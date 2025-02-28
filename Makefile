@@ -1,4 +1,4 @@
-.PHONY: install build serve-redoc serve-swagger lint
+.PHONY: install build serve-redoc lint
 
 install:
 	npm install
@@ -8,9 +8,6 @@ build:
 
 serve-redoc:
 	npm run serve:redoc
-
-serve-swagger:
-	npm run serve:swagger
 
 lint:
 	npm run lint 

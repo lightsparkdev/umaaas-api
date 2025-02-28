@@ -27,12 +27,9 @@ You can generate a new API token and client secret at any time in the UMAaas das
 
 The API is documented using the OpenAPI 3.1 specification. The full schema is available in the `openapi.yaml` file in this repository.
 
-### Documentation Formats
+### Documentation Format
 
-We provide the API documentation in multiple formats:
-
-1. **ReDoc** - Clean, responsive, three-panel documentation
-2. **Swagger UI** - Interactive documentation with a "Try it out" feature
+We provide the API documentation using ReDoc - a clean, responsive, three-panel documentation format that makes it easy to navigate and understand the API.
 
 ## Key Endpoints
 
@@ -617,7 +614,7 @@ To generate the documentation, you'll need Node.js (v14 or later) installed.
 # Install dependencies
 npm install
 
-# Build all documentation formats
+# Build documentation
 npm run build
 
 # Or use make
@@ -625,28 +622,19 @@ make install
 make build
 ```
 
-This will generate documentation in the following locations:
-
+This will generate documentation at:
 - ReDoc: `docs/index.html`
-- Swagger UI: `swagger-docs/index.html`
 
 ### Serving Documentation Locally
 
-You can serve the documentation locally for development purposes using several methods:
+You can serve the documentation locally for development purposes:
 
 ```bash
-# Serve ReDoc documentation (preferred method)
+# Serve ReDoc documentation
 npm run serve:redoc
 
-# Serve Swagger UI documentation
-npm run serve:swagger
-```
-
-#### Or use make
-
-```bash
+# Or use make
 make serve-redoc
-make serve-swagger
 ```
 
 ### Linting the OpenAPI Schema
