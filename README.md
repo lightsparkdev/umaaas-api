@@ -29,7 +29,10 @@ The API is documented using the OpenAPI 3.1 specification. The full schema is av
 
 ### Documentation Format
 
-We provide the API documentation using ReDoc - a clean, responsive, three-panel documentation format that makes it easy to navigate and understand the API.
+We provide the API documentation in multiple formats:
+
+- **ReDoc** - A clean, responsive, three-panel documentation format that makes it easy to navigate and understand the API.
+- **Markdown** - A Markdown version of the documentation available in `docs/api-docs.md`, which can be used for offline viewing or integrating into existing documentation systems.
 
 ## Key Endpoints
 
@@ -615,8 +618,14 @@ To generate the documentation, you'll need Node.js (v14 or later) installed.
 # Install dependencies
 npm install
 
-# Build documentation
+# Build documentation (both ReDoc HTML and Markdown)
 npm run build
+
+# Build only ReDoc HTML
+npm run build:redoc
+
+# Build only Markdown
+npm run build:markdown
 
 # Or use make
 make install
@@ -625,6 +634,7 @@ make build
 
 This will generate documentation at:
 - ReDoc: `docs/index.html`
+- Markdown: `docs/api-docs.md`
 
 ### Serving Documentation Locally
 
@@ -634,8 +644,12 @@ You can serve the documentation locally for development purposes:
 # Serve ReDoc documentation
 npm run serve:redoc
 
+# Serve Markdown documentation as HTML
+npm run serve:markdown
+
 # Or use make
 make serve-redoc
+make serve-markdown
 ```
 
 ### Linting the OpenAPI Schema

@@ -4,8 +4,7 @@ package-lock.json
 yarn.lock
 
 # Documentation output
-docs/
-swagger-docs/
+docs/index.html
 
 # Logs
 logs
