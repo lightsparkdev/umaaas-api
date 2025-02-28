@@ -1,0 +1,8 @@
+- group: Guides
+  items:
+    - page: docs/guides/configuring-users.md
+    - page: docs/guides/sending-payments.md
+    - page: docs/guides/receiving-payments.md
+    - page: docs/guides/webhook-verification.md
+- group: API
+  page: openapi.yaml

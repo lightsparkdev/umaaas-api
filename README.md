@@ -29,10 +29,22 @@ The API is documented using the OpenAPI 3.1 specification. The full schema is av
 
 ### Documentation Format
 
-We provide the API documentation in multiple formats:
+You can view the API documentation in several formats:
 
-- **ReDoc** - A clean, responsive, three-panel documentation format that makes it easy to navigate and understand the API.
-- **Markdown** - A Markdown version of the documentation available in `docs/api-docs.md`, which can be used for offline viewing or integrating into existing documentation systems.
+1. **HTML Documentation**: Use `npm run build:redoc` to generate HTML documentation, then open `docs/index.html`
+2. **Markdown Documentation**: Use `npm run build:markdown` to generate markdown documentation in `docs/api-docs.md`
+3. **Live Documentation Server**: Use `npm run serve:redoc` to start a local documentation server
+
+## API Guides
+
+We provide detailed guides for common workflows with the UMAaS API:
+
+- [Configuring Users](./docs/guides/configuring-users.md) - Comprehensive guide to user management, types, and bank account requirements
+- [Sending Payments](./docs/guides/sending-payments.md) - Step-by-step guide to sending payments to UMA addresses
+- [Receiving Payments](./docs/guides/receiving-payments.md) - How to receive payments from UMA addresses
+- [Webhook Verification](./docs/guides/webhook-verification.md) - Security best practices for webhook verification
+
+All guides are also accessible from the [central guides page](./docs/guides.md).
 
 ## Key Endpoints
 
@@ -633,6 +645,7 @@ make build
 ```
 
 This will generate documentation at:
+
 - ReDoc: `docs/index.html`
 - Markdown: `docs/api-docs.md`
 
