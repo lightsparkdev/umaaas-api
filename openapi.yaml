@@ -1,4 +1,4 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: UMA as a Service (UMAaas) API
   description: |
@@ -22,6 +22,20 @@ components:
       type: http
       scheme: basic
       description: API token authentication using format <api token id>:<api client secret>
+    
+    WebhookSignature:
+      type: apiKey
+      in: header
+      name: X-UMAaas-Signature
+      description: |
+        HMAC-SHA256 signature of the webhook payload, which can be used to verify that the webhook was sent by UMAaas.
+        
+        The signature is created by:
+        1. Taking the entire webhook request body as a string
+        2. Creating an HMAC-SHA256 hash of the request body using the webhook secret as the key
+        3. Encoding the hash in hexadecimal format
+        
+        Platforms should validate this signature by performing the same calculation and comparing the result with this header value.
 
   schemas:
     Error:
@@ -227,6 +241,152 @@ components:
           description: Last update timestamp
           readOnly: true
           example: "2023-06-15T12:30:45Z"
+
+    TransactionStatus:
+      type: string
+      enum: [PENDING, COMPLETED, FAILED, REFUNDED]
+      description: Status of a payment transaction
+
+    TransactionType:
+      type: string
+      enum: [INCOMING, OUTGOING]
+      description: Type of transaction (incoming payment or outgoing payment)
+
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "SAT" for satoshis, "USDC" for USDCoin, etc.)
+          example: "USD"
+        name:
+          type: string
+          description: Full name of the currency
+          example: "United States Dollar"
+        symbol:
+          type: string
+          description: Symbol of the currency
+          example: "$"
+        decimals:
+          type: integer
+          description: Number of decimal places for the currency
+          example: 2 # e.g. 123.45
+
+    CurrencyAmount:
+      type: object
+      required:
+        - amount
+        - currency
+      properties:
+        amount:
+          type: string
+          description: String representation of the amount with decimal places (to avoid floating point precision issues)
+          example: "125.50"
+        currency:
+          $ref: '#/components/schemas/Currency'
+    
+    Transaction:
+      type: object
+      required:
+        - transactionId
+        - status
+        - type
+        - senderUmaAddress
+        - receiverUmaAddress
+        - userId
+        - platformUserId
+      properties:
+        transactionId:
+          type: string
+          description: Unique identifier for the transaction
+          example: "txn_1a2b3c4d5e6f"
+        status:
+          $ref: '#/components/schemas/TransactionStatus'
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        senderUmaAddress:
+          type: string
+          description: UMA address of the payment sender
+          example: "$sender@external.domain"
+        receiverUmaAddress:
+          type: string
+          description: UMA address of the payment recipient
+          example: "$recipient@uma.domain"
+        userId:
+          type: string
+          description: System ID of the user (sender for outgoing, recipient for incoming)
+          example: "usr_12345678"
+        platformUserId:
+          type: string
+          description: Platform-specific ID of the user (sender for outgoing, recipient for incoming)
+          example: "platform_user_123"
+        settlementTime:
+          type: string
+          format: date-time
+          description: When the payment was or will be settled
+          example: "2023-08-15T14:30:00Z"
+        createdAt:
+          type: string
+          format: date-time
+          description: When the transaction was created
+          example: "2023-08-15T14:25:18Z"
+        description:
+          type: string
+          description: Optional memo or description for the payment
+          example: "Payment for invoice #1234"
+        counterpartyInformation:
+          type: object
+          description: Additional information about the counterparty, if available
+          additionalProperties: true
+          example:
+            fullName: "John Sender"
+            country: "DE"
+
+    IncomingTransaction:
+      allOf:
+        - $ref: '#/components/schemas/Transaction'
+        - type: object
+          required:
+            - receivedAmount
+          properties:
+            type:
+              $ref: '#/components/schemas/TransactionType'
+              example: "INCOMING"
+              description: Always "INCOMING" for incoming transactions
+            receivedAmount:
+              $ref: '#/components/schemas/CurrencyAmount'
+              description: Amount received in the recipient's currency
+
+    OutgoingTransaction:
+      allOf:
+        - $ref: '#/components/schemas/Transaction'
+        - type: object
+          required:
+            - sentAmount
+          properties:
+            type:
+              $ref: '#/components/schemas/TransactionType'
+              example: "OUTGOING"
+              description: Always "OUTGOING" for outgoing transactions
+            sentAmount:
+              $ref: '#/components/schemas/CurrencyAmount'
+              description: Amount sent in the sender's currency
+            receivedAmount:
+              $ref: '#/components/schemas/CurrencyAmount'
+              description: Amount to be received by recipient (if known)
+            exchangeRate:
+              type: object
+              description: If currency conversion occurred, contains exchange rate details
+              properties:
+                fromCurrency:
+                  type: string
+                  example: "EUR"
+                toCurrency:
+                  type: string
+                  example: "USD" 
+                rate:
+                  type: string
+                  example: "1.08"
 
 paths:
   /users:
@@ -683,6 +843,169 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+webhooks:
+  incoming-payment:
+    post:
+      summary: Incoming payment webhook and approval mechanism
+      description: |
+        Webhook that is called when an incoming payment is received by a user's UMA address.
+        This endpoint should be implemented by clients of the UMAaas API.
+        
+        ### Authentication
+        The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas.
+        To verify the signature:
+        1. Get the webhook secret provided to you during integration
+        2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key
+        3. Encode the hash in hexadecimal format
+        4. Compare this value to the signature in the `X-UMAaas-Signature` header
+        
+        If the values match, the webhook is authentic. If not, it should be rejected.
+        
+        ### Payment Approval Flow
+        When a transaction has `status: "PENDING"`, this webhook serves as an approval mechanism:
+        
+        1. The client should check the `counterpartyInformation` against their requirements
+        2. To APPROVE the payment, return a 200 OK response
+        3. To REJECT the payment, return a 403 Forbidden response with an Error object
+        4. To request more information, return a 422 Unprocessable Entity with specific missing fields
+        
+        The UMAaas system will proceed or cancel the payment based on your response.
+        
+        For transactions with other statuses (COMPLETED, FAILED, REFUNDED), this webhook is purely informational.
+      operationId: incomingPaymentWebhook
+      tags:
+        - Webhooks
+      security:
+        - WebhookSignature: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - transaction
+              properties:
+                transaction:
+                  $ref: '#/components/schemas/IncomingTransaction'
+                timestamp:
+                  type: string
+                  format: date-time
+                  description: ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)
+                  example: "2023-08-15T14:32:00Z"
+                webhookId:
+                  type: string
+                  description: Unique identifier for this webhook delivery (can be used for idempotency)
+                  example: "whk_1a2b3c4d5e6f"
+            examples:
+              pendingPayment:
+                summary: Pending payment example requiring approval
+                value:
+                  transaction:
+                    transactionId: "txn_9876543210"
+                    status: "PENDING"
+                    type: "INCOMING"
+                    senderUmaAddress: "$sender@external.domain"
+                    receiverUmaAddress: "$recipient@uma.domain"
+                    receivedAmount:
+                      amount: "500.00"
+                      currency: 
+                        code: "USD"
+                        name: "United States Dollar"
+                        symbol: "$"
+                        decimals: 2
+                    userId: "usr_12345678"
+                    platformUserId: "platform_user_123"
+                    counterpartyInformation:
+                      fullName: "John Sender"
+                      dateOfBirth: "1985-06-15"
+                      country: "DE"
+                  timestamp: "2023-08-15T14:32:00Z"
+                  webhookId: "whk_1a2b3c4d5e6f"
+              completedPayment:
+                summary: Completed payment notification
+                value:
+                  transaction:
+                    transactionId: "txn_9876543210"
+                    status: "COMPLETED"
+                    type: "INCOMING"
+                    senderUmaAddress: "$sender@external.domain"
+                    receiverUmaAddress: "$recipient@uma.domain"
+                    receivedAmount:
+                      amount: "500.00"
+                      currency: 
+                        code: "USD"
+                        name: "United States Dollar"
+                        symbol: "$"
+                        decimals: 2
+                    userId: "usr_12345678"
+                    platformUserId: "platform_user_123"
+                    settlementTime: "2023-08-15T14:30:00Z"
+                    createdAt: "2023-08-15T14:25:18Z"
+                    description: "Payment for services"
+                  timestamp: "2023-08-15T14:32:00Z"
+                  webhookId: "whk_1a2b3c4d5e6f"
+      responses:
+        '200':
+          description: |
+            Webhook received successfully. 
+            For PENDING transactions, this indicates approval to proceed with the payment.
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized - Signature validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: |
+            Forbidden - Payment rejected by the client.
+            Only applicable for PENDING transactions.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+                  - type: object
+                    properties:
+                      code:
+                        example: "payment_rejected"
+                      message:
+                        example: "Payment rejected due to compliance policy"
+                      details:
+                        example:
+                          reason: "failed_counterparty_check"
+                          rejectionReason: "User is in a restricted jurisdiction"
+        '409':
+          description: Conflict - Webhook has already been processed (duplicate webhookId)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: |
+            Unprocessable Entity - Additional counterparty information required.
+            Only applicable for PENDING transactions.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+                  - type: object
+                    properties:
+                      code:
+                        example: "additional_info_required"
+                      message:
+                        example: "Additional counterparty information required"
+                      details:
+                        example:
+                          requiredFields: ["TAX_ID", "REGISTRATION_NUMBER"]
 
 security:
   - BasicAuth: [] 
