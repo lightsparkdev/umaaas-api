@@ -395,6 +395,7 @@ components:
         decimals:
           type: integer
           description: Number of decimal places for the currency
+          minimum: 0
           example: 2 # e.g. 123.45
 
     CurrencyAmount:
@@ -404,9 +405,10 @@ components:
         - currency
       properties:
         amount:
-          type: string
-          description: String representation of the amount with decimal places (to avoid floating point precision issues)
-          example: "125.50"
+          type: integer
+          format: int64
+          description: Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)
+          example: 12550
         currency:
           $ref: '#/components/schemas/Currency'
     
@@ -502,8 +504,7 @@ components:
             exchangeRate:
               type: number
               description: Number of sending currency units per receiving currency unit.
-              minimum: 0
-              exclusiveMinimum: true
+              exclusiveMinimum: 0
               example: 1.08
             fees:
               type: integer
@@ -524,22 +525,19 @@ components:
         estimatedExchangeRate:
           type: number
           description: An estimated exchange rate from the sender's currency to this currency. This is not a locked rate and is subject to change when calling the quotes endpoint.
-          minimum: 0
-          exclusiveMinimum: true
+          exclusiveMinimum: 0
           example: 1.08
         min:
           type: integer
           format: int64
           description: The minimum amount that can be received in this currency.
-          minimum: 0
-          exclusiveMinimum: true
+          exclusiveMinimum: 0
           example: 1
         max:
           type: integer
           format: int64
           description: The maximum amount that can be received in this currency.
-          minimum: 0
-          exclusiveMinimum: true
+          exclusiveMinimum: 0
           example: 1000000
         
         
@@ -577,21 +575,18 @@ components:
           type: integer
           format: int64
           description: The total amount that will be sent in the smallest unit of the sending currency (eg. cents).
-          minimum: 0
-          exclusiveMinimum: true
+          exclusiveMinimum: 0
           example: 123010
         totalReceivingAmount:
           type: integer
           format: int64
           description: The total amount that will be received in the smallest unit of the receiving currency (eg. cents).
-          minimum: 0
-          exclusiveMinimum: true
+          exclusiveMinimum: 0
           example: 1000
         exchangeRate:
           type: number
           description: Number of sending currency units per receiving currency unit.
-          minimum: 0
-          exclusiveMinimum: true
+          exclusiveMinimum: 0
         expiresAt:
           type: string
           format: date-time
@@ -833,7 +828,7 @@ paths:
                     accountNumber: "55566677788"
                     routingNumber: "555666777"
                     accountCategory: "CHECKING"
-                    bankName: "Silicon Valley Bank"
+                    bankName: "JP Morgan Chase"
       responses:
         '200':
           description: User updated successfully
@@ -1420,8 +1415,7 @@ paths:
                   description: >-
                     The amount to send/receive in the smallest unit of the locked currency (eg. cents).
                     See `lockedCurrencySide` for more information.
-                  minimum: 0
-                  exclusiveMinimum: true
+                  exclusiveMinimum: 0
                   example: 1000
                 description:
                   type: string
@@ -1447,9 +1441,6 @@ paths:
                   receivingCurrencyCode: "EUR"
                   lockedCurrencySide: "RECEIVING"
                   lockedCurrencyAmount: 9200
-                  counterpartyInformation:
-                    fullName: "John Sender"
-                    dateOfBirth: "1985-06-15"
       responses:
         '201':
           description: |
@@ -1620,7 +1611,7 @@ webhooks:
                     senderUmaAddress: "$sender@external.domain"
                     receiverUmaAddress: "$recipient@uma.domain"
                     receivedAmount:
-                      amount: "500.00"
+                      amount: 50000
                       currency: 
                         code: "USD"
                         name: "United States Dollar"
@@ -1643,7 +1634,7 @@ webhooks:
                     senderUmaAddress: "$sender@external.domain"
                     receiverUmaAddress: "$recipient@uma.domain"
                     receivedAmount:
-                      amount: "500.00"
+                      amount: 50000
                       currency: 
                         code: "USD"
                         name: "United States Dollar"
@@ -1771,14 +1762,14 @@ webhooks:
                     senderUmaAddress: "$sender@uma.domain"
                     receiverUmaAddress: "$recipient@external.domain"
                     sentAmount:
-                      amount: "105.50"
+                      amount: 10550
                       currency: 
                         code: "USD"
                         name: "United States Dollar"
                         symbol: "$"
                         decimals: 2
                     receivedAmount:
-                      amount: "97.06"
+                      amount: 9706
                       currency: 
                         code: "EUR"
                         name: "Euro"
@@ -1789,10 +1780,7 @@ webhooks:
                     settlementTime: "2023-08-15T14:30:00Z"
                     createdAt: "2023-08-15T14:25:18Z"
                     description: "Payment for invoice #1234"
-                    exchangeRate:
-                      fromCurrency: "USD"
-                      toCurrency: "EUR"
-                      rate: "0.92"
+                    exchangeRate: 0.92
                   timestamp: "2023-08-15T14:32:00Z"
                   webhookId: "whk_1a2b3c4d5e6f"
               failedPayment:
@@ -1805,7 +1793,7 @@ webhooks:
                     senderUmaAddress: "$sender@uma.domain"
                     receiverUmaAddress: "$recipient@external.domain"
                     sentAmount:
-                      amount: "105.50"
+                      amount: 10550
                       currency: 
                         code: "USD"
                         name: "United States Dollar"
