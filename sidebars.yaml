@@ -1,5 +1,6 @@
 - group: Guides
   items:
+    - page: docs/guides/platform-configuration.md
     - page: docs/guides/configuring-users.md
     - page: docs/guides/sending-payments.md
     - page: docs/guides/receiving-payments.md
