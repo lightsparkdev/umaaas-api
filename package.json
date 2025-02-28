@@ -1,0 +1,26 @@
+{
+  "name": "umaas-api",
+  "version": "1.0.0",
+  "description": "UMA as a Service API Documentation",
+  "scripts": {
+    "serve:redoc": "npx @redocly/cli preview-docs openapi.yaml --port=8080",
+    "build:redoc": "npx @redocly/cli build-docs openapi.yaml -o docs/index.html",
+    "serve:swagger": "http-server swagger-docs -p 8080",
+    "build:swagger": "mkdir -p swagger-docs && cp openapi.yaml swagger-docs/ && cp -r node_modules/swagger-ui-dist swagger-docs/swagger-ui",
+    "build:swagger-html": "node scripts/generate-swagger-html.js",
+    "build": "npm run build:redoc && npm run build:swagger && npm run build:swagger-html",
+    "lint": "npx @redocly/cli lint openapi.yaml",
+    "validate": "npx @redocly/cli lint openapi.yaml",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@redocly/cli": "^1.5.0",
+    "swagger-ui-dist": "^5.9.0"
+  },
+  "devDependencies": {
+    "@apidevtools/swagger-cli": "^4.0.4",
+    "http-server": "^14.1.1"
+  },
+  "author": "",
+  "license": "MIT"
+} 

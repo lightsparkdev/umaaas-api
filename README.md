@@ -14,7 +14,8 @@ The UMAaas API provides endpoints for:
 All API requests must include HTTP Basic Authentication using the `Authorization` header. The credentials should be provided in the format `<api token id>:<api client secret>` and then Base64 encoded.
 
 Example:
-```
+
+```http
 Authorization: Basic <base64-encoded-credentials>
 ```
 
@@ -26,7 +27,63 @@ Contact UMAaas support to obtain your API token ID and client secret.
 
 The API is documented using the OpenAPI 3.0 specification. The full schema is available in the `openapi.yaml` file in this repository.
 
-### Key Endpoints
+### Documentation Formats
+
+We provide the API documentation in multiple formats:
+
+1. **ReDoc** - Clean, responsive, three-panel documentation
+2. **Swagger UI** - Interactive documentation with a "Try it out" feature
+
+### Building Documentation
+
+To generate the documentation, you'll need Node.js (v14 or later) installed.
+
+```bash
+# Install dependencies
+npm install
+
+# Build all documentation formats
+npm run build
+
+# Or use make
+make install
+make build
+```
+
+This will generate documentation in the following locations:
+
+- ReDoc: `docs/index.html`
+- Swagger UI: `swagger-docs/index.html`
+
+### Serving Documentation Locally
+
+You can serve the documentation locally for development purposes using several methods:
+
+```bash
+# Serve ReDoc documentation (preferred method)
+npm run serve:redoc
+
+# Serve Swagger UI documentation
+npm run serve:swagger
+```
+
+#### Or use make
+
+make serve-redoc
+make serve-swagger
+
+```
+
+### Linting the OpenAPI Schema
+
+We use Redocly to lint the OpenAPI schema:
+
+```bash
+npm run lint
+# Or: make lint
+```
+
+## Key Endpoints
 
 - **User Management**
   - `POST /users` - Add a new user
@@ -46,6 +103,7 @@ The API supports both individual and business users, with different required inf
 ### Individual Users
 
 Required information:
+
 - UMA address
 - Platform user ID
 - Full name
@@ -56,6 +114,7 @@ Required information:
 ### Business Users
 
 Required information:
+
 - UMA address
 - Platform user ID
 - Business information (legal name required)
@@ -63,6 +122,7 @@ Required information:
 - Bank account information
 
 Additional optional business information:
+
 - Registration number
 - Tax ID
 
@@ -71,6 +131,7 @@ When creating or updating users, the `userType` field must be specified as eithe
 ## Bank Account Information
 
 The API supports various bank account formats based on country:
+
 - Mexico: CLABE
 - United States: Account and routing number
 - Brazil: PIX address
@@ -80,12 +141,15 @@ The API supports various bank account formats based on country:
 
 ### Requirements
 
-- [List of requirements]
+- Node.js v14 or later
+- npm v6 or later
 
 ### Setup
 
-[Setup instructions]
+1. Clone this repository
+2. Install dependencies: `npm install`
+3. Build documentation: `npm run build`
 
 ## Support
 
-For any questions or issues, please contact UMAaas support at support@umaas.example.com. 
+For any questions or issues, please contact UMAaas support at <support@lightspark.com>.
