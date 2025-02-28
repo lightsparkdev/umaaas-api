@@ -231,7 +231,7 @@ components:
           type: string
           description: System-generated unique identifier
           readOnly: true
-          example: "usr_12345678"
+          example: "User:019542f5-b3e7-1d02-0000-000000000001"
         umaAddress:
           type: string
           description: full UMA address
@@ -239,7 +239,7 @@ components:
         platformUserId:
           type: string
           description: Platform-specific user identifier
-          example: "platform_user_123"
+          example: "9f84e0c2a72c4fa"
         userType:
           type: string
           enum: [INDIVIDUAL, BUSINESS]
@@ -339,7 +339,7 @@ components:
           type: string
           description: System-generated unique identifier
           readOnly: true
-          example: "cfg_87654321"
+          example: "PlatformConfig:019542f5-b3e7-1d02-0000-000000000003"
         umaDomain:
           type: string
           description: UMA domain for this platform
@@ -376,6 +376,11 @@ components:
       type: string
       enum: [INCOMING, OUTGOING]
       description: Type of transaction (incoming payment or outgoing payment)
+
+    WebhookType:
+      type: string
+      enum: [INCOMING_PAYMENT, OUTGOING_PAYMENT]
+      description: Type of webhook event, used by the receiver to identify which webhook is being received
 
     Currency:
       type: object
@@ -426,7 +431,7 @@ components:
         transactionId:
           type: string
           description: Unique identifier for the transaction
-          example: "txn_1a2b3c4d5e6f"
+          example: "Transaction:019542f5-b3e7-1d02-0000-000000000004"
         status:
           $ref: '#/components/schemas/TransactionStatus'
         type:
@@ -442,11 +447,11 @@ components:
         userId:
           type: string
           description: System ID of the user (sender for outgoing, recipient for incoming)
-          example: "usr_12345678"
+          example: "User:019542f5-b3e7-1d02-0000-000000000001"
         platformUserId:
           type: string
           description: Platform-specific ID of the user (sender for outgoing, recipient for incoming)
-          example: "platform_user_123"
+          example: "18d3e5f7b4a9c2"
         settlementTime:
           type: string
           format: date-time
@@ -512,6 +517,10 @@ components:
               description: The fees associated with the quote in the smallest unit of the sending currency (eg. cents).
               minimum: 0
               example: 10
+            quoteId:
+              type: string
+              description: The ID of the quote that was used to trigger this payment
+              example: "Quote:019542f5-b3e7-1d02-0000-000000000006"
     CurrencyPreference:
       type: object
       required:
@@ -566,7 +575,7 @@ components:
         quoteId:
           type: string
           description: Unique identifier for this quote
-          example: "quote_123456789"
+          example: "Quote:019542f5-b3e7-1d02-0000-000000000006"
         sendingCurrency:
           $ref: '#/components/schemas/Currency'
         receivingCurrency:
@@ -607,6 +616,15 @@ components:
             country: "FR"
         paymentInstructions:
           $ref: '#/components/schemas/PaymentInstructions'
+        status:
+          type: string
+          enum: [PENDING, PROCESSING, COMPLETED, FAILED, EXPIRED]
+          description: Current status of the quote
+          example: "PENDING"
+        transactionId:
+          type: string
+          description: The ID of the transaction created from this quote. Only present if the quote has started processing.
+          example: "Transaction:019542f5-b3e7-1d02-0000-000000000005"
 
 paths:
   /users:
@@ -631,7 +649,7 @@ paths:
                 summary: Create individual user example
                 value:
                   umaAddress: "$jane.doe@uma.domain.com"
-                  platformUserId: "platform_user_456"
+                  platformUserId: "7b3c5a89d2f1e0"
                   userType: "INDIVIDUAL"
                   fullName: "Jane Doe"
                   dateOfBirth: "1992-03-25"
@@ -652,7 +670,7 @@ paths:
                 summary: Create business user example
                 value:
                   umaAddress: "$acme@uma.domain.com"
-                  platformUserId: "platform_biz_789"
+                  platformUserId: "6e4d2c0b8a9f3"
                   userType: "BUSINESS"
                   businessInfo:
                     legalName: "Acme Corporation"
@@ -1318,10 +1336,6 @@ paths:
                     type: string
                     description: The UMA address that was looked up
                     example: "$receiver@uma.domain"
-                  receiverName:
-                    type: string
-                    description: Name of the recipient, if available
-                    example: "Jane Doe"
                   supportedCurrencies:
                     type: array
                     description: List of currencies supported by the receiving UMA address
@@ -1394,11 +1408,11 @@ paths:
                 userId:
                   type: string
                   description: System ID of the sender (optional if senderUmaAddress or platformUserId is provided)
-                  example: "usr_12345678"
+                  example: "User:019542f5-b3e7-1d02-0000-000000000001"
                 platformUserId:
                   type: string
                   description: Platform ID of the sender (optional if senderUmaAddress or userId is provided)
-                  example: "platform_user_123"
+                  example: "18d3e5f7b4a9c2"
                 sendingCurrencyCode:
                   type: string
                   description: Currency code for the sending amount
@@ -1436,7 +1450,7 @@ paths:
                 summary: Lock receiving amount
                 value:
                   receiverUmaAddress: "$receiver@uma.domain"
-                  platformUserId: "platform_user_123"
+                  platformUserId: "2d8e7f3a9c5b1"
                   sendingCurrencyCode: "USD"
                   receivingCurrencyCode: "EUR"
                   lockedCurrencySide: "RECEIVING"
@@ -1481,6 +1495,45 @@ paths:
                         example:
                           requiredFields: ["TAX_ID", "REGISTRATION_NUMBER"]
 
+  /quotes/{quoteId}:
+    get:
+      summary: Get quote by ID
+      description: |
+        Retrieve a quote by its ID. If the quote has been settled, it will include 
+        the transaction ID. This allows clients to track the full lifecycle of a payment
+        from quote creation to settlement.
+      operationId: getQuoteById
+      tags:
+        - Payments
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: quoteId
+          in: path
+          description: ID of the quote to retrieve
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Quote retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Quote not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /payments/status/{quoteId}:
     get:
       summary: Check payment status for a quote
@@ -1520,7 +1573,7 @@ paths:
                   quoteId:
                     type: string
                     description: ID of the quote
-                    example: "quote_123456789"
+                    example: "Quote:019542f5-b3e7-1d02-0000-000000000006"
                   status:
                     type: string
                     enum: [PENDING, RECEIVED, PROCESSING, COMPLETED, FAILED, EXPIRED]
@@ -1588,6 +1641,9 @@ webhooks:
               type: object
               required:
                 - transaction
+                - timestamp
+                - webhookId
+                - type
               properties:
                 transaction:
                   $ref: '#/components/schemas/IncomingTransaction'
@@ -1599,13 +1655,17 @@ webhooks:
                 webhookId:
                   type: string
                   description: Unique identifier for this webhook delivery (can be used for idempotency)
-                  example: "whk_1a2b3c4d5e6f"
+                  example: "Webhook:019542f5-b3e7-1d02-0000-000000000007"
+                type:
+                  $ref: '#/components/schemas/WebhookType'
+                  description: Type of webhook event
+                  example: "INCOMING_PAYMENT"
             examples:
               pendingPayment:
                 summary: Pending payment example requiring approval
                 value:
                   transaction:
-                    transactionId: "txn_9876543210"
+                    transactionId: "Transaction:019542f5-b3e7-1d02-0000-000000000005"
                     status: "PENDING"
                     type: "INCOMING"
                     senderUmaAddress: "$sender@external.domain"
@@ -1617,18 +1677,19 @@ webhooks:
                         name: "United States Dollar"
                         symbol: "$"
                         decimals: 2
-                    userId: "usr_12345678"
-                    platformUserId: "platform_user_123"
+                    userId: "User:019542f5-b3e7-1d02-0000-000000000001"
+                    platformUserId: "18d3e5f7b4a9c2"
                     counterpartyInformation:
                       fullName: "John Sender"
                       dateOfBirth: "1985-06-15"
                   timestamp: "2023-08-15T14:32:00Z"
-                  webhookId: "whk_1a2b3c4d5e6f"
-              completedPayment:
+                  webhookId: "Webhook:019542f5-b3e7-1d02-0000-000000000007"
+                  type: "INCOMING_PAYMENT"
+              incomingCompletedPayment:
                 summary: Completed payment notification
                 value:
                   transaction:
-                    transactionId: "txn_9876543210"
+                    transactionId: "Transaction:019542f5-b3e7-1d02-0000-000000000005"
                     status: "COMPLETED"
                     type: "INCOMING"
                     senderUmaAddress: "$sender@external.domain"
@@ -1640,13 +1701,16 @@ webhooks:
                         name: "United States Dollar"
                         symbol: "$"
                         decimals: 2
-                    userId: "usr_12345678"
-                    platformUserId: "platform_user_123"
+                    userId: "User:019542f5-b3e7-1d02-0000-000000000001"
+                    platformUserId: "18d3e5f7b4a9c2"
                     settlementTime: "2023-08-15T14:30:00Z"
                     createdAt: "2023-08-15T14:25:18Z"
                     description: "Payment for services"
+                    exchangeRate: 0.92
+                    quoteId: "Quote:019542f5-b3e7-1d02-0000-000000000006"
                   timestamp: "2023-08-15T14:32:00Z"
-                  webhookId: "whk_1a2b3c4d5e6f"
+                  webhookId: "Webhook:019542f5-b3e7-1d02-0000-000000000007"
+                  type: "INCOMING_PAYMENT"
       responses:
         '200':
           description: |
@@ -1739,6 +1803,9 @@ webhooks:
               type: object
               required:
                 - transaction
+                - timestamp
+                - webhookId
+                - type
               properties:
                 transaction:
                   $ref: '#/components/schemas/OutgoingTransaction'
@@ -1750,13 +1817,17 @@ webhooks:
                 webhookId:
                   type: string
                   description: Unique identifier for this webhook delivery (can be used for idempotency)
-                  example: "whk_1a2b3c4d5e6f"
+                  example: "Webhook:019542f5-b3e7-1d02-0000-000000000007"
+                type:
+                  $ref: '#/components/schemas/WebhookType'
+                  description: Type of webhook event
+                  example: "OUTGOING_PAYMENT"
             examples:
-              completedPayment:
+              outgoingCompletedPayment:
                 summary: Completed outgoing payment
                 value:
                   transaction:
-                    transactionId: "txn_9876543210"
+                    transactionId: "Transaction:019542f5-b3e7-1d02-0000-000000000005"
                     status: "COMPLETED"
                     type: "OUTGOING"
                     senderUmaAddress: "$sender@uma.domain"
@@ -1775,19 +1846,21 @@ webhooks:
                         name: "Euro"
                         symbol: "€"
                         decimals: 2
-                    userId: "usr_12345678"
-                    platformUserId: "platform_user_123"
+                    userId: "User:019542f5-b3e7-1d02-0000-000000000001"
+                    platformUserId: "18d3e5f7b4a9c2"
                     settlementTime: "2023-08-15T14:30:00Z"
                     createdAt: "2023-08-15T14:25:18Z"
                     description: "Payment for invoice #1234"
                     exchangeRate: 0.92
+                    quoteId: "Quote:019542f5-b3e7-1d02-0000-000000000006"
                   timestamp: "2023-08-15T14:32:00Z"
-                  webhookId: "whk_1a2b3c4d5e6f"
+                  webhookId: "Webhook:019542f5-b3e7-1d02-0000-000000000007"
+                  type: "OUTGOING_PAYMENT"
               failedPayment:
                 summary: Failed outgoing payment
                 value:
                   transaction:
-                    transactionId: "txn_9876543210"
+                    transactionId: "Transaction:019542f5-b3e7-1d02-0000-000000000005"
                     status: "FAILED"
                     type: "OUTGOING"
                     senderUmaAddress: "$sender@uma.domain"
@@ -1799,11 +1872,13 @@ webhooks:
                         name: "United States Dollar"
                         symbol: "$"
                         decimals: 2
-                    userId: "usr_12345678"
-                    platformUserId: "platform_user_123"
+                    userId: "User:019542f5-b3e7-1d02-0000-000000000001"
+                    platformUserId: "18d3e5f7b4a9c2"
                     createdAt: "2023-08-15T14:25:18Z"
+                    quoteId: "Quote:019542f5-b3e7-1d02-0000-000000000006"
                   timestamp: "2023-08-15T14:32:00Z"
-                  webhookId: "whk_1a2b3c4d5e6f"
+                  webhookId: "Webhook:019542f5-b3e7-1d02-0000-000000000007"
+                  type: "OUTGOING_PAYMENT"
       responses:
         '200':
           description: Webhook received successfully
