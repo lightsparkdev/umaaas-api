@@ -79,6 +79,44 @@ All guides are also accessible from the [central guides page](./docs/guides.md).
 
 This guide outlines the process for platforms to send payments to UMA addresses.
 
+The following sequence diagram illustrates the interaction between your platform and the UMAaS API when receiving payments:
+
+```mermaid
+sequenceDiagram
+    participant Sender as External Sender
+    participant UMAaS as UMAaS API
+    participant Client as Your Platform
+    participant Bank as Banking Provider
+    
+    Note over Client, UMAaS: One-time setup
+    Client->>UMAaS: PUT /config (set domain, webhook URL)
+    UMAaS-->>Client: Configuration saved
+    Client->>UMAaS: POST /users (register users with bank info)
+    UMAaS-->>Client: User registered
+    
+    Note over Sender, UMAaS: Payment initiated by sender
+    Sender->>UMAaS: Initiates payment to UMA address
+    UMAaS->>Client: Webhook: INCOMING_PAYMENT (PENDING)
+    
+    alt Payment approved
+        Client-->>UMAaS: HTTP 200 OK (approve payment)
+        UMAaS->>Bank: Execute payment to user's bank account
+        UMAaS->>Client: Webhook: INCOMING_PAYMENT (COMPLETED)
+        Client-->>UMAaS: HTTP 200 OK (acknowledge completion)
+    else Payment rejected
+        Client-->>UMAaS: HTTP 400 Bad Request with rejection reason
+        UMAaS->>Sender: Payment rejected notification
+    end
+```
+
+The process consists of five main steps:
+
+1. **Platform configuration** (one-time setup) to set your UMA domain and required counterparty fields
+2. **Register users** with their bank account information so they can receive payments
+3. **Set up webhook endpoints** to receive notifications about incoming payments
+4. **Receive and approve/reject incoming payments** via webhooks
+5. **Receive completion notification** when the payment completes
+
 #### Step 1: Look up recipient UMA address
 
 First, check if a UMA address is valid and retrieve supported currencies and exchange rates.
@@ -286,6 +324,46 @@ When the payment status changes (to completed or failed), your platform will rec
 ### Receiving Payments (Incoming Flow)
 
 This guide outlines the process for platforms to receive payments from UMA addresses.
+
+#### Process Overview
+
+The following sequence diagram illustrates the interaction between your platform and the UMAaS API when receiving payments:
+
+```mermaid
+sequenceDiagram
+    participant Sender as External Sender
+    participant UMAaS as UMAaS API
+    participant Client as Your Platform
+    participant Bank as Banking Provider
+    
+    Note over Client, UMAaS: One-time setup
+    Client->>UMAaS: PUT /config (set domain, webhook URL)
+    UMAaS-->>Client: Configuration saved
+    Client->>UMAaS: POST /users (register users with bank info)
+    UMAaS-->>Client: User registered
+    
+    Note over Sender, UMAaS: Payment initiated by sender
+    Sender->>UMAaS: Initiates payment to UMA address
+    UMAaS->>Client: Webhook: INCOMING_PAYMENT (PENDING)
+    
+    alt Payment approved
+        Client-->>UMAaS: HTTP 200 OK (approve payment)
+        UMAaS->>Bank: Execute payment to user's bank account
+        UMAaS->>Client: Webhook: INCOMING_PAYMENT (COMPLETED)
+        Client-->>UMAaS: HTTP 200 OK (acknowledge completion)
+    else Payment rejected
+        Client-->>UMAaS: HTTP 400 Bad Request with rejection reason
+        UMAaS->>Sender: Payment rejected notification
+    end
+```
+
+The process consists of five main steps:
+
+1. **Platform configuration** (one-time setup) to set your UMA domain and required counterparty fields
+2. **Register users** with their bank account information so they can receive payments
+3. **Set up webhook endpoints** to receive notifications about incoming payments
+4. **Receive and approve/reject incoming payments** via webhooks
+5. **Receive completion notification** when the payment completes
 
 #### Step 1: Platform configuration (one-time setup)
 

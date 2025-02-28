@@ -2,6 +2,43 @@
 
 This guide outlines the process for platforms to send payments to UMA addresses.
 
+## Process Overview
+
+The following sequence diagram illustrates the interaction between your platform and the UMAaS API when sending payments:
+
+```mermaid
+sequenceDiagram
+    participant Client as Your Platform
+    participant UMAaS as UMAaS API
+    participant Bank as Banking Provider
+    
+    Client->>UMAaS: GET /receiver/{umaAddress}
+    UMAaS-->>Client: Supported currencies and requirements
+    Note over Client: Select currency and amount
+    Client->>UMAaS: POST /quotes
+    UMAaS-->>Client: Quote with payment instructions
+    Note over Client: Execute payment using instructions
+    Client->>Bank: Initiate bank transfer with reference
+    
+    opt Payment Status Polling
+        loop Until completed or failed
+            Client->>UMAaS: GET /quotes/{quoteId}
+            UMAaS-->>Client: Quote with current status
+        end
+    end
+    
+    UMAaS->>Client: Webhook: OUTGOING_PAYMENT (status update)
+    Client-->>UMAaS: HTTP 200 OK (acknowledge webhook)
+```
+
+The process consists of five main steps:
+
+1. **Look up the recipient's UMA address** to validate it and retrieve supported currencies
+2. **Create a payment quote** to lock in exchange rates and get payment instructions
+3. **Execute the payment** through your banking provider using the instructions
+4. **Track the payment status** by polling or waiting for a webhook
+5. **Receive completion notification** when the payment completes or fails
+
 ## Step 1: Look up recipient UMA address
 
 First, check if a UMA address is valid and retrieve supported currencies and exchange rates.
