@@ -498,21 +498,19 @@ components:
               description: Amount sent in the sender's currency
             receivedAmount:
               $ref: '#/components/schemas/CurrencyAmount'
-              description: Amount to be received by recipient (if known)
+              description: Amount to be received by recipient in the recipient's currency
             exchangeRate:
-              type: object
-              description: If currency conversion occurred, contains exchange rate details
-              properties:
-                fromCurrency:
-                  type: string
-                  example: "EUR"
-                toCurrency:
-                  type: string
-                  example: "USD" 
-                rate:
-                  type: string
-                  example: "1.08"
-
+              type: number
+              description: Number of sending currency units per receiving currency unit.
+              minimum: 0
+              exclusiveMinimum: true
+              example: 1.08
+            fees:
+              type: integer
+              format: int64
+              description: The fees associated with the quote in the smallest unit of the sending currency (eg. cents).
+              minimum: 0
+              example: 10
     CurrencyPreference:
       type: object
       required:
@@ -549,10 +547,10 @@ components:
       type: string
       enum: [SENDING, RECEIVING]
       description: >-
-        The side of the quote which should be locked and specified in the `locked_currency_amount`.
+        The side of the quote which should be locked and specified in the `lockedCurrencyAmount`.
         For example, if I want to send exactly $5 MXN from my wallet, I would set this to "sending",
-        and the `locked_currency_amount` to 500 (in cents). If I want the receiver to receive exactly $10 USD,
-        I would set this to "receiving" and the `locked_currency_amount` to 10000 (in cents).
+        and the `lockedCurrencyAmount` to 500 (in cents). If I want the receiver to receive exactly $10 USD,
+        I would set this to "receiving" and the `lockedCurrencyAmount` to 10000 (in cents).
       
     Quote:
       type: object
@@ -560,8 +558,8 @@ components:
         - quoteId
         - sendingCurrency
         - receivingCurrency
-        - total_sending_amount
-        - total_receiving_amount
+        - totalSendingAmount
+        - totalReceivingAmount
         - exchangeRate
         - expiresAt
         - feesIncluded
@@ -575,14 +573,14 @@ components:
           $ref: '#/components/schemas/Currency'
         receivingCurrency:
           $ref: '#/components/schemas/Currency'
-        total_sending_amount:
+        totalSendingAmount:
           type: integer
           format: int64
           description: The total amount that will be sent in the smallest unit of the sending currency (eg. cents).
           minimum: 0
           exclusiveMinimum: true
           example: 123010
-        total_receiving_amount:
+        totalReceivingAmount:
           type: integer
           format: int64
           description: The total amount that will be received in the smallest unit of the receiving currency (eg. cents).
@@ -651,7 +649,6 @@ paths:
                     country: "US"
                   bankAccountInfo:
                     accountType: "US_ACCOUNT"
-                    accountHolderName: "Jane Doe"
                     accountNumber: "12345678901"
                     routingNumber: "123456789"
                     accountCategory: "CHECKING"
@@ -674,7 +671,6 @@ paths:
                     country: "US"
                   bankAccountInfo:
                     accountType: "US_ACCOUNT"
-                    accountHolderName: "Acme Corporation"
                     accountNumber: "98765432109"
                     routingNumber: "987654321"
                     accountCategory: "CHECKING"
@@ -814,7 +810,6 @@ paths:
                     country: "US"
                   bankAccountInfo:
                     accountType: "US_ACCOUNT"
-                    accountHolderName: "John Smith"
                     accountNumber: "11122233344"
                     routingNumber: "111222333"
                     accountCategory: "CHECKING"
@@ -835,7 +830,6 @@ paths:
                     country: "US"
                   bankAccountInfo:
                     accountType: "US_ACCOUNT"
-                    accountHolderName: "New Tech Solutions LLC"
                     accountNumber: "55566677788"
                     routingNumber: "555666777"
                     accountCategory: "CHECKING"
@@ -974,7 +968,6 @@ paths:
                     country: "US"
                   bankAccountInfo:
                     accountType: "US_ACCOUNT"
-                    accountHolderName: "Jane Smith"
                     accountNumber: "44455566677"
                     routingNumber: "444555666"
                     accountCategory: "CHECKING"
@@ -994,7 +987,6 @@ paths:
                     country: "US"
                   bankAccountInfo:
                     accountType: "US_ACCOUNT"
-                    accountHolderName: "Global Enterprises Inc."
                     accountNumber: "99988877766"
                     routingNumber: "999888777"
                     accountCategory: "CHECKING"
@@ -1427,7 +1419,7 @@ paths:
                   format: int64
                   description: >-
                     The amount to send/receive in the smallest unit of the locked currency (eg. cents).
-                    See `locked_currency_side` for more information.
+                    See `lockedCurrencySide` for more information.
                   minimum: 0
                   exclusiveMinimum: true
                   example: 1000
@@ -1443,7 +1435,7 @@ paths:
                   senderUmaAddress: "$sender@uma.domain"
                   sendingCurrencyCode: "USD"
                   receivingCurrencyCode: "EUR"
-                  lockedCurrencySide: "SEND"
+                  lockedCurrencySide: "SENDING"
                   lockedCurrencyAmount: 1000
                   description: "Payment for invoice #1234"
               lockReceiveAmount:
@@ -1453,7 +1445,7 @@ paths:
                   platformUserId: "platform_user_123"
                   sendingCurrencyCode: "USD"
                   receivingCurrencyCode: "EUR"
-                  lockedCurrencySide: "RECEIVE"
+                  lockedCurrencySide: "RECEIVING"
                   lockedCurrencyAmount: 9200
                   counterpartyInformation:
                     fullName: "John Sender"
