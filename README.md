@@ -39,6 +39,7 @@ You can view the API documentation in several formats:
 
 We provide detailed guides for common workflows with the UMAaS API:
 
+- [Platform Configuration](./docs/guides/platform-configuration.md) - Guide to configuring your platform settings, UMA domain, and webhooks
 - [Configuring Users](./docs/guides/configuring-users.md) - Comprehensive guide to user management, types, and bank account requirements
 - [Sending Payments](./docs/guides/sending-payments.md) - Step-by-step guide to sending payments to UMA addresses
 - [Receiving Payments](./docs/guides/receiving-payments.md) - How to receive payments from UMA addresses

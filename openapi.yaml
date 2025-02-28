@@ -397,7 +397,7 @@ components:
 
     WebhookType:
       type: string
-      enum: [INCOMING_PAYMENT, OUTGOING_PAYMENT]
+      enum: [INCOMING_PAYMENT, OUTGOING_PAYMENT, TEST]
       description: Type of webhook event, used by the receiver to identify which webhook is being received
 
     Currency:
@@ -1904,6 +1904,88 @@ webhooks:
       responses:
         '200':
           description: Webhook received successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized - Signature validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict - Webhook has already been processed (duplicate webhookId)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  test-webhook:
+    post:
+      summary: Test webhook for integration verification
+      description: |
+        Webhook that is sent once to verify your webhook endpoint is correctly set up.
+        This is sent when you configure or update your platform settings with a webhook URL.
+        
+        ### Authentication
+        The webhook includes a signature in the `X-UMAaS-Signature` header that allows you to verify that the webhook was sent by UMAaS.
+        To verify the signature:
+        1. Get the webhook secret provided to you during integration
+        2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key
+        3. Encode the hash in hexadecimal format
+        4. Compare this value to the signature in the `X-UMAaS-Signature` header
+        
+        If the values match, the webhook is authentic. If not, it should be rejected.
+        
+        This webhook is purely for testing your endpoint integration and signature verification.
+      operationId: testWebhook
+      tags:
+        - Webhooks
+      security:
+        - WebhookSignature: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - test
+                - timestamp
+                - webhookId
+                - type
+              properties:
+                test:
+                  type: boolean
+                  description: Indicates this is a test webhook
+                  example: true
+                timestamp:
+                  type: string
+                  format: date-time
+                  description: ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)
+                  example: "2023-08-15T14:32:00Z"
+                webhookId:
+                  type: string
+                  description: Unique identifier for this webhook delivery (can be used for idempotency)
+                  example: "Webhook:019542f5-b3e7-1d02-0000-000000000001"
+                type:
+                  $ref: '#/components/schemas/WebhookType'
+                  description: Type of webhook event
+                  example: "TEST"
+            examples:
+              testWebhook:
+                summary: Test webhook example
+                value:
+                  test: true
+                  timestamp: "2023-08-15T14:32:00Z"
+                  webhookId: "Webhook:019542f5-b3e7-1d02-0000-000000000001"
+                  type: "TEST"
+      responses:
+        '200':
+          description: Webhook received successfully. This confirms your webhook endpoint is properly configured.
         '400':
           description: Bad request
           content:

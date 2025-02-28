@@ -5,7 +5,7 @@ All webhooks sent by the UMAaS API include a signature in the `X-UMAaS-Signature
 ## Signature Verification Process
 
 1. **Obtain your webhook secret**
-   - This is provided to you during the integration process
+   - This is provided to you during the integration process and can only be retrieved from the UMAaS dashboard
    - Keep this secret secure and never expose it publicly
 
 2. **Verify incoming webhooks**
@@ -25,7 +25,7 @@ const express = require('express');
 const app = express();
 
 // Your webhook secret provided during integration
-const WEBHOOK_SECRET = 'your_webhook_secret';
+const WEBHOOK_SECRET = config.webhookSecret;
 
 app.use(express.json({
   verify: (req, res, buf) => {
@@ -85,7 +85,7 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 # Your webhook secret provided during integration
-WEBHOOK_SECRET = 'your_webhook_secret'
+WEBHOOK_SECRET = app.config['WEBHOOK_SECRET']
 
 @app.route('/webhooks/uma', methods=['POST'])
 def handle_webhook():
@@ -124,6 +124,23 @@ def handle_webhook():
 if __name__ == '__main__':
     app.run(port=3000)
 ```
+
+## Testing
+
+To test your webhook implementation, you can trigger a test webhook from the UMAaS dashboard. This will send a test webhook to the endpoint you provided during the integration process. The test webhook will also be sent automatically when you update your platform configuration with a new webhook URL.
+
+An example of the test webhook payload is shown below:
+
+```json
+{
+  "test": true,
+  "timestamp": "2023-08-15T14:32:00Z",
+  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
+  "type": "TEST"
+}
+```
+
+You should verify the signature of the webhook using the webhook secret and the process outlined in the [Signature Verification Process](#signature-verification-process) section and then reply with a 200 OK response to acknowledge receipt of the webhook.
 
 ## Security Considerations
 
