@@ -12,6 +12,19 @@ info:
     name: Proprietary
     url: https://lightspark.com/terms
 
+# Define tags to control their order in the documentation
+tags:
+  - name: Platform Configuration
+    description: Platform configuration endpoints for managing global settings. You can also configure these settings in the UMAaas dashboard.
+  - name: Users
+    description: User management endpoints for creating and updating user information
+  - name: Transactions
+    description: Endpoints for retrieving transaction information
+  - name: Sending Payments
+    description: Endpoints for creating and managing payment quotes and executing payments
+  - name: Webhooks
+    description: Webhook endpoints and configuration for receiving notifications
+
 servers:
   - url: https://api.lightspark.com/umaas/v1
     description: Production server
@@ -34,8 +47,9 @@ components:
         1. Taking the entire webhook request body as a string
         2. Creating an HMAC-SHA256 hash of the request body using the webhook secret as the key
         3. Encoding the hash in hexadecimal format
+        4. Compare this value to the signature in the `X-UMAaas-Signature` header
         
-        Platforms should validate this signature by performing the same calculation and comparing the result with this header value.
+        If the values match, the webhook is authentic. If not, it should be rejected.
 
   schemas:
     Error:
@@ -344,6 +358,10 @@ components:
           type: string
           description: UMA domain for this platform
           example: "platform.uma.domain"
+        webhookEndpoint:
+          type: string
+          description: URL where webhook notifications will be sent
+          example: "https://api.mycompany.com/webhooks/uma"
         requiredCounterpartyFields:
           type: array
           items:
@@ -1072,12 +1090,16 @@ paths:
                 umaDomain:
                   type: string
                   example: "mycompany.com"
+                webhookEndpoint:
+                  type: string
+                  example: "https://api.mycompany.com/webhooks/uma"
                 requiredCounterpartyFields:
                   type: array
                   items:
                     $ref: '#/components/schemas/CounterpartyFieldDefinition'
             example:
               umaDomain: "mycompany.com"
+              webhookEndpoint: "https://api.mycompany.com/webhooks/uma"
               requiredCounterpartyFields:
                 - name: "FULL_NAME"
                   mandatory: true
@@ -1293,7 +1315,7 @@ paths:
         This endpoint helps platforms determine what currencies they can send to a given UMA address.
       operationId: lookupUma
       tags:
-        - Payments
+        - Sending Payments
       security:
         - BasicAuth: []
       parameters:
@@ -1381,7 +1403,7 @@ paths:
         must be followed precisely, including any reference codes provided.
       operationId: createQuote
       tags:
-        - Payments
+        - Sending Payments
       security:
         - BasicAuth: []
       requestBody:
@@ -1504,7 +1526,7 @@ paths:
         from quote creation to settlement.
       operationId: getQuoteById
       tags:
-        - Payments
+        - Sending Payments
       security:
         - BasicAuth: []
       parameters:
@@ -1543,7 +1565,7 @@ paths:
         payment instructions has been received and processed.
       operationId: getPaymentStatus
       tags:
-        - Payments
+        - Sending Payments
       security:
         - BasicAuth: []
       parameters:

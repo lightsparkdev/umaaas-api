@@ -285,6 +285,7 @@ Request body:
 ```json
 {
   "umaDomain": "mycompany.com",
+  "webhookEndpoint": "https://api.mycompany.com/webhooks/uma",
   "requiredCounterpartyFields": [
     {
       "name": "FULL_NAME",

@@ -15,7 +15,7 @@ rules:
   no-unresolved-refs: error
   no-required-schema-properties-undefined: error
   tag-description: off
-  tags-alphabetical: warn
+  tags-alphabetical: off
   paths-kebab-case: warn
   no-ambiguous-paths: error
   info-license: warn
