@@ -81,19 +81,144 @@ components:
 
     BankAccountInfo:
       type: object
+      required:
+        - accountType
       properties:
         accountType:
           type: string
-          enum: [CLABE, US_ACCOUNT, PIX, IBAN, OTHER]
+          enum: [CLABE, US_ACCOUNT, PIX, IBAN]
           description: Type of bank account information
           example: "US_ACCOUNT"
-        data:
-          type: object
-          description: Flexible structure based on accountType
-          additionalProperties: true
-          example:
-            accountNumber: "123456789"
-            routingNumber: "987654321"
+        accountHolderName:
+          type: string
+          description: Name of the account holder
+          example: "John Doe"
+      discriminator:
+        propertyName: accountType
+        mapping:
+          CLABE: '#/components/schemas/ClabeAccountInfo'
+          US_ACCOUNT: '#/components/schemas/UsAccountInfo'
+          PIX: '#/components/schemas/PixAccountInfo'
+          IBAN: '#/components/schemas/IbanAccountInfo'
+
+    ClabeAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/BankAccountInfo'
+        - type: object
+          required:
+            - clabeNumber
+            - bankName
+          properties:
+            clabeNumber:
+              type: string
+              description: 18-digit CLABE number (Mexican banking standard)
+              example: "123456789012345678"
+              minLength: 18
+              maxLength: 18
+              pattern: "^[0-9]{18}$"
+            bankName:
+              type: string
+              description: Name of the bank
+              example: "BBVA Mexico"
+
+    UsAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/BankAccountInfo'
+        - type: object
+          required:
+            - accountNumber
+            - routingNumber
+          properties:
+            accountNumber:
+              type: string
+              description: US bank account number
+              example: "123456789"
+            routingNumber:
+              type: string
+              description: ACH routing number (9 digits)
+              example: "987654321"
+              minLength: 9
+              maxLength: 9
+              pattern: "^[0-9]{9}$"
+            accountCategory:
+              type: string
+              enum: [CHECKING, SAVINGS]
+              description: Type of account (checking or savings)
+              example: "CHECKING"
+            bankName:
+              type: string
+              description: Name of the bank
+              example: "Chase Bank"
+
+    PixAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/BankAccountInfo'
+        - type: object
+          required:
+            - pixKey
+            - pixKeyType
+          properties:
+            pixKey:
+              type: string
+              description: PIX key for Brazilian instant payments
+              example: "55119876543210"
+            pixKeyType:
+              type: string
+              enum: [CPF, CNPJ, EMAIL, PHONE, RANDOM]
+              description: Type of PIX key being used
+              example: "PHONE"
+            bankName:
+              type: string
+              description: Name of the bank
+              example: "Nubank"
+
+    IbanAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/BankAccountInfo'
+        - type: object
+          required:
+            - iban
+            - bankName
+          properties:
+            iban:
+              type: string
+              description: International Bank Account Number
+              example: "DE89370400440532013000"
+              minLength: 15
+              maxLength: 34
+            swiftBic:
+              type: string
+              description: SWIFT/BIC code (8 or 11 characters)
+              example: "DEUTDEFF"
+              minLength: 8
+              maxLength: 11
+            bankName:
+              type: string
+              description: Name of the bank
+              example: "Deutsche Bank"
+            
+    PaymentInstructions:
+      type: object
+      required:
+        - reference
+        - bankAccountInfo
+      properties:
+        reference:
+          type: string
+          description: Unique reference code that must be included with the payment to properly credit it
+          example: "UMA-Q12345-REF"
+        instructionsNotes:
+          type: string
+          description: Additional human-readable instructions for making the payment
+          example: "Please ensure the reference code is included in the payment memo/description field"
+        bankAccountInfo:
+          oneOf:
+            - $ref: '#/components/schemas/ClabeAccountInfo'
+            - $ref: '#/components/schemas/UsAccountInfo'
+            - $ref: '#/components/schemas/PixAccountInfo'
+            - $ref: '#/components/schemas/IbanAccountInfo'
+          discriminator:
+            propertyName: accountType
 
     User:
       type: object
@@ -388,6 +513,108 @@ components:
                   type: string
                   example: "1.08"
 
+    CurrencyPreference:
+      type: object
+      required:
+        - currency
+        - estimatedExchangeRate
+        - min
+        - max
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        estimatedExchangeRate:
+          type: number
+          description: An estimated exchange rate from the sender's currency to this currency. This is not a locked rate and is subject to change when calling the quotes endpoint.
+          minimum: 0
+          exclusiveMinimum: true
+          example: 1.08
+        min:
+          type: integer
+          format: int64
+          description: The minimum amount that can be received in this currency.
+          minimum: 0
+          exclusiveMinimum: true
+          example: 1
+        max:
+          type: integer
+          format: int64
+          description: The maximum amount that can be received in this currency.
+          minimum: 0
+          exclusiveMinimum: true
+          example: 1000000
+        
+        
+    QuoteLockSide:
+      type: string
+      enum: [SENDING, RECEIVING]
+      description: >-
+        The side of the quote which should be locked and specified in the `locked_currency_amount`.
+        For example, if I want to send exactly $5 MXN from my wallet, I would set this to "sending",
+        and the `locked_currency_amount` to 500 (in cents). If I want the receiver to receive exactly $10 USD,
+        I would set this to "receiving" and the `locked_currency_amount` to 10000 (in cents).
+      
+    Quote:
+      type: object
+      required:
+        - quoteId
+        - sendingCurrency
+        - receivingCurrency
+        - total_sending_amount
+        - total_receiving_amount
+        - exchangeRate
+        - expiresAt
+        - feesIncluded
+        - paymentInstructions
+      properties:
+        quoteId:
+          type: string
+          description: Unique identifier for this quote
+          example: "quote_123456789"
+        sendingCurrency:
+          $ref: '#/components/schemas/Currency'
+        receivingCurrency:
+          $ref: '#/components/schemas/Currency'
+        total_sending_amount:
+          type: integer
+          format: int64
+          description: The total amount that will be sent in the smallest unit of the sending currency (eg. cents).
+          minimum: 0
+          exclusiveMinimum: true
+          example: 123010
+        total_receiving_amount:
+          type: integer
+          format: int64
+          description: The total amount that will be received in the smallest unit of the receiving currency (eg. cents).
+          minimum: 0
+          exclusiveMinimum: true
+          example: 1000
+        exchangeRate:
+          type: number
+          description: Number of sending currency units per receiving currency unit.
+          minimum: 0
+          exclusiveMinimum: true
+        expiresAt:
+          type: string
+          format: date-time
+          description: When this quote expires (typically 1-5 minutes after creation)
+          example: "2023-09-01T14:30:00Z"
+        feesIncluded:
+          type: integer
+          format: int64
+          description: The fees associated with the quote in the smallest unit of the sending currency (eg. cents).
+          minimum: 0
+          example: 10
+        counterpartyInformation:
+          type: object
+          description: Information about the recipient, as required by the platform in their configuration.
+          additionalProperties: true
+          example:
+            fullName: "Jane Receiver"
+            country: "FR"
+        paymentInstructions:
+          $ref: '#/components/schemas/PaymentInstructions'
+
 paths:
   /users:
     post:
@@ -424,10 +651,11 @@ paths:
                     country: "US"
                   bankAccountInfo:
                     accountType: "US_ACCOUNT"
-                    data:
-                      accountNumber: "123498765"
-                      routingNumber: "321456789"
-                      accountHolderName: "Jane Doe"
+                    accountHolderName: "Jane Doe"
+                    accountNumber: "12345678901"
+                    routingNumber: "123456789"
+                    accountCategory: "CHECKING"
+                    bankName: "Chase Bank"
               businessUser:
                 summary: Create business user example
                 value:
@@ -446,10 +674,11 @@ paths:
                     country: "US"
                   bankAccountInfo:
                     accountType: "US_ACCOUNT"
-                    data:
-                      accountNumber: "987123456"
-                      routingNumber: "789123456"
-                      accountHolderName: "Acme Corporation"
+                    accountHolderName: "Acme Corporation"
+                    accountNumber: "98765432109"
+                    routingNumber: "987654321"
+                    accountCategory: "CHECKING"
+                    bankName: "Bank of America"
       responses:
         '201':
           description: User created successfully
@@ -585,9 +814,11 @@ paths:
                     country: "US"
                   bankAccountInfo:
                     accountType: "US_ACCOUNT"
-                    data:
-                      accountNumber: "987654321"
-                      routingNumber: "123456789"
+                    accountHolderName: "John Smith"
+                    accountNumber: "11122233344"
+                    routingNumber: "111222333"
+                    accountCategory: "CHECKING"
+                    bankName: "Wells Fargo"
               businessUpdate:
                 summary: Update business user example
                 value:
@@ -602,6 +833,13 @@ paths:
                     state: "CA"
                     postalCode: "94304"
                     country: "US"
+                  bankAccountInfo:
+                    accountType: "US_ACCOUNT"
+                    accountHolderName: "New Tech Solutions LLC"
+                    accountNumber: "55566677788"
+                    routingNumber: "555666777"
+                    accountCategory: "CHECKING"
+                    bankName: "Silicon Valley Bank"
       responses:
         '200':
           description: User updated successfully
@@ -734,6 +972,13 @@ paths:
                     state: "NY"
                     postalCode: "10003"
                     country: "US"
+                  bankAccountInfo:
+                    accountType: "US_ACCOUNT"
+                    accountHolderName: "Jane Smith"
+                    accountNumber: "44455566677"
+                    routingNumber: "444555666"
+                    accountCategory: "CHECKING"
+                    bankName: "CitiBank"
               businessUpdate:
                 summary: Update business user example
                 value:
@@ -741,6 +986,19 @@ paths:
                   businessInfo:
                     legalName: "Global Enterprises Inc."
                     taxId: "EIN-987654321"
+                  address:
+                    line1: "100 Technology Parkway"
+                    city: "Palo Alto"
+                    state: "CA"
+                    postalCode: "94304"
+                    country: "US"
+                  bankAccountInfo:
+                    accountType: "US_ACCOUNT"
+                    accountHolderName: "Global Enterprises Inc."
+                    accountNumber: "99988877766"
+                    routingNumber: "999888777"
+                    accountCategory: "CHECKING"
+                    bankName: "JP Morgan Chase"
       responses:
         '200':
           description: User updated successfully
@@ -1022,6 +1280,289 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /receiver/{receiverUmaAddress}:
+    get:
+      summary: Look up a UMA address for payment
+      description: |
+        Lookup a receiving UMA address to determine supported currencies and exchange rates.
+        This endpoint helps platforms determine what currencies they can send to a given UMA address.
+      operationId: lookupUma
+      tags:
+        - Payments
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: receiverUmaAddress
+          in: path
+          description: UMA address of the intended recipient
+          required: true
+          schema:
+            type: string
+        - name: sendingUmaAddress
+          in: query
+          description: UMA address of the sender (mutually exclusive with userId and platformUserId)
+          required: false
+          schema:
+            type: string
+        - name: userId
+          in: query
+          description: System ID of the sender (mutually exclusive with sendingUmaAddress and platformUserId)
+          required: false
+          schema:
+            type: string
+        - name: platformUserId
+          in: query
+          description: Platform ID of the sender (mutually exclusive with sendingUmaAddress and userId)
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful lookup
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - receivingUmaAddress
+                  - supportedCurrencies
+                properties:
+                  receivingUmaAddress:
+                    type: string
+                    description: The UMA address that was looked up
+                    example: "$receiver@uma.domain"
+                  receiverName:
+                    type: string
+                    description: Name of the recipient, if available
+                    example: "Jane Doe"
+                  supportedCurrencies:
+                    type: array
+                    description: List of currencies supported by the receiving UMA address
+                    items:
+                      $ref: '#/components/schemas/CurrencyPreference'
+                  requiredPayerDataFields:
+                    type: array
+                    description: Fields required by the receiving institution about the payer before payment can be completed
+                    items:
+                      $ref: '#/components/schemas/CounterpartyFieldDefinition'
+        '400':
+          description: Bad request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: UMA address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /quotes:
+    post:
+      summary: Create a payment quote
+      description: |
+        Generate a quote for a payment from one UMA address to another.
+        The quote locks in exchange rates and fees for a set period of time and provides
+        payment instructions that can be used to execute the payment.
+        
+        Depending on the `lockedCurrencySide` parameter, either the sending amount or 
+        receiving amount will be locked.
+        
+        The returned quote includes payment instructions with the banking details
+        needed to execute the payment and fulfill the quote. These instructions
+        must be followed precisely, including any reference codes provided.
+      operationId: createQuote
+      tags:
+        - Payments
+      security:
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - receiverUmaAddress
+                - sendingCurrencyCode
+                - receivingCurrencyCode
+                - lockedCurrencySide
+                - lockedCurrencyAmount
+              properties:
+                receiverUmaAddress:
+                  type: string
+                  description: UMA address of the recipient
+                  example: "$receiver@uma.domain"
+                senderUmaAddress:
+                  type: string
+                  description: UMA address of the sender (optional if userId or platformUserId is provided)
+                  example: "$sender@uma.domain"
+                userId:
+                  type: string
+                  description: System ID of the sender (optional if senderUmaAddress or platformUserId is provided)
+                  example: "usr_12345678"
+                platformUserId:
+                  type: string
+                  description: Platform ID of the sender (optional if senderUmaAddress or userId is provided)
+                  example: "platform_user_123"
+                sendingCurrencyCode:
+                  type: string
+                  description: Currency code for the sending amount
+                  example: "USD"
+                receivingCurrencyCode:
+                  type: string
+                  description: Currency code for the receiving amount
+                  example: "EUR"
+                lockedCurrencySide:
+                  $ref: '#/components/schemas/QuoteLockSide'
+                lockedCurrencyAmount:
+                  type: integer
+                  format: int64
+                  description: >-
+                    The amount to send/receive in the smallest unit of the locked currency (eg. cents).
+                    See `locked_currency_side` for more information.
+                  minimum: 0
+                  exclusiveMinimum: true
+                  example: 1000
+                description:
+                  type: string
+                  description: Optional description/memo for the payment
+                  example: "Invoice #1234 payment"
+            examples:
+              lockSendAmount:
+                summary: Lock sending amount
+                value:
+                  receiverUmaAddress: "$receiver@uma.domain"
+                  senderUmaAddress: "$sender@uma.domain"
+                  sendingCurrencyCode: "USD"
+                  receivingCurrencyCode: "EUR"
+                  lockedCurrencySide: "SEND"
+                  lockedCurrencyAmount: 1000
+                  description: "Payment for invoice #1234"
+              lockReceiveAmount:
+                summary: Lock receiving amount
+                value:
+                  receiverUmaAddress: "$receiver@uma.domain"
+                  platformUserId: "platform_user_123"
+                  sendingCurrencyCode: "USD"
+                  receivingCurrencyCode: "EUR"
+                  lockedCurrencySide: "RECEIVE"
+                  lockedCurrencyAmount: 9200
+                  counterpartyInformation:
+                    fullName: "John Sender"
+                    dateOfBirth: "1985-06-15"
+      responses:
+        '201':
+          description: |
+            Quote created successfully. The response includes payment instructions
+            that the client can use to execute the payment through their banking provider.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+        '400':
+          description: Bad request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: |
+            Unprocessable Entity - Additional counterparty information required,
+            or the payment cannot be completed for another reason.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+                  - type: object
+                    properties:
+                      code:
+                        example: "additional_info_required"
+                      message:
+                        example: "Additional counterparty information required"
+                      details:
+                        example:
+                          requiredFields: ["TAX_ID", "REGISTRATION_NUMBER"]
+
+  /payments/status/{quoteId}:
+    get:
+      summary: Check payment status for a quote
+      description: |
+        Check the status of a payment associated with a previously created quote.
+        This allows clients to verify if a payment they've initiated using the 
+        payment instructions has been received and processed.
+      operationId: getPaymentStatus
+      tags:
+        - Payments
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: quoteId
+          in: path
+          description: ID of the quote to check payment status for
+          required: true
+          schema:
+            type: string
+        - name: reference
+          in: query
+          description: Payment reference code (optional, but helps with verification)
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment status retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - quoteId
+                  - status
+                properties:
+                  quoteId:
+                    type: string
+                    description: ID of the quote
+                    example: "quote_123456789"
+                  status:
+                    type: string
+                    enum: [PENDING, RECEIVED, PROCESSING, COMPLETED, FAILED, EXPIRED]
+                    description: Current status of the payment
+                    example: "RECEIVED"
+                  statusMessage:
+                    type: string
+                    description: Human-readable description of the current status
+                    example: "Payment received and being processed"
+                  transaction:
+                    $ref: '#/components/schemas/OutgoingTransaction'
+                    description: Transaction details if the payment has been received and is being processed
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Quote not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 webhooks:
   incoming-payment:
     post:
@@ -1098,7 +1639,6 @@ webhooks:
                     counterpartyInformation:
                       fullName: "John Sender"
                       dateOfBirth: "1985-06-15"
-                      country: "DE"
                   timestamp: "2023-08-15T14:32:00Z"
                   webhookId: "whk_1a2b3c4d5e6f"
               completedPayment:
@@ -1184,6 +1724,127 @@ webhooks:
                       details:
                         example:
                           requiredFields: ["TAX_ID", "REGISTRATION_NUMBER"]
+
+  outgoing-payment:
+    post:
+      summary: Outgoing payment status webhook
+      description: |
+        Webhook that is called when an outgoing payment's status changes.
+        This endpoint should be implemented by clients of the UMAaas API.
+        
+        ### Authentication
+        The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas.
+        To verify the signature:
+        1. Get the webhook secret provided to you during integration
+        2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key
+        3. Encode the hash in hexadecimal format
+        4. Compare this value to the signature in the `X-UMAaas-Signature` header
+        
+        If the values match, the webhook is authentic. If not, it should be rejected.
+        
+        This webhook is informational only and is sent when an outgoing payment completes successfully or fails.
+      operationId: outgoingPaymentWebhook
+      tags:
+        - Webhooks
+      security:
+        - WebhookSignature: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - transaction
+              properties:
+                transaction:
+                  $ref: '#/components/schemas/OutgoingTransaction'
+                timestamp:
+                  type: string
+                  format: date-time
+                  description: ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)
+                  example: "2023-08-15T14:32:00Z"
+                webhookId:
+                  type: string
+                  description: Unique identifier for this webhook delivery (can be used for idempotency)
+                  example: "whk_1a2b3c4d5e6f"
+            examples:
+              completedPayment:
+                summary: Completed outgoing payment
+                value:
+                  transaction:
+                    transactionId: "txn_9876543210"
+                    status: "COMPLETED"
+                    type: "OUTGOING"
+                    senderUmaAddress: "$sender@uma.domain"
+                    receiverUmaAddress: "$recipient@external.domain"
+                    sentAmount:
+                      amount: "105.50"
+                      currency: 
+                        code: "USD"
+                        name: "United States Dollar"
+                        symbol: "$"
+                        decimals: 2
+                    receivedAmount:
+                      amount: "97.06"
+                      currency: 
+                        code: "EUR"
+                        name: "Euro"
+                        symbol: "€"
+                        decimals: 2
+                    userId: "usr_12345678"
+                    platformUserId: "platform_user_123"
+                    settlementTime: "2023-08-15T14:30:00Z"
+                    createdAt: "2023-08-15T14:25:18Z"
+                    description: "Payment for invoice #1234"
+                    exchangeRate:
+                      fromCurrency: "USD"
+                      toCurrency: "EUR"
+                      rate: "0.92"
+                  timestamp: "2023-08-15T14:32:00Z"
+                  webhookId: "whk_1a2b3c4d5e6f"
+              failedPayment:
+                summary: Failed outgoing payment
+                value:
+                  transaction:
+                    transactionId: "txn_9876543210"
+                    status: "FAILED"
+                    type: "OUTGOING"
+                    senderUmaAddress: "$sender@uma.domain"
+                    receiverUmaAddress: "$recipient@external.domain"
+                    sentAmount:
+                      amount: "105.50"
+                      currency: 
+                        code: "USD"
+                        name: "United States Dollar"
+                        symbol: "$"
+                        decimals: 2
+                    userId: "usr_12345678"
+                    platformUserId: "platform_user_123"
+                    createdAt: "2023-08-15T14:25:18Z"
+                  timestamp: "2023-08-15T14:32:00Z"
+                  webhookId: "whk_1a2b3c4d5e6f"
+      responses:
+        '200':
+          description: Webhook received successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized - Signature validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict - Webhook has already been processed (duplicate webhookId)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 security:
   - BasicAuth: [] 
