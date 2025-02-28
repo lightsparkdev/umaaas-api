@@ -6,8 +6,11 @@ UMA as a Service is an API that facilitates global payments to and from UMA addr
 
 The UMAaas API provides endpoints for:
 
-1. User Management - Adding and updating users with their UMA addresses and bank account information
-2. Platform Configuration - Managing platform-specific settings such as UMA domain and required counterparty fields
+1. Platform Configuration - Managing platform-specific settings such as UMA domain and required counterparty fields
+2. User Management - Adding and updating users with their UMA addresses and bank account information
+3. Sending Payments - Creating and executing payments to UMA addresses
+4. Receiving Payments - Receiving payments from UMA addresses and approving or rejecting them
+5. Fetching Transactions - Fetching transactions by ID or by quote ID
 
 ## Authentication
 
