@@ -1,5 +1,5 @@
 apis:
-  umaas@v1:
+  umaaas@v1:
     root: ./openapi.yaml
 
 extends:

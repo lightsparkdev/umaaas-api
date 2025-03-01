@@ -9,7 +9,7 @@ This service facilitates cross-currency financial transactions using simple huma
 
 Base URLs:
 
-* <a href="https://api.lightspark.com/umaas/v1">https://api.lightspark.com/umaas/v1</a>
+* <a href="https://api.lightspark.com/umaaas/v1">https://api.lightspark.com/umaaas/v1</a>
 
 Email: <a href="mailto:support@lightspark.com">Lightspark Support</a> 
 License: <a href="https://lightspark.com/terms">Proprietary</a>
@@ -45,7 +45,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaas/v1/config',
+fetch('https://api.lightspark.com/umaaas/v1/config',
 {
   method: 'GET',
 
@@ -65,7 +65,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaas/v1/config', headers = headers)
+r = requests.get('https://api.lightspark.com/umaaas/v1/config', headers = headers)
 
 print(r.json())
 
@@ -135,7 +135,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaas/v1/config',
+fetch('https://api.lightspark.com/umaaas/v1/config',
 {
   method: 'PUT',
   body: inputBody,
@@ -156,7 +156,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.put('https://api.lightspark.com/umaas/v1/config', headers = headers)
+r = requests.put('https://api.lightspark.com/umaaas/v1/config', headers = headers)
 
 print(r.json())
 
@@ -280,7 +280,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaas/v1/users',
+fetch('https://api.lightspark.com/umaaas/v1/users',
 {
   method: 'POST',
   body: inputBody,
@@ -301,7 +301,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.lightspark.com/umaas/v1/users', headers = headers)
+r = requests.post('https://api.lightspark.com/umaaas/v1/users', headers = headers)
 
 print(r.json())
 
@@ -414,7 +414,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaas/v1/users/{userId}',
+fetch('https://api.lightspark.com/umaaas/v1/users/{userId}',
 {
   method: 'GET',
 
@@ -434,7 +434,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaas/v1/users/{userId}', headers = headers)
+r = requests.get('https://api.lightspark.com/umaaas/v1/users/{userId}', headers = headers)
 
 print(r.json())
 
@@ -538,7 +538,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaas/v1/users/{userId}',
+fetch('https://api.lightspark.com/umaaas/v1/users/{userId}',
 {
   method: 'PATCH',
   body: inputBody,
@@ -559,7 +559,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.patch('https://api.lightspark.com/umaas/v1/users/{userId}', headers = headers)
+r = requests.patch('https://api.lightspark.com/umaaas/v1/users/{userId}', headers = headers)
 
 print(r.json())
 
@@ -670,7 +670,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaas/v1/users/by-platform-id/{platformUserId}',
+fetch('https://api.lightspark.com/umaaas/v1/users/by-platform-id/{platformUserId}',
 {
   method: 'GET',
 
@@ -690,7 +690,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaas/v1/users/by-platform-id/{platformUserId}', headers = headers)
+r = requests.get('https://api.lightspark.com/umaaas/v1/users/by-platform-id/{platformUserId}', headers = headers)
 
 print(r.json())
 
@@ -793,7 +793,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaas/v1/users/by-platform-id/{platformUserId}',
+fetch('https://api.lightspark.com/umaaas/v1/users/by-platform-id/{platformUserId}',
 {
   method: 'PATCH',
   body: inputBody,
@@ -814,7 +814,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.patch('https://api.lightspark.com/umaas/v1/users/by-platform-id/{platformUserId}', headers = headers)
+r = requests.patch('https://api.lightspark.com/umaaas/v1/users/by-platform-id/{platformUserId}', headers = headers)
 
 print(r.json())
 
@@ -928,7 +928,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaas/v1/transactions/{transactionId}',
+fetch('https://api.lightspark.com/umaaas/v1/transactions/{transactionId}',
 {
   method: 'GET',
 
@@ -948,7 +948,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaas/v1/transactions/{transactionId}', headers = headers)
+r = requests.get('https://api.lightspark.com/umaaas/v1/transactions/{transactionId}', headers = headers)
 
 print(r.json())
 
@@ -1040,7 +1040,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaas/v1/transactions',
+fetch('https://api.lightspark.com/umaaas/v1/transactions',
 {
   method: 'GET',
 
@@ -1060,7 +1060,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaas/v1/transactions', headers = headers)
+r = requests.get('https://api.lightspark.com/umaaas/v1/transactions', headers = headers)
 
 print(r.json())
 
@@ -1269,7 +1269,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaas/v1/receiver/{receiverUmaAddress}',
+fetch('https://api.lightspark.com/umaaas/v1/receiver/{receiverUmaAddress}',
 {
   method: 'GET',
 
@@ -1289,7 +1289,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaas/v1/receiver/{receiverUmaAddress}', headers = headers)
+r = requests.get('https://api.lightspark.com/umaaas/v1/receiver/{receiverUmaAddress}', headers = headers)
 
 print(r.json())
 
@@ -1406,7 +1406,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaas/v1/quotes',
+fetch('https://api.lightspark.com/umaaas/v1/quotes',
 {
   method: 'POST',
   body: inputBody,
@@ -1427,7 +1427,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.lightspark.com/umaas/v1/quotes', headers = headers)
+r = requests.post('https://api.lightspark.com/umaaas/v1/quotes', headers = headers)
 
 print(r.json())
 
@@ -1557,7 +1557,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaas/v1/quotes/{quoteId}',
+fetch('https://api.lightspark.com/umaaas/v1/quotes/{quoteId}',
 {
   method: 'GET',
 
@@ -1577,7 +1577,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaas/v1/quotes/{quoteId}', headers = headers)
+r = requests.get('https://api.lightspark.com/umaaas/v1/quotes/{quoteId}', headers = headers)
 
 print(r.json())
 
@@ -1665,7 +1665,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaas/v1/payments/status/{quoteId}',
+fetch('https://api.lightspark.com/umaaas/v1/payments/status/{quoteId}',
 {
   method: 'GET',
 
@@ -1685,7 +1685,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaas/v1/payments/status/{quoteId}', headers = headers)
+r = requests.get('https://api.lightspark.com/umaaas/v1/payments/status/{quoteId}', headers = headers)
 
 print(r.json())
 

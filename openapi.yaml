@@ -26,7 +26,7 @@ tags:
     description: Webhook endpoints and configuration for receiving notifications
 
 servers:
-  - url: https://api.lightspark.com/umaas/v1
+  - url: https://api.lightspark.com/umaaas/v1
     description: Production server
 
 components:
@@ -1931,12 +1931,12 @@ webhooks:
         This is sent when you configure or update your platform settings with a webhook URL.
         
         ### Authentication
-        The webhook includes a signature in the `X-UMAaS-Signature` header that allows you to verify that the webhook was sent by UMAaS.
+        The webhook includes a signature in the `X-UMAaaS-Signature` header that allows you to verify that the webhook was sent by UMAaaS.
         To verify the signature:
         1. Get the webhook secret provided to you during integration
         2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key
         3. Encode the hash in hexadecimal format
-        4. Compare this value to the signature in the `X-UMAaS-Signature` header
+        4. Compare this value to the signature in the `X-UMAaaS-Signature` header
         
         If the values match, the webhook is authentic. If not, it should be rejected.
         
