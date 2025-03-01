@@ -76,6 +76,7 @@ All guides are also accessible from the [central guides page](./docs/guides.md).
 - **Fetching Transactions**
   - `GET /transactions/{transactionId}` - Get a transaction by ID.
   - `GET /transactions/by-quote-id/{quoteId}` - Get a transaction by quote ID.
+  - `GET /transactions` - Get a list of transactions with filtering and pagination options.
 
 ## Quick-Start Guides
 
