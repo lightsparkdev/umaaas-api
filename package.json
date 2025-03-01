@@ -4,7 +4,6 @@
   "description": "UMA as a Service API Documentation",
   "scripts": {
     "serve:redoc": "npx @redocly/cli preview-docs openapi.yaml --port=8080",
-    "serve:markdown": "npx http-server docs -o docs/ --port=8081",
     "build:redoc": "npx @redocly/cli build-docs openapi.yaml -o generated/index.html",
     "build:markdown": "npx widdershins openapi.yaml -o generated/api-docs.md --omitHeader --language_tabs 'javascript:JavaScript' 'python:Python'",
     "build": "npm run build:redoc && npm run build:markdown",
@@ -18,7 +17,6 @@
     "@redocly/cli": "^1.31.3"
   },
   "devDependencies": {
-    "http-server": "^14.1.1",
     "markdownlint-cli": "^0.44.0",
     "widdershins": "^4.0.1"
   },
