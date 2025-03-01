@@ -1,6 +1,6 @@
 # UMA as a Service API Guides
 
-Welcome to the UMAaS API Guides. These guides provide detailed instructions for implementing common workflows with the UMA as a Service API.
+Welcome to the UMAaaS API Guides. These guides provide detailed instructions for implementing common workflows with the UMA as a Service API.
 
 ## Available Guides
 
@@ -10,7 +10,7 @@ Guide to configuring your platform settings, including UMA domain, webhook endpo
 
 ### [Configuring Users](./guides/configuring-users.md)
 
-Comprehensive guide to user management in the UMAaS API, including user registration, different user types (individual/business), bank account information requirements, and best practices for user data management.
+Comprehensive guide to user management in the UMAaaS API, including user registration, different user types (individual/business), bank account information requirements, and best practices for user data management.
 
 ### [Sending Payments](./guides/sending-payments.md)
 
