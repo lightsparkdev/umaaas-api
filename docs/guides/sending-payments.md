@@ -134,8 +134,8 @@ Response:
   "expiresAt": "2023-09-01T14:30:00Z",
   "feesIncluded": 100,
   "counterpartyInformation": {
-    "fullName": "Jane Doe",
-    "dateOfBirth": "1992-03-25"
+    "FULL_NAME": "Jane Doe",
+    "DATE_OF_BIRTH": "1992-03-25"
   },
   "paymentInstructions": {
     "reference": "UMA-Q12345-REF",
@@ -183,8 +183,8 @@ Response:
   "expiresAt": "2023-09-01T14:30:00Z",
   "feesIncluded": 100,
   "counterpartyInformation": {
-    "fullName": "Jane Doe",
-    "dateOfBirth": "1992-03-25"
+    "FULL_NAME": "Jane Doe",
+    "DATE_OF_BIRTH": "1992-03-25"
   },
   "paymentInstructions": {
     "reference": "UMA-Q12345-REF",

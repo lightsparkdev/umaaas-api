@@ -102,10 +102,12 @@ UMA addresses follow the format `$username@domain`. For your platform:
 
 1. The `domain` part will be your configured UMA domain (set in platform configuration)
 2. The `username` part can be chosen by you or your users, following these rules:
-   - Must start with a dollar sign ($)
-   - Can contain letters, numbers, periods, underscores, and hyphens
-   - Cannot contain spaces or special characters
-   - Case insensitive (lowercase is recommended)
+   - Must start with a $ symbol. This is to differentiate from email addresses and clearly identify an uma address.
+   - The `username` portion is limited to a-z0-9-_.+
+   - Addresses are case-insensitive, but by convention are written only with lowercase letters
+   - Like email addresses, the maximum number of characters for the `username` portion of the address is 64 characters (including the $).
+
+The UMAaas API will validate these requirements and will throw an error if they are not met.
 
 ## User Management
 
