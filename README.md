@@ -34,9 +34,9 @@ The API is documented using the OpenAPI 3.1 specification. The full schema is av
 
 You can view the API documentation in several formats:
 
-1. **HTML Documentation**: Use `npm run build:redoc` to generate HTML documentation, then open `docs/index.html`
-2. **Markdown Documentation**: Use `npm run build:markdown` to generate markdown documentation in `docs/api-docs.md`
-3. **Live Documentation Server**: Use `npm run serve:redoc` to start a local documentation server
+1. **Static HTML Documentation**: Use `npm run build:redoc` to generate HTML documentation, then open `generated/index.html`
+2. **Markdown Documentation**: Use `npm run build:markdown` to generate markdown documentation in `generated/api-docs.md`
+3. **Live Documentation Server**: Use `make serve-docs` to start a local documentation server for the Docusaurus docs. These docs are also available at [https://lightspark.github.io/umaaas-api/](https://lightspark.github.io/umaaas-api/)
 
 ## API Guides
 
@@ -727,8 +727,8 @@ make build
 
 This will generate documentation at:
 
-- ReDoc: `docs/index.html`
-- Markdown: `docs/api-docs.md`
+- ReDoc: `generated/index.html`
+- Markdown: `generated/api-docs.md`
 - Docusaurus: `docusaurus-docs/build`
 
 ### Serving Documentation Locally
