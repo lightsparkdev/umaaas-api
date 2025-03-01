@@ -5,8 +5,8 @@
   "scripts": {
     "serve:redoc": "npx @redocly/cli preview-docs openapi.yaml --port=8080",
     "serve:markdown": "npx http-server docs -o /api-docs.md --port=8081",
-    "build:redoc": "npx @redocly/cli build-docs openapi.yaml -o docs/index.html",
-    "build:markdown": "npx widdershins openapi.yaml -o docs/api-docs.md --omitHeader --language_tabs 'javascript:JavaScript' 'python:Python'",
+    "build:redoc": "npx @redocly/cli build-docs openapi.yaml -o docs/generated/index.html",
+    "build:markdown": "npx widdershins openapi.yaml -o docs/generated/api-docs.md --omitHeader --language_tabs 'javascript:JavaScript' 'python:Python'",
     "build": "npm run build:redoc && npm run build:markdown",
     "lint": "npx @redocly/cli lint openapi.yaml",
     "validate": "npx @redocly/cli lint openapi.yaml",
@@ -19,6 +19,6 @@
     "http-server": "^14.1.1",
     "widdershins": "^4.0.1"
   },
-  "author": "",
+  "author": "Lightspark Group",
   "license": "MIT"
 }
