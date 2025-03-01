@@ -76,7 +76,7 @@ const config: Config = {
       title: 'UMAaaS API',
       logo: {
         alt: 'UMAaaS Logo',
-        src: 'img/logo.svg',
+        src: 'img/uma.svg',
       },
       items: [
         {
