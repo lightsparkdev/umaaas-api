@@ -4,16 +4,16 @@ sidebar_position: 5
 
 # Webhook Verification Guide
 
-All webhooks sent by the UMAaS API include a signature in the `X-UMAaS-Signature` header, which allows you to verify the authenticity of the webhook. This is critical for security, as it ensures that only legitimate webhooks from UMAaS are processed by your system.
+All webhooks sent by the UMAaaS API include a signature in the `X-UMAaaS-Signature` header, which allows you to verify the authenticity of the webhook. This is critical for security, as it ensures that only legitimate webhooks from UMAaaS are processed by your system.
 
 ## Signature Verification Process
 
 1. **Obtain your webhook secret**
-   - This is provided to you during the integration process and can only be retrieved from the UMAaS dashboard
+   - This is provided to you during the integration process and can only be retrieved from the UMAaaS dashboard
    - Keep this secret secure and never expose it publicly
 
 2. **Verify incoming webhooks**
-   - Extract the signature from the `X-UMAaS-Signature` header
+   - Extract the signature from the `X-UMAaaS-Signature` header
    - Create an HMAC-SHA256 hash of the entire request body using your webhook secret as the key
    - Encode the hash in hexadecimal format
    - Compare this calculated value with the signature from the header
@@ -39,7 +39,7 @@ app.use(express.json({
 }));
 
 app.post('/webhooks/uma', (req, res) => {
-  const signature = req.header('X-UMAaS-Signature');
+  const signature = req.header('X-UMAaaS-Signature');
   
   if (!signature) {
     return res.status(401).json({ error: 'Signature missing' });
@@ -94,7 +94,7 @@ WEBHOOK_SECRET = app.config['WEBHOOK_SECRET']
 @app.route('/webhooks/uma', methods=['POST'])
 def handle_webhook():
     # Get signature from header
-    signature = request.headers.get('X-UMAaS-Signature')
+    signature = request.headers.get('X-UMAaaS-Signature')
     if not signature:
         return jsonify({'error': 'Signature missing'}), 401
     
@@ -131,7 +131,7 @@ if __name__ == '__main__':
 
 ## Testing
 
-To test your webhook implementation, you can trigger a test webhook from the UMAaS dashboard. This will send a test webhook to the endpoint you provided during the integration process. The test webhook will also be sent automatically when you update your platform configuration with a new webhook URL.
+To test your webhook implementation, you can trigger a test webhook from the UMAaaS dashboard. This will send a test webhook to the endpoint you provided during the integration process. The test webhook will also be sent automatically when you update your platform configuration with a new webhook URL.
 
 An example of the test webhook payload is shown below:
 

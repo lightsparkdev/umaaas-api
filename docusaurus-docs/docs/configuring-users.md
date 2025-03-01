@@ -8,7 +8,7 @@ This guide provides comprehensive information about user configuration in the UM
 
 ## User Types
 
-The UMAaS API supports both individual and business users, with different required information for each user type:
+The UMAaaS API supports both individual and business users, with different required information for each user type:
 
 ### Individual Users
 
@@ -117,7 +117,7 @@ The UMAaas API will validate these requirements and will throw an error if they 
 
 ### Retrieving User Information
 
-You can retrieve user information using either the UMAaS-assigned user ID or your platform's user ID:
+You can retrieve user information using either the UMAaaS-assigned user ID or your platform's user ID:
 
 ```http
 GET /users/{userId}
@@ -205,7 +205,7 @@ PIX key types can be one of: `CPF`, `CNPJ`, `PHONE`, `EMAIL`, or `RANDOM`.
 
 ## Data Validation
 
-The UMAaS API performs validation on all user data. Common validation rules include:
+The UMAaaS API performs validation on all user data. Common validation rules include:
 
 - All required fields must be present based on user type
 - Date of birth must be in YYYY-MM-DD format and represent a valid date
@@ -217,7 +217,7 @@ If validation fails, the API will return a 400 Bad Request response with detaile
 
 ## Best Practices
 
-1. **Identity Verification**: Implement proper KYC/KYB identity verification before creating users in the UMAaS system
+1. **Identity Verification**: Implement proper KYC/KYB identity verification before creating users in the UMAaaS system
 2. **Data Security**: Store and transmit user data securely, following data protection regulations
 3. **Regular Updates**: Keep user information up to date, especially banking details
 4. **Error Handling**: Implement proper error handling to manage validation failures gracefully

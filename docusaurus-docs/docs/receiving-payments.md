@@ -8,33 +8,33 @@ This guide outlines the process for platforms to receive payments from UMA addre
 
 ## Process Overview
 
-The following sequence diagram illustrates the interaction between your platform and the UMAaS API when receiving payments:
+The following sequence diagram illustrates the interaction between your platform and the UMAaaS API when receiving payments:
 
 ```mermaid
 sequenceDiagram
     participant Sender as External Sender
-    participant UMAaS as UMAaS API
+    participant UMAaaS as UMAaaS API
     participant Client as Your Platform
     participant Bank as Banking Provider
     
-    Note over Client, UMAaS: One-time setup
-    Client->>UMAaS: PUT /config (set domain, webhook URL)
-    UMAaS-->>Client: Configuration saved
-    Client->>UMAaS: POST /users (register users with bank info)
-    UMAaS-->>Client: User registered
+    Note over Client, UMAaaS: One-time setup
+    Client->>UMAaaS: PUT /config (set domain, webhook URL)
+    UMAaaS-->>Client: Configuration saved
+    Client->>UMAaaS: POST /users (register users with bank info)
+    UMAaaS-->>Client: User registered
     
-    Note over Sender, UMAaS: Payment initiated by sender
-    Sender->>UMAaS: Initiates payment to UMA address
-    UMAaS->>Client: Webhook: INCOMING_PAYMENT (PENDING)
+    Note over Sender, UMAaaS: Payment initiated by sender
+    Sender->>UMAaaS: Initiates payment to UMA address
+    UMAaaS->>Client: Webhook: INCOMING_PAYMENT (PENDING)
     
     alt Payment approved
-        Client-->>UMAaS: HTTP 200 OK (approve payment)
-        UMAaS->>Bank: Execute payment to user's bank account
-        UMAaS->>Client: Webhook: INCOMING_PAYMENT (COMPLETED)
-        Client-->>UMAaS: HTTP 200 OK (acknowledge completion)
+        Client-->>UMAaaS: HTTP 200 OK (approve payment)
+        UMAaaS->>Bank: Execute payment to user's bank account
+        UMAaaS->>Client: Webhook: INCOMING_PAYMENT (COMPLETED)
+        Client-->>UMAaaS: HTTP 200 OK (acknowledge completion)
     else Payment rejected
-        Client-->>UMAaS: HTTP 400 Bad Request with rejection reason
-        UMAaS->>Sender: Payment rejected notification
+        Client-->>UMAaaS: HTTP 400 Bad Request with rejection reason
+        UMAaaS->>Sender: Payment rejected notification
     end
 ```
 

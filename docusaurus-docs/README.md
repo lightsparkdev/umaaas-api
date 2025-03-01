@@ -1,6 +1,6 @@
-# UMAaS API Documentation
+# UMAaaS API Documentation
 
-This directory contains the documentation for the UMA as a Service (UMAaS) API, built using [Docusaurus](https://docusaurus.io/) and [Redocusaurus](https://redocusaurus.vercel.app/) for the OpenAPI specification.
+This directory contains the documentation for the UMA as a Service (UMAaaS) API, built using [Docusaurus](https://docusaurus.io/) and [Redocusaurus](https://redocusaurus.vercel.app/) for the OpenAPI specification.
 
 ## Getting Started
 
@@ -48,7 +48,7 @@ npm run serve
 ## Documentation Structure
 
 - `docs/`: Contains the Markdown documentation files
-  - `guides/`: Contains guides for using the UMAaS API
+  - `guides/`: Contains guides for using the UMAaaS API
 - `static/`: Contains static files
   - `api/`: Contains the OpenAPI specification
   - `img/`: Contains images used in the documentation

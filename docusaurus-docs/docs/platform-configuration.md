@@ -6,7 +6,7 @@ sidebar_position: 1
 
 This guide provides comprehensive information about configuring your platform settings in the UMA as a Service API, including setting up your UMA domain, webhook endpoints, and required counterparty fields.
 
-NOTE: All of this configuration can be managed in the UMAaS dashboard in addition to using the API endpoints.
+NOTE: All of this configuration can be managed in the UMAaaS dashboard in addition to using the API endpoints.
 
 ## Retrieve Current Configuration
 
@@ -93,7 +93,7 @@ Response:
 }
 ```
 
-Note: The `webhookSecret` is not returned in the response. It can only be retrieved from the UMAaS dashboard. Store this securely as it's used to verify the authenticity of webhooks (see the [Webhook Verification Guide](webhook-verification.md)).
+Note: The `webhookSecret` is not returned in the response. It can only be retrieved from the UMAaaS dashboard. Store this securely as it's used to verify the authenticity of webhooks (see the [Webhook Verification Guide](webhook-verification.md)).
 
 ## Configuration Parameters
 
@@ -105,14 +105,14 @@ Requirements for a valid UMA domain:
 
 - Must be a valid domain name format
 - Should be a domain that you control
-- Must proxy incoming requests to the UMAaS API as follows:
+- Must proxy incoming requests to the UMAaaS API as follows:
   - `https://<umaDomain>/.well-known/lnurlp/*` -> `https://<proxyUmaaasSubdomain>.uma.money/.well-known/lnurlp/*`
   - `https://<umaDomain>/.well-known/lnurlpubkey` -> `https://<proxyUmaaasSubdomain>.uma.money/.well-known/lnurlpubkey`
   - `https://<umaDomain>/.well-known/uma-configuration` -> `https://<proxyUmaaasSubdomain>.uma.money/.well-known/uma-configuration`
 
 ### Webhook Endpoint
 
-The `webhookEndpoint` parameter specifies the URL where UMAaS will send webhook notifications about payment events. Your webhook endpoint must:
+The `webhookEndpoint` parameter specifies the URL where UMAaaS will send webhook notifications about payment events. Your webhook endpoint must:
 
 - Be publicly accessible over HTTPS
 - Respond with appropriate HTTP status codes
@@ -149,7 +149,7 @@ The response should reflect your updated settings.
 
 ## Testing Your Webhook Endpoint
 
-Once your webhook endpoint is configured, UMAaS will send a test webhook notification to verify that your endpoint is correctly set up. You should implement your webhook handler to properly respond to this test event.
+Once your webhook endpoint is configured, UMAaaS will send a test webhook notification to verify that your endpoint is correctly set up. You should implement your webhook handler to properly respond to this test event.
 
 Example test webhook payload:
 

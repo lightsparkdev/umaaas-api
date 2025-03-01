@@ -5,7 +5,7 @@ slug: /
 
 # Introduction to UMA as a Service
 
-Welcome to the UMA as a Service (UMAaS) documentation. UMA as a Service is an API that facilitates global payments to and from UMA addresses, which are human-readable addresses that can send to and from any currency.
+Welcome to the UMA as a Service (UMAaaS) documentation. UMA as a Service is an API that facilitates global payments to and from UMA addresses, which are human-readable addresses that can send to and from any currency.
 
 ## Overview
 
