@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: UMA as a Service (UMAaas) API
+  title: UMA as a Service (UMAaaS) API
   description: |
     API for managing global payments to and from UMA addresses. 
     This service facilitates cross-currency financial transactions using simple human-readable UMA addresses.
