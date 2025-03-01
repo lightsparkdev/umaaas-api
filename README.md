@@ -42,13 +42,11 @@ You can view the API documentation in several formats:
 
 We provide detailed guides for common workflows with the UMAaaS API:
 
-- [Platform Configuration](./docs/guides/platform-configuration.md) - Guide to configuring your platform settings, UMA domain, and webhooks
-- [Configuring Users](./docs/guides/configuring-users.md) - Comprehensive guide to user management, types, and bank account requirements
-- [Sending Payments](./docs/guides/sending-payments.md) - Step-by-step guide to sending payments to UMA addresses
-- [Receiving Payments](./docs/guides/receiving-payments.md) - How to receive payments from UMA addresses
-- [Webhook Verification](./docs/guides/webhook-verification.md) - Security best practices for webhook verification
-
-All guides are also accessible from the [central guides page](./docs/guides.md).
+- [Platform Configuration](./docusaurus-docs/docs/platform-configuration.md) - Guide to configuring your platform settings, UMA domain, and webhooks
+- [Configuring Users](./docusaurus-docs/docs/configuring-users.md) - Comprehensive guide to user management, types, and bank account requirements
+- [Sending Payments](./docusaurus-docs/docs/sending-payments.md) - Step-by-step guide to sending payments to UMA addresses
+- [Receiving Payments](./docusaurus-docs/docs/receiving-payments.md) - How to receive payments from UMA addresses
+- [Webhook Verification](./docusaurus-docs/docs/webhook-verification.md) - Security best practices for webhook verification
 
 ## Key Endpoints
 
@@ -695,7 +693,7 @@ if __name__ == '__main__':
 
 ### Requirements
 
-- Node.js v14 or later
+- Node.js v16 or later
 - npm v6 or later
 
 ### Setup
@@ -706,14 +704,15 @@ if __name__ == '__main__':
 
 ### Building Documentation
 
-To generate the documentation, you'll need Node.js (v14 or later) installed.
+To generate the documentation, you'll need Node.js (v16 or later) installed.
 
 ```bash
 # Install dependencies
 npm install
 
-# Build documentation (both ReDoc HTML and Markdown)
-npm run build
+# Build docusaurus docs
+cd docusaurus-docs && npm install
+cd docusaurus-docs && npm run build
 
 # Build only ReDoc HTML
 npm run build:redoc
@@ -721,7 +720,7 @@ npm run build:redoc
 # Build only Markdown
 npm run build:markdown
 
-# Or use make
+# Or use make and build all
 make install
 make build
 ```
@@ -730,6 +729,7 @@ This will generate documentation at:
 
 - ReDoc: `docs/index.html`
 - Markdown: `docs/api-docs.md`
+- Docusaurus: `docusaurus-docs/build`
 
 ### Serving Documentation Locally
 
@@ -739,17 +739,17 @@ You can serve the documentation locally for development purposes:
 # Serve ReDoc documentation
 npm run serve:redoc
 
-# Serve Markdown documentation as HTML
-npm run serve:markdown
+# Serve Docusaurus documentation
+cd docusaurus-docs && npm run start
 
 # Or use make
 make serve-redoc
-make serve-markdown
+make serve-docs
 ```
 
 ### Linting the OpenAPI Schema
 
-We use Redocly to lint the OpenAPI schema:
+We use Redocly to lint the OpenAPI schema and markdown-lint to lint the markdown documentation:
 
 ```bash
 npm run lint

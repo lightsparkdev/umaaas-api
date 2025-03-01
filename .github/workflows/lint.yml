@@ -5,13 +5,13 @@ on:
     branches: [ main ]
     paths:
       - 'openapi.yaml'
-      - 'docs/**/*.md'
+      - 'docusaurus-docs/**/*.md'
       - '.markdownlint.json'
   pull_request:
     branches: [ main ]
     paths:
       - 'openapi.yaml'
-      - 'docs/**/*.md'
+      - 'docusaurus-docs/**/*.md'
       - '.markdownlint.json'
   # Allow manual triggering
   workflow_dispatch:
