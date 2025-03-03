@@ -160,13 +160,36 @@ Example request body for updating a user's bank account information:
 
 The API supports various bank account formats based on country. You must provide the correct format based on the user's location:
 
+### Optional Platform Account ID
+
+All bank account types support an optional `platformAccountId` field that allows you to link bank accounts to your internal systems. This field can be any string that helps identify the account in your platform (e.g., database IDs, custom references, etc.).
+
+Example with platform account ID:
+```json
+{
+  "accountType": "US_ACCOUNT",
+  "accountNumber": "123456789",
+  "routingNumber": "987654321",
+  "bankName": "Chase Bank",
+  "platformAccountId": "chase_primary_1234"
+}
+```
+
+Common use cases for `platformAccountId`:
+
+- Tracking multiple bank accounts for the same user
+- Linking accounts to internal accounting systems
+- Maintaining consistency between UMAaS and your platform's account records
+- Facilitating account reconciliation and reporting
+
 ### Mexico: CLABE
 
 ```json
 {
   "accountType": "CLABE",
   "accountNumber": "123456789012345678",
-  "bankName": "Banco de México"
+  "bankName": "Banco de México",
+  "platformAccountId": "banco_mx_primary_5678"
 }
 ```
 
@@ -177,7 +200,8 @@ The API supports various bank account formats based on country. You must provide
   "accountType": "US_ACCOUNT",
   "accountNumber": "123456789",
   "routingNumber": "987654321",
-  "bankName": "Chase Bank"
+  "bankName": "Chase Bank",
+  "platformAccountId": "chase_checking_1234"
 }
 ```
 
@@ -187,7 +211,8 @@ The API supports various bank account formats based on country. You must provide
 {
   "accountType": "PIX",
   "pixKey": "12345678901",
-  "pixKeyType": "CPF"
+  "pixKeyType": "CPF",
+  "platformAccountId": "pix_main_9012"
 }
 ```
 
@@ -199,7 +224,8 @@ PIX key types can be one of: `CPF`, `CNPJ`, `PHONE`, `EMAIL`, or `RANDOM`.
 {
   "accountType": "IBAN",
   "iban": "DE89370400440532013000",
-  "bankName": "Deutsche Bank"
+  "bankName": "Deutsche Bank",
+  "platformAccountId": "deutsche_primary_3456"
 }
 ```
 

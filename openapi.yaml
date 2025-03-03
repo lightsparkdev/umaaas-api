@@ -107,6 +107,18 @@ components:
           type: string
           description: Name of the account holder
           example: "John Doe"
+        platformAccountId:
+          type: string
+          description: |
+            Platform-specific identifier for this bank account. This optional field allows platforms
+            to link bank accounts to their internal account systems. The value can be any string
+            that helps identify the account in your system (e.g. database IDs, custom references, etc.).
+
+            This field is particularly useful when:
+            - Tracking multiple bank accounts for the same user
+            - Linking accounts to internal accounting systems
+            - Maintaining consistency between UMAaS and your platform's account records
+          example: "acc_123456789"
       discriminator:
         propertyName: accountType
         mapping:
@@ -684,6 +696,7 @@ paths:
                     routingNumber: "123456789"
                     accountCategory: "CHECKING"
                     bankName: "Chase Bank"
+                    platformAccountId: "chase_primary_1234"
               businessUser:
                 summary: Create business user example
                 value:
@@ -706,6 +719,7 @@ paths:
                     routingNumber: "987654321"
                     accountCategory: "CHECKING"
                     bankName: "Bank of America"
+                    platformAccountId: "boa_business_5678"
       responses:
         '201':
           description: User created successfully
@@ -845,6 +859,7 @@ paths:
                     routingNumber: "111222333"
                     accountCategory: "CHECKING"
                     bankName: "Wells Fargo"
+                    platformAccountId: "wf_checking_9012"
               businessUpdate:
                 summary: Update business user example
                 value:
@@ -865,6 +880,7 @@ paths:
                     routingNumber: "555666777"
                     accountCategory: "CHECKING"
                     bankName: "JP Morgan Chase"
+                    platformAccountId: "chase_business_3456"
       responses:
         '200':
           description: User updated successfully
@@ -1022,6 +1038,7 @@ paths:
                     routingNumber: "999888777"
                     accountCategory: "CHECKING"
                     bankName: "JP Morgan Chase"
+                    platformAccountId: "chase_business_3456"
       responses:
         '200':
           description: User updated successfully
