@@ -23,6 +23,11 @@ function HomepageHeader() {
             to="/docs/">
             Get Started
           </Link>
+          <Link
+            className="button button--secondary button--lg"
+            to="/api/">
+            API Docs
+          </Link>
         </div>
       </div>
     </header>
