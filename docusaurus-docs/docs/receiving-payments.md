@@ -75,7 +75,7 @@ Request body:
 
 ## Step 2: Register users with bank account information
 
-First, register your users in the system so they can receive payments via UMA.
+First, register your users in the system so they can receive payments via UMA. You can optionally include a `platformAccountId` in the bank account information to link accounts with your internal systems.
 
 ```http
 POST /users
@@ -101,7 +101,8 @@ Request body:
   "bankAccountInfo": {
     "accountType": "CLABE",
     "accountNumber": "123456789012345678",
-    "bankName": "Banco de México"
+    "bankName": "Banco de México",
+    "platformAccountId": "banco_mx_primary_5678"
   }
 }
 ```
