@@ -91,6 +91,11 @@ const config: Config = {
           position: 'left',
         },
         {
+          type: 'html',
+          position: 'right',
+          value: '<span class="badge badge--danger">Work in progress alpha! Not for production use.</span>',
+        },
+        {
           href: 'https://github.com/lightspark/umaaas-api',
           label: 'GitHub',
           position: 'right',
