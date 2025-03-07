@@ -10,10 +10,10 @@ const config: Config = {
   tagline: 'Documentation for the UMAaaS API',
   favicon: 'img/favicon.ico',
 
-  url: 'https://automatic-adventure-qzp6497.pages.github.io/',
+  url: 'https://lightsparkdev.github.io/umaaas-api/',
   organizationName: 'lightsparkdev', // Usually your GitHub org/user name.
   projectName: 'umaaas-api', // Usually your repo name.
-  baseUrl: '/',
+  baseUrl: '/umaaas-api/',
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
