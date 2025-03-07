@@ -10,7 +10,7 @@ const config: Config = {
   tagline: 'Documentation for the UMAaaS API',
   favicon: 'img/favicon.ico',
 
-  url: 'https://lightsparkdev.github.io/umaaas-api/',
+  url: 'https://lightsparkdev.github.io/',
   organizationName: 'lightsparkdev', // Usually your GitHub org/user name.
   projectName: 'umaaas-api', // Usually your repo name.
   baseUrl: '/umaaas-api/',
