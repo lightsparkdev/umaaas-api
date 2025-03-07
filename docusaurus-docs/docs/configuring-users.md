@@ -248,3 +248,74 @@ If validation fails, the API will return a 400 Bad Request response with detaile
 3. **Regular Updates**: Keep user information up to date, especially banking details
 4. **Error Handling**: Implement proper error handling to manage validation failures gracefully
 5. **Idempotent Operations**: Use your platformUserId consistently to avoid duplicate user creation
+
+## Bulk User Import Operations
+
+For scenarios where you need to add many users to the system at once, the API provides a CSV file upload endpoint.
+
+### CSV File Upload
+
+For large-scale user imports, you can upload a CSV file containing user information:
+
+```http
+POST /users/bulk/csv
+```
+
+The CSV file should follow a specific format with required and optional columns based on user type. Here's an example:
+
+```csv
+umaAddress,platformUserId,userType,fullName,dateOfBirth,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId
+$john.doe@uma.domain.com,user123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,Chase Bank,chase_primary_1234
+$acme@uma.domain.com,biz456,BUSINESS,Acme Corp,400 Commerce Way,Austin,TX,78701,US,US_ACCOUNT,987654321,Bank of America,boa_business_5678
+```
+
+:::tip CSV Upload Best Practices
+
+1. Use a spreadsheet application to prepare your CSV file
+2. Validate data before upload (e.g., date formats, required fields)
+3. Include a header row with column names
+4. Use UTF-8 encoding for special characters
+5. Keep file size under 100MB for optimal processing
+:::
+
+You can track the job status through:
+
+1. Webhook notifications (if configured)
+2. Status polling endpoint:
+
+```http
+GET /users/bulk/jobs/{jobId}
+```
+
+Example job status response:
+
+```json
+{
+  "jobId": "job_123456789",
+  "status": "PROCESSING",
+  "progress": {
+    "total": 5000,
+    "processed": 2500,
+    "successful": 2499,
+    "failed": 1
+  },
+  "errors": [
+    {
+      "platformUserId": "biz456",
+      "error": {
+        "code": "validation_error",
+        "message": "Invalid bank account number"
+      }
+    }
+  ]
+}
+```
+
+:::tip Best Practices for Bulk Operations
+
+1. Use platform user IDs to track individual users in the bulk operation
+2. Implement proper error handling for partial successes
+3. Consider breaking very large datasets into multiple smaller jobs
+4. Use webhooks for real-time status updates on asynchronous jobs
+5. For CSV uploads, validate your data before submission
+:::
