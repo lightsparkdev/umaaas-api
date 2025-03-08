@@ -165,6 +165,7 @@ The API supports various bank account formats based on country. You must provide
 All bank account types support an optional `platformAccountId` field that allows you to link bank accounts to your internal systems. This field can be any string that helps identify the account in your platform (e.g., database IDs, custom references, etc.).
 
 Example with platform account ID:
+
 ```json
 {
   "accountType": "US_ACCOUNT",
