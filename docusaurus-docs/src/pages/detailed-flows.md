@@ -43,4 +43,51 @@ sequenceDiagram
 
 ## Sending Payments
 
-TODO: Add diagram for sending payments
+```mermaid
+sequenceDiagram
+    participant Bank as Banking Provider
+    participant Client as Your Platform
+    participant UMAaaS as UMAaaS API (Sparkcore)
+    participant GridSwitch as Grid Switch
+    participant Counterparty as External Receiver
+    
+    Client->>UMAaaS: GET /receiver/{umaAddress}
+    UMAaaS->>Counterparty: LNURLP Request
+    Counterparty-->>UMAaaS: LNURLP Response
+    UMAaaS->>GridSwitch: Get BTC rate estimates for sending currency
+    UMAaaS-->>Client: Supported currencies and payer information requirements
+    Note over Client: User selects currency and amount
+    Client->>UMAaaS: POST /quotes with amount to send
+    alt Sender-locked amount
+        UMAaaS->>GridSwitch: Create Currency->BTC onramp quote for sending amount
+        GridSwitch-->>UMAaaS: BTC onramp quote with payment instructions
+        UMAaaS->>Counterparty: Payreq request with payer information and invoice amount
+        Counterparty-->>UMAaaS: Payreq response with lightning invoice
+    else Receiver-locked amount
+        UMAaaS->>Counterparty: Payreq request with payer information and receiving amount
+        Counterparty-->>UMAaaS: Payreq response with lightning invoice
+        UMAaaS->>GridSwitch: Create Currency->BTC onramp quote to cover invoice
+        GridSwitch-->>UMAaaS: BTC onramp quote with payment instructions
+    end
+    Note over UMAaaS: Combines onramp and offramp quotes
+    UMAaaS-->>Client: Quote with payment instructions and payee information
+    Note over Client: Execute payment using instructions
+    Client->>Bank: Initiate bank transfer with reference
+    Bank-->>GridSwitch: Bank transer completed
+    GridSwitch-->>UMAaaS: Bank transer completed
+    Note over UMAaaS: Convert to BTC
+    UMAaaS->>GridSwitch: Pay Lightning Invoice
+    GridSwitch->>Counterparty: Lightning Payment
+    GridSwitch-->>UMAaaS: Lightning Payment completed
+    Note over Counterparty: Receive Lightning Invoice, Convert to receiving currency, Send to payee.
+    
+    opt Payment Status Polling
+        loop Until completed or failed
+            Client->>UMAaaS: GET /quotes/{quoteId}
+            UMAaaS-->>Client: Quote with current status
+        end
+    end
+    
+    UMAaaS->>Client: Webhook: OUTGOING_PAYMENT (status update)
+    Client-->>UMAaaS: HTTP 200 OK (acknowledge webhook)
+```
