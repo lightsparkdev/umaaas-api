@@ -193,3 +193,34 @@ When the payment completes, your webhook endpoint will receive another notificat
   "type": "INCOMING_PAYMENT"
 }
 ```
+
+## Detailed UMA flow
+
+This section is not necessary knowledge for platforms, but it describes the flow at a more detailed level including UMA protocol messages for those who are curious.
+
+```mermaid
+sequenceDiagram
+    participant Sender as External Sender
+    participant UMAaaS as UMAaaS API
+    participant Client as Your Platform
+    participant Bank as Banking Provider
+    
+    Note over Sender, UMAaaS: Payment initiated by sender
+    Sender->>UMAaaS: Lnurlp request for UMA address
+    Note over UMAaaS: Resolves the UMA address to a registered user
+    UMAaaS->>Sender: Lnurlp response with currencies and requested payer fields
+    Sender->>UMAaaS: Payreq request with payer information and amount
+    UMAaaS->>Client: Webhook: INCOMING_PAYMENT (PENDING)
+    
+    alt Payment approved
+        Client-->>UMAaaS: HTTP 200 OK with payee and bank account info to pay out
+        UMAaaS-->>Sender: Payreq response with payee info and a Lightning Invoice
+        Note over Sender: Sender pays Lightning Invoice
+        UMAaaS->>Bank: Execute payment to user's bank account
+        UMAaaS->>Client: Webhook: INCOMING_PAYMENT (COMPLETED)
+        Client-->>UMAaaS: HTTP 200 OK (acknowledge completion)
+    else Payment rejected
+        Client-->>UMAaaS: HTTP 400 Bad Request with rejection reason
+        UMAaaS->>Sender: Failed payreq response.
+    end
+```

@@ -246,3 +246,41 @@ When the payment status changes (to completed or failed), your platform will rec
   "type": "OUTGOING_PAYMENT"
 }
 ```
+
+## Detailed UMA flow
+
+This section is not necessary knowledge for platforms, but it describes the flow at a more detailed level including UMA protocol messages for those who are curious.
+
+```mermaid
+sequenceDiagram
+    participant Bank as Banking Provider
+    participant Client as Your Platform
+    participant UMAaaS as UMAaaS API
+    participant Counterparty as UMA Counterparty
+    
+    Client->>UMAaaS: GET /receiver/{umaAddress}
+    UMAaaS->>Counterparty: LNURLP Request
+    Counterparty-->>UMAaaS: LNURLP Response
+    UMAaaS-->>Client: Supported currencies and payer information requirements
+    Note over Client: User selects currency and amount
+    Client->>UMAaaS: POST /quotes with amount and payer information
+    UMAaaS->>Counterparty: Payreq request with payer information and amount
+    Counterparty-->>UMAaaS: Payreq response with lightning invoice
+    UMAaaS-->>Client: Quote with payment instructions and payee information
+    Note over Client: Execute payment using instructions
+    Client->>Bank: Initiate bank transfer with reference
+    Bank-->>UMAaaS: Bank transer completed
+    Note over UMAaaS: Convert to BTC
+    UMAaaS->>Counterparty: Pay Lightning Invoice
+    Note over Counterparty: Receive Lightning Invoice, Convert to receiving currency, Send to payee.
+    
+    opt Payment Status Polling
+        loop Until completed or failed
+            Client->>UMAaaS: GET /quotes/{quoteId}
+            UMAaaS-->>Client: Quote with current status
+        end
+    end
+    
+    UMAaaS->>Client: Webhook: OUTGOING_PAYMENT (status update)
+    Client-->>UMAaaS: HTTP 200 OK (acknowledge webhook)
+```
