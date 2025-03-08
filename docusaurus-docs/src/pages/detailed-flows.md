@@ -10,9 +10,8 @@ sequenceDiagram
     participant UMAaaS as UMAaaS API (Sparkcore)
     participant GridSwitch as Grid Switch
     participant Client as Your Platform
-    participant Bank as Banking Provider
     
-    Note over Sender, UMAaaS. GridSwitch: Payment initiated by sender
+    Note over Sender: Payment initiated by sender
     Sender->>UMAaaS: Lnurlp request for UMA address
     Note over UMAaaS: Resolves the UMA address to a registered user
     UMAaaS->>GridSwitch: Fetch currencies with BTC rate estimates
@@ -45,7 +44,6 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    participant Bank as Banking Provider
     participant Client as Your Platform
     participant UMAaaS as UMAaaS API (Sparkcore)
     participant GridSwitch as Grid Switch
@@ -72,14 +70,13 @@ sequenceDiagram
     Note over UMAaaS: Combines onramp and offramp quotes
     UMAaaS-->>Client: Quote with payment instructions and payee information
     Note over Client: Execute payment using instructions
-    Client->>Bank: Initiate bank transfer with reference
-    Bank-->>GridSwitch: Bank transer completed
-    GridSwitch-->>UMAaaS: Bank transer completed
+    Client->>GridSwitch: Initiate bank transfer with reference
+    GridSwitch-->>UMAaaS: Bank transfer received
     Note over UMAaaS: Convert to BTC
     UMAaaS->>GridSwitch: Pay Lightning Invoice
     GridSwitch->>Counterparty: Lightning Payment
     GridSwitch-->>UMAaaS: Lightning Payment completed
-    Note over Counterparty: Receive Lightning Invoice, Convert to receiving currency, Send to payee.
+    Note over Counterparty: Receive payment, convert, send to payee
     
     opt Payment Status Polling
         loop Until completed or failed
