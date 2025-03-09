@@ -272,7 +272,8 @@ const inputBody = '{
     "accountNumber": "12345678901",
     "routingNumber": "123456789",
     "accountCategory": "CHECKING",
-    "bankName": "Chase Bank"
+    "bankName": "Chase Bank",
+    "platformAccountId": "chase_primary_1234"
   }
 }';
 const headers = {
@@ -335,7 +336,8 @@ Register a new user in the system with UMA address and bank account information
     "accountNumber": "12345678901",
     "routingNumber": "123456789",
     "accountCategory": "CHECKING",
-    "bankName": "Chase Bank"
+    "bankName": "Chase Bank",
+    "platformAccountId": "chase_primary_1234"
   }
 }
 ```
@@ -370,7 +372,8 @@ Register a new user in the system with UMA address and bank account information
   },
   "bankAccountInfo": {
     "accountType": "US_ACCOUNT",
-    "accountHolderName": "John Doe"
+    "accountHolderName": "John Doe",
+    "platformAccountId": "acc_123456789"
   }
 }
 ```
@@ -385,6 +388,210 @@ Register a new user in the system with UMA address and bank account information
 |409|[Conflict](https://tools.ietf.org/html/rfc7231#section-6.5.8)|Conflict - User with the UMA address or platform user ID already exists|[Error](#schemaerror)|
 
 <h3 id="createuser-responseschema">Response Schema</h3>
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|userType|INDIVIDUAL|
+|userType|BUSINESS|
+|accountType|CLABE|
+|accountType|US_ACCOUNT|
+|accountType|PIX|
+|accountType|IBAN|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BasicAuth
+</aside>
+
+## listUsers
+
+<a id="opIdlistUsers"></a>
+
+> Code samples
+
+```javascript
+
+const headers = {
+  'Accept':'application/json'
+};
+
+fetch('https://api.lightspark.com/umaaas/v1/users',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('https://api.lightspark.com/umaaas/v1/users', headers = headers)
+
+print(r.json())
+
+```
+
+`GET /users`
+
+*List users*
+
+Retrieve a list of users with optional filtering parameters. Returns all users that match
+the specified filters. If no filters are provided, returns all users (paginated).
+
+<h3 id="listusers-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|platformUserId|query|string|false|Filter by platform-specific user identifier|
+|umaAddress|query|string|false|Filter by UMA address|
+|userType|query|string|false|Filter by user type|
+|createdAfter|query|string(date-time)|false|Filter users created after this timestamp (inclusive)|
+|createdBefore|query|string(date-time)|false|Filter users created before this timestamp (inclusive)|
+|updatedAfter|query|string(date-time)|false|Filter users updated after this timestamp (inclusive)|
+|updatedBefore|query|string(date-time)|false|Filter users updated before this timestamp (inclusive)|
+|limit|query|integer|false|Maximum number of results to return (default 20, max 100)|
+|cursor|query|string|false|Cursor for pagination (returned from previous request)|
+
+#### Enumerated Values
+
+|Parameter|Value|
+|---|---|
+|userType|INDIVIDUAL|
+|userType|BUSINESS|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": [
+    {
+      "id": "User:019542f5-b3e7-1d02-0000-000000000001",
+      "umaAddress": "$john.doe@uma.domain.com",
+      "platformUserId": "9f84e0c2a72c4fa",
+      "userType": "INDIVIDUAL",
+      "createdAt": "2023-07-21T17:32:28Z",
+      "updatedAt": "2023-07-21T17:32:28Z",
+      "fullName": "John Michael Doe",
+      "dateOfBirth": "1990-01-15",
+      "address": {
+        "line1": "123 Main Street",
+        "line2": "Apt 4B",
+        "city": "San Francisco",
+        "state": "CA",
+        "postalCode": "94105",
+        "country": "US"
+      },
+      "bankAccountInfo": {
+        "accountType": "US_ACCOUNT",
+        "accountHolderName": "John Doe",
+        "platformAccountId": "acc_123456789"
+      }
+    }
+  ],
+  "hasMore": true,
+  "nextCursor": "string",
+  "totalCount": 0
+}
+```
+
+<h3 id="listusers-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Successful operation|Inline|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request - Invalid parameters|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
+
+<h3 id="listusers-responseschema">Response Schema</h3>
+
+Status Code **200**
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|» data|[oneOf]|true|none|List of users matching the filter criteria|
+
+*oneOf*
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|»» *anonymous*|any|false|none|none|
+
+*allOf - discriminator: userType*
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|»»» *anonymous*|[User](#schemauser)|false|none|none|
+|»»»» id|string|false|read-only|System-generated unique identifier|
+|»»»» umaAddress|string|true|none|full UMA address|
+|»»»» platformUserId|string|true|none|Platform-specific user identifier|
+|»»»» userType|string|true|none|Whether the user is an individual or a business entity|
+|»»»» createdAt|string(date-time)|false|read-only|Creation timestamp|
+|»»»» updatedAt|string(date-time)|false|read-only|Last update timestamp|
+
+*and*
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|»»» *anonymous*|object|false|none|none|
+|»»»» fullName|string|true|none|Individual's full name|
+|»»»» dateOfBirth|string(date)|true|none|Date of birth in ISO 8601 format (YYYY-MM-DD)|
+|»»»» address|[Address](#schemaaddress)|true|none|none|
+|»»»»» line1|string|false|none|Street address line 1|
+|»»»»» line2|string|false|none|Street address line 2|
+|»»»»» city|string|false|none|City|
+|»»»»» state|string|false|none|State/Province/Region|
+|»»»»» postalCode|string|false|none|Postal/ZIP code|
+|»»»»» country|string|false|none|Country code (ISO 3166-1 alpha-2)|
+|»»»» bankAccountInfo|[BankAccountInfo](#schemabankaccountinfo)|true|none|none|
+|»»»»» accountType|string|true|none|Type of bank account information|
+|»»»»» accountHolderName|string|false|none|Name of the account holder|
+|»»»»» platformAccountId|string|false|none|Platform-specific identifier for this bank account. This optional field allows platforms<br>to link bank accounts to their internal account systems. The value can be any string<br>that helps identify the account in your system (e.g. database IDs, custom references, etc.).<br><br>This field is particularly useful when:<br>- Tracking multiple bank accounts for the same user<br>- Linking accounts to internal accounting systems<br>- Maintaining consistency between UMAaS and your platform's account records|
+
+*xor*
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|»» *anonymous*|any|false|none|none|
+
+*allOf - discriminator: userType*
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|»»» *anonymous*|[User](#schemauser)|false|none|none|
+
+*and*
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|»»» *anonymous*|object|false|none|none|
+|»»»» address|[Address](#schemaaddress)|true|none|none|
+|»»»» bankAccountInfo|[BankAccountInfo](#schemabankaccountinfo)|true|none|none|
+|»»»» businessInfo|object|true|none|Additional information required for business entities|
+|»»»»» legalName|string|true|none|Legal name of the business|
+|»»»»» registrationNumber|string|false|none|Business registration number|
+|»»»»» taxId|string|false|none|Tax identification number|
+
+*continued*
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|» hasMore|boolean|true|none|Indicates if more results are available beyond this page|
+|» nextCursor|string|false|none|Cursor to retrieve the next page of results (only present if hasMore is true)|
+|» totalCount|integer|false|none|Total number of users matching the criteria (excluding pagination)|
 
 #### Enumerated Values
 
@@ -476,7 +683,8 @@ Retrieve a user by their system-generated ID
   },
   "bankAccountInfo": {
     "accountType": "US_ACCOUNT",
-    "accountHolderName": "John Doe"
+    "accountHolderName": "John Doe",
+    "platformAccountId": "acc_123456789"
   }
 }
 ```
@@ -530,7 +738,8 @@ const inputBody = '{
     "accountNumber": "11122233344",
     "routingNumber": "111222333",
     "accountCategory": "CHECKING",
-    "bankName": "Wells Fargo"
+    "bankName": "Wells Fargo",
+    "platformAccountId": "wf_checking_9012"
   }
 }';
 const headers = {
@@ -590,7 +799,8 @@ Update a user's metadata by their system-generated ID
     "accountNumber": "11122233344",
     "routingNumber": "111222333",
     "accountCategory": "CHECKING",
-    "bankName": "Wells Fargo"
+    "bankName": "Wells Fargo",
+    "platformAccountId": "wf_checking_9012"
   }
 }
 ```
@@ -626,7 +836,8 @@ Update a user's metadata by their system-generated ID
   },
   "bankAccountInfo": {
     "accountType": "US_ACCOUNT",
-    "accountHolderName": "John Doe"
+    "accountHolderName": "John Doe",
+    "platformAccountId": "acc_123456789"
   }
 }
 ```
@@ -658,9 +869,207 @@ To perform this operation, you must be authenticated by means of one of the foll
 BasicAuth
 </aside>
 
-## getUserByPlatformId
+## uploadUsersCsv
 
-<a id="opIdgetUserByPlatformId"></a>
+<a id="opIduploadUsersCsv"></a>
+
+> Code samples
+
+```javascript
+const inputBody = '{
+  "file": "string",
+  "webhookUrl": "http://example.com"
+}';
+const headers = {
+  'Content-Type':'multipart/form-data',
+  'Accept':'application/json'
+};
+
+fetch('https://api.lightspark.com/umaaas/v1/users/bulk/csv',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'multipart/form-data',
+  'Accept': 'application/json'
+}
+
+r = requests.post('https://api.lightspark.com/umaaas/v1/users/bulk/csv', headers = headers)
+
+print(r.json())
+
+```
+
+`POST /users/bulk/csv`
+
+*Upload users via CSV file*
+
+Upload a CSV file containing user information for bulk creation. The CSV file should follow
+a specific format with required and optional columns based on user type.
+
+### CSV Format
+The CSV file should have the following columns:
+
+Required columns for all users:
+- umaAddress: The user's UMA address (e.g., $john.doe@uma.domain.com)
+- platformUserId: Your platform's unique identifier for the user
+- userType: Either "INDIVIDUAL" or "BUSINESS"
+
+Required columns for individual users:
+- fullName: Individual's full name
+- dateOfBirth: Date of birth in YYYY-MM-DD format
+- addressLine1: Street address line 1
+- city: City
+- state: State/Province/Region
+- postalCode: Postal/ZIP code
+- country: Country code (ISO 3166-1 alpha-2)
+- accountType: Bank account type (CLABE, US_ACCOUNT, PIX, IBAN)
+- accountNumber: Bank account number
+- bankName: Name of the bank
+
+Required columns for business users:
+- businessLegalName: Legal name of the business
+- addressLine1: Street address line 1
+- city: City
+- state: State/Province/Region
+- postalCode: Postal/ZIP code
+- country: Country code (ISO 3166-1 alpha-2)
+- accountType: Bank account type (CLABE, US_ACCOUNT, PIX, IBAN)
+- accountNumber: Bank account number
+- bankName: Name of the bank
+
+Optional columns for all users:
+- addressLine2: Street address line 2
+- platformAccountId: Your platform's identifier for the bank account
+- description: Optional description for the user
+
+Optional columns for individual users:
+- email: User's email address
+
+Optional columns for business users:
+- businessRegistrationNumber: Business registration number
+- businessTaxId: Tax identification number
+
+Additional required columns based on account type:
+
+For US_ACCOUNT:
+- routingNumber: ACH routing number (9 digits)
+- accountCategory: Either "CHECKING" or "SAVINGS"
+
+For CLABE:
+- clabeNumber: 18-digit CLABE number
+
+For PIX:
+- pixKey: PIX key value
+- pixKeyType: Type of PIX key (CPF, CNPJ, EMAIL, PHONE, RANDOM)
+
+For IBAN:
+- iban: International Bank Account Number
+- swiftBic: SWIFT/BIC code (8 or 11 characters)
+
+See the BankAccountInfo and UserInfo schemas for more details on the required and optional fields.
+
+### Example CSV
+```csv
+umaAddress,platformUserId,userType,fullName,dateOfBirth,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId
+$john.doe@uma.domain.com,user123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,Chase Bank,chase_primary_1234
+$acme@uma.domain.com,biz456,BUSINESS,Acme Corp,400 Commerce Way,Austin,TX,78701,US,US_ACCOUNT,987654321,Bank of America,boa_business_5678
+```
+
+The upload process is asynchronous and will return a job ID that can be used to track progress.
+You can monitor the job status using the `/users/bulk/jobs/{jobId}` endpoint.
+
+> Body parameter
+
+```yaml
+file: string
+webhookUrl: http://example.com
+
+```
+
+<h3 id="uploaduserscsv-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|body|body|object|true|none|
+|» file|body|string(binary)|true|CSV file containing user information|
+|» webhookUrl|body|string(uri)|false|Optional webhook URL for job status updates. If not provided, the platform's default webhook URL will be used.|
+
+> Example responses
+
+> 202 Response
+
+```json
+{
+  "jobId": "string",
+  "status": "PENDING",
+  "validationSummary": {
+    "totalRows": 0,
+    "validRows": 0,
+    "invalidRows": 0,
+    "errors": [
+      {
+        "row": 0,
+        "errors": [
+          "string"
+        ]
+      }
+    ]
+  }
+}
+```
+
+<h3 id="uploaduserscsv-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|202|[Accepted](https://tools.ietf.org/html/rfc7231#section-6.3.3)|CSV upload accepted for processing|Inline|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request - Invalid CSV format or content|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
+
+<h3 id="uploaduserscsv-responseschema">Response Schema</h3>
+
+Status Code **202**
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|» jobId|string|true|none|Unique identifier for the bulk import job|
+|» status|string|true|none|none|
+|» validationSummary|object|false|none|Summary of CSV validation results|
+|»» totalRows|integer|false|none|Total number of rows in the CSV file|
+|»» validRows|integer|false|none|Number of rows that passed initial validation|
+|»» invalidRows|integer|false|none|Number of rows that failed validation|
+|»» errors|[object]|false|none|none|
+|»»» row|integer|false|none|Row number in the CSV file (1-based)|
+|»»» errors|[string]|false|none|none|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|status|PENDING|
+|status|PROCESSING|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BasicAuth
+</aside>
+
+## getBulkUserImportJob
+
+<a id="opIdgetBulkUserImportJob"></a>
 
 > Code samples
 
@@ -670,7 +1079,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/users/by-platform-id/{platformUserId}',
+fetch('https://api.lightspark.com/umaaas/v1/users/bulk/jobs/{jobId}',
 {
   method: 'GET',
 
@@ -690,23 +1099,30 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaaas/v1/users/by-platform-id/{platformUserId}', headers = headers)
+r = requests.get('https://api.lightspark.com/umaaas/v1/users/bulk/jobs/{jobId}', headers = headers)
 
 print(r.json())
 
 ```
 
-`GET /users/by-platform-id/{platformUserId}`
+`GET /users/bulk/jobs/{jobId}`
 
-*Get user by platform user ID*
+*Get bulk import job status*
 
-Retrieve a user by their platform-specific ID
+Retrieve the current status and results of a bulk user import job. This endpoint can be used
+to track the progress of both CSV uploads.
 
-<h3 id="getuserbyplatformid-parameters">Parameters</h3>
+The response includes:
+- Overall job status
+- Progress statistics
+- Detailed error information for failed entries
+- Completion timestamp when finished
+
+<h3 id="getbulkuserimportjob-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
-|platformUserId|path|string|true|Platform-specific user identifier|
+|jobId|path|string|true|ID of the bulk import job to retrieve|
 
 > Example responses
 
@@ -714,198 +1130,65 @@ Retrieve a user by their platform-specific ID
 
 ```json
 {
-  "id": "User:019542f5-b3e7-1d02-0000-000000000001",
-  "umaAddress": "$john.doe@uma.domain.com",
-  "platformUserId": "9f84e0c2a72c4fa",
-  "userType": "INDIVIDUAL",
-  "createdAt": "2023-07-21T17:32:28Z",
-  "updatedAt": "2023-07-21T17:32:28Z",
-  "fullName": "John Michael Doe",
-  "dateOfBirth": "1990-01-15",
-  "address": {
-    "line1": "123 Main Street",
-    "line2": "Apt 4B",
-    "city": "San Francisco",
-    "state": "CA",
-    "postalCode": "94105",
-    "country": "US"
+  "jobId": "job_123456789",
+  "status": "PROCESSING",
+  "progress": {
+    "total": 5000,
+    "processed": 2500,
+    "successful": 2450,
+    "failed": 50
   },
-  "bankAccountInfo": {
-    "accountType": "US_ACCOUNT",
-    "accountHolderName": "John Doe"
-  }
+  "errors": [
+    {
+      "correlationId": "biz456",
+      "error": {
+        "code": "string",
+        "message": "string",
+        "details": {}
+      }
+    }
+  ],
+  "completedAt": "2023-08-15T14:32:00Z"
 }
 ```
 
-<h3 id="getuserbyplatformid-responses">Responses</h3>
+<h3 id="getbulkuserimportjob-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Successful operation|Inline|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Job status retrieved successfully|Inline|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|User not found|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Job not found|[Error](#schemaerror)|
 
-<h3 id="getuserbyplatformid-responseschema">Response Schema</h3>
+<h3 id="getbulkuserimportjob-responseschema">Response Schema</h3>
 
-#### Enumerated Values
+Status Code **200**
 
-|Property|Value|
-|---|---|
-|userType|INDIVIDUAL|
-|userType|BUSINESS|
-|accountType|CLABE|
-|accountType|US_ACCOUNT|
-|accountType|PIX|
-|accountType|IBAN|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-BasicAuth
-</aside>
-
-## updateUserByPlatformId
-
-<a id="opIdupdateUserByPlatformId"></a>
-
-> Code samples
-
-```javascript
-const inputBody = '{
-  "userType": "INDIVIDUAL",
-  "fullName": "Jane Smith",
-  "address": {
-    "line1": "789 Broadway",
-    "city": "New York",
-    "state": "NY",
-    "postalCode": "10003",
-    "country": "US"
-  },
-  "bankAccountInfo": {
-    "accountType": "US_ACCOUNT",
-    "accountNumber": "44455566677",
-    "routingNumber": "444555666",
-    "accountCategory": "CHECKING",
-    "bankName": "CitiBank"
-  }
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json'
-};
-
-fetch('https://api.lightspark.com/umaaas/v1/users/by-platform-id/{platformUserId}',
-{
-  method: 'PATCH',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```python
-import requests
-headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json'
-}
-
-r = requests.patch('https://api.lightspark.com/umaaas/v1/users/by-platform-id/{platformUserId}', headers = headers)
-
-print(r.json())
-
-```
-
-`PATCH /users/by-platform-id/{platformUserId}`
-
-*Update user by platform user ID*
-
-Update a user's metadata by their platform-specific ID
-
-> Body parameter
-
-```json
-{
-  "userType": "INDIVIDUAL",
-  "fullName": "Jane Smith",
-  "address": {
-    "line1": "789 Broadway",
-    "city": "New York",
-    "state": "NY",
-    "postalCode": "10003",
-    "country": "US"
-  },
-  "bankAccountInfo": {
-    "accountType": "US_ACCOUNT",
-    "accountNumber": "44455566677",
-    "routingNumber": "444555666",
-    "accountCategory": "CHECKING",
-    "bankName": "CitiBank"
-  }
-}
-```
-
-<h3 id="updateuserbyplatformid-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
+|Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|body|body|any|true|none|
-|platformUserId|path|string|true|Platform-specific user identifier|
-
-> Example responses
-
-> 200 Response
-
-```json
-{
-  "id": "User:019542f5-b3e7-1d02-0000-000000000001",
-  "umaAddress": "$john.doe@uma.domain.com",
-  "platformUserId": "9f84e0c2a72c4fa",
-  "userType": "INDIVIDUAL",
-  "createdAt": "2023-07-21T17:32:28Z",
-  "updatedAt": "2023-07-21T17:32:28Z",
-  "fullName": "John Michael Doe",
-  "dateOfBirth": "1990-01-15",
-  "address": {
-    "line1": "123 Main Street",
-    "line2": "Apt 4B",
-    "city": "San Francisco",
-    "state": "CA",
-    "postalCode": "94105",
-    "country": "US"
-  },
-  "bankAccountInfo": {
-    "accountType": "US_ACCOUNT",
-    "accountHolderName": "John Doe"
-  }
-}
-```
-
-<h3 id="updateuserbyplatformid-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|User updated successfully|Inline|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|[Error](#schemaerror)|
-|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|User not found|[Error](#schemaerror)|
-
-<h3 id="updateuserbyplatformid-responseschema">Response Schema</h3>
+|» jobId|string|true|none|Unique identifier for the bulk import job|
+|» status|string|true|none|Current status of the job|
+|» progress|object|true|none|none|
+|»» total|integer|true|none|Total number of users to process|
+|»» processed|integer|true|none|Number of users processed so far|
+|»» successful|integer|true|none|Number of users successfully created|
+|»» failed|integer|true|none|Number of users that failed to create|
+|» errors|[object]|false|none|Detailed error information for failed entries|
+|»» correlationId|string|true|none|Platform user ID or row number for the failed entry|
+|»» error|[Error](#schemaerror)|true|none|none|
+|»»» code|string|false|none|Error code|
+|»»» message|string|false|none|Error message|
+|»»» details|object|false|none|Additional error details|
+|» completedAt|string(date-time)|false|none|Timestamp when the job completed (only present for COMPLETED or FAILED status)|
 
 #### Enumerated Values
 
 |Property|Value|
 |---|---|
-|userType|INDIVIDUAL|
-|userType|BUSINESS|
-|accountType|CLABE|
-|accountType|US_ACCOUNT|
-|accountType|PIX|
-|accountType|IBAN|
+|status|PENDING|
+|status|PROCESSING|
+|status|COMPLETED|
+|status|FAILED|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -1518,6 +1801,7 @@ must be followed precisely, including any reference codes provided.
     "bankAccountInfo": {
       "accountType": "US_ACCOUNT",
       "accountHolderName": "John Doe",
+      "platformAccountId": "acc_123456789",
       "clabeNumber": "123456789012345678",
       "bankName": "BBVA Mexico"
     }
@@ -1631,6 +1915,7 @@ from quote creation to settlement.
     "bankAccountInfo": {
       "accountType": "US_ACCOUNT",
       "accountHolderName": "John Doe",
+      "platformAccountId": "acc_123456789",
       "clabeNumber": "123456789012345678",
       "bankName": "BBVA Mexico"
     }
@@ -1899,7 +2184,8 @@ BasicAuth
 ```json
 {
   "accountType": "US_ACCOUNT",
-  "accountHolderName": "John Doe"
+  "accountHolderName": "John Doe",
+  "platformAccountId": "acc_123456789"
 }
 
 ```
@@ -1910,6 +2196,7 @@ BasicAuth
 |---|---|---|---|---|
 |accountType|string|true|none|Type of bank account information|
 |accountHolderName|string|false|none|Name of the account holder|
+|platformAccountId|string|false|none|Platform-specific identifier for this bank account. This optional field allows platforms<br>to link bank accounts to their internal account systems. The value can be any string<br>that helps identify the account in your system (e.g. database IDs, custom references, etc.).<br><br>This field is particularly useful when:<br>- Tracking multiple bank accounts for the same user<br>- Linking accounts to internal accounting systems<br>- Maintaining consistency between UMAaS and your platform's account records|
 
 #### Enumerated Values
 
@@ -1931,6 +2218,7 @@ BasicAuth
 {
   "accountType": "US_ACCOUNT",
   "accountHolderName": "John Doe",
+  "platformAccountId": "acc_123456789",
   "clabeNumber": "123456789012345678",
   "bankName": "BBVA Mexico"
 }
@@ -1964,6 +2252,7 @@ and
 {
   "accountType": "US_ACCOUNT",
   "accountHolderName": "John Doe",
+  "platformAccountId": "acc_123456789",
   "accountNumber": "123456789",
   "routingNumber": "987654321",
   "accountCategory": "CHECKING",
@@ -2008,6 +2297,7 @@ and
 {
   "accountType": "US_ACCOUNT",
   "accountHolderName": "John Doe",
+  "platformAccountId": "acc_123456789",
   "pixKey": "55119876543210",
   "pixKeyType": "PHONE",
   "bankName": "Nubank"
@@ -2053,6 +2343,7 @@ and
 {
   "accountType": "US_ACCOUNT",
   "accountHolderName": "John Doe",
+  "platformAccountId": "acc_123456789",
   "iban": "DE89370400440532013000",
   "swiftBic": "DEUTDEFF",
   "bankName": "Deutsche Bank"
@@ -2091,6 +2382,7 @@ and
   "bankAccountInfo": {
     "accountType": "US_ACCOUNT",
     "accountHolderName": "John Doe",
+    "platformAccountId": "acc_123456789",
     "clabeNumber": "123456789012345678",
     "bankName": "BBVA Mexico"
   }
@@ -2194,7 +2486,8 @@ xor
   },
   "bankAccountInfo": {
     "accountType": "US_ACCOUNT",
-    "accountHolderName": "John Doe"
+    "accountHolderName": "John Doe",
+    "platformAccountId": "acc_123456789"
   }
 }
 
@@ -2243,7 +2536,8 @@ and
   },
   "bankAccountInfo": {
     "accountType": "US_ACCOUNT",
-    "accountHolderName": "John Doe"
+    "accountHolderName": "John Doe",
+    "platformAccountId": "acc_123456789"
   },
   "businessInfo": {
     "legalName": "Acme Corporation, Inc.",
@@ -2429,6 +2723,7 @@ Type of webhook event, used by the receiver to identify which webhook is being r
 |*anonymous*|INCOMING_PAYMENT|
 |*anonymous*|OUTGOING_PAYMENT|
 |*anonymous*|TEST|
+|*anonymous*|BULK_UPLOAD|
 
 <h2 id="tocS_Currency">Currency</h2>
 <!-- backwards compatibility -->
@@ -2741,6 +3036,7 @@ The side of the quote which should be locked and specified in the `lockedCurrenc
     "bankAccountInfo": {
       "accountType": "US_ACCOUNT",
       "accountHolderName": "John Doe",
+      "platformAccountId": "acc_123456789",
       "clabeNumber": "123456789012345678",
       "bankName": "BBVA Mexico"
     }
