@@ -36,6 +36,10 @@ Required information for business users:
 
 When creating or updating users, the `userType` field must be specified as either `INDIVIDUAL` or `BUSINESS`, and the appropriate properties for that user type must be provided.
 
+:::tip
+There can be multiple users with the same platformUserId, but different uma addresses. This is useful if you want to track multiple uma addresses and/or bank accounts for the same user in your platform.
+:::
+
 ## User Registration Process
 
 ### Creating a New User
@@ -123,24 +127,20 @@ You can retrieve user information using either the UMAaaS-assigned user ID or yo
 GET /users/{userId}
 ```
 
-or
+or list users with a filter:
 
 ```http
-GET /users/by-platform-id/{platformUserId}
+GET /users?umaAddress={umaAddress}&platformUserId={platformUserId}&userType={userType}&createdAfter={createdAfter}&createdBefore={createdBefore}&cursor={cursor}&limit={limit}
 ```
+
+Note that this example shows all available filters. You can use any combination of them.
 
 ### Updating User Information
 
-To update user information, use one of the following endpoints:
+To update user information:
 
 ```http
 PATCH /users/{userId}
-```
-
-or
-
-```http
-PATCH /users/by-platform-id/{platformUserId}
 ```
 
 Example request body for updating a user's bank account information:
@@ -178,7 +178,7 @@ Example with platform account ID:
 
 Common use cases for `platformAccountId`:
 
-- Tracking multiple bank accounts for the same user
+- Tracking multiple bank accounts and uma addresses for the same user
 - Linking accounts to internal accounting systems
 - Maintaining consistency between UMAaS and your platform's account records
 - Facilitating account reconciliation and reporting

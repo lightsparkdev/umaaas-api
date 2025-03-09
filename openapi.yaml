@@ -747,6 +747,118 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    get:
+      summary: List users
+      description: |
+        Retrieve a list of users with optional filtering parameters. Returns all users that match
+        the specified filters. If no filters are provided, returns all users (paginated).
+      operationId: listUsers
+      tags:
+        - Users
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: platformUserId
+          in: query
+          description: Filter by platform-specific user identifier
+          required: false
+          schema:
+            type: string
+        - name: umaAddress
+          in: query
+          description: Filter by UMA address
+          required: false
+          schema:
+            type: string
+        - name: userType
+          in: query
+          description: Filter by user type
+          required: false
+          schema:
+            type: string
+            enum: [INDIVIDUAL, BUSINESS]
+        - name: createdAfter
+          in: query
+          description: Filter users created after this timestamp (inclusive)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: createdBefore
+          in: query
+          description: Filter users created before this timestamp (inclusive)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: updatedAfter
+          in: query
+          description: Filter users updated after this timestamp (inclusive)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: updatedBefore
+          in: query
+          description: Filter users updated before this timestamp (inclusive)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          description: Maximum number of results to return (default 20, max 100)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: cursor
+          in: query
+          description: Cursor for pagination (returned from previous request)
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - hasMore
+                properties:
+                  data:
+                    type: array
+                    description: List of users matching the filter criteria
+                    items:
+                      oneOf:
+                        - $ref: '#/components/schemas/IndividualUser'
+                        - $ref: '#/components/schemas/BusinessUser'
+                  hasMore:
+                    type: boolean
+                    description: Indicates if more results are available beyond this page
+                  nextCursor:
+                    type: string
+                    description: Cursor to retrieve the next page of results (only present if hasMore is true)
+                  totalCount:
+                    type: integer
+                    description: Total number of users matching the criteria (excluding pagination)
+        '400':
+          description: Bad request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   
   /users/{userId}:
     parameters:
@@ -878,164 +990,6 @@ paths:
                     accountType: "US_ACCOUNT"
                     accountNumber: "55566677788"
                     routingNumber: "555666777"
-                    accountCategory: "CHECKING"
-                    bankName: "JP Morgan Chase"
-                    platformAccountId: "chase_business_3456"
-      responses:
-        '200':
-          description: User updated successfully
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/IndividualUser'
-                  - $ref: '#/components/schemas/BusinessUser'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '404':
-          description: User not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  
-  /users/by-platform-id/{platformUserId}:
-    parameters:
-      - name: platformUserId
-        in: path
-        description: Platform-specific user identifier
-        required: true
-        schema:
-          type: string
-    get:
-      summary: Get user by platform user ID
-      description: Retrieve a user by their platform-specific ID
-      operationId: getUserByPlatformId
-      tags:
-        - Users
-      security:
-        - BasicAuth: []
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/IndividualUser'
-                  - $ref: '#/components/schemas/BusinessUser'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '404':
-          description: User not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-    patch:
-      summary: Update user by platform user ID
-      description: Update a user's metadata by their platform-specific ID
-      operationId: updateUserByPlatformId
-      tags:
-        - Users
-      security:
-        - BasicAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              oneOf:
-                - type: object
-                  title: individualUpdate
-                  properties:
-                    userType:
-                      type: string
-                      enum: [INDIVIDUAL]
-                      description: Update user type to individual
-                    fullName:
-                      type: string
-                      description: Individual's full name
-                    dateOfBirth:
-                      type: string
-                      format: date
-                      description: Date of birth in ISO 8601 format (YYYY-MM-DD)
-                    address:
-                      $ref: '#/components/schemas/Address'
-                    bankAccountInfo:
-                      $ref: '#/components/schemas/BankAccountInfo'
-                - type: object
-                  title: businessUpdate
-                  properties:
-                    userType:
-                      type: string
-                      enum: [BUSINESS]
-                      description: Update user type to business
-                    businessInfo:
-                      type: object
-                      properties:
-                        legalName:
-                          type: string
-                          description: Legal name of the business
-                        registrationNumber:
-                          type: string
-                          description: Business registration number
-                        taxId:
-                          type: string
-                          description: Tax identification number
-                    address:
-                      $ref: '#/components/schemas/Address'
-                    bankAccountInfo:
-                      $ref: '#/components/schemas/BankAccountInfo'
-            examples:
-              individualUpdate:
-                summary: Update individual user example
-                value:
-                  userType: "INDIVIDUAL"
-                  fullName: "Jane Smith"
-                  address:
-                    line1: "789 Broadway"
-                    city: "New York"
-                    state: "NY"
-                    postalCode: "10003"
-                    country: "US"
-                  bankAccountInfo:
-                    accountType: "US_ACCOUNT"
-                    accountNumber: "44455566677"
-                    routingNumber: "444555666"
-                    accountCategory: "CHECKING"
-                    bankName: "CitiBank"
-              businessUpdate:
-                summary: Update business user example
-                value:
-                  userType: "BUSINESS"
-                  businessInfo:
-                    legalName: "Global Enterprises Inc."
-                    taxId: "EIN-987654321"
-                  address:
-                    line1: "100 Technology Parkway"
-                    city: "Palo Alto"
-                    state: "CA"
-                    postalCode: "94304"
-                    country: "US"
-                  bankAccountInfo:
-                    accountType: "US_ACCOUNT"
-                    accountNumber: "99988877766"
-                    routingNumber: "999888777"
                     accountCategory: "CHECKING"
                     bankName: "JP Morgan Chase"
                     platformAccountId: "chase_business_3456"
