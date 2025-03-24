@@ -1,4 +1,4 @@
-# Receiving Payments - Nubank alternative JIT flow  
+# Receiving Payments - alternative JIT flow  
 
 This guide outlines the process for platforms to receive payments from UMA addresses, but with an alternative just in time (JIT) user information flow.
 
@@ -10,8 +10,8 @@ The following sequence diagram illustrates the interaction between your platform
 sequenceDiagram
     participant Sender as External Sender
     participant UMAaaS as UMAaaS API
-    participant Client as Nubank
-    participant Bank as Lead Bank
+    participant Client as Platform
+    participant Bank as Bank
     
     Note over Client, UMAaaS: One-time setup
     Client->>UMAaaS: PUT /config (set domain, webhook URL)
