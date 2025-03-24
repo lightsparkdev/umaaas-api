@@ -1,4 +1,4 @@
-# Sending Payments - Nubank alternative JIT flow
+# Sending Payments - alternative JIT flow
 
 This guide outlines the process for platforms to send payments to UMA addresses, but with an alternative just in time (JIT) user information flow.
 
@@ -8,8 +8,8 @@ The following sequence diagram illustrates the interaction between your platform
 
 ```mermaid
 sequenceDiagram
-    participant Bank as Lead Bank
-    participant Client as Nubank
+    participant Bank as Bank
+    participant Client as Platform
     participant UMAaaS as UMAaaS API
     participant Counterparty as UMA Counterparty
     
