@@ -20,6 +20,9 @@ src/umaaas_api/main.py
 src/umaaas_api/models/__init__.py
 src/umaaas_api/models/address.py
 src/umaaas_api/models/bank_account_info.py
+src/umaaas_api/models/bulk_upload_webhook_request.py
+src/umaaas_api/models/bulk_upload_webhook_request_errors_inner.py
+src/umaaas_api/models/bulk_upload_webhook_request_progress.py
 src/umaaas_api/models/business_update.py
 src/umaaas_api/models/business_update_business_info.py
 src/umaaas_api/models/business_user.py
@@ -39,6 +42,8 @@ src/umaaas_api/models/get_bulk_user_import_job200_response_progress.py
 src/umaaas_api/models/get_payment_status200_response.py
 src/umaaas_api/models/get_transaction_by_id200_response.py
 src/umaaas_api/models/iban_account_info.py
+src/umaaas_api/models/incoming_payment_webhook403_response.py
+src/umaaas_api/models/incoming_payment_webhook_request.py
 src/umaaas_api/models/incoming_transaction.py
 src/umaaas_api/models/individual_update.py
 src/umaaas_api/models/individual_user.py
@@ -46,13 +51,16 @@ src/umaaas_api/models/list_transactions200_response.py
 src/umaaas_api/models/list_users200_response.py
 src/umaaas_api/models/list_users200_response_data_inner.py
 src/umaaas_api/models/lookup_uma200_response.py
+src/umaaas_api/models/outgoing_payment_webhook_request.py
 src/umaaas_api/models/outgoing_transaction.py
 src/umaaas_api/models/payment_instructions.py
 src/umaaas_api/models/payment_instructions_bank_account_info.py
 src/umaaas_api/models/pix_account_info.py
 src/umaaas_api/models/platform_config.py
+src/umaaas_api/models/platform_currency_config.py
 src/umaaas_api/models/quote.py
 src/umaaas_api/models/quote_lock_side.py
+src/umaaas_api/models/test_webhook_request.py
 src/umaaas_api/models/transaction.py
 src/umaaas_api/models/transaction_status.py
 src/umaaas_api/models/transaction_type.py
