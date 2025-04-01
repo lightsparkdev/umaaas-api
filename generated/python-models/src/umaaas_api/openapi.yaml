@@ -1,0 +1,2026 @@
+openapi: 3.1.0
+info:
+  contact:
+    email: support@lightspark.com
+    name: Lightspark Support
+  description: "API for managing global payments to and from UMA addresses. \nThis\
+    \ service facilitates cross-currency financial transactions using simple human-readable\
+    \ UMA addresses.\n"
+  license:
+    name: Proprietary
+    url: https://lightspark.com/terms
+  title: UMA as a Service (UMAaaS) API
+  version: 1.0.0
+servers:
+- description: Production server
+  url: https://api.lightspark.com/umaaas/v1
+security:
+- BasicAuth: []
+tags:
+- description: Platform configuration endpoints for managing global settings. You
+    can also configure these settings in the UMAaas dashboard.
+  name: Platform Configuration
+- description: User management endpoints for creating and updating user information
+  name: Users
+- description: Endpoints for retrieving transaction information
+  name: Transactions
+- description: Endpoints for creating and managing payment quotes and executing payments
+  name: Sending Payments
+- description: Webhook endpoints and configuration for receiving notifications
+  name: Webhooks
+paths:
+  /users:
+    get:
+      description: |
+        Retrieve a list of users with optional filtering parameters. Returns all users that match
+        the specified filters. If no filters are provided, returns all users (paginated).
+      operationId: listUsers
+      parameters:
+      - description: Filter by platform-specific user identifier
+        explode: true
+        in: query
+        name: platformUserId
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Filter by UMA address
+        explode: true
+        in: query
+        name: umaAddress
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Filter by user type
+        explode: true
+        in: query
+        name: userType
+        required: false
+        schema:
+          enum:
+          - INDIVIDUAL
+          - BUSINESS
+          type: string
+        style: form
+      - description: Filter users created after this timestamp (inclusive)
+        explode: true
+        in: query
+        name: createdAfter
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - description: Filter users created before this timestamp (inclusive)
+        explode: true
+        in: query
+        name: createdBefore
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - description: Filter users updated after this timestamp (inclusive)
+        explode: true
+        in: query
+        name: updatedAfter
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - description: Filter users updated before this timestamp (inclusive)
+        explode: true
+        in: query
+        name: updatedBefore
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - description: "Maximum number of results to return (default 20, max 100)"
+        explode: true
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      - description: Cursor for pagination (returned from previous request)
+        explode: true
+        in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listUsers_200_response'
+          description: Successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request - Invalid parameters
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+      security:
+      - BasicAuth: []
+      summary: List users
+      tags:
+      - Users
+    post:
+      description: Register a new user in the system with UMA address and bank account
+        information
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            examples:
+              individualUser:
+                summary: Create individual user example
+                value:
+                  umaAddress: $jane.doe@uma.domain.com
+                  platformUserId: 7b3c5a89d2f1e0
+                  userType: INDIVIDUAL
+                  fullName: Jane Doe
+                  dateOfBirth: 1992-03-25
+                  address:
+                    line1: 123 Pine Street
+                    line2: Unit 501
+                    city: Seattle
+                    state: WA
+                    postalCode: "98101"
+                    country: US
+                  bankAccountInfo:
+                    accountType: US_ACCOUNT
+                    accountNumber: "12345678901"
+                    routingNumber: "123456789"
+                    accountCategory: CHECKING
+                    bankName: Chase Bank
+                    platformAccountId: chase_primary_1234
+              businessUser:
+                summary: Create business user example
+                value:
+                  umaAddress: $acme@uma.domain.com
+                  platformUserId: 6e4d2c0b8a9f3
+                  userType: BUSINESS
+                  businessInfo:
+                    legalName: Acme Corporation
+                    registrationNumber: BRN-456789123
+                    taxId: EIN-987123456
+                  address:
+                    line1: 400 Commerce Way
+                    city: Austin
+                    state: TX
+                    postalCode: "78701"
+                    country: US
+                  bankAccountInfo:
+                    accountType: US_ACCOUNT
+                    accountNumber: "98765432109"
+                    routingNumber: "987654321"
+                    accountCategory: CHECKING
+                    bankName: Bank of America
+                    platformAccountId: boa_business_5678
+            schema:
+              $ref: '#/components/schemas/listUsers_200_response_data_inner'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listUsers_200_response_data_inner'
+          description: User created successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Conflict - User with the UMA address or platform user ID already
+            exists
+      security:
+      - BasicAuth: []
+      summary: Add a new user
+      tags:
+      - Users
+  /users/{userId}:
+    get:
+      description: Retrieve a user by their system-generated ID
+      operationId: getUserById
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listUsers_200_response_data_inner'
+          description: Successful operation
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: User not found
+      security:
+      - BasicAuth: []
+      summary: Get user by ID
+      tags:
+      - Users
+    parameters:
+    - description: System-generated unique user identifier
+      explode: false
+      in: path
+      name: userId
+      required: true
+      schema:
+        type: string
+      style: simple
+    patch:
+      description: Update a user's metadata by their system-generated ID
+      operationId: updateUserById
+      requestBody:
+        content:
+          application/json:
+            examples:
+              individualUpdate:
+                summary: Update individual user example
+                value:
+                  userType: INDIVIDUAL
+                  fullName: John Smith
+                  dateOfBirth: 1985-06-15
+                  address:
+                    line1: 456 Market St
+                    city: San Francisco
+                    state: CA
+                    postalCode: "94103"
+                    country: US
+                  bankAccountInfo:
+                    accountType: US_ACCOUNT
+                    accountNumber: "11122233344"
+                    routingNumber: "111222333"
+                    accountCategory: CHECKING
+                    bankName: Wells Fargo
+                    platformAccountId: wf_checking_9012
+              businessUpdate:
+                summary: Update business user example
+                value:
+                  userType: BUSINESS
+                  businessInfo:
+                    legalName: New Tech Solutions LLC
+                    registrationNumber: BRN-987654321
+                    taxId: EIN-123456789
+                  address:
+                    line1: 100 Technology Parkway
+                    city: Palo Alto
+                    state: CA
+                    postalCode: "94304"
+                    country: US
+                  bankAccountInfo:
+                    accountType: US_ACCOUNT
+                    accountNumber: "55566677788"
+                    routingNumber: "555666777"
+                    accountCategory: CHECKING
+                    bankName: JP Morgan Chase
+                    platformAccountId: chase_business_3456
+            schema:
+              $ref: '#/components/schemas/updateUserById_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listUsers_200_response_data_inner'
+          description: User updated successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: User not found
+      security:
+      - BasicAuth: []
+      summary: Update user by ID
+      tags:
+      - Users
+  /config:
+    get:
+      description: Retrieve the current platform configuration
+      operationId: getPlatformConfig
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlatformConfig'
+          description: Successful operation
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+      security:
+      - BasicAuth: []
+      summary: Get platform configuration
+      tags:
+      - Platform Configuration
+    put:
+      description: Update the platform configuration settings
+      operationId: updatePlatformConfig
+      requestBody:
+        content:
+          application/json:
+            example:
+              umaDomain: mycompany.com
+              webhookEndpoint: https://api.mycompany.com/webhooks/uma
+              requiredCounterpartyFields:
+              - name: FULL_NAME
+                mandatory: true
+              - name: ADDRESS
+                mandatory: true
+              - name: DATE_OF_BIRTH
+                mandatory: true
+              - name: TAX_ID
+                mandatory: false
+            schema:
+              $ref: '#/components/schemas/updatePlatformConfig_request'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlatformConfig'
+          description: Configuration updated successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+      security:
+      - BasicAuth: []
+      summary: Update platform configuration
+      tags:
+      - Platform Configuration
+  /transactions/{transactionId}:
+    get:
+      description: Retrieve detailed information about a specific transaction
+      operationId: getTransactionById
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getTransactionById_200_response'
+          description: Successful operation
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Transaction not found
+      security:
+      - BasicAuth: []
+      summary: Get transaction by ID
+      tags:
+      - Transactions
+    parameters:
+    - description: Unique identifier of the transaction
+      explode: false
+      in: path
+      name: transactionId
+      required: true
+      schema:
+        type: string
+      style: simple
+  /transactions:
+    get:
+      description: "Retrieve a paginated list of transactions with optional filtering.\n\
+        The transactions can be filtered by user ID, platform user ID, UMA address,\
+        \ \ndate range, status, and transaction type.\n"
+      operationId: listTransactions
+      parameters:
+      - description: Filter by system user ID
+        explode: true
+        in: query
+        name: userId
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Filter by platform-specific user ID
+        explode: true
+        in: query
+        name: platformUserId
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Filter by UMA address (either sender or receiver)
+        explode: true
+        in: query
+        name: umaAddress
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Filter by sender UMA address
+        explode: true
+        in: query
+        name: senderUmaAddress
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Filter by receiver UMA address
+        explode: true
+        in: query
+        name: receiverUmaAddress
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Filter by transaction status
+        explode: true
+        in: query
+        name: status
+        required: false
+        schema:
+          $ref: '#/components/schemas/TransactionStatus'
+        style: form
+      - description: Filter by transaction type
+        explode: true
+        in: query
+        name: type
+        required: false
+        schema:
+          $ref: '#/components/schemas/TransactionType'
+        style: form
+      - description: Filter by start date (inclusive) in ISO 8601 format
+        explode: true
+        in: query
+        name: startDate
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - description: Filter by end date (inclusive) in ISO 8601 format
+        explode: true
+        in: query
+        name: endDate
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - description: "Maximum number of results to return (default 20, max 100)"
+        explode: true
+        in: query
+        name: limit
+        required: false
+        schema:
+          default: 20
+          maximum: 100
+          minimum: 1
+          type: integer
+        style: form
+      - description: Cursor for pagination (returned from previous request)
+        explode: true
+        in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Field to sort results by
+        explode: true
+        in: query
+        name: sortBy
+        required: false
+        schema:
+          default: createdAt
+          enum:
+          - createdAt
+          - settlementTime
+          - receivedAmount
+          - sentAmount
+          type: string
+        style: form
+      - description: Order to sort results in
+        explode: true
+        in: query
+        name: sortOrder
+        required: false
+        schema:
+          default: desc
+          enum:
+          - asc
+          - desc
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listTransactions_200_response'
+          description: Successful operation
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request - Invalid parameters
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+      security:
+      - BasicAuth: []
+      summary: List transactions
+      tags:
+      - Transactions
+  /receiver/{receiverUmaAddress}:
+    get:
+      description: |
+        Lookup a receiving UMA address to determine supported currencies and exchange rates.
+        This endpoint helps platforms determine what currencies they can send to a given UMA address.
+      operationId: lookupUma
+      parameters:
+      - description: UMA address of the intended recipient
+        explode: false
+        in: path
+        name: receiverUmaAddress
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: UMA address of the sender (mutually exclusive with userId and
+          platformUserId)
+        explode: true
+        in: query
+        name: sendingUmaAddress
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: System ID of the sender (mutually exclusive with sendingUmaAddress
+          and platformUserId)
+        explode: true
+        in: query
+        name: userId
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: Platform ID of the sender (mutually exclusive with sendingUmaAddress
+          and userId)
+        explode: true
+        in: query
+        name: platformUserId
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/lookupUma_200_response'
+          description: Successful lookup
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request - Missing or invalid parameters
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: UMA address not found
+      security:
+      - BasicAuth: []
+      summary: Look up a UMA address for payment
+      tags:
+      - Sending Payments
+  /quotes:
+    post:
+      description: "Generate a quote for a payment from one UMA address to another.\n\
+        The quote locks in exchange rates and fees for a set period of time and provides\n\
+        payment instructions that can be used to execute the payment.\n\nDepending\
+        \ on the `lockedCurrencySide` parameter, either the sending amount or \nreceiving\
+        \ amount will be locked.\n\nThe returned quote includes payment instructions\
+        \ with the banking details\nneeded to execute the payment and fulfill the\
+        \ quote. These instructions\nmust be followed precisely, including any reference\
+        \ codes provided.\n"
+      operationId: createQuote
+      requestBody:
+        content:
+          application/json:
+            examples:
+              lockSendAmount:
+                summary: Lock sending amount
+                value:
+                  receiverUmaAddress: $receiver@uma.domain
+                  senderUmaAddress: $sender@uma.domain
+                  sendingCurrencyCode: USD
+                  receivingCurrencyCode: EUR
+                  lockedCurrencySide: SENDING
+                  lockedCurrencyAmount: 1000
+                  description: "Payment for invoice #1234"
+              lockReceiveAmount:
+                summary: Lock receiving amount
+                value:
+                  receiverUmaAddress: $receiver@uma.domain
+                  platformUserId: 2d8e7f3a9c5b1
+                  sendingCurrencyCode: USD
+                  receivingCurrencyCode: EUR
+                  lockedCurrencySide: RECEIVING
+                  lockedCurrencyAmount: 9200
+            schema:
+              $ref: '#/components/schemas/createQuote_request'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+          description: |
+            Quote created successfully. The response includes payment instructions
+            that the client can use to execute the payment through their banking provider.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request - Missing or invalid parameters
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createQuote_422_response'
+          description: |
+            Unprocessable Entity - Additional counterparty information required,
+            or the payment cannot be completed for another reason.
+      security:
+      - BasicAuth: []
+      summary: Create a payment quote
+      tags:
+      - Sending Payments
+  /quotes/{quoteId}:
+    get:
+      description: "Retrieve a quote by its ID. If the quote has been settled, it\
+        \ will include \nthe transaction ID. This allows clients to track the full\
+        \ lifecycle of a payment\nfrom quote creation to settlement.\n"
+      operationId: getQuoteById
+      parameters:
+      - description: ID of the quote to retrieve
+        explode: false
+        in: path
+        name: quoteId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+          description: Quote retrieved successfully
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Quote not found
+      security:
+      - BasicAuth: []
+      summary: Get quote by ID
+      tags:
+      - Sending Payments
+  /payments/status/{quoteId}:
+    get:
+      description: "Check the status of a payment associated with a previously created\
+        \ quote.\nThis allows clients to verify if a payment they've initiated using\
+        \ the \npayment instructions has been received and processed.\n"
+      operationId: getPaymentStatus
+      parameters:
+      - description: ID of the quote to check payment status for
+        explode: false
+        in: path
+        name: quoteId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: "Payment reference code (optional, but helps with verification)"
+        explode: true
+        in: query
+        name: reference
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getPaymentStatus_200_response'
+          description: Payment status retrieved successfully
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Quote not found
+      security:
+      - BasicAuth: []
+      summary: Check payment status for a quote
+      tags:
+      - Sending Payments
+  /users/bulk/csv:
+    post:
+      description: |
+        Upload a CSV file containing user information for bulk creation. The CSV file should follow
+        a specific format with required and optional columns based on user type.
+
+        ### CSV Format
+        The CSV file should have the following columns:
+
+        Required columns for all users:
+        - umaAddress: The user's UMA address (e.g., $john.doe@uma.domain.com)
+        - platformUserId: Your platform's unique identifier for the user
+        - userType: Either "INDIVIDUAL" or "BUSINESS"
+
+        Required columns for individual users:
+        - fullName: Individual's full name
+        - dateOfBirth: Date of birth in YYYY-MM-DD format
+        - addressLine1: Street address line 1
+        - city: City
+        - state: State/Province/Region
+        - postalCode: Postal/ZIP code
+        - country: Country code (ISO 3166-1 alpha-2)
+        - accountType: Bank account type (CLABE, US_ACCOUNT, PIX, IBAN)
+        - accountNumber: Bank account number
+        - bankName: Name of the bank
+
+        Required columns for business users:
+        - businessLegalName: Legal name of the business
+        - addressLine1: Street address line 1
+        - city: City
+        - state: State/Province/Region
+        - postalCode: Postal/ZIP code
+        - country: Country code (ISO 3166-1 alpha-2)
+        - accountType: Bank account type (CLABE, US_ACCOUNT, PIX, IBAN)
+        - accountNumber: Bank account number
+        - bankName: Name of the bank
+
+        Optional columns for all users:
+        - addressLine2: Street address line 2
+        - platformAccountId: Your platform's identifier for the bank account
+        - description: Optional description for the user
+
+        Optional columns for individual users:
+        - email: User's email address
+
+        Optional columns for business users:
+        - businessRegistrationNumber: Business registration number
+        - businessTaxId: Tax identification number
+
+        Additional required columns based on account type:
+
+        For US_ACCOUNT:
+        - routingNumber: ACH routing number (9 digits)
+        - accountCategory: Either "CHECKING" or "SAVINGS"
+
+        For CLABE:
+        - clabeNumber: 18-digit CLABE number
+
+        For PIX:
+        - pixKey: PIX key value
+        - pixKeyType: Type of PIX key (CPF, CNPJ, EMAIL, PHONE, RANDOM)
+
+        For IBAN:
+        - iban: International Bank Account Number
+        - swiftBic: SWIFT/BIC code (8 or 11 characters)
+
+        See the BankAccountInfo and UserInfo schemas for more details on the required and optional fields.
+
+        ### Example CSV
+        ```csv
+        umaAddress,platformUserId,userType,fullName,dateOfBirth,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId
+        $john.doe@uma.domain.com,user123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,Chase Bank,chase_primary_1234
+        $acme@uma.domain.com,biz456,BUSINESS,Acme Corp,400 Commerce Way,Austin,TX,78701,US,US_ACCOUNT,987654321,Bank of America,boa_business_5678
+        ```
+
+        The upload process is asynchronous and will return a job ID that can be used to track progress.
+        You can monitor the job status using the `/users/bulk/jobs/{jobId}` endpoint.
+      operationId: uploadUsersCsv
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/uploadUsersCsv_request'
+        required: true
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/uploadUsersCsv_202_response'
+          description: CSV upload accepted for processing
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request - Invalid CSV format or content
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+      security:
+      - BasicAuth: []
+      summary: Upload users via CSV file
+      tags:
+      - Users
+  /users/bulk/jobs/{jobId}:
+    get:
+      description: |
+        Retrieve the current status and results of a bulk user import job. This endpoint can be used
+        to track the progress of both CSV uploads.
+
+        The response includes:
+        - Overall job status
+        - Progress statistics
+        - Detailed error information for failed entries
+        - Completion timestamp when finished
+      operationId: getBulkUserImportJob
+      parameters:
+      - description: ID of the bulk import job to retrieve
+        explode: false
+        in: path
+        name: jobId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getBulkUserImportJob_200_response'
+          description: Job status retrieved successfully
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Job not found
+      security:
+      - BasicAuth: []
+      summary: Get bulk import job status
+      tags:
+      - Users
+components:
+  schemas:
+    Error:
+      properties:
+        code:
+          description: Error code
+          title: code
+          type: string
+        message:
+          description: Error message
+          title: message
+          type: string
+        details:
+          description: Additional error details
+          title: details
+          type: object
+      title: Error
+    Address:
+      properties:
+        line1:
+          description: Street address line 1
+          example: 123 Main Street
+          title: line1
+          type: string
+        line2:
+          description: Street address line 2
+          example: Apt 4B
+          title: line2
+          type: string
+        city:
+          description: City
+          example: San Francisco
+          title: city
+          type: string
+        state:
+          description: State/Province/Region
+          example: CA
+          title: state
+          type: string
+        postalCode:
+          description: Postal/ZIP code
+          example: "94105"
+          title: postalCode
+          type: string
+        country:
+          description: Country code (ISO 3166-1 alpha-2)
+          example: US
+          title: country
+          type: string
+      title: Address
+    BankAccountInfo:
+      discriminator:
+        mapping:
+          CLABE: '#/components/schemas/ClabeAccountInfo'
+          US_ACCOUNT: '#/components/schemas/UsAccountInfo'
+          PIX: '#/components/schemas/PixAccountInfo'
+          IBAN: '#/components/schemas/IbanAccountInfo'
+        propertyName: accountType
+      properties:
+        accountType:
+          description: Type of bank account information
+          enum:
+          - CLABE
+          - US_ACCOUNT
+          - PIX
+          - IBAN
+          example: US_ACCOUNT
+          title: accountType
+          type: string
+        accountHolderName:
+          description: Name of the account holder
+          example: John Doe
+          title: accountHolderName
+          type: string
+        platformAccountId:
+          description: |
+            Platform-specific identifier for this bank account. This optional field allows platforms
+            to link bank accounts to their internal account systems. The value can be any string
+            that helps identify the account in your system (e.g. database IDs, custom references, etc.).
+
+            This field is particularly useful when:
+            - Tracking multiple bank accounts for the same user
+            - Linking accounts to internal accounting systems
+            - Maintaining consistency between UMAaS and your platform's account records
+          example: acc_123456789
+          title: platformAccountId
+          type: string
+      required:
+      - accountType
+      title: BankAccountInfo
+    ClabeAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/BankAccountInfo'
+      - properties:
+          clabeNumber:
+            description: 18-digit CLABE number (Mexican banking standard)
+            example: "123456789012345678"
+            maxLength: 18
+            minLength: 18
+            pattern: "^[0-9]{18}$"
+            type: string
+          bankName:
+            description: Name of the bank
+            example: BBVA Mexico
+            type: string
+        required:
+        - bankName
+        - clabeNumber
+      title: ClabeAccountInfo
+    UsAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/BankAccountInfo'
+      - properties:
+          accountNumber:
+            description: US bank account number
+            example: "123456789"
+            type: string
+          routingNumber:
+            description: ACH routing number (9 digits)
+            example: "987654321"
+            maxLength: 9
+            minLength: 9
+            pattern: "^[0-9]{9}$"
+            type: string
+          accountCategory:
+            description: Type of account (checking or savings)
+            enum:
+            - CHECKING
+            - SAVINGS
+            example: CHECKING
+            type: string
+          bankName:
+            description: Name of the bank
+            example: Chase Bank
+            type: string
+        required:
+        - accountNumber
+        - routingNumber
+      title: UsAccountInfo
+    PixAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/BankAccountInfo'
+      - properties:
+          pixKey:
+            description: PIX key for Brazilian instant payments
+            example: "55119876543210"
+            type: string
+          pixKeyType:
+            description: Type of PIX key being used
+            enum:
+            - CPF
+            - CNPJ
+            - EMAIL
+            - PHONE
+            - RANDOM
+            example: PHONE
+            type: string
+          bankName:
+            description: Name of the bank
+            example: Nubank
+            type: string
+        required:
+        - pixKey
+        - pixKeyType
+      title: PixAccountInfo
+    IbanAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/BankAccountInfo'
+      - properties:
+          iban:
+            description: International Bank Account Number
+            example: DE89370400440532013000
+            maxLength: 34
+            minLength: 15
+            type: string
+          swiftBic:
+            description: SWIFT/BIC code (8 or 11 characters)
+            example: DEUTDEFF
+            maxLength: 11
+            minLength: 8
+            type: string
+          bankName:
+            description: Name of the bank
+            example: Deutsche Bank
+            type: string
+        required:
+        - bankName
+        - iban
+      title: IbanAccountInfo
+    PaymentInstructions:
+      properties:
+        reference:
+          description: Unique reference code that must be included with the payment
+            to properly credit it
+          example: UMA-Q12345-REF
+          title: reference
+          type: string
+        instructionsNotes:
+          description: Additional human-readable instructions for making the payment
+          example: Please ensure the reference code is included in the payment memo/description
+            field
+          title: instructionsNotes
+          type: string
+        bankAccountInfo:
+          $ref: '#/components/schemas/PaymentInstructions_bankAccountInfo'
+      required:
+      - bankAccountInfo
+      - reference
+      title: PaymentInstructions
+    User:
+      discriminator:
+        mapping:
+          INDIVIDUAL: '#/components/schemas/IndividualUser'
+          BUSINESS: '#/components/schemas/BusinessUser'
+        propertyName: userType
+      properties:
+        id:
+          description: System-generated unique identifier
+          example: User:019542f5-b3e7-1d02-0000-000000000001
+          readOnly: true
+          title: id
+          type: string
+        umaAddress:
+          description: full UMA address
+          example: $john.doe@uma.domain.com
+          title: umaAddress
+          type: string
+        platformUserId:
+          description: Platform-specific user identifier
+          example: 9f84e0c2a72c4fa
+          title: platformUserId
+          type: string
+        userType:
+          description: Whether the user is an individual or a business entity
+          enum:
+          - INDIVIDUAL
+          - BUSINESS
+          example: INDIVIDUAL
+          title: userType
+          type: string
+        createdAt:
+          description: Creation timestamp
+          example: 2023-07-21T17:32:28Z
+          format: date-time
+          readOnly: true
+          title: createdAt
+          type: string
+        updatedAt:
+          description: Last update timestamp
+          example: 2023-07-21T17:32:28Z
+          format: date-time
+          readOnly: true
+          title: updatedAt
+          type: string
+      required:
+      - platformUserId
+      - umaAddress
+      - userType
+      title: User
+    IndividualUser:
+      allOf:
+      - $ref: '#/components/schemas/User'
+      - properties:
+          fullName:
+            description: Individual's full name
+            example: John Michael Doe
+            type: string
+          dateOfBirth:
+            description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+            example: 1990-01-15
+            format: date
+            type: string
+          address:
+            $ref: '#/components/schemas/Address'
+          bankAccountInfo:
+            $ref: '#/components/schemas/BankAccountInfo'
+        required:
+        - address
+        - bankAccountInfo
+        - dateOfBirth
+        - fullName
+      title: IndividualUser
+    BusinessUser:
+      allOf:
+      - $ref: '#/components/schemas/User'
+      - properties:
+          address:
+            $ref: '#/components/schemas/Address'
+          bankAccountInfo:
+            $ref: '#/components/schemas/BankAccountInfo'
+          businessInfo:
+            $ref: '#/components/schemas/BusinessUser_allOf_businessInfo'
+        required:
+        - address
+        - bankAccountInfo
+        - businessInfo
+      title: BusinessUser
+    CounterpartyFieldDefinition:
+      properties:
+        name:
+          description: Name of the counterparty field
+          enum:
+          - FULL_NAME
+          - ADDRESS
+          - DATE_OF_BIRTH
+          - TAX_ID
+          - REGISTRATION_NUMBER
+          - ACCOUNT_NUMBER
+          example: FULL_NAME
+          title: name
+          type: string
+        mandatory:
+          description: Whether the field is mandatory
+          example: true
+          title: mandatory
+          type: boolean
+      title: CounterpartyFieldDefinition
+    PlatformConfig:
+      properties:
+        id:
+          description: System-generated unique identifier
+          example: PlatformConfig:019542f5-b3e7-1d02-0000-000000000003
+          readOnly: true
+          type: string
+        umaDomain:
+          description: UMA domain for this platform
+          example: platform.uma.domain
+          type: string
+        webhookEndpoint:
+          description: URL where webhook notifications will be sent
+          example: https://api.mycompany.com/webhooks/uma
+          type: string
+        requiredCounterpartyFields:
+          description: List of counterparty fields and their requirements
+          example:
+          - name: FULL_NAME
+            mandatory: true
+          - name: DATE_OF_BIRTH
+            mandatory: true
+          items:
+            $ref: '#/components/schemas/CounterpartyFieldDefinition'
+          type: array
+        createdAt:
+          description: Creation timestamp
+          example: 2023-06-15T12:30:45Z
+          format: date-time
+          readOnly: true
+          type: string
+        updatedAt:
+          description: Last update timestamp
+          example: 2023-06-15T12:30:45Z
+          format: date-time
+          readOnly: true
+          type: string
+    TransactionStatus:
+      description: Status of a payment transaction
+      enum:
+      - PENDING
+      - COMPLETED
+      - FAILED
+      - REFUNDED
+      title: TransactionStatus
+      type: string
+    TransactionType:
+      description: Type of transaction (incoming payment or outgoing payment)
+      enum:
+      - INCOMING
+      - OUTGOING
+      title: TransactionType
+      type: string
+    WebhookType:
+      description: "Type of webhook event, used by the receiver to identify which\
+        \ webhook is being received"
+      enum:
+      - INCOMING_PAYMENT
+      - OUTGOING_PAYMENT
+      - TEST
+      - BULK_UPLOAD
+      type: string
+    Currency:
+      properties:
+        code:
+          description: "Three-letter currency code (ISO 4217) for fiat currencies.\
+            \ Some cryptocurrencies may use their own ticker symbols (e.g. \"SAT\"\
+            \ for satoshis, \"USDC\" for USDCoin, etc.)"
+          example: USD
+          title: code
+          type: string
+        name:
+          description: Full name of the currency
+          example: United States Dollar
+          title: name
+          type: string
+        symbol:
+          description: Symbol of the currency
+          example: $
+          title: symbol
+          type: string
+        decimals:
+          description: Number of decimal places for the currency
+          example: 2
+          minimum: 0
+          title: decimals
+          type: integer
+      title: Currency
+    CurrencyAmount:
+      properties:
+        amount:
+          description: "Amount in the smallest unit of the currency (e.g., cents for\
+            \ USD/EUR, satoshis for BTC)"
+          example: 12550
+          format: int64
+          title: amount
+          type: integer
+        currency:
+          $ref: '#/components/schemas/Currency'
+      required:
+      - amount
+      - currency
+      title: CurrencyAmount
+    Transaction:
+      properties:
+        transactionId:
+          description: Unique identifier for the transaction
+          example: Transaction:019542f5-b3e7-1d02-0000-000000000004
+          title: transactionId
+          type: string
+        status:
+          $ref: '#/components/schemas/TransactionStatus'
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        senderUmaAddress:
+          description: UMA address of the payment sender
+          example: $sender@external.domain
+          title: senderUmaAddress
+          type: string
+        receiverUmaAddress:
+          description: UMA address of the payment recipient
+          example: $recipient@uma.domain
+          title: receiverUmaAddress
+          type: string
+        userId:
+          description: "System ID of the user (sender for outgoing, recipient for\
+            \ incoming)"
+          example: User:019542f5-b3e7-1d02-0000-000000000001
+          title: userId
+          type: string
+        platformUserId:
+          description: "Platform-specific ID of the user (sender for outgoing, recipient\
+            \ for incoming)"
+          example: 18d3e5f7b4a9c2
+          title: platformUserId
+          type: string
+        settlementTime:
+          description: When the payment was or will be settled
+          example: 2023-08-15T14:30:00Z
+          format: date-time
+          title: settlementTime
+          type: string
+        createdAt:
+          description: When the transaction was created
+          example: 2023-08-15T14:25:18Z
+          format: date-time
+          title: createdAt
+          type: string
+        description:
+          description: Optional memo or description for the payment
+          example: "Payment for invoice #1234"
+          title: description
+          type: string
+        counterpartyInformation:
+          additionalProperties: true
+          description: "Additional information about the counterparty, if available"
+          example:
+            fullName: John Sender
+            country: DE
+          title: counterpartyInformation
+          type: object
+      required:
+      - platformUserId
+      - receiverUmaAddress
+      - senderUmaAddress
+      - status
+      - transactionId
+      - type
+      - userId
+      title: Transaction
+    IncomingTransaction:
+      allOf:
+      - $ref: '#/components/schemas/Transaction'
+      - properties:
+          type:
+            $ref: '#/components/schemas/TransactionType'
+          receivedAmount:
+            $ref: '#/components/schemas/CurrencyAmount'
+        required:
+        - receivedAmount
+      title: IncomingTransaction
+    OutgoingTransaction:
+      allOf:
+      - $ref: '#/components/schemas/Transaction'
+      - properties:
+          type:
+            $ref: '#/components/schemas/TransactionType'
+          sentAmount:
+            $ref: '#/components/schemas/CurrencyAmount'
+          receivedAmount:
+            $ref: '#/components/schemas/CurrencyAmount'
+          exchangeRate:
+            description: Number of sending currency units per receiving currency unit.
+            example: 1.08
+            type: number
+          fees:
+            description: The fees associated with the quote in the smallest unit of
+              the sending currency (eg. cents).
+            example: 10
+            format: int64
+            minimum: 0
+            type: integer
+          quoteId:
+            description: The ID of the quote that was used to trigger this payment
+            example: Quote:019542f5-b3e7-1d02-0000-000000000006
+            type: string
+        required:
+        - sentAmount
+      title: OutgoingTransaction
+    CurrencyPreference:
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        estimatedExchangeRate:
+          description: An estimated exchange rate from the sender's currency to this
+            currency. This is not a locked rate and is subject to change when calling
+            the quotes endpoint.
+          example: 1.08
+          title: estimatedExchangeRate
+          type: number
+        min:
+          description: The minimum amount that can be received in this currency.
+          example: 1
+          format: int64
+          title: min
+          type: integer
+        max:
+          description: The maximum amount that can be received in this currency.
+          example: 1000000
+          format: int64
+          title: max
+          type: integer
+      required:
+      - currency
+      - estimatedExchangeRate
+      - max
+      - min
+      title: CurrencyPreference
+    QuoteLockSide:
+      description: "The side of the quote which should be locked and specified in\
+        \ the `lockedCurrencyAmount`. For example, if I want to send exactly $5 MXN\
+        \ from my wallet, I would set this to \"sending\", and the `lockedCurrencyAmount`\
+        \ to 500 (in cents). If I want the receiver to receive exactly $10 USD, I\
+        \ would set this to \"receiving\" and the `lockedCurrencyAmount` to 10000\
+        \ (in cents)."
+      enum:
+      - SENDING
+      - RECEIVING
+      title: QuoteLockSide
+      type: string
+    Quote:
+      properties:
+        quoteId:
+          description: Unique identifier for this quote
+          example: Quote:019542f5-b3e7-1d02-0000-000000000006
+          type: string
+        sendingCurrency:
+          $ref: '#/components/schemas/Currency'
+        receivingCurrency:
+          $ref: '#/components/schemas/Currency'
+        totalSendingAmount:
+          description: The total amount that will be sent in the smallest unit of
+            the sending currency (eg. cents).
+          example: 123010
+          format: int64
+          type: integer
+        totalReceivingAmount:
+          description: The total amount that will be received in the smallest unit
+            of the receiving currency (eg. cents).
+          example: 1000
+          format: int64
+          type: integer
+        exchangeRate:
+          description: Number of sending currency units per receiving currency unit.
+          type: number
+        expiresAt:
+          description: When this quote expires (typically 1-5 minutes after creation)
+          example: 2023-09-01T14:30:00Z
+          format: date-time
+          type: string
+        feesIncluded:
+          description: The fees associated with the quote in the smallest unit of
+            the sending currency (eg. cents).
+          example: 10
+          format: int64
+          minimum: 0
+          type: integer
+        counterpartyInformation:
+          additionalProperties: true
+          description: "Information about the recipient, as required by the platform\
+            \ in their configuration."
+          example:
+            fullName: Jane Receiver
+            country: FR
+          type: object
+        paymentInstructions:
+          $ref: '#/components/schemas/PaymentInstructions'
+        status:
+          description: Current status of the quote
+          enum:
+          - PENDING
+          - PROCESSING
+          - COMPLETED
+          - FAILED
+          - EXPIRED
+          example: PENDING
+          type: string
+        transactionId:
+          description: The ID of the transaction created from this quote. Only present
+            if the quote has started processing.
+          example: Transaction:019542f5-b3e7-1d02-0000-000000000005
+          type: string
+      required:
+      - exchangeRate
+      - expiresAt
+      - feesIncluded
+      - paymentInstructions
+      - quoteId
+      - receivingCurrency
+      - sendingCurrency
+      - totalReceivingAmount
+      - totalSendingAmount
+    listUsers_200_response_data_inner:
+      oneOf:
+      - $ref: '#/components/schemas/IndividualUser'
+      - $ref: '#/components/schemas/BusinessUser'
+      title: listUsers_200_response_data_inner
+    listUsers_200_response:
+      properties:
+        data:
+          description: List of users matching the filter criteria
+          items:
+            $ref: '#/components/schemas/listUsers_200_response_data_inner'
+          type: array
+        hasMore:
+          description: Indicates if more results are available beyond this page
+          type: boolean
+        nextCursor:
+          description: Cursor to retrieve the next page of results (only present if
+            hasMore is true)
+          type: string
+        totalCount:
+          description: Total number of users matching the criteria (excluding pagination)
+          type: integer
+      required:
+      - data
+      - hasMore
+    individualUpdate:
+      properties:
+        userType:
+          description: Update user type to individual
+          enum:
+          - INDIVIDUAL
+          title: userType
+          type: string
+        fullName:
+          description: Individual's full name
+          title: fullName
+          type: string
+        dateOfBirth:
+          description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+          format: date
+          title: dateOfBirth
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        bankAccountInfo:
+          $ref: '#/components/schemas/BankAccountInfo'
+      title: individualUpdate
+    businessUpdate_businessInfo:
+      properties:
+        legalName:
+          description: Legal name of the business
+          title: legalName
+          type: string
+        registrationNumber:
+          description: Business registration number
+          title: registrationNumber
+          type: string
+        taxId:
+          description: Tax identification number
+          title: taxId
+          type: string
+      title: businessUpdate_businessInfo
+    businessUpdate:
+      properties:
+        userType:
+          description: Update user type to business
+          enum:
+          - BUSINESS
+          title: userType
+          type: string
+        businessInfo:
+          $ref: '#/components/schemas/businessUpdate_businessInfo'
+        address:
+          $ref: '#/components/schemas/Address'
+        bankAccountInfo:
+          $ref: '#/components/schemas/BankAccountInfo'
+      title: businessUpdate
+    updateUserById_request:
+      oneOf:
+      - $ref: '#/components/schemas/individualUpdate'
+      - $ref: '#/components/schemas/businessUpdate'
+    updatePlatformConfig_request:
+      properties:
+        umaDomain:
+          example: mycompany.com
+          type: string
+        webhookEndpoint:
+          example: https://api.mycompany.com/webhooks/uma
+          type: string
+        requiredCounterpartyFields:
+          items:
+            $ref: '#/components/schemas/CounterpartyFieldDefinition'
+          type: array
+    getTransactionById_200_response:
+      oneOf:
+      - $ref: '#/components/schemas/IncomingTransaction'
+      - $ref: '#/components/schemas/OutgoingTransaction'
+      title: getTransactionById_200_response
+    listTransactions_200_response:
+      properties:
+        data:
+          description: List of transactions matching the criteria
+          items:
+            $ref: '#/components/schemas/getTransactionById_200_response'
+          type: array
+        hasMore:
+          description: Indicates if more results are available beyond this page
+          type: boolean
+        nextCursor:
+          description: Cursor to retrieve the next page of results (only present if
+            hasMore is true)
+          type: string
+        totalCount:
+          description: Total number of transactions matching the criteria (excluding
+            pagination)
+          type: integer
+      required:
+      - data
+      - hasMore
+    lookupUma_200_response:
+      properties:
+        receivingUmaAddress:
+          description: The UMA address that was looked up
+          example: $receiver@uma.domain
+          type: string
+        supportedCurrencies:
+          description: List of currencies supported by the receiving UMA address
+          items:
+            $ref: '#/components/schemas/CurrencyPreference'
+          type: array
+        requiredPayerDataFields:
+          description: Fields required by the receiving institution about the payer
+            before payment can be completed
+          items:
+            $ref: '#/components/schemas/CounterpartyFieldDefinition'
+          type: array
+      required:
+      - receivingUmaAddress
+      - supportedCurrencies
+    createQuote_request:
+      properties:
+        receiverUmaAddress:
+          description: UMA address of the recipient
+          example: $receiver@uma.domain
+          type: string
+        senderUmaAddress:
+          description: UMA address of the sender (optional if userId or platformUserId
+            is provided)
+          example: $sender@uma.domain
+          type: string
+        userId:
+          description: System ID of the sender (optional if senderUmaAddress or platformUserId
+            is provided)
+          example: User:019542f5-b3e7-1d02-0000-000000000001
+          type: string
+        platformUserId:
+          description: Platform ID of the sender (optional if senderUmaAddress or
+            userId is provided)
+          example: 18d3e5f7b4a9c2
+          type: string
+        sendingCurrencyCode:
+          description: Currency code for the sending amount
+          example: USD
+          type: string
+        receivingCurrencyCode:
+          description: Currency code for the receiving amount
+          example: EUR
+          type: string
+        lockedCurrencySide:
+          $ref: '#/components/schemas/QuoteLockSide'
+        lockedCurrencyAmount:
+          description: The amount to send/receive in the smallest unit of the locked
+            currency (eg. cents). See `lockedCurrencySide` for more information.
+          example: 1000
+          format: int64
+          type: integer
+        description:
+          description: Optional description/memo for the payment
+          example: "Invoice #1234 payment"
+          type: string
+      required:
+      - lockedCurrencyAmount
+      - lockedCurrencySide
+      - receiverUmaAddress
+      - receivingCurrencyCode
+      - sendingCurrencyCode
+    createQuote_422_response:
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - properties:
+          code: {}
+          message: {}
+          details: {}
+    getPaymentStatus_200_response:
+      properties:
+        quoteId:
+          description: ID of the quote
+          example: Quote:019542f5-b3e7-1d02-0000-000000000006
+          type: string
+        status:
+          description: Current status of the payment
+          enum:
+          - PENDING
+          - RECEIVED
+          - PROCESSING
+          - COMPLETED
+          - FAILED
+          - EXPIRED
+          example: RECEIVED
+          type: string
+        statusMessage:
+          description: Human-readable description of the current status
+          example: Payment received and being processed
+          type: string
+        transaction:
+          $ref: '#/components/schemas/OutgoingTransaction'
+      required:
+      - quoteId
+      - status
+    uploadUsersCsv_request:
+      properties:
+        file:
+          description: CSV file containing user information
+          format: binary
+          type: string
+        webhookUrl:
+          description: "Optional webhook URL for job status updates. If not provided,\
+            \ the platform's default webhook URL will be used."
+          format: uri
+          type: string
+      required:
+      - file
+    uploadUsersCsv_202_response_validationSummary_errors_inner:
+      properties:
+        row:
+          description: Row number in the CSV file (1-based)
+          title: row
+          type: integer
+        errors:
+          items:
+            type: string
+          title: errors
+          type: array
+      title: uploadUsersCsv_202_response_validationSummary_errors_inner
+    uploadUsersCsv_202_response_validationSummary:
+      description: Summary of CSV validation results
+      properties:
+        totalRows:
+          description: Total number of rows in the CSV file
+          title: totalRows
+          type: integer
+        validRows:
+          description: Number of rows that passed initial validation
+          title: validRows
+          type: integer
+        invalidRows:
+          description: Number of rows that failed validation
+          title: invalidRows
+          type: integer
+        errors:
+          items:
+            $ref: '#/components/schemas/uploadUsersCsv_202_response_validationSummary_errors_inner'
+          title: errors
+          type: array
+      title: uploadUsersCsv_202_response_validationSummary
+    uploadUsersCsv_202_response:
+      properties:
+        jobId:
+          description: Unique identifier for the bulk import job
+          type: string
+        status:
+          enum:
+          - PENDING
+          - PROCESSING
+          type: string
+        validationSummary:
+          $ref: '#/components/schemas/uploadUsersCsv_202_response_validationSummary'
+      required:
+      - jobId
+      - status
+    getBulkUserImportJob_200_response_progress:
+      properties:
+        total:
+          description: Total number of users to process
+          example: 5000
+          title: total
+          type: integer
+        processed:
+          description: Number of users processed so far
+          example: 2500
+          title: processed
+          type: integer
+        successful:
+          description: Number of users successfully created
+          example: 2450
+          title: successful
+          type: integer
+        failed:
+          description: Number of users that failed to create
+          example: 50
+          title: failed
+          type: integer
+      required:
+      - failed
+      - processed
+      - successful
+      - total
+      title: getBulkUserImportJob_200_response_progress
+    getBulkUserImportJob_200_response_errors_inner:
+      properties:
+        correlationId:
+          description: Platform user ID or row number for the failed entry
+          example: biz456
+          title: correlationId
+          type: string
+        error:
+          $ref: '#/components/schemas/Error'
+      required:
+      - correlationId
+      - error
+      title: getBulkUserImportJob_200_response_errors_inner
+    getBulkUserImportJob_200_response:
+      properties:
+        jobId:
+          description: Unique identifier for the bulk import job
+          example: job_123456789
+          type: string
+        status:
+          description: Current status of the job
+          enum:
+          - PENDING
+          - PROCESSING
+          - COMPLETED
+          - FAILED
+          example: PROCESSING
+          type: string
+        progress:
+          $ref: '#/components/schemas/getBulkUserImportJob_200_response_progress'
+        errors:
+          description: Detailed error information for failed entries
+          items:
+            $ref: '#/components/schemas/getBulkUserImportJob_200_response_errors_inner'
+          type: array
+        completedAt:
+          description: Timestamp when the job completed (only present for COMPLETED
+            or FAILED status)
+          example: 2023-08-15T14:32:00Z
+          format: date-time
+          type: string
+      required:
+      - jobId
+      - progress
+      - status
+    PaymentInstructions_bankAccountInfo:
+      discriminator:
+        propertyName: accountType
+      oneOf:
+      - $ref: '#/components/schemas/ClabeAccountInfo'
+      - $ref: '#/components/schemas/UsAccountInfo'
+      - $ref: '#/components/schemas/PixAccountInfo'
+      - $ref: '#/components/schemas/IbanAccountInfo'
+      title: PaymentInstructions_bankAccountInfo
+    BusinessUser_allOf_businessInfo:
+      description: Additional information required for business entities
+      properties:
+        legalName:
+          description: Legal name of the business
+          example: "Acme Corporation, Inc."
+          title: legalName
+          type: string
+        registrationNumber:
+          description: Business registration number
+          example: BRN-123456789
+          title: registrationNumber
+          type: string
+        taxId:
+          description: Tax identification number
+          example: EIN-987654321
+          title: taxId
+          type: string
+      required:
+      - legalName
+      title: BusinessUser_allOf_businessInfo
+  securitySchemes:
+    BasicAuth:
+      description: API token authentication using format `<api token id>:<api client
+        secret>`
+      scheme: basic
+      type: http
+    WebhookSignature:
+      description: |
+        HMAC-SHA256 signature of the webhook payload, which can be used to verify that the webhook was sent by UMAaas.
+
+        The signature is created by:
+        1. Taking the entire webhook request body as a string
+        2. Creating an HMAC-SHA256 hash of the request body using the webhook secret as the key
+        3. Encoding the hash in hexadecimal format
+        4. Compare this value to the signature in the `X-UMAaas-Signature` header
+
+        If the values match, the webhook is authentic. If not, it should be rejected.
+      in: header
+      name: X-UMAaas-Signature
+      type: apiKey
