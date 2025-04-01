@@ -358,6 +358,41 @@ components:
           description: Whether the field is mandatory
           example: true
 
+    PlatformCurrencyConfig:
+      type: object
+      properties:
+        currencyCode:
+          type: string
+          description: Three-letter currency code (ISO 4217)
+          example: "USD"
+        minAmount:
+          type: integer
+          format: int64
+          description: Minimum amount that can be sent in the smallest unit of this currency
+          minimum: 0
+          example: 100
+        maxAmount:
+          type: integer
+          format: int64
+          description: Maximum amount that can be sent in the smallest unit of this currency
+          minimum: 0
+          example: 1000000
+        requiredCounterpartyFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/CounterpartyFieldDefinition'
+          description: List of counterparty fields and their requirements
+          example:
+            - name: "FULL_NAME"
+              mandatory: true
+            - name: "DATE_OF_BIRTH"
+              mandatory: true
+      required:
+        - currencyCode
+        - minAmount
+        - maxAmount
+        - requiredCounterpartyFields
+
     PlatformConfig:
       type: object
       properties:
@@ -374,16 +409,11 @@ components:
           type: string
           description: URL where webhook notifications will be sent
           example: "https://api.mycompany.com/webhooks/uma"
-        requiredCounterpartyFields:
+        supportedCurrencies:
           type: array
           items:
-            $ref: '#/components/schemas/CounterpartyFieldDefinition'
-          description: List of counterparty fields and their requirements
-          example:
-            - name: "FULL_NAME"
-              mandatory: true
-            - name: "DATE_OF_BIRTH"
-              mandatory: true
+            $ref: '#/components/schemas/PlatformCurrencyConfig'
+          description: List of currencies supported by the platform
         createdAt:
           type: string
           format: date-time
@@ -1064,22 +1094,26 @@ paths:
                 webhookEndpoint:
                   type: string
                   example: "https://api.mycompany.com/webhooks/uma"
-                requiredCounterpartyFields:
+                supportedCurrencies:
                   type: array
                   items:
-                    $ref: '#/components/schemas/CounterpartyFieldDefinition'
+                    $ref: '#/components/schemas/PlatformCurrencyConfig'
             example:
               umaDomain: "mycompany.com"
               webhookEndpoint: "https://api.mycompany.com/webhooks/uma"
-              requiredCounterpartyFields:
-                - name: "FULL_NAME"
-                  mandatory: true
-                - name: "ADDRESS"
-                  mandatory: true
-                - name: "DATE_OF_BIRTH"
-                  mandatory: true
-                - name: "TAX_ID"
-                  mandatory: false
+              supportedCurrencies:
+                - currencyCode: "USD"
+                  minAmount: 100
+                  maxAmount: 1000000
+                  requiredCounterpartyFields:
+                    - name: "FULL_NAME"
+                      mandatory: true
+                    - name: "ADDRESS"
+                      mandatory: true
+                    - name: "DATE_OF_BIRTH"
+                      mandatory: true
+                    - name: "TAX_ID"
+                      mandatory: false
       responses:
         '200':
           description: Configuration updated successfully

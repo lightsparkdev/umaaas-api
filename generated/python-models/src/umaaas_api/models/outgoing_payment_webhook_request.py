@@ -23,24 +23,23 @@ import json
 
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
-from umaaas_api.models.platform_currency_config import PlatformCurrencyConfig
+from typing import Any, ClassVar, Dict, List
+from umaaas_api.models.outgoing_transaction import OutgoingTransaction
+from umaaas_api.models.webhook_type import WebhookType
 try:
     from typing import Self
 except ImportError:
     from typing_extensions import Self
 
-class PlatformConfig(BaseModel):
+class OutgoingPaymentWebhookRequest(BaseModel):
     """
-    PlatformConfig
+    OutgoingPaymentWebhookRequest
     """ # noqa: E501
-    id: Optional[StrictStr] = Field(default=None, description="System-generated unique identifier")
-    uma_domain: Optional[StrictStr] = Field(default=None, description="UMA domain for this platform", alias="umaDomain")
-    webhook_endpoint: Optional[StrictStr] = Field(default=None, description="URL where webhook notifications will be sent", alias="webhookEndpoint")
-    supported_currencies: Optional[List[PlatformCurrencyConfig]] = Field(default=None, description="List of currencies supported by the platform", alias="supportedCurrencies")
-    created_at: Optional[datetime] = Field(default=None, description="Creation timestamp", alias="createdAt")
-    updated_at: Optional[datetime] = Field(default=None, description="Last update timestamp", alias="updatedAt")
-    __properties: ClassVar[List[str]] = ["id", "umaDomain", "webhookEndpoint", "supportedCurrencies", "createdAt", "updatedAt"]
+    transaction: OutgoingTransaction
+    timestamp: datetime = Field(description="ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)")
+    webhook_id: StrictStr = Field(description="Unique identifier for this webhook delivery (can be used for idempotency)", alias="webhookId")
+    type: WebhookType = Field(description="Type of webhook event")
+    __properties: ClassVar[List[str]] = ["transaction", "timestamp", "webhookId", "type"]
 
     model_config = {
         "populate_by_name": True,
@@ -59,7 +58,7 @@ class PlatformConfig(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Self:
-        """Create an instance of PlatformConfig from a JSON string"""
+        """Create an instance of OutgoingPaymentWebhookRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -71,33 +70,23 @@ class PlatformConfig(BaseModel):
         * `None` is only added to the output dict for nullable fields that
           were set at model initialization. Other fields with value `None`
           are ignored.
-        * OpenAPI `readOnly` fields are excluded.
-        * OpenAPI `readOnly` fields are excluded.
-        * OpenAPI `readOnly` fields are excluded.
         """
         _dict = self.model_dump(
             mode="json",
             by_alias=True,
             exclude={
-                "id",
-                "created_at",
-                "updated_at",
             },
             exclude_none=True,
             exclude_unset=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of each item in supported_currencies (list)
-        _items = []
-        if self.supported_currencies:
-            for _item in self.supported_currencies:
-                if _item:
-                    _items.append(_item.to_dict())
-            _dict['supportedCurrencies'] = _items
+        # override the default output from pydantic by calling `to_dict()` of transaction
+        if self.transaction:
+            _dict['transaction'] = self.transaction.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Dict) -> Self:
-        """Create an instance of PlatformConfig from a dict"""
+        """Create an instance of OutgoingPaymentWebhookRequest from a dict"""
         if obj is None:
             return None
 
@@ -105,12 +94,10 @@ class PlatformConfig(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "id": obj.get("id"),
-            "umaDomain": obj.get("umaDomain"),
-            "webhookEndpoint": obj.get("webhookEndpoint"),
-            "supportedCurrencies": [PlatformCurrencyConfig.from_dict(_item) for _item in obj.get("supportedCurrencies")] if obj.get("supportedCurrencies") is not None else None,
-            "createdAt": obj.get("createdAt"),
-            "updatedAt": obj.get("updatedAt")
+            "transaction": OutgoingTransaction.from_dict(obj.get("transaction")) if obj.get("transaction") is not None else None,
+            "timestamp": obj.get("timestamp"),
+            "webhookId": obj.get("webhookId"),
+            "type": obj.get("type")
         })
         return _obj
 

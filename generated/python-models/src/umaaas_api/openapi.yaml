@@ -377,15 +377,19 @@ paths:
             example:
               umaDomain: mycompany.com
               webhookEndpoint: https://api.mycompany.com/webhooks/uma
-              requiredCounterpartyFields:
-              - name: FULL_NAME
-                mandatory: true
-              - name: ADDRESS
-                mandatory: true
-              - name: DATE_OF_BIRTH
-                mandatory: true
-              - name: TAX_ID
-                mandatory: false
+              supportedCurrencies:
+              - currencyCode: USD
+                minAmount: 100
+                maxAmount: 1000000
+                requiredCounterpartyFields:
+                - name: FULL_NAME
+                  mandatory: true
+                - name: ADDRESS
+                  mandatory: true
+                - name: DATE_OF_BIRTH
+                  mandatory: true
+                - name: TAX_ID
+                  mandatory: false
             schema:
               $ref: '#/components/schemas/updatePlatformConfig_request'
         required: true
@@ -1299,6 +1303,46 @@ components:
           title: mandatory
           type: boolean
       title: CounterpartyFieldDefinition
+    PlatformCurrencyConfig:
+      properties:
+        currencyCode:
+          description: Three-letter currency code (ISO 4217)
+          example: USD
+          title: currencyCode
+          type: string
+        minAmount:
+          description: Minimum amount that can be sent in the smallest unit of this
+            currency
+          example: 100
+          format: int64
+          minimum: 0
+          title: minAmount
+          type: integer
+        maxAmount:
+          description: Maximum amount that can be sent in the smallest unit of this
+            currency
+          example: 1000000
+          format: int64
+          minimum: 0
+          title: maxAmount
+          type: integer
+        requiredCounterpartyFields:
+          description: List of counterparty fields and their requirements
+          example:
+          - name: FULL_NAME
+            mandatory: true
+          - name: DATE_OF_BIRTH
+            mandatory: true
+          items:
+            $ref: '#/components/schemas/CounterpartyFieldDefinition'
+          title: requiredCounterpartyFields
+          type: array
+      required:
+      - currencyCode
+      - maxAmount
+      - minAmount
+      - requiredCounterpartyFields
+      title: PlatformCurrencyConfig
     PlatformConfig:
       properties:
         id:
@@ -1314,15 +1358,10 @@ components:
           description: URL where webhook notifications will be sent
           example: https://api.mycompany.com/webhooks/uma
           type: string
-        requiredCounterpartyFields:
-          description: List of counterparty fields and their requirements
-          example:
-          - name: FULL_NAME
-            mandatory: true
-          - name: DATE_OF_BIRTH
-            mandatory: true
+        supportedCurrencies:
+          description: List of currencies supported by the platform
           items:
-            $ref: '#/components/schemas/CounterpartyFieldDefinition'
+            $ref: '#/components/schemas/PlatformCurrencyConfig'
           type: array
         createdAt:
           description: Creation timestamp
@@ -1710,9 +1749,9 @@ components:
         webhookEndpoint:
           example: https://api.mycompany.com/webhooks/uma
           type: string
-        requiredCounterpartyFields:
+        supportedCurrencies:
           items:
-            $ref: '#/components/schemas/CounterpartyFieldDefinition'
+            $ref: '#/components/schemas/PlatformCurrencyConfig'
           type: array
     getTransactionById_200_response:
       oneOf:
@@ -1974,6 +2013,149 @@ components:
       - jobId
       - progress
       - status
+    incomingPaymentWebhook_request:
+      properties:
+        transaction:
+          $ref: '#/components/schemas/IncomingTransaction'
+        timestamp:
+          description: ISO8601 timestamp when the webhook was sent (can be used to
+            prevent replay attacks)
+          example: 2023-08-15T14:32:00Z
+          format: date-time
+        webhookId:
+          description: Unique identifier for this webhook delivery (can be used for
+            idempotency)
+          example: Webhook:019542f5-b3e7-1d02-0000-000000000007
+        type:
+          $ref: '#/components/schemas/WebhookType'
+      required:
+      - timestamp
+      - transaction
+      - type
+      - webhookId
+    incomingPaymentWebhook_403_response:
+      allOf:
+      - $ref: '#/components/schemas/Error'
+      - properties:
+          code:
+            example: payment_rejected
+          message:
+            example: Payment rejected due to compliance policy
+          details:
+            example:
+              reason: failed_counterparty_check
+              rejectionReason: User is in a restricted jurisdiction
+    outgoingPaymentWebhook_request:
+      properties:
+        transaction:
+          $ref: '#/components/schemas/OutgoingTransaction'
+        timestamp:
+          description: ISO8601 timestamp when the webhook was sent (can be used to
+            prevent replay attacks)
+          example: 2023-08-15T14:32:00Z
+          format: date-time
+        webhookId:
+          description: Unique identifier for this webhook delivery (can be used for
+            idempotency)
+          example: Webhook:019542f5-b3e7-1d02-0000-000000000007
+        type:
+          $ref: '#/components/schemas/WebhookType'
+      required:
+      - timestamp
+      - transaction
+      - type
+      - webhookId
+    testWebhook_request:
+      properties:
+        test:
+          description: Indicates this is a test webhook
+          example: true
+        timestamp:
+          description: ISO8601 timestamp when the webhook was sent (can be used to
+            prevent replay attacks)
+          example: 2023-08-15T14:32:00Z
+          format: date-time
+        webhookId:
+          description: Unique identifier for this webhook delivery (can be used for
+            idempotency)
+          example: Webhook:019542f5-b3e7-1d02-0000-000000000001
+        type:
+          $ref: '#/components/schemas/WebhookType'
+      required:
+      - test
+      - timestamp
+      - type
+      - webhookId
+    bulkUploadWebhook_request_progress:
+      properties:
+        total:
+          description: Total number of users to process
+          example: 5000
+          title: total
+        processed:
+          description: Number of users processed
+          example: 5000
+          title: processed
+        successful:
+          description: Number of users successfully created
+          example: 4950
+          title: successful
+        failed:
+          description: Number of users that failed to create
+          example: 50
+          title: failed
+      required:
+      - failed
+      - processed
+      - successful
+      - total
+      title: bulkUploadWebhook_request_progress
+    bulkUploadWebhook_request_errors_inner:
+      properties:
+        correlationId:
+          description: Platform user ID or row number for the failed entry
+          example: biz456
+          title: correlationId
+        error:
+          $ref: '#/components/schemas/Error'
+      required:
+      - correlationId
+      - error
+      title: bulkUploadWebhook_request_errors_inner
+    bulkUploadWebhook_request:
+      properties:
+        jobId:
+          description: ID of the bulk upload job
+          example: job_123456789
+        status:
+          description: Final status of the bulk upload job
+          enum:
+          - SUCCESS
+          - PARTIAL_SUCCESS
+          - FAILED
+          example: SUCCESS
+        timestamp:
+          description: ISO8601 timestamp when the webhook was sent
+          example: 2023-08-15T14:32:00Z
+          format: date-time
+        webhookId:
+          description: Unique identifier for this webhook delivery
+          example: Webhook:019542f5-b3e7-1d02-0000-000000000008
+        type:
+          $ref: '#/components/schemas/WebhookType'
+        progress:
+          $ref: '#/components/schemas/bulkUploadWebhook_request_progress'
+        errors:
+          description: Detailed error information for failed entries
+          items:
+            $ref: '#/components/schemas/bulkUploadWebhook_request_errors_inner'
+      required:
+      - jobId
+      - progress
+      - status
+      - timestamp
+      - type
+      - webhookId
     PaymentInstructions_bankAccountInfo:
       discriminator:
         propertyName: accountType

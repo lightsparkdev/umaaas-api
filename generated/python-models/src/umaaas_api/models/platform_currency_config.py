@@ -21,26 +21,24 @@ import json
 
 
 
-from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
-from umaaas_api.models.platform_currency_config import PlatformCurrencyConfig
+from typing import Any, ClassVar, Dict, List
+from typing_extensions import Annotated
+from umaaas_api.models.counterparty_field_definition import CounterpartyFieldDefinition
 try:
     from typing import Self
 except ImportError:
     from typing_extensions import Self
 
-class PlatformConfig(BaseModel):
+class PlatformCurrencyConfig(BaseModel):
     """
-    PlatformConfig
+    PlatformCurrencyConfig
     """ # noqa: E501
-    id: Optional[StrictStr] = Field(default=None, description="System-generated unique identifier")
-    uma_domain: Optional[StrictStr] = Field(default=None, description="UMA domain for this platform", alias="umaDomain")
-    webhook_endpoint: Optional[StrictStr] = Field(default=None, description="URL where webhook notifications will be sent", alias="webhookEndpoint")
-    supported_currencies: Optional[List[PlatformCurrencyConfig]] = Field(default=None, description="List of currencies supported by the platform", alias="supportedCurrencies")
-    created_at: Optional[datetime] = Field(default=None, description="Creation timestamp", alias="createdAt")
-    updated_at: Optional[datetime] = Field(default=None, description="Last update timestamp", alias="updatedAt")
-    __properties: ClassVar[List[str]] = ["id", "umaDomain", "webhookEndpoint", "supportedCurrencies", "createdAt", "updatedAt"]
+    currency_code: StrictStr = Field(description="Three-letter currency code (ISO 4217)", alias="currencyCode")
+    min_amount: Annotated[int, Field(strict=True, ge=0)] = Field(description="Minimum amount that can be sent in the smallest unit of this currency", alias="minAmount")
+    max_amount: Annotated[int, Field(strict=True, ge=0)] = Field(description="Maximum amount that can be sent in the smallest unit of this currency", alias="maxAmount")
+    required_counterparty_fields: List[CounterpartyFieldDefinition] = Field(description="List of counterparty fields and their requirements", alias="requiredCounterpartyFields")
+    __properties: ClassVar[List[str]] = ["currencyCode", "minAmount", "maxAmount", "requiredCounterpartyFields"]
 
     model_config = {
         "populate_by_name": True,
@@ -59,7 +57,7 @@ class PlatformConfig(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Self:
-        """Create an instance of PlatformConfig from a JSON string"""
+        """Create an instance of PlatformCurrencyConfig from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -71,33 +69,27 @@ class PlatformConfig(BaseModel):
         * `None` is only added to the output dict for nullable fields that
           were set at model initialization. Other fields with value `None`
           are ignored.
-        * OpenAPI `readOnly` fields are excluded.
-        * OpenAPI `readOnly` fields are excluded.
-        * OpenAPI `readOnly` fields are excluded.
         """
         _dict = self.model_dump(
             mode="json",
             by_alias=True,
             exclude={
-                "id",
-                "created_at",
-                "updated_at",
             },
             exclude_none=True,
             exclude_unset=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of each item in supported_currencies (list)
+        # override the default output from pydantic by calling `to_dict()` of each item in required_counterparty_fields (list)
         _items = []
-        if self.supported_currencies:
-            for _item in self.supported_currencies:
+        if self.required_counterparty_fields:
+            for _item in self.required_counterparty_fields:
                 if _item:
                     _items.append(_item.to_dict())
-            _dict['supportedCurrencies'] = _items
+            _dict['requiredCounterpartyFields'] = _items
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Dict) -> Self:
-        """Create an instance of PlatformConfig from a dict"""
+        """Create an instance of PlatformCurrencyConfig from a dict"""
         if obj is None:
             return None
 
@@ -105,12 +97,10 @@ class PlatformConfig(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "id": obj.get("id"),
-            "umaDomain": obj.get("umaDomain"),
-            "webhookEndpoint": obj.get("webhookEndpoint"),
-            "supportedCurrencies": [PlatformCurrencyConfig.from_dict(_item) for _item in obj.get("supportedCurrencies")] if obj.get("supportedCurrencies") is not None else None,
-            "createdAt": obj.get("createdAt"),
-            "updatedAt": obj.get("updatedAt")
+            "currencyCode": obj.get("currencyCode"),
+            "minAmount": obj.get("minAmount"),
+            "maxAmount": obj.get("maxAmount"),
+            "requiredCounterpartyFields": [CounterpartyFieldDefinition.from_dict(_item) for _item in obj.get("requiredCounterpartyFields")] if obj.get("requiredCounterpartyFields") is not None else None
         })
         return _obj
 

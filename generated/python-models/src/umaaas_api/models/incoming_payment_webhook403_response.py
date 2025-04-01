@@ -21,22 +21,21 @@ import json
 
 
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic import BaseModel, ConfigDict
 from typing import Any, ClassVar, Dict, List, Optional
-from umaaas_api.models.platform_currency_config import PlatformCurrencyConfig
 try:
     from typing import Self
 except ImportError:
     from typing_extensions import Self
 
-class UpdatePlatformConfigRequest(BaseModel):
+class IncomingPaymentWebhook403Response(BaseModel):
     """
-    UpdatePlatformConfigRequest
+    IncomingPaymentWebhook403Response
     """ # noqa: E501
-    uma_domain: Optional[StrictStr] = Field(default=None, alias="umaDomain")
-    webhook_endpoint: Optional[StrictStr] = Field(default=None, alias="webhookEndpoint")
-    supported_currencies: Optional[List[PlatformCurrencyConfig]] = Field(default=None, alias="supportedCurrencies")
-    __properties: ClassVar[List[str]] = ["umaDomain", "webhookEndpoint", "supportedCurrencies"]
+    code: Optional[Any] = None
+    message: Optional[Any] = None
+    details: Optional[Any] = None
+    __properties: ClassVar[List[str]] = ["code", "message", "details"]
 
     model_config = {
         "populate_by_name": True,
@@ -55,7 +54,7 @@ class UpdatePlatformConfigRequest(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Self:
-        """Create an instance of UpdatePlatformConfigRequest from a JSON string"""
+        """Create an instance of IncomingPaymentWebhook403Response from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -76,18 +75,26 @@ class UpdatePlatformConfigRequest(BaseModel):
             exclude_none=True,
             exclude_unset=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of each item in supported_currencies (list)
-        _items = []
-        if self.supported_currencies:
-            for _item in self.supported_currencies:
-                if _item:
-                    _items.append(_item.to_dict())
-            _dict['supportedCurrencies'] = _items
+        # set to None if code (nullable) is None
+        # and model_fields_set contains the field
+        if self.code is None and "code" in self.model_fields_set:
+            _dict['code'] = None
+
+        # set to None if message (nullable) is None
+        # and model_fields_set contains the field
+        if self.message is None and "message" in self.model_fields_set:
+            _dict['message'] = None
+
+        # set to None if details (nullable) is None
+        # and model_fields_set contains the field
+        if self.details is None and "details" in self.model_fields_set:
+            _dict['details'] = None
+
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Dict) -> Self:
-        """Create an instance of UpdatePlatformConfigRequest from a dict"""
+        """Create an instance of IncomingPaymentWebhook403Response from a dict"""
         if obj is None:
             return None
 
@@ -95,9 +102,9 @@ class UpdatePlatformConfigRequest(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "umaDomain": obj.get("umaDomain"),
-            "webhookEndpoint": obj.get("webhookEndpoint"),
-            "supportedCurrencies": [PlatformCurrencyConfig.from_dict(_item) for _item in obj.get("supportedCurrencies")] if obj.get("supportedCurrencies") is not None else None
+            "code": obj.get("code"),
+            "message": obj.get("message"),
+            "details": obj.get("details")
         })
         return _obj
 

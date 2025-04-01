@@ -22,21 +22,20 @@ import json
 
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
-from umaaas_api.models.platform_currency_config import PlatformCurrencyConfig
+from typing import Any, ClassVar, Dict, List
+from umaaas_api.models.error import Error
 try:
     from typing import Self
 except ImportError:
     from typing_extensions import Self
 
-class UpdatePlatformConfigRequest(BaseModel):
+class BulkUploadWebhookRequestErrorsInner(BaseModel):
     """
-    UpdatePlatformConfigRequest
+    BulkUploadWebhookRequestErrorsInner
     """ # noqa: E501
-    uma_domain: Optional[StrictStr] = Field(default=None, alias="umaDomain")
-    webhook_endpoint: Optional[StrictStr] = Field(default=None, alias="webhookEndpoint")
-    supported_currencies: Optional[List[PlatformCurrencyConfig]] = Field(default=None, alias="supportedCurrencies")
-    __properties: ClassVar[List[str]] = ["umaDomain", "webhookEndpoint", "supportedCurrencies"]
+    correlation_id: StrictStr = Field(description="Platform user ID or row number for the failed entry", alias="correlationId")
+    error: Error
+    __properties: ClassVar[List[str]] = ["correlationId", "error"]
 
     model_config = {
         "populate_by_name": True,
@@ -55,7 +54,7 @@ class UpdatePlatformConfigRequest(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Self:
-        """Create an instance of UpdatePlatformConfigRequest from a JSON string"""
+        """Create an instance of BulkUploadWebhookRequestErrorsInner from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -76,18 +75,14 @@ class UpdatePlatformConfigRequest(BaseModel):
             exclude_none=True,
             exclude_unset=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of each item in supported_currencies (list)
-        _items = []
-        if self.supported_currencies:
-            for _item in self.supported_currencies:
-                if _item:
-                    _items.append(_item.to_dict())
-            _dict['supportedCurrencies'] = _items
+        # override the default output from pydantic by calling `to_dict()` of error
+        if self.error:
+            _dict['error'] = self.error.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Dict) -> Self:
-        """Create an instance of UpdatePlatformConfigRequest from a dict"""
+        """Create an instance of BulkUploadWebhookRequestErrorsInner from a dict"""
         if obj is None:
             return None
 
@@ -95,9 +90,8 @@ class UpdatePlatformConfigRequest(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "umaDomain": obj.get("umaDomain"),
-            "webhookEndpoint": obj.get("webhookEndpoint"),
-            "supportedCurrencies": [PlatformCurrencyConfig.from_dict(_item) for _item in obj.get("supportedCurrencies")] if obj.get("supportedCurrencies") is not None else None
+            "correlationId": obj.get("correlationId"),
+            "error": Error.from_dict(obj.get("error")) if obj.get("error") is not None else None
         })
         return _obj
 
