@@ -756,6 +756,14 @@ npm run lint
 # Or: make lint
 ```
 
+### Generating Python Models
+
+```bash
+make build-python-models
+```
+
+This will generate the Python models in the `generated/python-models` directory.
+
 ## Support
 
 For any questions or issues, please contact UMAaas support at <support@lightspark.com>.
