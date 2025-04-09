@@ -39,7 +39,7 @@ class UsAccountInfo(BankAccountInfo):
     platform_account_id: Optional[StrictStr] = Field(default=None, description="Platform-specific identifier for this bank account. This optional field allows platforms to link bank accounts to their internal account systems. The value can be any string that helps identify the account in your system (e.g. database IDs, custom references, etc.).  This field is particularly useful when: - Tracking multiple bank accounts for the same user - Linking accounts to internal accounting systems - Maintaining consistency between UMAaS and your platform's account records ", alias="platformAccountId")
     account_number: StrictStr = Field(description="US bank account number", alias="accountNumber")
     routing_number: Annotated[str, Field(min_length=9, strict=True, max_length=9)] = Field(description="ACH routing number (9 digits)", alias="routingNumber")
-    account_category: Optional[StrictStr] = Field(default=None, description="Type of account (checking or savings)", alias="accountCategory")
+    account_category: StrictStr = Field(description="Type of account (checking or savings)", alias="accountCategory")
     bank_name: Optional[StrictStr] = Field(default=None, description="Name of the bank", alias="bankName")
     __properties: ClassVar[List[str]] = ["accountType", "accountHolderName", "platformAccountId", "accountNumber", "routingNumber", "accountCategory", "bankName"]
 
@@ -60,9 +60,6 @@ class UsAccountInfo(BankAccountInfo):
     @field_validator('account_category')
     def account_category_validate_enum(cls, value):
         """Validates the enum"""
-        if value is None:
-            return value
-
         if value not in ('CHECKING', 'SAVINGS'):
             raise ValueError("must be one of enum values ('CHECKING', 'SAVINGS')")
         return value
