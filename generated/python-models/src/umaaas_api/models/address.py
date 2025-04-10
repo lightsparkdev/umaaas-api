@@ -32,12 +32,12 @@ class Address(BaseModel):
     """
     Address
     """ # noqa: E501
-    line1: Optional[StrictStr] = Field(default=None, description="Street address line 1")
+    line1: StrictStr = Field(description="Street address line 1")
     line2: Optional[StrictStr] = Field(default=None, description="Street address line 2")
     city: Optional[StrictStr] = Field(default=None, description="City")
     state: Optional[StrictStr] = Field(default=None, description="State/Province/Region")
-    postal_code: Optional[StrictStr] = Field(default=None, description="Postal/ZIP code", alias="postalCode")
-    country: Optional[StrictStr] = Field(default=None, description="Country code (ISO 3166-1 alpha-2)")
+    postal_code: StrictStr = Field(description="Postal/ZIP code", alias="postalCode")
+    country: StrictStr = Field(description="Country code (ISO 3166-1 alpha-2)")
     __properties: ClassVar[List[str]] = ["line1", "line2", "city", "state", "postalCode", "country"]
 
     model_config = {

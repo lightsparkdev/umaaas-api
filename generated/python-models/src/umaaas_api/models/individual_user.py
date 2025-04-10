@@ -44,9 +44,10 @@ class IndividualUser(User):
     updated_at: Optional[datetime] = Field(default=None, description="Last update timestamp", alias="updatedAt")
     full_name: StrictStr = Field(description="Individual's full name", alias="fullName")
     date_of_birth: date = Field(description="Date of birth in ISO 8601 format (YYYY-MM-DD)", alias="dateOfBirth")
+    nationality: Optional[StrictStr] = Field(default=None, description="Country code (ISO 3166-1 alpha-2)")
     address: Address
     bank_account_info: BankAccountInfo = Field(alias="bankAccountInfo")
-    __properties: ClassVar[List[str]] = ["id", "umaAddress", "platformUserId", "userType", "createdAt", "updatedAt", "fullName", "dateOfBirth", "address", "bankAccountInfo"]
+    __properties: ClassVar[List[str]] = ["id", "umaAddress", "platformUserId", "userType", "createdAt", "updatedAt", "fullName", "dateOfBirth", "nationality", "address", "bankAccountInfo"]
 
     @field_validator('user_type')
     def user_type_validate_enum(cls, value):
@@ -125,6 +126,7 @@ class IndividualUser(User):
             "updatedAt": obj.get("updatedAt"),
             "fullName": obj.get("fullName"),
             "dateOfBirth": obj.get("dateOfBirth"),
+            "nationality": obj.get("nationality"),
             "address": Address.from_dict(obj.get("address")) if obj.get("address") is not None else None,
             "bankAccountInfo": BankAccountInfo.from_dict(obj.get("bankAccountInfo")) if obj.get("bankAccountInfo") is not None else None
         })

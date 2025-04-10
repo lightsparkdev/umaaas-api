@@ -222,8 +222,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-          description: Conflict - User with the UMA address or platform user ID already
-            exists
+          description: Conflict - User with the UMA address already exists
       security:
       - BasicAuth: []
       summary: Add a new user
@@ -1035,6 +1034,10 @@ components:
           example: US
           title: country
           type: string
+      required:
+      - country
+      - line1
+      - postalCode
       title: Address
     BankAccountInfo:
       discriminator:
@@ -1122,6 +1125,7 @@ components:
             example: Chase Bank
             type: string
         required:
+        - accountCategory
         - accountNumber
         - routingNumber
       title: UsAccountInfo
@@ -1257,6 +1261,10 @@ components:
             description: Date of birth in ISO 8601 format (YYYY-MM-DD)
             example: 1990-01-15
             format: date
+            type: string
+          nationality:
+            description: Country code (ISO 3166-1 alpha-2)
+            example: US
             type: string
           address:
             $ref: '#/components/schemas/Address'
