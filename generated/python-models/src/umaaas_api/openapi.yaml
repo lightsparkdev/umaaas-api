@@ -229,6 +229,39 @@ paths:
       tags:
       - Users
   /users/{userId}:
+    delete:
+      description: Delete a user by their system-generated ID
+      operationId: deleteUserById
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/listUsers_200_response_data_inner'
+          description: User deleted successfully
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: User not found
+        "410":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: User deleted already
+      security:
+      - BasicAuth: []
+      summary: Delete user by ID
+      tags:
+      - Users
     get:
       description: Retrieve a user by their system-generated ID
       operationId: getUserById
@@ -1695,11 +1728,9 @@ components:
       - hasMore
     individualUpdate:
       properties:
-        userType:
-          description: Update user type to individual
-          enum:
-          - INDIVIDUAL
-          title: userType
+        umaAddress:
+          description: Full UMA address
+          title: umaAddress
           type: string
         fullName:
           description: Individual's full name
@@ -1709,6 +1740,10 @@ components:
           description: Date of birth in ISO 8601 format (YYYY-MM-DD)
           format: date
           title: dateOfBirth
+          type: string
+        nationality:
+          description: Country code (ISO 3166-1 alpha-2)
+          title: nationality
           type: string
         address:
           $ref: '#/components/schemas/Address'
@@ -1732,11 +1767,9 @@ components:
       title: businessUpdate_businessInfo
     businessUpdate:
       properties:
-        userType:
-          description: Update user type to business
-          enum:
-          - BUSINESS
-          title: userType
+        umaAddress:
+          description: Full UMA address
+          title: umaAddress
           type: string
         businessInfo:
           $ref: '#/components/schemas/businessUpdate_businessInfo'

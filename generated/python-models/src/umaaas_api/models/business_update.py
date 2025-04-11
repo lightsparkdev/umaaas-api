@@ -21,7 +21,7 @@ import json
 
 
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from umaaas_api.models.address import Address
 from umaaas_api.models.bank_account_info import BankAccountInfo
@@ -35,21 +35,11 @@ class BusinessUpdate(BaseModel):
     """
     BusinessUpdate
     """ # noqa: E501
-    user_type: Optional[StrictStr] = Field(default=None, description="Update user type to business", alias="userType")
+    uma_address: Optional[StrictStr] = Field(default=None, description="Full UMA address", alias="umaAddress")
     business_info: Optional[BusinessUpdateBusinessInfo] = Field(default=None, alias="businessInfo")
     address: Optional[Address] = None
     bank_account_info: Optional[BankAccountInfo] = Field(default=None, alias="bankAccountInfo")
-    __properties: ClassVar[List[str]] = ["userType", "businessInfo", "address", "bankAccountInfo"]
-
-    @field_validator('user_type')
-    def user_type_validate_enum(cls, value):
-        """Validates the enum"""
-        if value is None:
-            return value
-
-        if value not in ('BUSINESS'):
-            raise ValueError("must be one of enum values ('BUSINESS')")
-        return value
+    __properties: ClassVar[List[str]] = ["umaAddress", "businessInfo", "address", "bankAccountInfo"]
 
     model_config = {
         "populate_by_name": True,
@@ -110,7 +100,7 @@ class BusinessUpdate(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "userType": obj.get("userType"),
+            "umaAddress": obj.get("umaAddress"),
             "businessInfo": BusinessUpdateBusinessInfo.from_dict(obj.get("businessInfo")) if obj.get("businessInfo") is not None else None,
             "address": Address.from_dict(obj.get("address")) if obj.get("address") is not None else None,
             "bankAccountInfo": BankAccountInfo.from_dict(obj.get("bankAccountInfo")) if obj.get("bankAccountInfo") is not None else None

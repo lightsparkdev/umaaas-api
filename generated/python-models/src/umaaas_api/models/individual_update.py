@@ -22,7 +22,7 @@ import json
 
 
 from datetime import date
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from umaaas_api.models.address import Address
 from umaaas_api.models.bank_account_info import BankAccountInfo
@@ -35,22 +35,13 @@ class IndividualUpdate(BaseModel):
     """
     IndividualUpdate
     """ # noqa: E501
-    user_type: Optional[StrictStr] = Field(default=None, description="Update user type to individual", alias="userType")
+    uma_address: Optional[StrictStr] = Field(default=None, description="Full UMA address", alias="umaAddress")
     full_name: Optional[StrictStr] = Field(default=None, description="Individual's full name", alias="fullName")
     date_of_birth: Optional[date] = Field(default=None, description="Date of birth in ISO 8601 format (YYYY-MM-DD)", alias="dateOfBirth")
+    nationality: Optional[StrictStr] = Field(default=None, description="Country code (ISO 3166-1 alpha-2)")
     address: Optional[Address] = None
     bank_account_info: Optional[BankAccountInfo] = Field(default=None, alias="bankAccountInfo")
-    __properties: ClassVar[List[str]] = ["userType", "fullName", "dateOfBirth", "address", "bankAccountInfo"]
-
-    @field_validator('user_type')
-    def user_type_validate_enum(cls, value):
-        """Validates the enum"""
-        if value is None:
-            return value
-
-        if value not in ('INDIVIDUAL'):
-            raise ValueError("must be one of enum values ('INDIVIDUAL')")
-        return value
+    __properties: ClassVar[List[str]] = ["umaAddress", "fullName", "dateOfBirth", "nationality", "address", "bankAccountInfo"]
 
     model_config = {
         "populate_by_name": True,
@@ -108,9 +99,10 @@ class IndividualUpdate(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "userType": obj.get("userType"),
+            "umaAddress": obj.get("umaAddress"),
             "fullName": obj.get("fullName"),
             "dateOfBirth": obj.get("dateOfBirth"),
+            "nationality": obj.get("nationality"),
             "address": Address.from_dict(obj.get("address")) if obj.get("address") is not None else None,
             "bankAccountInfo": BankAccountInfo.from_dict(obj.get("bankAccountInfo")) if obj.get("bankAccountInfo") is not None else None
         })

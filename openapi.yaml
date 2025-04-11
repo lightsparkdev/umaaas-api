@@ -953,10 +953,9 @@ paths:
                 - type: object
                   title: individualUpdate
                   properties:
-                    userType:
+                    umaAddress:
                       type: string
-                      enum: [INDIVIDUAL]
-                      description: Update user type to individual
+                      description: Full UMA address
                     fullName:
                       type: string
                       description: Individual's full name
@@ -964,6 +963,9 @@ paths:
                       type: string
                       format: date
                       description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+                    nationality:
+                      type: string
+                      description: Country code (ISO 3166-1 alpha-2)
                     address:
                       $ref: '#/components/schemas/Address'
                     bankAccountInfo:
@@ -971,10 +973,9 @@ paths:
                 - type: object
                   title: businessUpdate
                   properties:
-                    userType:
+                    umaAddress:
                       type: string
-                      enum: [BUSINESS]
-                      description: Update user type to business
+                      description: Full UMA address
                     businessInfo:
                       type: object
                       properties:
