@@ -1059,7 +1059,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  
+    delete:
+      summary: Delete user by ID
+      description: Delete a user by their system-generated ID
+      operationId: deleteUserById
+      tags:
+        - Users
+      security:
+        - BasicAuth: []
+      responses:
+        '200':
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/IndividualUser'
+                  - $ref: '#/components/schemas/BusinessUser'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '410':
+          description: User deleted already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /config:
     get:
       summary: Get platform configuration

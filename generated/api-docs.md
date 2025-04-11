@@ -86,14 +86,21 @@ Retrieve the current platform configuration
   "id": "PlatformConfig:019542f5-b3e7-1d02-0000-000000000003",
   "umaDomain": "platform.uma.domain",
   "webhookEndpoint": "https://api.mycompany.com/webhooks/uma",
-  "requiredCounterpartyFields": [
+  "supportedCurrencies": [
     {
-      "name": "FULL_NAME",
-      "mandatory": true
-    },
-    {
-      "name": "DATE_OF_BIRTH",
-      "mandatory": true
+      "currencyCode": "USD",
+      "minAmount": 100,
+      "maxAmount": 1000000,
+      "requiredCounterpartyFields": [
+        {
+          "name": "FULL_NAME",
+          "mandatory": true
+        },
+        {
+          "name": "DATE_OF_BIRTH",
+          "mandatory": true
+        }
+      ]
     }
   ],
   "createdAt": "2023-06-15T12:30:45Z",
@@ -123,10 +130,21 @@ BasicAuth
 const inputBody = '{
   "umaDomain": "mycompany.com",
   "webhookEndpoint": "https://api.mycompany.com/webhooks/uma",
-  "requiredCounterpartyFields": [
+  "supportedCurrencies": [
     {
-      "name": "FULL_NAME",
-      "mandatory": true
+      "currencyCode": "USD",
+      "minAmount": 100,
+      "maxAmount": 1000000,
+      "requiredCounterpartyFields": [
+        {
+          "name": "FULL_NAME",
+          "mandatory": true
+        },
+        {
+          "name": "DATE_OF_BIRTH",
+          "mandatory": true
+        }
+      ]
     }
   ]
 }';
@@ -174,10 +192,21 @@ Update the platform configuration settings
 {
   "umaDomain": "mycompany.com",
   "webhookEndpoint": "https://api.mycompany.com/webhooks/uma",
-  "requiredCounterpartyFields": [
+  "supportedCurrencies": [
     {
-      "name": "FULL_NAME",
-      "mandatory": true
+      "currencyCode": "USD",
+      "minAmount": 100,
+      "maxAmount": 1000000,
+      "requiredCounterpartyFields": [
+        {
+          "name": "FULL_NAME",
+          "mandatory": true
+        },
+        {
+          "name": "DATE_OF_BIRTH",
+          "mandatory": true
+        }
+      ]
     }
   ]
 }
@@ -190,20 +219,24 @@ Update the platform configuration settings
 |body|body|object|true|none|
 |» umaDomain|body|string|false|none|
 |» webhookEndpoint|body|string|false|none|
-|» requiredCounterpartyFields|body|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|false|none|
-|»» name|body|string|false|Name of the counterparty field|
-|»» mandatory|body|boolean|false|Whether the field is mandatory|
+|» supportedCurrencies|body|[[PlatformCurrencyConfig](#schemaplatformcurrencyconfig)]|false|none|
+|»» currencyCode|body|string|true|Three-letter currency code (ISO 4217)|
+|»» minAmount|body|integer(int64)|true|Minimum amount that can be sent in the smallest unit of this currency|
+|»» maxAmount|body|integer(int64)|true|Maximum amount that can be sent in the smallest unit of this currency|
+|»» requiredCounterpartyFields|body|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|true|List of counterparty fields and their requirements|
+|»»» name|body|string|false|Name of the counterparty field|
+|»»» mandatory|body|boolean|false|Whether the field is mandatory|
 
 #### Enumerated Values
 
 |Parameter|Value|
 |---|---|
-|»» name|FULL_NAME|
-|»» name|ADDRESS|
-|»» name|DATE_OF_BIRTH|
-|»» name|TAX_ID|
-|»» name|REGISTRATION_NUMBER|
-|»» name|ACCOUNT_NUMBER|
+|»»» name|FULL_NAME|
+|»»» name|ADDRESS|
+|»»» name|DATE_OF_BIRTH|
+|»»» name|TAX_ID|
+|»»» name|REGISTRATION_NUMBER|
+|»»» name|ACCOUNT_NUMBER|
 
 > Example responses
 
@@ -214,14 +247,21 @@ Update the platform configuration settings
   "id": "PlatformConfig:019542f5-b3e7-1d02-0000-000000000003",
   "umaDomain": "platform.uma.domain",
   "webhookEndpoint": "https://api.mycompany.com/webhooks/uma",
-  "requiredCounterpartyFields": [
+  "supportedCurrencies": [
     {
-      "name": "FULL_NAME",
-      "mandatory": true
-    },
-    {
-      "name": "DATE_OF_BIRTH",
-      "mandatory": true
+      "currencyCode": "USD",
+      "minAmount": 100,
+      "maxAmount": 1000000,
+      "requiredCounterpartyFields": [
+        {
+          "name": "FULL_NAME",
+          "mandatory": true
+        },
+        {
+          "name": "DATE_OF_BIRTH",
+          "mandatory": true
+        }
+      ]
     }
   ],
   "createdAt": "2023-06-15T12:30:45Z",
@@ -362,6 +402,7 @@ Register a new user in the system with UMA address and bank account information
   "updatedAt": "2023-07-21T17:32:28Z",
   "fullName": "John Michael Doe",
   "dateOfBirth": "1990-01-15",
+  "nationality": "US",
   "address": {
     "line1": "123 Main Street",
     "line2": "Apt 4B",
@@ -385,7 +426,7 @@ Register a new user in the system with UMA address and bank account information
 |201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|User created successfully|Inline|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|[Error](#schemaerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
-|409|[Conflict](https://tools.ietf.org/html/rfc7231#section-6.5.8)|Conflict - User with the UMA address or platform user ID already exists|[Error](#schemaerror)|
+|409|[Conflict](https://tools.ietf.org/html/rfc7231#section-6.5.8)|Conflict - User with the UMA address already exists|[Error](#schemaerror)|
 
 <h3 id="createuser-responseschema">Response Schema</h3>
 
@@ -487,6 +528,7 @@ the specified filters. If no filters are provided, returns all users (paginated)
       "updatedAt": "2023-07-21T17:32:28Z",
       "fullName": "John Michael Doe",
       "dateOfBirth": "1990-01-15",
+      "nationality": "US",
       "address": {
         "line1": "123 Main Street",
         "line2": "Apt 4B",
@@ -549,13 +591,14 @@ Status Code **200**
 |»»» *anonymous*|object|false|none|none|
 |»»»» fullName|string|true|none|Individual's full name|
 |»»»» dateOfBirth|string(date)|true|none|Date of birth in ISO 8601 format (YYYY-MM-DD)|
+|»»»» nationality|string|false|none|Country code (ISO 3166-1 alpha-2)|
 |»»»» address|[Address](#schemaaddress)|true|none|none|
-|»»»»» line1|string|false|none|Street address line 1|
+|»»»»» line1|string|true|none|Street address line 1|
 |»»»»» line2|string|false|none|Street address line 2|
 |»»»»» city|string|false|none|City|
 |»»»»» state|string|false|none|State/Province/Region|
-|»»»»» postalCode|string|false|none|Postal/ZIP code|
-|»»»»» country|string|false|none|Country code (ISO 3166-1 alpha-2)|
+|»»»»» postalCode|string|true|none|Postal/ZIP code|
+|»»»»» country|string|true|none|Country code (ISO 3166-1 alpha-2)|
 |»»»» bankAccountInfo|[BankAccountInfo](#schemabankaccountinfo)|true|none|none|
 |»»»»» accountType|string|true|none|Type of bank account information|
 |»»»»» accountHolderName|string|false|none|Name of the account holder|
@@ -673,6 +716,7 @@ Retrieve a user by their system-generated ID
   "updatedAt": "2023-07-21T17:32:28Z",
   "fullName": "John Michael Doe",
   "dateOfBirth": "1990-01-15",
+  "nationality": "US",
   "address": {
     "line1": "123 Main Street",
     "line2": "Apt 4B",
@@ -826,6 +870,7 @@ Update a user's metadata by their system-generated ID
   "updatedAt": "2023-07-21T17:32:28Z",
   "fullName": "John Michael Doe",
   "dateOfBirth": "1990-01-15",
+  "nationality": "US",
   "address": {
     "line1": "123 Main Street",
     "line2": "Apt 4B",
@@ -852,6 +897,114 @@ Update a user's metadata by their system-generated ID
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|User not found|[Error](#schemaerror)|
 
 <h3 id="updateuserbyid-responseschema">Response Schema</h3>
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|userType|INDIVIDUAL|
+|userType|BUSINESS|
+|accountType|CLABE|
+|accountType|US_ACCOUNT|
+|accountType|PIX|
+|accountType|IBAN|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BasicAuth
+</aside>
+
+## deleteUserById
+
+<a id="opIddeleteUserById"></a>
+
+> Code samples
+
+```javascript
+
+const headers = {
+  'Accept':'application/json'
+};
+
+fetch('https://api.lightspark.com/umaaas/v1/users/{userId}',
+{
+  method: 'DELETE',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.delete('https://api.lightspark.com/umaaas/v1/users/{userId}', headers = headers)
+
+print(r.json())
+
+```
+
+`DELETE /users/{userId}`
+
+*Delete user by ID*
+
+Delete a user by their system-generated ID
+
+<h3 id="deleteuserbyid-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|userId|path|string|true|System-generated unique user identifier|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "id": "User:019542f5-b3e7-1d02-0000-000000000001",
+  "umaAddress": "$john.doe@uma.domain.com",
+  "platformUserId": "9f84e0c2a72c4fa",
+  "userType": "INDIVIDUAL",
+  "createdAt": "2023-07-21T17:32:28Z",
+  "updatedAt": "2023-07-21T17:32:28Z",
+  "fullName": "John Michael Doe",
+  "dateOfBirth": "1990-01-15",
+  "nationality": "US",
+  "address": {
+    "line1": "123 Main Street",
+    "line2": "Apt 4B",
+    "city": "San Francisco",
+    "state": "CA",
+    "postalCode": "94105",
+    "country": "US"
+  },
+  "bankAccountInfo": {
+    "accountType": "US_ACCOUNT",
+    "accountHolderName": "John Doe",
+    "platformAccountId": "acc_123456789"
+  }
+}
+```
+
+<h3 id="deleteuserbyid-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|User deleted successfully|Inline|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|User not found|[Error](#schemaerror)|
+|410|[Gone](https://tools.ietf.org/html/rfc7231#section-6.5.9)|User deleted already|[Error](#schemaerror)|
+
+<h3 id="deleteuserbyid-responseschema">Response Schema</h3>
 
 #### Enumerated Values
 
@@ -2167,12 +2320,12 @@ BasicAuth
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|line1|string|false|none|Street address line 1|
+|line1|string|true|none|Street address line 1|
 |line2|string|false|none|Street address line 2|
 |city|string|false|none|City|
 |state|string|false|none|State/Province/Region|
-|postalCode|string|false|none|Postal/ZIP code|
-|country|string|false|none|Country code (ISO 3166-1 alpha-2)|
+|postalCode|string|true|none|Postal/ZIP code|
+|country|string|true|none|Country code (ISO 3166-1 alpha-2)|
 
 <h2 id="tocS_BankAccountInfo">BankAccountInfo</h2>
 <!-- backwards compatibility -->
@@ -2276,7 +2429,7 @@ and
 |*anonymous*|object|false|none|none|
 |» accountNumber|string|true|none|US bank account number|
 |» routingNumber|string|true|none|ACH routing number (9 digits)|
-|» accountCategory|string|false|none|Type of account (checking or savings)|
+|» accountCategory|string|true|none|Type of account (checking or savings)|
 |» bankName|string|false|none|Name of the bank|
 
 #### Enumerated Values
@@ -2476,6 +2629,7 @@ xor
   "updatedAt": "2023-07-21T17:32:28Z",
   "fullName": "John Michael Doe",
   "dateOfBirth": "1990-01-15",
+  "nationality": "US",
   "address": {
     "line1": "123 Main Street",
     "line2": "Apt 4B",
@@ -2508,6 +2662,7 @@ and
 |*anonymous*|object|false|none|none|
 |» fullName|string|true|none|Individual's full name|
 |» dateOfBirth|string(date)|true|none|Date of birth in ISO 8601 format (YYYY-MM-DD)|
+|» nationality|string|false|none|Country code (ISO 3166-1 alpha-2)|
 |» address|[Address](#schemaaddress)|true|none|none|
 |» bankAccountInfo|[BankAccountInfo](#schemabankaccountinfo)|true|none|none|
 
@@ -2601,6 +2756,41 @@ and
 |name|REGISTRATION_NUMBER|
 |name|ACCOUNT_NUMBER|
 
+<h2 id="tocS_PlatformCurrencyConfig">PlatformCurrencyConfig</h2>
+<!-- backwards compatibility -->
+<a id="schemaplatformcurrencyconfig"></a>
+<a id="schema_PlatformCurrencyConfig"></a>
+<a id="tocSplatformcurrencyconfig"></a>
+<a id="tocsplatformcurrencyconfig"></a>
+
+```json
+{
+  "currencyCode": "USD",
+  "minAmount": 100,
+  "maxAmount": 1000000,
+  "requiredCounterpartyFields": [
+    {
+      "name": "FULL_NAME",
+      "mandatory": true
+    },
+    {
+      "name": "DATE_OF_BIRTH",
+      "mandatory": true
+    }
+  ]
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|currencyCode|string|true|none|Three-letter currency code (ISO 4217)|
+|minAmount|integer(int64)|true|none|Minimum amount that can be sent in the smallest unit of this currency|
+|maxAmount|integer(int64)|true|none|Maximum amount that can be sent in the smallest unit of this currency|
+|requiredCounterpartyFields|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|true|none|List of counterparty fields and their requirements|
+
 <h2 id="tocS_PlatformConfig">PlatformConfig</h2>
 <!-- backwards compatibility -->
 <a id="schemaplatformconfig"></a>
@@ -2613,14 +2803,21 @@ and
   "id": "PlatformConfig:019542f5-b3e7-1d02-0000-000000000003",
   "umaDomain": "platform.uma.domain",
   "webhookEndpoint": "https://api.mycompany.com/webhooks/uma",
-  "requiredCounterpartyFields": [
+  "supportedCurrencies": [
     {
-      "name": "FULL_NAME",
-      "mandatory": true
-    },
-    {
-      "name": "DATE_OF_BIRTH",
-      "mandatory": true
+      "currencyCode": "USD",
+      "minAmount": 100,
+      "maxAmount": 1000000,
+      "requiredCounterpartyFields": [
+        {
+          "name": "FULL_NAME",
+          "mandatory": true
+        },
+        {
+          "name": "DATE_OF_BIRTH",
+          "mandatory": true
+        }
+      ]
     }
   ],
   "createdAt": "2023-06-15T12:30:45Z",
@@ -2636,7 +2833,7 @@ and
 |id|string|false|read-only|System-generated unique identifier|
 |umaDomain|string|false|none|UMA domain for this platform|
 |webhookEndpoint|string|false|none|URL where webhook notifications will be sent|
-|requiredCounterpartyFields|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|false|none|List of counterparty fields and their requirements|
+|supportedCurrencies|[[PlatformCurrencyConfig](#schemaplatformcurrencyconfig)]|false|none|List of currencies supported by the platform|
 |createdAt|string(date-time)|false|read-only|Creation timestamp|
 |updatedAt|string(date-time)|false|read-only|Last update timestamp|
 
