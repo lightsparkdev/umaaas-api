@@ -19,6 +19,7 @@ src/umaaas_api/apis/__init__.py
 src/umaaas_api/main.py
 src/umaaas_api/models/__init__.py
 src/umaaas_api/models/address.py
+src/umaaas_api/models/api_token.py
 src/umaaas_api/models/bank_account_info.py
 src/umaaas_api/models/bulk_upload_webhook_request.py
 src/umaaas_api/models/bulk_upload_webhook_request_errors_inner.py
@@ -47,6 +48,7 @@ src/umaaas_api/models/incoming_payment_webhook_request.py
 src/umaaas_api/models/incoming_transaction.py
 src/umaaas_api/models/individual_update.py
 src/umaaas_api/models/individual_user.py
+src/umaaas_api/models/list_tokens200_response.py
 src/umaaas_api/models/list_transactions200_response.py
 src/umaaas_api/models/list_users200_response.py
 src/umaaas_api/models/list_users200_response_data_inner.py
@@ -55,12 +57,14 @@ src/umaaas_api/models/outgoing_payment_webhook_request.py
 src/umaaas_api/models/outgoing_transaction.py
 src/umaaas_api/models/payment_instructions.py
 src/umaaas_api/models/payment_instructions_bank_account_info.py
+src/umaaas_api/models/permission.py
 src/umaaas_api/models/pix_account_info.py
 src/umaaas_api/models/platform_config.py
 src/umaaas_api/models/platform_currency_config.py
 src/umaaas_api/models/quote.py
 src/umaaas_api/models/quote_lock_side.py
 src/umaaas_api/models/test_webhook_request.py
+src/umaaas_api/models/token_create.py
 src/umaaas_api/models/transaction.py
 src/umaaas_api/models/transaction_status.py
 src/umaaas_api/models/transaction_type.py

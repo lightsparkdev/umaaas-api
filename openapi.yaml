@@ -590,6 +590,7 @@ components:
               type: string
               description: The ID of the quote that was used to trigger this payment
               example: "Quote:019542f5-b3e7-1d02-0000-000000000006"
+
     CurrencyPreference:
       type: object
       required:
@@ -695,6 +696,64 @@ components:
           description: The ID of the transaction created from this quote. Only present if the quote has started processing.
           example: "Transaction:019542f5-b3e7-1d02-0000-000000000005"
 
+    Permission:
+      type: string
+      enum: [PRODUCTION_VIEW, PRODUCTION_TRANSACT, PRODUCTION_MANAGE, SANDBOX_VIEW, SANDBOX_TRANSACT, SANDBOX_MANAGE]
+      description: >- 
+        Permission of an API token that determines what actions the token can perform.
+        PRODUCTION_VIEW: Can view data in production mode, including platform config, users and transactions
+        PRODUCTION_TRANSACT: Can send payments in production mode
+        PRODUCTION_MANAGE: Can manage platform config and users in production mode
+        SANDBOX_VIEW: Can view data in sandbox mode, including platform config, users and transactions
+        SANDBOX_TRANSACT: Can send payments in sandbox mode
+        SANDBOX_MANAGE: Can manage platform config and users in sandbox mode
+
+    ApiToken:
+      type: object
+      required:
+        - id
+        - name
+        - permissions
+        - clientId
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          description: System-generated unique identifier
+          example: "User:019542f5-b3e7-1d02-0000-000000000001"
+        name:
+          type: string
+          description: Name of the token
+          example: "Sandbox read-only token"
+        permissions:
+          type: array
+          description: A list of permissions granted to the token
+          items:
+            $ref: '#/components/schemas/Permission'
+        clientId:
+          type: string
+          description: >- 
+            An opaque identifier that should be used as a client_id (or username) 
+            in the HTTP Basic Authentication scheme when issuing http requests to UMAaaS.
+          example: "01947d2284054f890000e63bca4810df"
+        clientSecret:
+          type: string
+          description: >- 
+            The secret that should be used to authenticate against UMAaaS API.
+            This secret is not stored and will never be available again after creation. 
+            Platform must keep this secret secure as it grants access to the account.
+          example: "ed0ad25881e234cc28fb2dec0a4fe64e4172"
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          example: "2023-07-21T17:32:28Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: "2023-07-21T17:32:28Z"
 paths:
   /users:
     post:
@@ -1095,6 +1154,224 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /tokens:
+    post:
+      summary: Create a new API token
+      description: Create a new API token to access the UMAaaS APIs.
+      operationId: createToken
+      tags:
+        - API Tokens
+      security:
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: tokenCreate
+              properties:
+                name:
+                  type: string
+                  description: Name of the token to help identify it
+                  example: "Sandbox read-only"
+                permissions:
+                  type: array
+                  description: A list of permissions to grant to the token
+                  items:
+                    $ref: '#/components/schemas/Permission'
+              required:
+                - name
+                - permissions
+      responses:
+        '201':
+          description: API token created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiToken'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      summary: List tokens
+      description: |
+        Retrieve a list of API tokens with optional filtering parameters. Returns all tokens that match
+        the specified filters. If no filters are provided, returns all tokens (paginated).
+      operationId: listTokens
+      tags:
+        - API Tokens
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: name
+          in: query
+          description: Filter by name of the token
+          required: false
+          schema:
+            type: string
+        - name: createdAfter
+          in: query
+          description: Filter users created after this timestamp (inclusive)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: createdBefore
+          in: query
+          description: Filter users created before this timestamp (inclusive)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: updatedAfter
+          in: query
+          description: Filter users updated after this timestamp (inclusive)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: updatedBefore
+          in: query
+          description: Filter users updated before this timestamp (inclusive)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          description: Maximum number of results to return (default 20, max 100)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: cursor
+          in: query
+          description: Cursor for pagination (returned from previous request)
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - hasMore
+                properties:
+                  data:
+                    type: array
+                    description: List of tokens matching the filter criteria
+                    items:
+                      $ref: '#/components/schemas/ApiToken'
+                  hasMore:
+                    type: boolean
+                    description: Indicates if more results are available beyond this page
+                  nextCursor:
+                    type: string
+                    description: Cursor to retrieve the next page of results (only present if hasMore is true)
+                  totalCount:
+                    type: integer
+                    description: Total number of tokens matching the criteria (excluding pagination)
+        '400':
+          description: Bad request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /tokens/{tokenId}:
+    parameters:
+      - name: tokenId
+        in: path
+        description: System-generated unique token identifier
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get API token by ID
+      description: Retrieve an API token by their system-generated ID
+      operationId: getTokenById
+      tags:
+        - API Tokens
+      security:
+        - BasicAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiToken'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Token not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Delete API token by ID
+      description: Delete an API token by their system-generated ID
+      operationId: deleteTokenById
+      tags:
+        - API Tokens
+      security:
+        - BasicAuth: []
+      responses:
+        '200':
+          description: API token deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiToken'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Token not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '410':
+          description: Token deleted already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /config:
     get:
       summary: Get platform configuration
