@@ -2271,6 +2271,396 @@ To perform this operation, you must be authenticated by means of one of the foll
 BasicAuth
 </aside>
 
+<h1 id="uma-as-a-service-umaaas-api-api-tokens">API Tokens</h1>
+
+## createToken
+
+<a id="opIdcreateToken"></a>
+
+> Code samples
+
+```javascript
+const inputBody = '{
+  "name": "Sandbox read-only",
+  "permissions": [
+    "PRODUCTION_VIEW"
+  ]
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+};
+
+fetch('https://api.lightspark.com/umaaas/v1/tokens',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('https://api.lightspark.com/umaaas/v1/tokens', headers = headers)
+
+print(r.json())
+
+```
+
+`POST /tokens`
+
+*Create a new API token*
+
+Create a new API token to access the UMAaaS APIs.
+
+> Body parameter
+
+```json
+{
+  "name": "Sandbox read-only",
+  "permissions": [
+    "PRODUCTION_VIEW"
+  ]
+}
+```
+
+<h3 id="createtoken-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|body|body|object|true|none|
+|» name|body|string|true|Name of the token to help identify it|
+|» permissions|body|[[Permission](#schemapermission)]|true|A list of permissions to grant to the token|
+
+#### Enumerated Values
+
+|Parameter|Value|
+|---|---|
+|» permissions|PRODUCTION_VIEW|
+|» permissions|PRODUCTION_TRANSACT|
+|» permissions|PRODUCTION_MANAGE|
+|» permissions|SANDBOX_VIEW|
+|» permissions|SANDBOX_TRANSACT|
+|» permissions|SANDBOX_MANAGE|
+
+> Example responses
+
+> 201 Response
+
+```json
+{
+  "id": "User:019542f5-b3e7-1d02-0000-000000000001",
+  "name": "Sandbox read-only token",
+  "permissions": [
+    "PRODUCTION_VIEW"
+  ],
+  "clientId": "01947d2284054f890000e63bca4810df",
+  "clientSecret": "ed0ad25881e234cc28fb2dec0a4fe64e4172",
+  "createdAt": "2023-07-21T17:32:28Z",
+  "updatedAt": "2023-07-21T17:32:28Z"
+}
+```
+
+<h3 id="createtoken-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|API token created successfully|[ApiToken](#schemaapitoken)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BasicAuth
+</aside>
+
+## listTokens
+
+<a id="opIdlistTokens"></a>
+
+> Code samples
+
+```javascript
+
+const headers = {
+  'Accept':'application/json'
+};
+
+fetch('https://api.lightspark.com/umaaas/v1/tokens',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('https://api.lightspark.com/umaaas/v1/tokens', headers = headers)
+
+print(r.json())
+
+```
+
+`GET /tokens`
+
+*List tokens*
+
+Retrieve a list of API tokens with optional filtering parameters. Returns all tokens that match
+the specified filters. If no filters are provided, returns all tokens (paginated).
+
+<h3 id="listtokens-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|name|query|string|false|Filter by name of the token|
+|createdAfter|query|string(date-time)|false|Filter users created after this timestamp (inclusive)|
+|createdBefore|query|string(date-time)|false|Filter users created before this timestamp (inclusive)|
+|updatedAfter|query|string(date-time)|false|Filter users updated after this timestamp (inclusive)|
+|updatedBefore|query|string(date-time)|false|Filter users updated before this timestamp (inclusive)|
+|limit|query|integer|false|Maximum number of results to return (default 20, max 100)|
+|cursor|query|string|false|Cursor for pagination (returned from previous request)|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": [
+    {
+      "id": "User:019542f5-b3e7-1d02-0000-000000000001",
+      "name": "Sandbox read-only token",
+      "permissions": [
+        "PRODUCTION_VIEW"
+      ],
+      "clientId": "01947d2284054f890000e63bca4810df",
+      "clientSecret": "ed0ad25881e234cc28fb2dec0a4fe64e4172",
+      "createdAt": "2023-07-21T17:32:28Z",
+      "updatedAt": "2023-07-21T17:32:28Z"
+    }
+  ],
+  "hasMore": true,
+  "nextCursor": "string",
+  "totalCount": 0
+}
+```
+
+<h3 id="listtokens-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Successful operation|Inline|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request - Invalid parameters|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
+
+<h3 id="listtokens-responseschema">Response Schema</h3>
+
+Status Code **200**
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|» data|[[ApiToken](#schemaapitoken)]|true|none|List of tokens matching the filter criteria|
+|»» id|string|true|none|System-generated unique identifier|
+|»» name|string|true|none|Name of the token|
+|»» permissions|[[Permission](#schemapermission)]|true|none|A list of permissions granted to the token|
+|»» clientId|string|true|none|An opaque identifier that should be used as a client_id (or username)  in the HTTP Basic Authentication scheme when issuing http requests to UMAaaS.|
+|»» clientSecret|string|false|none|The secret that should be used to authenticate against UMAaaS API. This secret is not stored and will never be available again after creation.  Platform must keep this secret secure as it grants access to the account.|
+|»» createdAt|string(date-time)|true|none|Creation timestamp|
+|»» updatedAt|string(date-time)|true|none|Last update timestamp|
+|» hasMore|boolean|true|none|Indicates if more results are available beyond this page|
+|» nextCursor|string|false|none|Cursor to retrieve the next page of results (only present if hasMore is true)|
+|» totalCount|integer|false|none|Total number of tokens matching the criteria (excluding pagination)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BasicAuth
+</aside>
+
+## getTokenById
+
+<a id="opIdgetTokenById"></a>
+
+> Code samples
+
+```javascript
+
+const headers = {
+  'Accept':'application/json'
+};
+
+fetch('https://api.lightspark.com/umaaas/v1/tokens/{tokenId}',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('https://api.lightspark.com/umaaas/v1/tokens/{tokenId}', headers = headers)
+
+print(r.json())
+
+```
+
+`GET /tokens/{tokenId}`
+
+*Get API token by ID*
+
+Retrieve an API token by their system-generated ID
+
+<h3 id="gettokenbyid-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|tokenId|path|string|true|System-generated unique token identifier|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "id": "User:019542f5-b3e7-1d02-0000-000000000001",
+  "name": "Sandbox read-only token",
+  "permissions": [
+    "PRODUCTION_VIEW"
+  ],
+  "clientId": "01947d2284054f890000e63bca4810df",
+  "clientSecret": "ed0ad25881e234cc28fb2dec0a4fe64e4172",
+  "createdAt": "2023-07-21T17:32:28Z",
+  "updatedAt": "2023-07-21T17:32:28Z"
+}
+```
+
+<h3 id="gettokenbyid-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Successful operation|[ApiToken](#schemaapitoken)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Token not found|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BasicAuth
+</aside>
+
+## deleteTokenById
+
+<a id="opIddeleteTokenById"></a>
+
+> Code samples
+
+```javascript
+
+const headers = {
+  'Accept':'application/json'
+};
+
+fetch('https://api.lightspark.com/umaaas/v1/tokens/{tokenId}',
+{
+  method: 'DELETE',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.delete('https://api.lightspark.com/umaaas/v1/tokens/{tokenId}', headers = headers)
+
+print(r.json())
+
+```
+
+`DELETE /tokens/{tokenId}`
+
+*Delete API token by ID*
+
+Delete an API token by their system-generated ID
+
+<h3 id="deletetokenbyid-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|tokenId|path|string|true|System-generated unique token identifier|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "id": "User:019542f5-b3e7-1d02-0000-000000000001",
+  "name": "Sandbox read-only token",
+  "permissions": [
+    "PRODUCTION_VIEW"
+  ],
+  "clientId": "01947d2284054f890000e63bca4810df",
+  "clientSecret": "ed0ad25881e234cc28fb2dec0a4fe64e4172",
+  "createdAt": "2023-07-21T17:32:28Z",
+  "updatedAt": "2023-07-21T17:32:28Z"
+}
+```
+
+<h3 id="deletetokenbyid-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|API token deleted successfully|[ApiToken](#schemaapitoken)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Token not found|[Error](#schemaerror)|
+|410|[Gone](https://tools.ietf.org/html/rfc7231#section-6.5.9)|Token deleted already|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BasicAuth
+</aside>
+
 # Schemas
 
 <h2 id="tocS_Error">Error</h2>
@@ -3270,4 +3660,69 @@ The side of the quote which should be locked and specified in the `lockedCurrenc
 |status|COMPLETED|
 |status|FAILED|
 |status|EXPIRED|
+
+<h2 id="tocS_Permission">Permission</h2>
+<!-- backwards compatibility -->
+<a id="schemapermission"></a>
+<a id="schema_Permission"></a>
+<a id="tocSpermission"></a>
+<a id="tocspermission"></a>
+
+```json
+"PRODUCTION_VIEW"
+
+```
+
+Permission of an API token that determines what actions the token can perform. PRODUCTION_VIEW: Can view data in production mode, including platform config, users and transactions PRODUCTION_TRANSACT: Can send payments in production mode PRODUCTION_MANAGE: Can manage platform config and users in production mode SANDBOX_VIEW: Can view data in sandbox mode, including platform config, users and transactions SANDBOX_TRANSACT: Can send payments in sandbox mode SANDBOX_MANAGE: Can manage platform config and users in sandbox mode
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|string|false|none|Permission of an API token that determines what actions the token can perform. PRODUCTION_VIEW: Can view data in production mode, including platform config, users and transactions PRODUCTION_TRANSACT: Can send payments in production mode PRODUCTION_MANAGE: Can manage platform config and users in production mode SANDBOX_VIEW: Can view data in sandbox mode, including platform config, users and transactions SANDBOX_TRANSACT: Can send payments in sandbox mode SANDBOX_MANAGE: Can manage platform config and users in sandbox mode|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|*anonymous*|PRODUCTION_VIEW|
+|*anonymous*|PRODUCTION_TRANSACT|
+|*anonymous*|PRODUCTION_MANAGE|
+|*anonymous*|SANDBOX_VIEW|
+|*anonymous*|SANDBOX_TRANSACT|
+|*anonymous*|SANDBOX_MANAGE|
+
+<h2 id="tocS_ApiToken">ApiToken</h2>
+<!-- backwards compatibility -->
+<a id="schemaapitoken"></a>
+<a id="schema_ApiToken"></a>
+<a id="tocSapitoken"></a>
+<a id="tocsapitoken"></a>
+
+```json
+{
+  "id": "User:019542f5-b3e7-1d02-0000-000000000001",
+  "name": "Sandbox read-only token",
+  "permissions": [
+    "PRODUCTION_VIEW"
+  ],
+  "clientId": "01947d2284054f890000e63bca4810df",
+  "clientSecret": "ed0ad25881e234cc28fb2dec0a4fe64e4172",
+  "createdAt": "2023-07-21T17:32:28Z",
+  "updatedAt": "2023-07-21T17:32:28Z"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|id|string|true|none|System-generated unique identifier|
+|name|string|true|none|Name of the token|
+|permissions|[[Permission](#schemapermission)]|true|none|A list of permissions granted to the token|
+|clientId|string|true|none|An opaque identifier that should be used as a client_id (or username)  in the HTTP Basic Authentication scheme when issuing http requests to UMAaaS.|
+|clientSecret|string|false|none|The secret that should be used to authenticate against UMAaaS API. This secret is not stored and will never be available again after creation.  Platform must keep this secret secure as it grants access to the account.|
+|createdAt|string(date-time)|true|none|Creation timestamp|
+|updatedAt|string(date-time)|true|none|Last update timestamp|
 
