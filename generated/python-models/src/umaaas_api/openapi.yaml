@@ -510,12 +510,14 @@ paths:
       description: Delete an API token by their system-generated ID
       operationId: deleteTokenById
       responses:
-        "200":
+        "204":
+          description: API token deleted successfully
+        "400":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiToken'
-          description: API token deleted successfully
+                $ref: '#/components/schemas/Error'
+          description: Bad request
         "401":
           content:
             application/json:
@@ -528,12 +530,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           description: Token not found
-        "410":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-          description: Token deleted already
       security:
       - BasicAuth: []
       summary: Delete API token by ID
@@ -597,7 +593,7 @@ paths:
       summary: Get platform configuration
       tags:
       - Platform Configuration
-    put:
+    patch:
       description: Update the platform configuration settings
       operationId: updatePlatformConfig
       requestBody:
@@ -1540,6 +1536,9 @@ components:
           example: true
           title: mandatory
           type: boolean
+      required:
+      - mandatory
+      - name
       title: CounterpartyFieldDefinition
     PlatformCurrencyConfig:
       properties:
@@ -1902,11 +1901,11 @@ components:
       description: "Permission of an API token that determines what actions the token\
         \ can perform. PRODUCTION_VIEW: Can view data in production mode, including\
         \ platform config, users and transactions PRODUCTION_TRANSACT: Can send payments\
-        \ in production mode PRODUCTION_MANAGE: Can manage platform config and users\
-        \ in production mode SANDBOX_VIEW: Can view data in sandbox mode, including\
-        \ platform config, users and transactions SANDBOX_TRANSACT: Can send payments\
-        \ in sandbox mode SANDBOX_MANAGE: Can manage platform config and users in\
-        \ sandbox mode"
+        \ in production mode PRODUCTION_MANAGE: Can manage platform config, api tokens\
+        \ and users in production mode SANDBOX_VIEW: Can view data in sandbox mode,\
+        \ including platform config, users and transactions SANDBOX_TRANSACT: Can\
+        \ send payments in sandbox mode SANDBOX_MANAGE: Can manage platform config,\
+        \ api tokens and users in sandbox mode"
       enum:
       - PRODUCTION_VIEW
       - PRODUCTION_TRANSACT
