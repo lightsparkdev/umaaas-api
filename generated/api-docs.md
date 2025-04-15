@@ -2283,7 +2283,7 @@ BasicAuth
 const inputBody = '{
   "name": "Sandbox read-only",
   "permissions": [
-    "PRODUCTION_VIEW"
+    "VIEW"
   ]
 }';
 const headers = {
@@ -2330,7 +2330,7 @@ Create a new API token to access the UMAaaS APIs.
 {
   "name": "Sandbox read-only",
   "permissions": [
-    "PRODUCTION_VIEW"
+    "VIEW"
   ]
 }
 ```
@@ -2347,12 +2347,9 @@ Create a new API token to access the UMAaaS APIs.
 
 |Parameter|Value|
 |---|---|
-|» permissions|PRODUCTION_VIEW|
-|» permissions|PRODUCTION_TRANSACT|
-|» permissions|PRODUCTION_MANAGE|
-|» permissions|SANDBOX_VIEW|
-|» permissions|SANDBOX_TRANSACT|
-|» permissions|SANDBOX_MANAGE|
+|» permissions|VIEW|
+|» permissions|TRANSACT|
+|» permissions|MANAGE|
 
 > Example responses
 
@@ -2363,7 +2360,7 @@ Create a new API token to access the UMAaaS APIs.
   "id": "User:019542f5-b3e7-1d02-0000-000000000001",
   "name": "Sandbox read-only token",
   "permissions": [
-    "PRODUCTION_VIEW"
+    "VIEW"
   ],
   "clientId": "01947d2284054f890000e63bca4810df",
   "clientSecret": "ed0ad25881e234cc28fb2dec0a4fe64e4172",
@@ -2453,7 +2450,7 @@ the specified filters. If no filters are provided, returns all tokens (paginated
       "id": "User:019542f5-b3e7-1d02-0000-000000000001",
       "name": "Sandbox read-only token",
       "permissions": [
-        "PRODUCTION_VIEW"
+        "VIEW"
       ],
       "clientId": "01947d2284054f890000e63bca4810df",
       "clientSecret": "ed0ad25881e234cc28fb2dec0a4fe64e4172",
@@ -2557,7 +2554,7 @@ Retrieve an API token by their system-generated ID
   "id": "User:019542f5-b3e7-1d02-0000-000000000001",
   "name": "Sandbox read-only token",
   "permissions": [
-    "PRODUCTION_VIEW"
+    "VIEW"
   ],
   "clientId": "01947d2284054f890000e63bca4810df",
   "clientSecret": "ed0ad25881e234cc28fb2dec0a4fe64e4172",
@@ -3663,28 +3660,25 @@ The side of the quote which should be locked and specified in the `lockedCurrenc
 <a id="tocspermission"></a>
 
 ```json
-"PRODUCTION_VIEW"
+"VIEW"
 
 ```
 
-Permission of an API token that determines what actions the token can perform. PRODUCTION_VIEW: Can view data in production mode, including platform config, users and transactions PRODUCTION_TRANSACT: Can send payments in production mode PRODUCTION_MANAGE: Can manage platform config, api tokens and users in production mode SANDBOX_VIEW: Can view data in sandbox mode, including platform config, users and transactions SANDBOX_TRANSACT: Can send payments in sandbox mode SANDBOX_MANAGE: Can manage platform config, api tokens and users in sandbox mode
+Permission of an API token that determines what actions the token can perform: VIEW: Can view all data, including platform config, users and transactions TRANSACT: Can send payments MANAGE: Can manage platform config, api tokens and users
 
 ### Properties
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|*anonymous*|string|false|none|Permission of an API token that determines what actions the token can perform. PRODUCTION_VIEW: Can view data in production mode, including platform config, users and transactions PRODUCTION_TRANSACT: Can send payments in production mode PRODUCTION_MANAGE: Can manage platform config, api tokens and users in production mode SANDBOX_VIEW: Can view data in sandbox mode, including platform config, users and transactions SANDBOX_TRANSACT: Can send payments in sandbox mode SANDBOX_MANAGE: Can manage platform config, api tokens and users in sandbox mode|
+|*anonymous*|string|false|none|Permission of an API token that determines what actions the token can perform: VIEW: Can view all data, including platform config, users and transactions TRANSACT: Can send payments MANAGE: Can manage platform config, api tokens and users|
 
 #### Enumerated Values
 
 |Property|Value|
 |---|---|
-|*anonymous*|PRODUCTION_VIEW|
-|*anonymous*|PRODUCTION_TRANSACT|
-|*anonymous*|PRODUCTION_MANAGE|
-|*anonymous*|SANDBOX_VIEW|
-|*anonymous*|SANDBOX_TRANSACT|
-|*anonymous*|SANDBOX_MANAGE|
+|*anonymous*|VIEW|
+|*anonymous*|TRANSACT|
+|*anonymous*|MANAGE|
 
 <h2 id="tocS_ApiToken">ApiToken</h2>
 <!-- backwards compatibility -->
@@ -3698,7 +3692,7 @@ Permission of an API token that determines what actions the token can perform. P
   "id": "User:019542f5-b3e7-1d02-0000-000000000001",
   "name": "Sandbox read-only token",
   "permissions": [
-    "PRODUCTION_VIEW"
+    "VIEW"
   ],
   "clientId": "01947d2284054f890000e63bca4810df",
   "clientSecret": "ed0ad25881e234cc28fb2dec0a4fe64e4172",

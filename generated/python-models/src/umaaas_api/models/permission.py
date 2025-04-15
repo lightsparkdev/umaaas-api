@@ -29,18 +29,15 @@ except ImportError:
 
 class Permission(str, Enum):
     """
-    Permission of an API token that determines what actions the token can perform. PRODUCTION_VIEW: Can view data in production mode, including platform config, users and transactions PRODUCTION_TRANSACT: Can send payments in production mode PRODUCTION_MANAGE: Can manage platform config, api tokens and users in production mode SANDBOX_VIEW: Can view data in sandbox mode, including platform config, users and transactions SANDBOX_TRANSACT: Can send payments in sandbox mode SANDBOX_MANAGE: Can manage platform config, api tokens and users in sandbox mode
+    Permission of an API token that determines what actions the token can perform: VIEW: Can view all data, including platform config, users and transactions TRANSACT: Can send payments MANAGE: Can manage platform config, api tokens and users
     """
 
     """
     allowed enum values
     """
-    PRODUCTION_VIEW = 'PRODUCTION_VIEW'
-    PRODUCTION_TRANSACT = 'PRODUCTION_TRANSACT'
-    PRODUCTION_MANAGE = 'PRODUCTION_MANAGE'
-    SANDBOX_VIEW = 'SANDBOX_VIEW'
-    SANDBOX_TRANSACT = 'SANDBOX_TRANSACT'
-    SANDBOX_MANAGE = 'SANDBOX_MANAGE'
+    VIEW = 'VIEW'
+    TRANSACT = 'TRANSACT'
+    MANAGE = 'MANAGE'
 
     @classmethod
     def from_json(cls, json_str: str) -> Self:
