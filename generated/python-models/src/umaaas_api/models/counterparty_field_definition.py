@@ -22,7 +22,7 @@ import json
 
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List, Optional
+from typing import Any, ClassVar, Dict, List
 try:
     from typing import Self
 except ImportError:
@@ -32,16 +32,13 @@ class CounterpartyFieldDefinition(BaseModel):
     """
     CounterpartyFieldDefinition
     """ # noqa: E501
-    name: Optional[StrictStr] = Field(default=None, description="Name of the counterparty field")
-    mandatory: Optional[StrictBool] = Field(default=None, description="Whether the field is mandatory")
+    name: StrictStr = Field(description="Name of the counterparty field")
+    mandatory: StrictBool = Field(description="Whether the field is mandatory")
     __properties: ClassVar[List[str]] = ["name", "mandatory"]
 
     @field_validator('name')
     def name_validate_enum(cls, value):
         """Validates the enum"""
-        if value is None:
-            return value
-
         if value not in ('FULL_NAME', 'ADDRESS', 'DATE_OF_BIRTH', 'TAX_ID', 'REGISTRATION_NUMBER', 'ACCOUNT_NUMBER'):
             raise ValueError("must be one of enum values ('FULL_NAME', 'ADDRESS', 'DATE_OF_BIRTH', 'TAX_ID', 'REGISTRATION_NUMBER', 'ACCOUNT_NUMBER')")
         return value

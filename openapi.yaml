@@ -366,6 +366,9 @@ components:
           type: boolean
           description: Whether the field is mandatory
           example: true
+      required:
+        - name
+        - mandatory
 
     PlatformCurrencyConfig:
       type: object
@@ -703,10 +706,10 @@ components:
         Permission of an API token that determines what actions the token can perform.
         PRODUCTION_VIEW: Can view data in production mode, including platform config, users and transactions
         PRODUCTION_TRANSACT: Can send payments in production mode
-        PRODUCTION_MANAGE: Can manage platform config and users in production mode
+        PRODUCTION_MANAGE: Can manage platform config, api tokens and users in production mode
         SANDBOX_VIEW: Can view data in sandbox mode, including platform config, users and transactions
         SANDBOX_TRANSACT: Can send payments in sandbox mode
-        SANDBOX_MANAGE: Can manage platform config and users in sandbox mode
+        SANDBOX_MANAGE: Can manage platform config, api tokens and users in sandbox mode
 
     ApiToken:
       type: object
@@ -1347,12 +1350,14 @@ paths:
       security:
         - BasicAuth: []
       responses:
-        '200':
+        '204':
           description: API token deleted successfully
+        '400':
+          description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiToken'
+                $ref: '#/components/schemas/Error'
         '401':
           description: Unauthorized
           content:
@@ -1361,12 +1366,6 @@ paths:
                 $ref: '#/components/schemas/Error'
         '404':
           description: Token not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '410':
-          description: Token deleted already
           content:
             application/json:
               schema:
@@ -1394,7 +1393,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    put:
+    patch:
       summary: Update platform configuration
       description: Update the platform configuration settings
       operationId: updatePlatformConfig

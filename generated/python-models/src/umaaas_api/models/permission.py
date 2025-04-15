@@ -29,7 +29,7 @@ except ImportError:
 
 class Permission(str, Enum):
     """
-    Permission of an API token that determines what actions the token can perform. PRODUCTION_VIEW: Can view data in production mode, including platform config, users and transactions PRODUCTION_TRANSACT: Can send payments in production mode PRODUCTION_MANAGE: Can manage platform config and users in production mode SANDBOX_VIEW: Can view data in sandbox mode, including platform config, users and transactions SANDBOX_TRANSACT: Can send payments in sandbox mode SANDBOX_MANAGE: Can manage platform config and users in sandbox mode
+    Permission of an API token that determines what actions the token can perform. PRODUCTION_VIEW: Can view data in production mode, including platform config, users and transactions PRODUCTION_TRANSACT: Can send payments in production mode PRODUCTION_MANAGE: Can manage platform config, api tokens and users in production mode SANDBOX_VIEW: Can view data in sandbox mode, including platform config, users and transactions SANDBOX_TRANSACT: Can send payments in sandbox mode SANDBOX_MANAGE: Can manage platform config, api tokens and users in sandbox mode
     """
 
     """

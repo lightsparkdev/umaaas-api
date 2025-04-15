@@ -155,7 +155,7 @@ const headers = {
 
 fetch('https://api.lightspark.com/umaaas/v1/config',
 {
-  method: 'PUT',
+  method: 'PATCH',
   body: inputBody,
   headers: headers
 })
@@ -174,13 +174,13 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.put('https://api.lightspark.com/umaaas/v1/config', headers = headers)
+r = requests.patch('https://api.lightspark.com/umaaas/v1/config', headers = headers)
 
 print(r.json())
 
 ```
 
-`PUT /config`
+`PATCH /config`
 
 *Update platform configuration*
 
@@ -224,8 +224,8 @@ Update the platform configuration settings
 |»» minAmount|body|integer(int64)|true|Minimum amount that can be sent in the smallest unit of this currency|
 |»» maxAmount|body|integer(int64)|true|Maximum amount that can be sent in the smallest unit of this currency|
 |»» requiredCounterpartyFields|body|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|true|List of counterparty fields and their requirements|
-|»»» name|body|string|false|Name of the counterparty field|
-|»»» mandatory|body|boolean|false|Whether the field is mandatory|
+|»»» name|body|string|true|Name of the counterparty field|
+|»»» mandatory|body|boolean|true|Whether the field is mandatory|
 
 #### Enumerated Values
 
@@ -1802,8 +1802,8 @@ Status Code **200**
 |»» min|integer(int64)|true|none|The minimum amount that can be received in this currency.|
 |»» max|integer(int64)|true|none|The maximum amount that can be received in this currency.|
 |» requiredPayerDataFields|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|false|none|Fields required by the receiving institution about the payer before payment can be completed|
-|»» name|string|false|none|Name of the counterparty field|
-|»» mandatory|boolean|false|none|Whether the field is mandatory|
+|»» name|string|true|none|Name of the counterparty field|
+|»» mandatory|boolean|true|none|Whether the field is mandatory|
 
 #### Enumerated Values
 
@@ -2631,19 +2631,13 @@ Delete an API token by their system-generated ID
 
 > Example responses
 
-> 200 Response
+> 400 Response
 
 ```json
 {
-  "id": "User:019542f5-b3e7-1d02-0000-000000000001",
-  "name": "Sandbox read-only token",
-  "permissions": [
-    "PRODUCTION_VIEW"
-  ],
-  "clientId": "01947d2284054f890000e63bca4810df",
-  "clientSecret": "ed0ad25881e234cc28fb2dec0a4fe64e4172",
-  "createdAt": "2023-07-21T17:32:28Z",
-  "updatedAt": "2023-07-21T17:32:28Z"
+  "code": "string",
+  "message": "string",
+  "details": {}
 }
 ```
 
@@ -2651,10 +2645,10 @@ Delete an API token by their system-generated ID
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|API token deleted successfully|[ApiToken](#schemaapitoken)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|API token deleted successfully|None|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|[Error](#schemaerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Token not found|[Error](#schemaerror)|
-|410|[Gone](https://tools.ietf.org/html/rfc7231#section-6.5.9)|Token deleted already|[Error](#schemaerror)|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -3132,8 +3126,8 @@ and
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|name|string|false|none|Name of the counterparty field|
-|mandatory|boolean|false|none|Whether the field is mandatory|
+|name|string|true|none|Name of the counterparty field|
+|mandatory|boolean|true|none|Whether the field is mandatory|
 
 #### Enumerated Values
 
@@ -3673,13 +3667,13 @@ The side of the quote which should be locked and specified in the `lockedCurrenc
 
 ```
 
-Permission of an API token that determines what actions the token can perform. PRODUCTION_VIEW: Can view data in production mode, including platform config, users and transactions PRODUCTION_TRANSACT: Can send payments in production mode PRODUCTION_MANAGE: Can manage platform config and users in production mode SANDBOX_VIEW: Can view data in sandbox mode, including platform config, users and transactions SANDBOX_TRANSACT: Can send payments in sandbox mode SANDBOX_MANAGE: Can manage platform config and users in sandbox mode
+Permission of an API token that determines what actions the token can perform. PRODUCTION_VIEW: Can view data in production mode, including platform config, users and transactions PRODUCTION_TRANSACT: Can send payments in production mode PRODUCTION_MANAGE: Can manage platform config, api tokens and users in production mode SANDBOX_VIEW: Can view data in sandbox mode, including platform config, users and transactions SANDBOX_TRANSACT: Can send payments in sandbox mode SANDBOX_MANAGE: Can manage platform config, api tokens and users in sandbox mode
 
 ### Properties
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|*anonymous*|string|false|none|Permission of an API token that determines what actions the token can perform. PRODUCTION_VIEW: Can view data in production mode, including platform config, users and transactions PRODUCTION_TRANSACT: Can send payments in production mode PRODUCTION_MANAGE: Can manage platform config and users in production mode SANDBOX_VIEW: Can view data in sandbox mode, including platform config, users and transactions SANDBOX_TRANSACT: Can send payments in sandbox mode SANDBOX_MANAGE: Can manage platform config and users in sandbox mode|
+|*anonymous*|string|false|none|Permission of an API token that determines what actions the token can perform. PRODUCTION_VIEW: Can view data in production mode, including platform config, users and transactions PRODUCTION_TRANSACT: Can send payments in production mode PRODUCTION_MANAGE: Can manage platform config, api tokens and users in production mode SANDBOX_VIEW: Can view data in sandbox mode, including platform config, users and transactions SANDBOX_TRANSACT: Can send payments in sandbox mode SANDBOX_MANAGE: Can manage platform config, api tokens and users in sandbox mode|
 
 #### Enumerated Values
 
