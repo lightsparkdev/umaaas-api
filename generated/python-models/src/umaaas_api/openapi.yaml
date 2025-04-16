@@ -642,6 +642,34 @@ paths:
       summary: Update platform configuration
       tags:
       - Platform Configuration
+  /webhooks/test:
+    post:
+      description: Send a test webhook to the configured endpoint
+      operationId: sendTestWebhook
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestWebhookResponse'
+          description: Webhook delivered successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Bad request - Webhook delivery failed
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Unauthorized
+      security:
+      - BasicAuth: []
+      summary: Send a test webhook
+      tags:
+      - Webhooks
   /transactions/{transactionId}:
     get:
       description: Retrieve detailed information about a specific transaction
@@ -1637,6 +1665,23 @@ components:
       - TEST
       - BULK_UPLOAD
       type: string
+    TestWebhookResponse:
+      properties:
+        url:
+          description: URL where the webhook was sent
+          example: https://api.mycompany.com/webhooks/uma
+          format: uri
+          type: string
+        response_status:
+          description: The HTTP status code returned by the webhook endpoint
+          example: 200
+          type: integer
+        response_body:
+          description: The raw body content returned by the webhook endpoint in response
+            to the request
+          type: string
+      required:
+      - response_status
     Currency:
       properties:
         code:
@@ -2403,9 +2448,6 @@ components:
       - webhookId
     testWebhook_request:
       properties:
-        test:
-          description: Indicates this is a test webhook
-          example: true
         timestamp:
           description: ISO8601 timestamp when the webhook was sent (can be used to
             prevent replay attacks)
@@ -2418,7 +2460,6 @@ components:
         type:
           $ref: '#/components/schemas/WebhookType'
       required:
-      - test
       - timestamp
       - type
       - webhookId

@@ -21,23 +21,21 @@ import json
 
 
 
-from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List
-from umaaas_api.models.webhook_type import WebhookType
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
+from typing import Any, ClassVar, Dict, List, Optional
 try:
     from typing import Self
 except ImportError:
     from typing_extensions import Self
 
-class TestWebhookRequest(BaseModel):
+class TestWebhookResponse(BaseModel):
     """
-    TestWebhookRequest
+    TestWebhookResponse
     """ # noqa: E501
-    timestamp: datetime = Field(description="ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)")
-    webhook_id: StrictStr = Field(description="Unique identifier for this webhook delivery (can be used for idempotency)", alias="webhookId")
-    type: WebhookType = Field(description="Type of webhook event")
-    __properties: ClassVar[List[str]] = ["timestamp", "webhookId", "type"]
+    url: Optional[StrictStr] = Field(default=None, description="URL where the webhook was sent")
+    response_status: StrictInt = Field(description="The HTTP status code returned by the webhook endpoint")
+    response_body: Optional[StrictStr] = Field(default=None, description="The raw body content returned by the webhook endpoint in response to the request")
+    __properties: ClassVar[List[str]] = ["url", "response_status", "response_body"]
 
     model_config = {
         "populate_by_name": True,
@@ -56,7 +54,7 @@ class TestWebhookRequest(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Self:
-        """Create an instance of TestWebhookRequest from a JSON string"""
+        """Create an instance of TestWebhookResponse from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -81,7 +79,7 @@ class TestWebhookRequest(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Dict) -> Self:
-        """Create an instance of TestWebhookRequest from a dict"""
+        """Create an instance of TestWebhookResponse from a dict"""
         if obj is None:
             return None
 
@@ -89,9 +87,9 @@ class TestWebhookRequest(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "timestamp": obj.get("timestamp"),
-            "webhookId": obj.get("webhookId"),
-            "type": obj.get("type")
+            "url": obj.get("url"),
+            "response_status": obj.get("response_status"),
+            "response_body": obj.get("response_body")
         })
         return _obj
 
