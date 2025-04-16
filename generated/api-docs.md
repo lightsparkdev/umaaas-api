@@ -2271,6 +2271,79 @@ To perform this operation, you must be authenticated by means of one of the foll
 BasicAuth
 </aside>
 
+<h1 id="uma-as-a-service-umaaas-api-webhooks">Webhooks</h1>
+
+Webhook endpoints and configuration for receiving notifications
+
+## sendTestWebhook
+
+<a id="opIdsendTestWebhook"></a>
+
+> Code samples
+
+```javascript
+
+const headers = {
+  'Accept':'application/json'
+};
+
+fetch('https://api.lightspark.com/umaaas/v1/webhooks/test',
+{
+  method: 'POST',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.post('https://api.lightspark.com/umaaas/v1/webhooks/test', headers = headers)
+
+print(r.json())
+
+```
+
+`POST /webhooks/test`
+
+*Send a test webhook*
+
+Send a test webhook to the configured endpoint
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "url": "https://api.mycompany.com/webhooks/uma",
+  "response_status": 200,
+  "response_body": "string"
+}
+```
+
+<h3 id="sendtestwebhook-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Webhook delivered successfully|[TestWebhookResponse](#schematestwebhookresponse)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request - Webhook delivery failed|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BasicAuth
+</aside>
+
 <h1 id="uma-as-a-service-umaaas-api-api-tokens">API Tokens</h1>
 
 ## createToken
@@ -3302,6 +3375,30 @@ Type of webhook event, used by the receiver to identify which webhook is being r
 |*anonymous*|OUTGOING_PAYMENT|
 |*anonymous*|TEST|
 |*anonymous*|BULK_UPLOAD|
+
+<h2 id="tocS_TestWebhookResponse">TestWebhookResponse</h2>
+<!-- backwards compatibility -->
+<a id="schematestwebhookresponse"></a>
+<a id="schema_TestWebhookResponse"></a>
+<a id="tocStestwebhookresponse"></a>
+<a id="tocstestwebhookresponse"></a>
+
+```json
+{
+  "url": "https://api.mycompany.com/webhooks/uma",
+  "response_status": 200,
+  "response_body": "string"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|url|string(uri)|false|none|URL where the webhook was sent|
+|response_status|integer|true|none|The HTTP status code returned by the webhook endpoint|
+|response_body|string|false|none|The raw body content returned by the webhook endpoint in response to the request|
 
 <h2 id="tocS_Currency">Currency</h2>
 <!-- backwards compatibility -->

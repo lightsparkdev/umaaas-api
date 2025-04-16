@@ -454,6 +454,24 @@ components:
       enum: [INCOMING_PAYMENT, OUTGOING_PAYMENT, TEST, BULK_UPLOAD]
       description: Type of webhook event, used by the receiver to identify which webhook is being received
 
+    TestWebhookResponse:
+      type: object
+      required:
+        - response_status
+      properties:
+        url:
+          type: string
+          format: uri
+          description: URL where the webhook was sent
+          example: "https://api.mycompany.com/webhooks/uma"
+        response_status:
+          type: integer
+          description: The HTTP status code returned by the webhook endpoint
+          example: 200
+        response_body:
+          type: string
+          description: The raw body content returned by the webhook endpoint in response to the request
+
     Currency:
       type: object
       properties:
@@ -1440,6 +1458,35 @@ paths:
                 $ref: '#/components/schemas/PlatformConfig'
         '400':
           description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /webhooks/test:
+    post:
+      summary: Send a test webhook
+      description: Send a test webhook to the configured endpoint
+      operationId: sendTestWebhook
+      tags:
+        - Webhooks
+      security:
+        - BasicAuth: []
+      responses:
+        '200':
+          description: Webhook delivered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestWebhookResponse'
+        '400':
+          description: Bad request - Webhook delivery failed
           content:
             application/json:
               schema:
@@ -2532,15 +2579,10 @@ webhooks:
             schema:
               type: object
               required:
-                - test
                 - timestamp
                 - webhookId
                 - type
               properties:
-                test:
-                  type: boolean
-                  description: Indicates this is a test webhook
-                  example: true
                 timestamp:
                   type: string
                   format: date-time
@@ -2558,7 +2600,6 @@ webhooks:
               testWebhook:
                 summary: Test webhook example
                 value:
-                  test: true
                   timestamp: "2023-08-15T14:32:00Z"
                   webhookId: "Webhook:019542f5-b3e7-1d02-0000-000000000001"
                   type: "TEST"
