@@ -7,7 +7,7 @@ import type * as Redocusaurus from 'redocusaurus';
 
 const config: Config = {
   title: 'UMA as a Service (UMAaaS)',
-  tagline: 'Documentation for the UMAaaS API',
+  tagline: 'Docs and Guides for the UMAaaS API',
   favicon: 'img/favicon.ico',
 
   url: 'https://lightsparkdev.github.io/',
@@ -61,7 +61,7 @@ const config: Config = {
         // Theme Options for modifying how redoc renders them
         theme: {
           // Change with your site colors
-          primaryColor: '#1890ff',
+          primaryColor: '#000000',
         },
       } satisfies Redocusaurus.PresetOptions,
     ],
@@ -71,7 +71,7 @@ const config: Config = {
 
   themeConfig: {
     // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    image: 'img/social-card.jpg',
     navbar: {
       title: 'UMAaaS API',
       logo: {
@@ -90,11 +90,11 @@ const config: Config = {
           label: 'API Reference',
           position: 'left',
         },
-        {
-          type: 'html',
-          position: 'right',
-          value: '<span class="badge badge--danger">Work in progress alpha! Not for production use.</span>',
-        },
+        // {
+        //   type: 'html',
+        //   position: 'right',
+        //   value: '<span class="badge badge--danger">Work in progress alpha! Not for production use.</span>',
+        // },
         {
           href: 'https://github.com/lightspark/umaaas-api',
           label: 'GitHub',
@@ -104,31 +104,7 @@ const config: Config = {
     },
     footer: {
       style: 'dark',
-      links: [
-        {
-          title: 'Docs',
-          items: [
-            {
-              label: 'Guides',
-              to: '/docs',
-            },
-            {
-              label: 'API Reference',
-              to: '/api',
-            },
-          ],
-        },
-        {
-          title: 'More',
-          items: [
-            {
-              label: 'GitHub',
-              href: 'https://github.com/lightspark/umaaas-api',
-            },
-          ],
-        },
-      ],
-      copyright: `Copyright © ${new Date().getFullYear()} Lightspark Group. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Lightspark Group`,
     },
     prism: {
       theme: prismThemes.github,

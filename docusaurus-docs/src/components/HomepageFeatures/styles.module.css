@@ -5,7 +5,11 @@
   width: 100%;
 }
 
-.featureSvg {
+.featureImage {
   height: 200px;
   width: 200px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+  border: #333333 2px solid;
+  border-radius: 8px;
 }
