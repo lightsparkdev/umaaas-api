@@ -40,10 +40,10 @@ If this is your first time configuring the platform, some default values may be 
 
 ## Update Platform Configuration
 
-To update your platform configuration, use the PUT endpoint:
+To update your platform configuration, use the PATCH endpoint:
 
 ```http
-PUT /config
+PATCH /config
 ```
 
 Request body:
@@ -52,18 +52,25 @@ Request body:
 {
   "umaDomain": "mycompany.com",
   "webhookEndpoint": "https://api.mycompany.com/webhooks/uma",
-  "requiredCounterpartyFields": [
+  "supportedCurrencies": [
     {
-      "name": "FULL_NAME",
-      "mandatory": true
-    },
-    {
-      "name": "DATE_OF_BIRTH",
-      "mandatory": true
-    },
-    {
-      "name": "ADDRESS",
-      "mandatory": false
+      "currencyCode": "USD",
+      "minAmount": 100,
+      "maxAmount": 1000000,
+      "requiredCounterpartyFields": [
+        {
+          "name": "FULL_NAME",
+          "mandatory": true
+        },
+        {
+          "name": "DATE_OF_BIRTH",
+          "mandatory": true
+        },
+        {
+          "name": "ADDRESS",
+          "mandatory": false
+        }
+      ]
     }
   ]
 }
@@ -73,23 +80,32 @@ Response:
 
 ```json
 {
+  "id": "PlatformConfig:019542f5-b3e7-1d02-0000-000000000003",
   "umaDomain": "mycompany.com",
-  "proxyUmaaasSubdomain": "mycompany",
   "webhookEndpoint": "https://api.mycompany.com/webhooks/uma",
-  "requiredCounterpartyFields": [
+  "supportedCurrencies": [
     {
-      "name": "FULL_NAME",
-      "mandatory": true
-    },
-    {
-      "name": "DATE_OF_BIRTH",
-      "mandatory": true
-    },
-    {
-      "name": "ADDRESS",
-      "mandatory": false
+      "currencyCode": "USD",
+      "minAmount": 100,
+      "maxAmount": 1000000,
+      "requiredCounterpartyFields": [
+        {
+          "name": "FULL_NAME",
+          "mandatory": true
+        },
+        {
+          "name": "DATE_OF_BIRTH",
+          "mandatory": true
+        },
+        {
+          "name": "ADDRESS",
+          "mandatory": false
+        }
+      ]
     }
-  ]
+  ],
+  "createdAt": "2023-06-15T12:30:45Z",
+  "updatedAt": "2023-06-15T12:30:45Z"
 }
 ```
 
@@ -167,3 +183,4 @@ Your webhook handler should:
 1. Verify the webhook signature (see [Webhook Verification Guide](webhook-verification.md))
 2. Identify the webhook as a test event
 3. Respond with a 200 OK status
+
