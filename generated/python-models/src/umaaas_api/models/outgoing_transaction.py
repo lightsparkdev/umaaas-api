@@ -37,14 +37,14 @@ class OutgoingTransaction(BaseModel):
     """
     OutgoingTransaction
     """ # noqa: E501
-    transaction_id: StrictStr = Field(description="Unique identifier for the transaction", alias="transactionId")
+    id: StrictStr = Field(description="Unique identifier for the transaction")
     status: TransactionStatus
     type: TransactionType = Field(description="Always \"OUTGOING\" for outgoing transactions")
     sender_uma_address: StrictStr = Field(description="UMA address of the payment sender", alias="senderUmaAddress")
     receiver_uma_address: StrictStr = Field(description="UMA address of the payment recipient", alias="receiverUmaAddress")
     user_id: StrictStr = Field(description="System ID of the user (sender for outgoing, recipient for incoming)", alias="userId")
     platform_user_id: StrictStr = Field(description="Platform-specific ID of the user (sender for outgoing, recipient for incoming)", alias="platformUserId")
-    settlement_time: Optional[datetime] = Field(default=None, description="When the payment was or will be settled", alias="settlementTime")
+    settled_at: Optional[datetime] = Field(default=None, description="When the payment was or will be settled", alias="settledAt")
     created_at: Optional[datetime] = Field(default=None, description="When the transaction was created", alias="createdAt")
     description: Optional[StrictStr] = Field(default=None, description="Optional memo or description for the payment")
     counterparty_information: Optional[Dict[str, Any]] = Field(default=None, description="Additional information about the counterparty, if available", alias="counterpartyInformation")
@@ -53,7 +53,7 @@ class OutgoingTransaction(BaseModel):
     exchange_rate: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="Number of sending currency units per receiving currency unit.", alias="exchangeRate")
     fees: Optional[Annotated[int, Field(strict=True, ge=0)]] = Field(default=None, description="The fees associated with the quote in the smallest unit of the sending currency (eg. cents).")
     quote_id: Optional[StrictStr] = Field(default=None, description="The ID of the quote that was used to trigger this payment", alias="quoteId")
-    __properties: ClassVar[List[str]] = ["transactionId", "status", "type", "senderUmaAddress", "receiverUmaAddress", "userId", "platformUserId", "settlementTime", "createdAt", "description", "counterpartyInformation", "sentAmount", "receivedAmount", "exchangeRate", "fees", "quoteId"]
+    __properties: ClassVar[List[str]] = ["id", "status", "type", "senderUmaAddress", "receiverUmaAddress", "userId", "platformUserId", "settledAt", "createdAt", "description", "counterpartyInformation", "sentAmount", "receivedAmount", "exchangeRate", "fees", "quoteId"]
 
     model_config = {
         "populate_by_name": True,
@@ -111,14 +111,14 @@ class OutgoingTransaction(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "transactionId": obj.get("transactionId"),
+            "id": obj.get("id"),
             "status": obj.get("status"),
             "type": obj.get("type"),
             "senderUmaAddress": obj.get("senderUmaAddress"),
             "receiverUmaAddress": obj.get("receiverUmaAddress"),
             "userId": obj.get("userId"),
             "platformUserId": obj.get("platformUserId"),
-            "settlementTime": obj.get("settlementTime"),
+            "settledAt": obj.get("settledAt"),
             "createdAt": obj.get("createdAt"),
             "description": obj.get("description"),
             "counterpartyInformation": obj.get("counterpartyInformation"),
