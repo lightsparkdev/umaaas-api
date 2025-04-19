@@ -19,15 +19,15 @@ License: <a href="https://lightspark.com/terms">Proprietary</a>
 - HTTP Authentication, scheme: basic API token authentication using format `<api token id>:<api client secret>`
 
 * API Key (WebhookSignature)
-    - Parameter Name: **X-UMAaas-Signature**, in: header. HMAC-SHA256 signature of the webhook payload, which can be used to verify that the webhook was sent by UMAaas.
+    - Parameter Name: **X-UMAaas-Signature**, in: header. Secp256r1 (P-256) asymmetric signature of the webhook payload, which can be used to verify that the webhook was sent by UMAaas.
 
-The signature is created by:
-1. Taking the entire webhook request body as a string
-2. Creating an HMAC-SHA256 hash of the request body using the webhook secret as the key
-3. Encoding the hash in hexadecimal format
-4. Compare this value to the signature in the `X-UMAaas-Signature` header
+To verify the signature:
+1. Get the UMAaas public key provided to you during integration
+2. Decode the base64 signature from the header
+3. Create a SHA-256 hash of the request body
+4. Verify the signature using the public key and the hash
 
-If the values match, the webhook is authentic. If not, it should be rejected.
+If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
 
 <h1 id="uma-as-a-service-umaaas-api-platform-configuration">Platform Configuration</h1>
 
@@ -1408,14 +1408,14 @@ Retrieve detailed information about a specific transaction
 
 ```json
 {
-  "transactionId": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
+  "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
   "status": "PENDING",
   "type": "INCOMING",
   "senderUmaAddress": "$sender@external.domain",
   "receiverUmaAddress": "$recipient@uma.domain",
   "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
   "platformUserId": "18d3e5f7b4a9c2",
-  "settlementTime": "2023-08-15T14:30:00Z",
+  "settledAt": "2023-08-15T14:30:00Z",
   "createdAt": "2023-08-15T14:25:18Z",
   "description": "Payment for invoice #1234",
   "counterpartyInformation": {
@@ -1525,7 +1525,6 @@ date range, status, and transaction type.
 |endDate|query|string(date-time)|false|Filter by end date (inclusive) in ISO 8601 format|
 |limit|query|integer|false|Maximum number of results to return (default 20, max 100)|
 |cursor|query|string|false|Cursor for pagination (returned from previous request)|
-|sortBy|query|string|false|Field to sort results by|
 |sortOrder|query|string|false|Order to sort results in|
 
 #### Enumerated Values
@@ -1538,10 +1537,6 @@ date range, status, and transaction type.
 |status|REFUNDED|
 |type|INCOMING|
 |type|OUTGOING|
-|sortBy|createdAt|
-|sortBy|settlementTime|
-|sortBy|receivedAmount|
-|sortBy|sentAmount|
 |sortOrder|asc|
 |sortOrder|desc|
 
@@ -1553,14 +1548,14 @@ date range, status, and transaction type.
 {
   "data": [
     {
-      "transactionId": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
+      "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
       "status": "PENDING",
       "type": "INCOMING",
       "senderUmaAddress": "$sender@external.domain",
       "receiverUmaAddress": "$recipient@uma.domain",
       "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
       "platformUserId": "18d3e5f7b4a9c2",
-      "settlementTime": "2023-08-15T14:30:00Z",
+      "settledAt": "2023-08-15T14:30:00Z",
       "createdAt": "2023-08-15T14:25:18Z",
       "description": "Payment for invoice #1234",
       "counterpartyInformation": {
@@ -1611,14 +1606,14 @@ Status Code **200**
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |»»» *anonymous*|[Transaction](#schematransaction)|false|none|none|
-|»»»» transactionId|string|true|none|Unique identifier for the transaction|
+|»»»» id|string|true|none|Unique identifier for the transaction|
 |»»»» status|[TransactionStatus](#schematransactionstatus)|true|none|Status of a payment transaction|
 |»»»» type|[TransactionType](#schematransactiontype)|true|none|Type of transaction (incoming payment or outgoing payment)|
 |»»»» senderUmaAddress|string|true|none|UMA address of the payment sender|
 |»»»» receiverUmaAddress|string|true|none|UMA address of the payment recipient|
 |»»»» userId|string|true|none|System ID of the user (sender for outgoing, recipient for incoming)|
 |»»»» platformUserId|string|true|none|Platform-specific ID of the user (sender for outgoing, recipient for incoming)|
-|»»»» settlementTime|string(date-time)|false|none|When the payment was or will be settled|
+|»»»» settledAt|string(date-time)|false|none|When the payment was or will be settled|
 |»»»» createdAt|string(date-time)|false|none|When the transaction was created|
 |»»»» description|string|false|none|Optional memo or description for the payment|
 |»»»» counterpartyInformation|object|false|none|Additional information about the counterparty, if available|
@@ -2154,14 +2149,14 @@ payment instructions has been received and processed.
   "status": "RECEIVED",
   "statusMessage": "Payment received and being processed",
   "transaction": {
-    "transactionId": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
+    "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
     "status": "PENDING",
     "type": "INCOMING",
     "senderUmaAddress": "$sender@external.domain",
     "receiverUmaAddress": "$recipient@uma.domain",
     "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
     "platformUserId": "18d3e5f7b4a9c2",
-    "settlementTime": "2023-08-15T14:30:00Z",
+    "settledAt": "2023-08-15T14:30:00Z",
     "createdAt": "2023-08-15T14:25:18Z",
     "description": "Payment for invoice #1234",
     "counterpartyInformation": {
@@ -2217,14 +2212,14 @@ Status Code **200**
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |»» *anonymous*|[Transaction](#schematransaction)|false|none|none|
-|»»» transactionId|string|true|none|Unique identifier for the transaction|
+|»»» id|string|true|none|Unique identifier for the transaction|
 |»»» status|[TransactionStatus](#schematransactionstatus)|true|none|Status of a payment transaction|
 |»»» type|[TransactionType](#schematransactiontype)|true|none|Type of transaction (incoming payment or outgoing payment)|
 |»»» senderUmaAddress|string|true|none|UMA address of the payment sender|
 |»»» receiverUmaAddress|string|true|none|UMA address of the payment recipient|
 |»»» userId|string|true|none|System ID of the user (sender for outgoing, recipient for incoming)|
 |»»» platformUserId|string|true|none|Platform-specific ID of the user (sender for outgoing, recipient for incoming)|
-|»»» settlementTime|string(date-time)|false|none|When the payment was or will be settled|
+|»»» settledAt|string(date-time)|false|none|When the payment was or will be settled|
 |»»» createdAt|string(date-time)|false|none|When the transaction was created|
 |»»» description|string|false|none|Optional memo or description for the payment|
 |»»» counterpartyInformation|object|false|none|Additional information about the counterparty, if available|
@@ -3462,14 +3457,14 @@ Type of webhook event, used by the receiver to identify which webhook is being r
 
 ```json
 {
-  "transactionId": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
+  "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
   "status": "PENDING",
   "type": "INCOMING",
   "senderUmaAddress": "$sender@external.domain",
   "receiverUmaAddress": "$recipient@uma.domain",
   "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
   "platformUserId": "18d3e5f7b4a9c2",
-  "settlementTime": "2023-08-15T14:30:00Z",
+  "settledAt": "2023-08-15T14:30:00Z",
   "createdAt": "2023-08-15T14:25:18Z",
   "description": "Payment for invoice #1234",
   "counterpartyInformation": {
@@ -3484,14 +3479,14 @@ Type of webhook event, used by the receiver to identify which webhook is being r
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|transactionId|string|true|none|Unique identifier for the transaction|
+|id|string|true|none|Unique identifier for the transaction|
 |status|[TransactionStatus](#schematransactionstatus)|true|none|Status of a payment transaction|
 |type|[TransactionType](#schematransactiontype)|true|none|Type of transaction (incoming payment or outgoing payment)|
 |senderUmaAddress|string|true|none|UMA address of the payment sender|
 |receiverUmaAddress|string|true|none|UMA address of the payment recipient|
 |userId|string|true|none|System ID of the user (sender for outgoing, recipient for incoming)|
 |platformUserId|string|true|none|Platform-specific ID of the user (sender for outgoing, recipient for incoming)|
-|settlementTime|string(date-time)|false|none|When the payment was or will be settled|
+|settledAt|string(date-time)|false|none|When the payment was or will be settled|
 |createdAt|string(date-time)|false|none|When the transaction was created|
 |description|string|false|none|Optional memo or description for the payment|
 |counterpartyInformation|object|false|none|Additional information about the counterparty, if available|
@@ -3505,14 +3500,14 @@ Type of webhook event, used by the receiver to identify which webhook is being r
 
 ```json
 {
-  "transactionId": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
+  "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
   "status": "PENDING",
   "type": "INCOMING",
   "senderUmaAddress": "$sender@external.domain",
   "receiverUmaAddress": "$recipient@uma.domain",
   "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
   "platformUserId": "18d3e5f7b4a9c2",
-  "settlementTime": "2023-08-15T14:30:00Z",
+  "settledAt": "2023-08-15T14:30:00Z",
   "createdAt": "2023-08-15T14:25:18Z",
   "description": "Payment for invoice #1234",
   "counterpartyInformation": {
@@ -3557,14 +3552,14 @@ and
 
 ```json
 {
-  "transactionId": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
+  "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
   "status": "PENDING",
   "type": "INCOMING",
   "senderUmaAddress": "$sender@external.domain",
   "receiverUmaAddress": "$recipient@uma.domain",
   "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
   "platformUserId": "18d3e5f7b4a9c2",
-  "settlementTime": "2023-08-15T14:30:00Z",
+  "settledAt": "2023-08-15T14:30:00Z",
   "createdAt": "2023-08-15T14:25:18Z",
   "description": "Payment for invoice #1234",
   "counterpartyInformation": {

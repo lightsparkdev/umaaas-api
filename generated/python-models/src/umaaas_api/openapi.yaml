@@ -807,20 +807,6 @@ paths:
         schema:
           type: string
         style: form
-      - description: Field to sort results by
-        explode: true
-        in: query
-        name: sortBy
-        required: false
-        schema:
-          default: createdAt
-          enum:
-          - createdAt
-          - settlementTime
-          - receivedAmount
-          - sentAmount
-          type: string
-        style: form
       - description: Order to sort results in
         explode: true
         in: query
@@ -1725,10 +1711,10 @@ components:
       title: CurrencyAmount
     Transaction:
       properties:
-        transactionId:
+        id:
           description: Unique identifier for the transaction
           example: Transaction:019542f5-b3e7-1d02-0000-000000000004
-          title: transactionId
+          title: id
           type: string
         status:
           $ref: '#/components/schemas/TransactionStatus'
@@ -1756,11 +1742,11 @@ components:
           example: 18d3e5f7b4a9c2
           title: platformUserId
           type: string
-        settlementTime:
+        settledAt:
           description: When the payment was or will be settled
           example: 2023-08-15T14:30:00Z
           format: date-time
-          title: settlementTime
+          title: settledAt
           type: string
         createdAt:
           description: When the transaction was created
@@ -1782,11 +1768,11 @@ components:
           title: counterpartyInformation
           type: object
       required:
+      - id
       - platformUserId
       - receiverUmaAddress
       - senderUmaAddress
       - status
-      - transactionId
       - type
       - userId
       title: Transaction
@@ -2571,15 +2557,15 @@ components:
       type: http
     WebhookSignature:
       description: |
-        HMAC-SHA256 signature of the webhook payload, which can be used to verify that the webhook was sent by UMAaas.
+        Secp256r1 (P-256) asymmetric signature of the webhook payload, which can be used to verify that the webhook was sent by UMAaas.
 
-        The signature is created by:
-        1. Taking the entire webhook request body as a string
-        2. Creating an HMAC-SHA256 hash of the request body using the webhook secret as the key
-        3. Encoding the hash in hexadecimal format
-        4. Compare this value to the signature in the `X-UMAaas-Signature` header
+        To verify the signature:
+        1. Get the UMAaas public key provided to you during integration
+        2. Decode the base64 signature from the header
+        3. Create a SHA-256 hash of the request body
+        4. Verify the signature using the public key and the hash
 
-        If the values match, the webhook is authentic. If not, it should be rejected.
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
       in: header
       name: X-UMAaas-Signature
       type: apiKey

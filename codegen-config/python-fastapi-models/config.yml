@@ -2,7 +2,7 @@ templateDir: codegen-config/python-fastapi-models/templates
 additionalProperties:
   infoEmail: "info@lightspark.com"
   packageUrl: https://github.com/uma-universal-money-address/umaaas-api
-  packageVersion: 0.0.5
+  packageVersion: 0.0.6
 packageName: umaaas_api
 files:
   setup_cfg.mustache:
