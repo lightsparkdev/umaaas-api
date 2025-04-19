@@ -39,7 +39,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/lightspark/umaaas-api/tree/main/docusaurus-docs/',
+            'https://github.com/lightsparkdev/umaaas-api/tree/main/docusaurus-docs/',
         },
         blog: false, // Disable the blog feature
         theme: {
@@ -96,7 +96,7 @@ const config: Config = {
         //   value: '<span class="badge badge--danger">Work in progress alpha! Not for production use.</span>',
         // },
         {
-          href: 'https://github.com/lightspark/umaaas-api',
+          href: 'https://github.com/lightsparkdev/umaaas-api',
           label: 'GitHub',
           position: 'right',
         },

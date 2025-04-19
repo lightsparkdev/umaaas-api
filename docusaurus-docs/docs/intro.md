@@ -56,4 +56,4 @@ This documentation is organized into the following sections:
 - **Guides**: Step-by-step instructions for implementing UMA as a Service features
 - **API Reference**: Detailed documentation of API endpoints and schemas
 
-We continuously improve our documentation. If you have any suggestions or find any issues, please let us know through our [GitHub repository](https://github.com/lightspark/umaaas-api).
+We continuously improve our documentation. If you have any suggestions or find any issues, please let us know through our [GitHub repository](https://github.com/lightsparkdev/umaaas-api).
