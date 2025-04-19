@@ -1,52 +1,56 @@
-import type {ReactNode} from 'react';
-import clsx from 'clsx';
-import Heading from '@theme/Heading';
-import styles from './styles.module.css';
+import type { ReactNode } from "react";
+import clsx from "clsx";
+import Heading from "@theme/Heading";
+import styles from "./styles.module.css";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 
 type FeatureItem = {
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
+  imageUrl: string;
   description: ReactNode;
 };
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'UMA without touching crypto',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: "UMA without touching crypto",
+    imageUrl: "img/without-crypto.png",
     description: (
       <>
-        UMA as a Service enables your users to send and receive payments globally
-        without needing to touch crypto or worry about the underlying payment networks.
+        UMA as a Service enables your users to send and receive payments
+        globally without needing to touch crypto or worry about the underlying
+        payment networks.
       </>
     ),
   },
   {
-    title: 'Human-readable Payment Addresses',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: "Human-readable Payment Addresses",
+    imageUrl: "img/human-readable.png",
     description: (
       <>
-        Assign personalized UMA addresses to your users in the format of <code>$username@domain.com</code>,
-        making money addresses as intuitive and easy to remember as email addresses.
+        Assign personalized UMA addresses to your users in the format of{" "}
+        <code>$username@domain.com</code>, making money addresses as intuitive
+        and easy to remember as email addresses.
       </>
     ),
   },
   {
-    title: 'Seamless API Integration',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: "Seamless API Integration",
+    imageUrl: "img/seamless-api.png",
     description: (
       <>
-        Integrate universal money addresses into your application with our
-        REST API, webhook notifications, and comprehensive security features.
+        Integrate universal money addresses into your application with our REST
+        API, webhook notifications, and comprehensive security features.
       </>
     ),
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Feature({ title, imageUrl, description }: FeatureItem) {
+  const imgUrl = useBaseUrl(imageUrl);
   return (
-    <div className={clsx('col col--4')}>
+    <div className={clsx("col col--4")}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+        <img src={imgUrl} className={styles.featureImage} role="img" alt={title} />
       </div>
       <div className="text--center padding-horiz--md">
         <Heading as="h3">{title}</Heading>
