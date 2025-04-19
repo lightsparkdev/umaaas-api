@@ -60,16 +60,16 @@ Example request body for an individual user:
   "fullName": "John Sender",
   "dateOfBirth": "1985-06-15",
   "address": {
-    "line1": "123 Pine Street",
-    "line2": "Unit 501",
-    "city": "Mexico City",
-    "state": "Mexico City",
-    "postalCode": "01000",
+    "line1": "Paseo de la Reforma 222",
+    "line2": "Piso 15",
+    "city": "Ciudad de México",
+    "state": "Ciudad de México",
+    "postalCode": "06600",
     "country": "MX"
   },
   "bankAccountInfo": {
     "accountType": "CLABE",
-    "accountNumber": "123456789012345678",
+    "clabeNumber": "123456789012345678",
     "bankName": "Banco de México"
   }
 }
@@ -96,9 +96,10 @@ Example request body for a business user:
     "country": "US"
   },
   "bankAccountInfo": {
-    "accountType": "ACH",
+    "accountType": "US_ACCOUNT",
     "accountNumber": "123456789",
     "routingNumber": "987654321",
+    "accountCategory": "CHECKING",
     "bankName": "Chase Bank"
   }
 }
@@ -188,7 +189,7 @@ Common use cases for `platformAccountId`:
 ```json
 {
   "accountType": "CLABE",
-  "accountNumber": "123456789012345678",
+  "clabeNumber": "123456789012345678",
   "bankName": "Banco de México",
   "platformAccountId": "banco_mx_primary_5678"
 }
@@ -201,6 +202,7 @@ Common use cases for `platformAccountId`:
   "accountType": "US_ACCOUNT",
   "accountNumber": "123456789",
   "routingNumber": "987654321",
+  "accountCategory": "CHECKING",
   "bankName": "Chase Bank",
   "platformAccountId": "chase_checking_1234"
 }
@@ -265,9 +267,9 @@ POST /users/bulk/csv
 The CSV file should follow a specific format with required and optional columns based on user type. Here's an example:
 
 ```csv
-umaAddress,platformUserId,userType,fullName,dateOfBirth,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId
-$john.doe@uma.domain.com,user123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,Chase Bank,chase_primary_1234
-$acme@uma.domain.com,biz456,BUSINESS,Acme Corp,400 Commerce Way,Austin,TX,78701,US,US_ACCOUNT,987654321,Bank of America,boa_business_5678
+umaAddress,platformUserId,userType,fullName,dateOfBirth,addressLine1,city,state,postalCode,country,accountType,accountNumber,routingNumber,accountCategory,bankName,platformAccountId
+$john.doe@uma.domain.com,user123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,987654321,CHECKING,Chase Bank,chase_primary_1234
+$acme@uma.domain.com,biz456,BUSINESS,Acme Corp,,400 Commerce Way,Austin,TX,78701,US,US_ACCOUNT,987654321,123456789,CHECKING,Bank of America,boa_business_5678,businessLegalName,Acme Corporation
 ```
 
 :::tip CSV Upload Best Practices
@@ -320,3 +322,82 @@ Example job status response:
 4. Use webhooks for real-time status updates on asynchronous jobs
 5. For CSV uploads, validate your data before submission
 :::
+
+### CSV Format
+
+The CSV file should have the following columns:
+
+Required columns for all users:
+
+- umaAddress: The user's UMA address (e.g., `$john.doe@uma.domain.com`)
+- platformUserId: Your platform's unique identifier for the user
+- userType: Either "INDIVIDUAL" or "BUSINESS"
+
+Required columns for individual users:
+
+- fullName: Individual's full name
+- dateOfBirth: Date of birth in YYYY-MM-DD format
+- addressLine1: Street address line 1
+- city: City
+- state: State/Province/Region
+- postalCode: Postal/ZIP code
+- country: Country code (ISO 3166-1 alpha-2)
+- accountType: Bank account type (CLABE, US_ACCOUNT, PIX, IBAN)
+- accountNumber: Bank account number
+- bankName: Name of the bank
+
+Required columns for business users:
+
+- businessLegalName: Legal name of the business
+- addressLine1: Street address line 1
+- city: City
+- state: State/Province/Region
+- postalCode: Postal/ZIP code
+- country: Country code (ISO 3166-1 alpha-2)
+- accountType: Bank account type (CLABE, US_ACCOUNT, PIX, IBAN)
+- accountNumber: Bank account number
+- bankName: Name of the bank
+
+Optional columns for all users:
+
+- addressLine2: Street address line 2
+- platformAccountId: Your platform's identifier for the bank account
+- description: Optional description for the user
+
+Optional columns for individual users:
+
+- email: User's email address
+
+Optional columns for business users:
+
+- businessRegistrationNumber: Business registration number
+- businessTaxId: Tax identification number
+
+Additional required columns based on account type:
+
+For US_ACCOUNT:
+
+- routingNumber: ACH routing number (9 digits)
+- accountCategory: Either "CHECKING" or "SAVINGS"
+
+For CLABE:
+
+- clabeNumber: 18-digit CLABE number
+
+For PIX:
+
+- pixKey: PIX key value
+- pixKeyType: Type of PIX key (CPF, CNPJ, EMAIL, PHONE, RANDOM)
+
+For IBAN:
+
+- iban: International Bank Account Number
+- swiftBic: SWIFT/BIC code (8 or 11 characters)
+
+### Example CSV
+
+```csv
+umaAddress,platformUserId,userType,fullName,dateOfBirth,addressLine1,city,state,postalCode,country,accountType,accountNumber,routingNumber,accountCategory,bankName,platformAccountId
+$john.doe@uma.domain.com,user123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,987654321,CHECKING,Chase Bank,chase_primary_1234
+$acme@uma.domain.com,biz456,BUSINESS,Acme Corp,,400 Commerce Way,Austin,TX,78701,US,US_ACCOUNT,987654321,123456789,CHECKING,Bank of America,boa_business_5678,businessLegalName,Acme Corporation
+```

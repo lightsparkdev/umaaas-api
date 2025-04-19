@@ -48,30 +48,7 @@ The process consists of five main steps:
 
 ## Step 1: Platform configuration (one-time setup)
 
-Configure your platform settings (if you haven't already in the onboarding process), including the required counterparty information.
-
-```http
-PUT /config
-```
-
-Request body:
-
-```json
-{
-  "umaDomain": "mycompany.com",
-  "webhookEndpoint": "https://api.mycompany.com/webhooks/uma",
-  "requiredCounterpartyFields": [
-    {
-      "name": "FULL_NAME",
-      "mandatory": true
-    },
-    {
-      "name": "DATE_OF_BIRTH",
-      "mandatory": true
-    }
-  ]
-}
-```
+Configure your platform settings (if you haven't already in the onboarding process). See the [Platform Configuration](/platform-configuration) guide for more details.
 
 ## Step 2: Register users with bank account information
 
@@ -85,31 +62,35 @@ Request body:
 
 ```json
 {
-  "umaAddress": "$john.sender@uma.domain.com",
+  "umaAddress": "$john.receiver@thegoodbank.com",
   "platformUserId": "9f84e0c2a72c4fa",
   "userType": "INDIVIDUAL",
-  "fullName": "John Sender",
+  "fullName": "John Receiver",
   "dateOfBirth": "1985-06-15",
   "address": {
     "line1": "123 Pine Street",
     "line2": "Unit 501",
-    "city": "Mexico City",
-    "state": "Mexico City",
-    "postalCode": "01000",
-    "country": "MX"
+    "city": "Seattle",
+    "state": "WA",
+    "postalCode": "98101",
+    "country": "US"
   },
   "bankAccountInfo": {
-    "accountType": "CLABE",
-    "accountNumber": "123456789012345678",
-    "bankName": "Banco de México",
-    "platformAccountId": "banco_mx_primary_5678"
+    "accountType": "US_ACCOUNT",
+    "accountNumber": "123456789",
+    "routingNumber": "987654321",
+    "accountCategory": "CHECKING",
+    "bankName": "Chase Bank",
+    "platformAccountId": "chase_primary_1234"
   }
 }
 ```
 
+See the [Configuring Users](/configuring-users) guide for more details.
+
 ## Step 3: Webhook setup (one-time setup)
 
-Configure your webhook endpoints to receive notifications about incoming payments. You'll need to implement the webhook endpoints on your server. Remember to validate webhook signatures to ensure they are authentic.
+Configure your webhook endpoints to receive notifications about incoming payments. You'll need to implement the webhook endpoints on your server. Remember to validate webhook signatures to ensure they are authentic. See the [Webhook Verification](/webhook-verification) guide for more details.
 
 ## Step 4: Receive and approve incoming payments
 
@@ -121,8 +102,8 @@ When someone initiates a payment to one of your users' UMA addresses, you'll rec
     "transactionId": "Transaction:019542f5-b3e7-1d02-0000-000000000005",
     "status": "PENDING",
     "type": "INCOMING",
-    "senderUmaAddress": "$sender@external.domain",
-    "receiverUmaAddress": "$recipient@uma.domain",
+    "senderUmaAddress": "$mary.sender@thelessgoodbank.com",
+    "receiverUmaAddress": "$john.receiver@thegoodbank.com",
     "receivedAmount": {
       "amount": 50000,
       "currency": {
@@ -135,7 +116,7 @@ When someone initiates a payment to one of your users' UMA addresses, you'll rec
     "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
     "platformUserId": "9f84e0c2a72c4fa",
     "counterpartyInformation": {
-      "fullName": "John Sender",
+      "fullName": "Mary Sender",
       "dateOfBirth": "1985-06-15"
     }
   },
@@ -170,8 +151,8 @@ When the payment completes, your webhook endpoint will receive another notificat
     "transactionId": "Transaction:019542f5-b3e7-1d02-0000-000000000005",
     "status": "COMPLETED",
     "type": "INCOMING",
-    "senderUmaAddress": "$sender@external.domain",
-    "receiverUmaAddress": "$recipient@uma.domain",
+    "senderUmaAddress": "$mary.sender@thelessgoodbank.com",
+    "receiverUmaAddress": "$john.receiver@thegoodbank.com",
     "receivedAmount": {
       "amount": 50000,
       "currency": {

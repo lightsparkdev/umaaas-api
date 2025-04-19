@@ -144,9 +144,11 @@ Response:
   "paymentInstructions": {
     "reference": "UMA-Q12345-REF",
     "bankAccountInfo": {
-      "accountType": "CLABE",
-      "accountNumber": "987654321012345678",
-      "bankName": "Banco de México"
+      "accountType": "US_ACCOUNT",
+      "accountNumber": "987654321",
+      "routingNumber": "123456789",
+      "accountCategory": "CHECKING",
+      "bankName": "Chase Bank"
     }
   }
 }
@@ -193,9 +195,11 @@ Response:
   "paymentInstructions": {
     "reference": "UMA-Q12345-REF",
     "bankAccountInfo": {
-      "accountType": "CLABE",
-      "accountNumber": "987654321012345678",
-      "bankName": "Banco de México"
+      "accountType": "US_ACCOUNT",
+      "accountNumber": "987654321",
+      "routingNumber": "123456789",
+      "accountCategory": "CHECKING",
+      "bankName": "Chase Bank"
     }
   },
   "status": "COMPLETED",
