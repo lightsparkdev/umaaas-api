@@ -48,7 +48,7 @@ The process consists of five main steps:
 
 ## Step 1: Platform configuration (one-time setup)
 
-Configure your platform settings (if you haven't already in the onboarding process). See the [Platform Configuration](/platform-configuration) guide for more details.
+Configure your platform settings (if you haven't already in the onboarding process). See the [Platform Configuration](/docs/platform-configuration) guide for more details.
 
 ## Step 2: Register users with bank account information
 
@@ -86,11 +86,11 @@ Request body:
 }
 ```
 
-See the [Configuring Users](/configuring-users) guide for more details.
+See the [Configuring Users](/docs/configuring-users) guide for more details.
 
 ## Step 3: Webhook setup (one-time setup)
 
-Configure your webhook endpoints to receive notifications about incoming payments. You'll need to implement the webhook endpoints on your server. Remember to validate webhook signatures to ensure they are authentic. See the [Webhook Verification](/webhook-verification) guide for more details.
+Configure your webhook endpoints to receive notifications about incoming payments. You'll need to implement the webhook endpoints on your server. Remember to validate webhook signatures to ensure they are authentic. See the [Webhook Verification](/docs/webhook-verification) guide for more details.
 
 ## Step 4: Receive and approve incoming payments
 
