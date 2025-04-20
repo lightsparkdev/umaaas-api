@@ -15,7 +15,17 @@ Method | HTTP request | Description
 
 Create a payment quote
 
-Generate a quote for a payment from one UMA address to another. The quote locks in exchange rates and fees for a set period of time and provides payment instructions that can be used to execute the payment.  Depending on the `lockedCurrencySide` parameter, either the sending amount or  receiving amount will be locked.  The returned quote includes payment instructions with the banking details needed to execute the payment and fulfill the quote. These instructions must be followed precisely, including any reference codes provided. 
+Generate a quote for a payment from one UMA address to another.
+The quote locks in exchange rates and fees for a set period of time and provides
+payment instructions that can be used to execute the payment.
+
+Depending on the `lockedCurrencySide` parameter, either the sending amount or 
+receiving amount will be locked.
+
+The returned quote includes payment instructions with the banking details
+needed to execute the payment and fulfill the quote. These instructions
+must be followed precisely, including any reference codes provided.
+
 
 ### Example
 
@@ -98,7 +108,10 @@ Name | Type | Description  | Notes
 
 Check payment status for a quote
 
-Check the status of a payment associated with a previously created quote. This allows clients to verify if a payment they've initiated using the  payment instructions has been received and processed. 
+Check the status of a payment associated with a previously created quote.
+This allows clients to verify if a payment they've initiated using the 
+payment instructions has been received and processed.
+
 
 ### Example
 
@@ -181,7 +194,10 @@ Name | Type | Description  | Notes
 
 Get quote by ID
 
-Retrieve a quote by its ID. If the quote has been settled, it will include  the transaction ID. This allows clients to track the full lifecycle of a payment from quote creation to settlement. 
+Retrieve a quote by its ID. If the quote has been settled, it will include 
+the transaction ID. This allows clients to track the full lifecycle of a payment
+from quote creation to settlement.
+
 
 ### Example
 
@@ -262,7 +278,9 @@ Name | Type | Description  | Notes
 
 Look up a UMA address for payment
 
-Lookup a receiving UMA address to determine supported currencies and exchange rates. This endpoint helps platforms determine what currencies they can send to a given UMA address. 
+Lookup a receiving UMA address to determine supported currencies and exchange rates.
+This endpoint helps platforms determine what currencies they can send to a given UMA address.
+
 
 ### Example
 

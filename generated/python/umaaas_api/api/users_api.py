@@ -19,7 +19,7 @@ from typing_extensions import Annotated
 
 from datetime import datetime
 from pydantic import Field, StrictBytes, StrictStr, field_validator
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 from typing_extensions import Annotated
 from umaaas_api.models.get_bulk_user_import_job200_response import GetBulkUserImportJob200Response
 from umaaas_api.models.list_users200_response import ListUsers200Response
@@ -269,7 +269,9 @@ class UsersApi:
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[str, Union[str, bytes]] = {}
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters
@@ -550,7 +552,9 @@ class UsersApi:
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[str, Union[str, bytes]] = {}
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters
@@ -815,7 +819,9 @@ class UsersApi:
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[str, Union[str, bytes]] = {}
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters
@@ -1080,7 +1086,9 @@ class UsersApi:
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[str, Union[str, bytes]] = {}
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters
@@ -1449,7 +1457,9 @@ class UsersApi:
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[str, Union[str, bytes]] = {}
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters
@@ -1800,7 +1810,9 @@ class UsersApi:
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[str, Union[str, bytes]] = {}
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters
@@ -1862,7 +1874,7 @@ class UsersApi:
     @validate_call
     def upload_users_csv(
         self,
-        file: Annotated[Union[StrictBytes, StrictStr], Field(description="CSV file containing user information")],
+        file: Annotated[Union[StrictBytes, StrictStr, Tuple[StrictStr, StrictBytes]], Field(description="CSV file containing user information")],
         webhook_url: Annotated[Optional[StrictStr], Field(description="Optional webhook URL for job status updates. If not provided, the platform's default webhook URL will be used.")] = None,
         _request_timeout: Union[
             None,
@@ -1935,7 +1947,7 @@ class UsersApi:
     @validate_call
     def upload_users_csv_with_http_info(
         self,
-        file: Annotated[Union[StrictBytes, StrictStr], Field(description="CSV file containing user information")],
+        file: Annotated[Union[StrictBytes, StrictStr, Tuple[StrictStr, StrictBytes]], Field(description="CSV file containing user information")],
         webhook_url: Annotated[Optional[StrictStr], Field(description="Optional webhook URL for job status updates. If not provided, the platform's default webhook URL will be used.")] = None,
         _request_timeout: Union[
             None,
@@ -2008,7 +2020,7 @@ class UsersApi:
     @validate_call
     def upload_users_csv_without_preload_content(
         self,
-        file: Annotated[Union[StrictBytes, StrictStr], Field(description="CSV file containing user information")],
+        file: Annotated[Union[StrictBytes, StrictStr, Tuple[StrictStr, StrictBytes]], Field(description="CSV file containing user information")],
         webhook_url: Annotated[Optional[StrictStr], Field(description="Optional webhook URL for job status updates. If not provided, the platform's default webhook URL will be used.")] = None,
         _request_timeout: Union[
             None,
@@ -2093,7 +2105,9 @@ class UsersApi:
         _query_params: List[Tuple[str, str]] = []
         _header_params: Dict[str, Optional[str]] = _headers or {}
         _form_params: List[Tuple[str, str]] = []
-        _files: Dict[str, Union[str, bytes]] = {}
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
         _body_params: Optional[bytes] = None
 
         # process the path parameters
