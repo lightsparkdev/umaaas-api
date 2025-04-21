@@ -2305,7 +2305,7 @@ webhooks:
                 summary: Pending payment example requiring approval
                 value:
                   transaction:
-                    transactionId: "Transaction:019542f5-b3e7-1d02-0000-000000000005"
+                    id: "Transaction:019542f5-b3e7-1d02-0000-000000000005"
                     status: "PENDING"
                     type: "INCOMING"
                     senderUmaAddress: "$sender@external.domain"
@@ -2329,7 +2329,7 @@ webhooks:
                 summary: Completed payment notification
                 value:
                   transaction:
-                    transactionId: "Transaction:019542f5-b3e7-1d02-0000-000000000005"
+                    id: "Transaction:019542f5-b3e7-1d02-0000-000000000005"
                     status: "COMPLETED"
                     type: "INCOMING"
                     senderUmaAddress: "$sender@external.domain"
@@ -2467,7 +2467,7 @@ webhooks:
                 summary: Completed outgoing payment
                 value:
                   transaction:
-                    transactionId: "Transaction:019542f5-b3e7-1d02-0000-000000000005"
+                    id: "Transaction:019542f5-b3e7-1d02-0000-000000000005"
                     status: "COMPLETED"
                     type: "OUTGOING"
                     senderUmaAddress: "$sender@uma.domain"
@@ -2500,7 +2500,7 @@ webhooks:
                 summary: Failed outgoing payment
                 value:
                   transaction:
-                    transactionId: "Transaction:019542f5-b3e7-1d02-0000-000000000005"
+                    id: "Transaction:019542f5-b3e7-1d02-0000-000000000005"
                     status: "FAILED"
                     type: "OUTGOING"
                     senderUmaAddress: "$sender@uma.domain"

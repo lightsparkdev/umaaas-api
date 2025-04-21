@@ -8,8 +8,8 @@ build:
 	npm run build
 	cd docusaurus-docs && npm run build
 
-build-python-models:
-	openapi-generator generate -g python-fastapi -i openapi.yaml -o generated/python-models -c codegen-config/python-fastapi-models/config.yml --global-property=models,supportingFiles
+build-python:
+	openapi-generator generate -g python -i openapi.yaml -o generated/python -c codegen-config/python/config.yml
 
 build-markdown:
 	npm run build:markdown

@@ -1,0 +1,22 @@
+templateDir: codegen-config/python/templates
+additionalProperties:
+  infoEmail: "info@lightspark.com"
+  packageUrl: https://github.com/lightsparkdev/umaaas-api
+  packageVersion: 0.0.7
+packageName: umaaas_api
+globalProperties:
+  webhooks: "false"
+  supportingFiles: ""
+  models: ""
+  apis: ""
+files:
+  setup_cfg.mustache:
+    destinationFilename: setup.cfg
+  README.mustache:
+    destinationFilename: README.md
+  Pipfile.mustache:
+    destinationFilename: Pipfile
+  LICENSE: {}
+  .pylintrc: {}
+  .pyre_configuration: {}
+  MANIFEST.in: {}
