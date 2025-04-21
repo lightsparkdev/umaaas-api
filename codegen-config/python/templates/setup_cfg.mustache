@@ -12,22 +12,16 @@ license = Apache-2.0
 license_files = LICENSE
 project_urls =
   Documentation = https://lightsparkdev.github.io/umaaas-api/
-  Source Code = https://github.com/uma-universal-money-address/umaaas-api/
+  Source Code = https://github.com/lightsparkdev/umaaas-api/
 classifiers =
     Operating System :: OS Independent
     Programming Language :: Python :: 3
     Programming Language :: Python :: {{{generatorLanguageVersion}}}
 
 [options]
-install_requires = fastapi[all]
 include_package_data = True
 setup_requires = setuptools
-package_dir =
-    = {{sourceFolder}}
-packages = find_namespace:
 
 [options.package_data]
  "*" = *.yaml
 
-[options.packages.find]
-where = {{sourceFolder}}

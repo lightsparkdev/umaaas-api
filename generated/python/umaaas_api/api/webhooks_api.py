@@ -17,13 +17,7 @@ from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
 from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
-from umaaas_api.models.bulk_upload_webhook_request import BulkUploadWebhookRequest
-from umaaas_api.models.create_quote422_response import CreateQuote422Response
-from umaaas_api.models.error import Error
-from umaaas_api.models.incoming_payment_webhook403_response import IncomingPaymentWebhook403Response
-from umaaas_api.models.incoming_payment_webhook_request import IncomingPaymentWebhookRequest
-from umaaas_api.models.outgoing_payment_webhook_request import OutgoingPaymentWebhookRequest
-from umaaas_api.models.test_webhook_request import TestWebhookRequest
+from umaaas_api.models.test_webhook_response import TestWebhookResponse
 
 from umaaas_api.api_client import ApiClient, RequestSerialized
 from umaaas_api.api_response import ApiResponse
@@ -44,9 +38,8 @@ class WebhooksApi:
 
 
     @validate_call
-    def bulk_upload_webhook(
+    def send_test_webhook(
         self,
-        bulk_upload_webhook_request: BulkUploadWebhookRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -59,13 +52,11 @@ class WebhooksApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> None:
-        """Bulk upload status webhook
+    ) -> TestWebhookResponse:
+        """Send a test webhook
 
-        Webhook that is called when a bulk user upload job completes or fails. This endpoint should be implemented by clients of the UMAaas API.  ### Authentication The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas. To verify the signature: 1. Get the webhook secret provided to you during integration 2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key 3. Encode the hash in hexadecimal format 4. Compare this value to the signature in the `X-UMAaas-Signature` header  If the values match, the webhook is authentic. If not, it should be rejected.  This webhook is sent when a bulk upload job completes or fails, providing detailed information about the results. 
+        Send a test webhook to the configured endpoint
 
-        :param bulk_upload_webhook_request: (required)
-        :type bulk_upload_webhook_request: BulkUploadWebhookRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -88,8 +79,7 @@ class WebhooksApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._bulk_upload_webhook_serialize(
-            bulk_upload_webhook_request=bulk_upload_webhook_request,
+        _param = self._send_test_webhook_serialize(
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -97,10 +87,9 @@ class WebhooksApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': None,
+            '200': "TestWebhookResponse",
             '400': "Error",
             '401': "Error",
-            '409': "Error",
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -114,9 +103,8 @@ class WebhooksApi:
 
 
     @validate_call
-    def bulk_upload_webhook_with_http_info(
+    def send_test_webhook_with_http_info(
         self,
-        bulk_upload_webhook_request: BulkUploadWebhookRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -129,13 +117,11 @@ class WebhooksApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[None]:
-        """Bulk upload status webhook
+    ) -> ApiResponse[TestWebhookResponse]:
+        """Send a test webhook
 
-        Webhook that is called when a bulk user upload job completes or fails. This endpoint should be implemented by clients of the UMAaas API.  ### Authentication The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas. To verify the signature: 1. Get the webhook secret provided to you during integration 2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key 3. Encode the hash in hexadecimal format 4. Compare this value to the signature in the `X-UMAaas-Signature` header  If the values match, the webhook is authentic. If not, it should be rejected.  This webhook is sent when a bulk upload job completes or fails, providing detailed information about the results. 
+        Send a test webhook to the configured endpoint
 
-        :param bulk_upload_webhook_request: (required)
-        :type bulk_upload_webhook_request: BulkUploadWebhookRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -158,8 +144,7 @@ class WebhooksApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._bulk_upload_webhook_serialize(
-            bulk_upload_webhook_request=bulk_upload_webhook_request,
+        _param = self._send_test_webhook_serialize(
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -167,10 +152,9 @@ class WebhooksApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': None,
+            '200': "TestWebhookResponse",
             '400': "Error",
             '401': "Error",
-            '409': "Error",
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -184,9 +168,8 @@ class WebhooksApi:
 
 
     @validate_call
-    def bulk_upload_webhook_without_preload_content(
+    def send_test_webhook_without_preload_content(
         self,
-        bulk_upload_webhook_request: BulkUploadWebhookRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -200,12 +183,10 @@ class WebhooksApi:
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        """Bulk upload status webhook
+        """Send a test webhook
 
-        Webhook that is called when a bulk user upload job completes or fails. This endpoint should be implemented by clients of the UMAaas API.  ### Authentication The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas. To verify the signature: 1. Get the webhook secret provided to you during integration 2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key 3. Encode the hash in hexadecimal format 4. Compare this value to the signature in the `X-UMAaas-Signature` header  If the values match, the webhook is authentic. If not, it should be rejected.  This webhook is sent when a bulk upload job completes or fails, providing detailed information about the results. 
+        Send a test webhook to the configured endpoint
 
-        :param bulk_upload_webhook_request: (required)
-        :type bulk_upload_webhook_request: BulkUploadWebhookRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -228,8 +209,7 @@ class WebhooksApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._bulk_upload_webhook_serialize(
-            bulk_upload_webhook_request=bulk_upload_webhook_request,
+        _param = self._send_test_webhook_serialize(
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -237,10 +217,9 @@ class WebhooksApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': None,
+            '200': "TestWebhookResponse",
             '400': "Error",
             '401': "Error",
-            '409': "Error",
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -249,9 +228,8 @@ class WebhooksApi:
         return response_data.response
 
 
-    def _bulk_upload_webhook_serialize(
+    def _send_test_webhook_serialize(
         self,
-        bulk_upload_webhook_request,
         _request_auth,
         _content_type,
         _headers,
@@ -277,8 +255,6 @@ class WebhooksApi:
         # process the header parameters
         # process the form parameters
         # process the body parameter
-        if bulk_upload_webhook_request is not None:
-            _body_params = bulk_upload_webhook_request
 
 
         # set the HTTP header `Accept`
@@ -289,883 +265,15 @@ class WebhooksApi:
                 ]
             )
 
-        # set the HTTP header `Content-Type`
-        if _content_type:
-            _header_params['Content-Type'] = _content_type
-        else:
-            _default_content_type = (
-                self.api_client.select_header_content_type(
-                    [
-                        'application/json'
-                    ]
-                )
-            )
-            if _default_content_type is not None:
-                _header_params['Content-Type'] = _default_content_type
 
         # authentication setting
         _auth_settings: List[str] = [
-            'WebhookSignature'
+            'BasicAuth'
         ]
 
         return self.api_client.param_serialize(
             method='POST',
-            resource_path='/bulk-upload',
-            path_params=_path_params,
-            query_params=_query_params,
-            header_params=_header_params,
-            body=_body_params,
-            post_params=_form_params,
-            files=_files,
-            auth_settings=_auth_settings,
-            collection_formats=_collection_formats,
-            _host=_host,
-            _request_auth=_request_auth
-        )
-
-
-
-
-    @validate_call
-    def incoming_payment_webhook(
-        self,
-        incoming_payment_webhook_request: IncomingPaymentWebhookRequest,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> None:
-        """Incoming payment webhook and approval mechanism
-
-        Webhook that is called when an incoming payment is received by a user's UMA address. This endpoint should be implemented by clients of the UMAaas API.  ### Authentication The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas. To verify the signature: 1. Get the webhook secret provided to you during integration 2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key 3. Encode the hash in hexadecimal format 4. Compare this value to the signature in the `X-UMAaas-Signature` header  If the values match, the webhook is authentic. If not, it should be rejected.  ### Payment Approval Flow When a transaction has `status: \"PENDING\"`, this webhook serves as an approval mechanism:  1. The client should check the `counterpartyInformation` against their requirements 2. To APPROVE the payment, return a 200 OK response 3. To REJECT the payment, return a 403 Forbidden response with an Error object 4. To request more information, return a 422 Unprocessable Entity with specific missing fields  The UMAaas system will proceed or cancel the payment based on your response.  For transactions with other statuses (COMPLETED, FAILED, REFUNDED), this webhook is purely informational. 
-
-        :param incoming_payment_webhook_request: (required)
-        :type incoming_payment_webhook_request: IncomingPaymentWebhookRequest
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._incoming_payment_webhook_serialize(
-            incoming_payment_webhook_request=incoming_payment_webhook_request,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': None,
-            '400': "Error",
-            '401': "Error",
-            '403': "IncomingPaymentWebhook403Response",
-            '409': "Error",
-            '422': "CreateQuote422Response",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        ).data
-
-
-    @validate_call
-    def incoming_payment_webhook_with_http_info(
-        self,
-        incoming_payment_webhook_request: IncomingPaymentWebhookRequest,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[None]:
-        """Incoming payment webhook and approval mechanism
-
-        Webhook that is called when an incoming payment is received by a user's UMA address. This endpoint should be implemented by clients of the UMAaas API.  ### Authentication The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas. To verify the signature: 1. Get the webhook secret provided to you during integration 2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key 3. Encode the hash in hexadecimal format 4. Compare this value to the signature in the `X-UMAaas-Signature` header  If the values match, the webhook is authentic. If not, it should be rejected.  ### Payment Approval Flow When a transaction has `status: \"PENDING\"`, this webhook serves as an approval mechanism:  1. The client should check the `counterpartyInformation` against their requirements 2. To APPROVE the payment, return a 200 OK response 3. To REJECT the payment, return a 403 Forbidden response with an Error object 4. To request more information, return a 422 Unprocessable Entity with specific missing fields  The UMAaas system will proceed or cancel the payment based on your response.  For transactions with other statuses (COMPLETED, FAILED, REFUNDED), this webhook is purely informational. 
-
-        :param incoming_payment_webhook_request: (required)
-        :type incoming_payment_webhook_request: IncomingPaymentWebhookRequest
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._incoming_payment_webhook_serialize(
-            incoming_payment_webhook_request=incoming_payment_webhook_request,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': None,
-            '400': "Error",
-            '401': "Error",
-            '403': "IncomingPaymentWebhook403Response",
-            '409': "Error",
-            '422': "CreateQuote422Response",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        )
-
-
-    @validate_call
-    def incoming_payment_webhook_without_preload_content(
-        self,
-        incoming_payment_webhook_request: IncomingPaymentWebhookRequest,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RESTResponseType:
-        """Incoming payment webhook and approval mechanism
-
-        Webhook that is called when an incoming payment is received by a user's UMA address. This endpoint should be implemented by clients of the UMAaas API.  ### Authentication The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas. To verify the signature: 1. Get the webhook secret provided to you during integration 2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key 3. Encode the hash in hexadecimal format 4. Compare this value to the signature in the `X-UMAaas-Signature` header  If the values match, the webhook is authentic. If not, it should be rejected.  ### Payment Approval Flow When a transaction has `status: \"PENDING\"`, this webhook serves as an approval mechanism:  1. The client should check the `counterpartyInformation` against their requirements 2. To APPROVE the payment, return a 200 OK response 3. To REJECT the payment, return a 403 Forbidden response with an Error object 4. To request more information, return a 422 Unprocessable Entity with specific missing fields  The UMAaas system will proceed or cancel the payment based on your response.  For transactions with other statuses (COMPLETED, FAILED, REFUNDED), this webhook is purely informational. 
-
-        :param incoming_payment_webhook_request: (required)
-        :type incoming_payment_webhook_request: IncomingPaymentWebhookRequest
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._incoming_payment_webhook_serialize(
-            incoming_payment_webhook_request=incoming_payment_webhook_request,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': None,
-            '400': "Error",
-            '401': "Error",
-            '403': "IncomingPaymentWebhook403Response",
-            '409': "Error",
-            '422': "CreateQuote422Response",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        return response_data.response
-
-
-    def _incoming_payment_webhook_serialize(
-        self,
-        incoming_payment_webhook_request,
-        _request_auth,
-        _content_type,
-        _headers,
-        _host_index,
-    ) -> RequestSerialized:
-
-        _host = None
-
-        _collection_formats: Dict[str, str] = {
-        }
-
-        _path_params: Dict[str, str] = {}
-        _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
-        _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
-        _body_params: Optional[bytes] = None
-
-        # process the path parameters
-        # process the query parameters
-        # process the header parameters
-        # process the form parameters
-        # process the body parameter
-        if incoming_payment_webhook_request is not None:
-            _body_params = incoming_payment_webhook_request
-
-
-        # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json'
-                ]
-            )
-
-        # set the HTTP header `Content-Type`
-        if _content_type:
-            _header_params['Content-Type'] = _content_type
-        else:
-            _default_content_type = (
-                self.api_client.select_header_content_type(
-                    [
-                        'application/json'
-                    ]
-                )
-            )
-            if _default_content_type is not None:
-                _header_params['Content-Type'] = _default_content_type
-
-        # authentication setting
-        _auth_settings: List[str] = [
-            'WebhookSignature'
-        ]
-
-        return self.api_client.param_serialize(
-            method='POST',
-            resource_path='/incoming-payment',
-            path_params=_path_params,
-            query_params=_query_params,
-            header_params=_header_params,
-            body=_body_params,
-            post_params=_form_params,
-            files=_files,
-            auth_settings=_auth_settings,
-            collection_formats=_collection_formats,
-            _host=_host,
-            _request_auth=_request_auth
-        )
-
-
-
-
-    @validate_call
-    def outgoing_payment_webhook(
-        self,
-        outgoing_payment_webhook_request: OutgoingPaymentWebhookRequest,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> None:
-        """Outgoing payment status webhook
-
-        Webhook that is called when an outgoing payment's status changes. This endpoint should be implemented by clients of the UMAaas API.  ### Authentication The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas. To verify the signature: 1. Get the webhook secret provided to you during integration 2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key 3. Encode the hash in hexadecimal format 4. Compare this value to the signature in the `X-UMAaas-Signature` header  If the values match, the webhook is authentic. If not, it should be rejected.  This webhook is informational only and is sent when an outgoing payment completes successfully or fails. 
-
-        :param outgoing_payment_webhook_request: (required)
-        :type outgoing_payment_webhook_request: OutgoingPaymentWebhookRequest
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._outgoing_payment_webhook_serialize(
-            outgoing_payment_webhook_request=outgoing_payment_webhook_request,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': None,
-            '400': "Error",
-            '401': "Error",
-            '409': "Error",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        ).data
-
-
-    @validate_call
-    def outgoing_payment_webhook_with_http_info(
-        self,
-        outgoing_payment_webhook_request: OutgoingPaymentWebhookRequest,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[None]:
-        """Outgoing payment status webhook
-
-        Webhook that is called when an outgoing payment's status changes. This endpoint should be implemented by clients of the UMAaas API.  ### Authentication The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas. To verify the signature: 1. Get the webhook secret provided to you during integration 2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key 3. Encode the hash in hexadecimal format 4. Compare this value to the signature in the `X-UMAaas-Signature` header  If the values match, the webhook is authentic. If not, it should be rejected.  This webhook is informational only and is sent when an outgoing payment completes successfully or fails. 
-
-        :param outgoing_payment_webhook_request: (required)
-        :type outgoing_payment_webhook_request: OutgoingPaymentWebhookRequest
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._outgoing_payment_webhook_serialize(
-            outgoing_payment_webhook_request=outgoing_payment_webhook_request,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': None,
-            '400': "Error",
-            '401': "Error",
-            '409': "Error",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        )
-
-
-    @validate_call
-    def outgoing_payment_webhook_without_preload_content(
-        self,
-        outgoing_payment_webhook_request: OutgoingPaymentWebhookRequest,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RESTResponseType:
-        """Outgoing payment status webhook
-
-        Webhook that is called when an outgoing payment's status changes. This endpoint should be implemented by clients of the UMAaas API.  ### Authentication The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas. To verify the signature: 1. Get the webhook secret provided to you during integration 2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key 3. Encode the hash in hexadecimal format 4. Compare this value to the signature in the `X-UMAaas-Signature` header  If the values match, the webhook is authentic. If not, it should be rejected.  This webhook is informational only and is sent when an outgoing payment completes successfully or fails. 
-
-        :param outgoing_payment_webhook_request: (required)
-        :type outgoing_payment_webhook_request: OutgoingPaymentWebhookRequest
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._outgoing_payment_webhook_serialize(
-            outgoing_payment_webhook_request=outgoing_payment_webhook_request,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': None,
-            '400': "Error",
-            '401': "Error",
-            '409': "Error",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        return response_data.response
-
-
-    def _outgoing_payment_webhook_serialize(
-        self,
-        outgoing_payment_webhook_request,
-        _request_auth,
-        _content_type,
-        _headers,
-        _host_index,
-    ) -> RequestSerialized:
-
-        _host = None
-
-        _collection_formats: Dict[str, str] = {
-        }
-
-        _path_params: Dict[str, str] = {}
-        _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
-        _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
-        _body_params: Optional[bytes] = None
-
-        # process the path parameters
-        # process the query parameters
-        # process the header parameters
-        # process the form parameters
-        # process the body parameter
-        if outgoing_payment_webhook_request is not None:
-            _body_params = outgoing_payment_webhook_request
-
-
-        # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json'
-                ]
-            )
-
-        # set the HTTP header `Content-Type`
-        if _content_type:
-            _header_params['Content-Type'] = _content_type
-        else:
-            _default_content_type = (
-                self.api_client.select_header_content_type(
-                    [
-                        'application/json'
-                    ]
-                )
-            )
-            if _default_content_type is not None:
-                _header_params['Content-Type'] = _default_content_type
-
-        # authentication setting
-        _auth_settings: List[str] = [
-            'WebhookSignature'
-        ]
-
-        return self.api_client.param_serialize(
-            method='POST',
-            resource_path='/outgoing-payment',
-            path_params=_path_params,
-            query_params=_query_params,
-            header_params=_header_params,
-            body=_body_params,
-            post_params=_form_params,
-            files=_files,
-            auth_settings=_auth_settings,
-            collection_formats=_collection_formats,
-            _host=_host,
-            _request_auth=_request_auth
-        )
-
-
-
-
-    @validate_call
-    def test_webhook(
-        self,
-        test_webhook_request: TestWebhookRequest,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> None:
-        """Test webhook for integration verification
-
-        Webhook that is sent once to verify your webhook endpoint is correctly set up. This is sent when you configure or update your platform settings with a webhook URL.  ### Authentication The webhook includes a signature in the `X-UMAaaS-Signature` header that allows you to verify that the webhook was sent by UMAaaS. To verify the signature: 1. Get the webhook secret provided to you during integration 2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key 3. Encode the hash in hexadecimal format 4. Compare this value to the signature in the `X-UMAaaS-Signature` header  If the values match, the webhook is authentic. If not, it should be rejected.  This webhook is purely for testing your endpoint integration and signature verification. 
-
-        :param test_webhook_request: (required)
-        :type test_webhook_request: TestWebhookRequest
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._test_webhook_serialize(
-            test_webhook_request=test_webhook_request,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': None,
-            '400': "Error",
-            '401': "Error",
-            '409': "Error",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        ).data
-
-
-    @validate_call
-    def test_webhook_with_http_info(
-        self,
-        test_webhook_request: TestWebhookRequest,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[None]:
-        """Test webhook for integration verification
-
-        Webhook that is sent once to verify your webhook endpoint is correctly set up. This is sent when you configure or update your platform settings with a webhook URL.  ### Authentication The webhook includes a signature in the `X-UMAaaS-Signature` header that allows you to verify that the webhook was sent by UMAaaS. To verify the signature: 1. Get the webhook secret provided to you during integration 2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key 3. Encode the hash in hexadecimal format 4. Compare this value to the signature in the `X-UMAaaS-Signature` header  If the values match, the webhook is authentic. If not, it should be rejected.  This webhook is purely for testing your endpoint integration and signature verification. 
-
-        :param test_webhook_request: (required)
-        :type test_webhook_request: TestWebhookRequest
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._test_webhook_serialize(
-            test_webhook_request=test_webhook_request,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': None,
-            '400': "Error",
-            '401': "Error",
-            '409': "Error",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        response_data.read()
-        return self.api_client.response_deserialize(
-            response_data=response_data,
-            response_types_map=_response_types_map,
-        )
-
-
-    @validate_call
-    def test_webhook_without_preload_content(
-        self,
-        test_webhook_request: TestWebhookRequest,
-        _request_timeout: Union[
-            None,
-            Annotated[StrictFloat, Field(gt=0)],
-            Tuple[
-                Annotated[StrictFloat, Field(gt=0)],
-                Annotated[StrictFloat, Field(gt=0)]
-            ]
-        ] = None,
-        _request_auth: Optional[Dict[StrictStr, Any]] = None,
-        _content_type: Optional[StrictStr] = None,
-        _headers: Optional[Dict[StrictStr, Any]] = None,
-        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> RESTResponseType:
-        """Test webhook for integration verification
-
-        Webhook that is sent once to verify your webhook endpoint is correctly set up. This is sent when you configure or update your platform settings with a webhook URL.  ### Authentication The webhook includes a signature in the `X-UMAaaS-Signature` header that allows you to verify that the webhook was sent by UMAaaS. To verify the signature: 1. Get the webhook secret provided to you during integration 2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key 3. Encode the hash in hexadecimal format 4. Compare this value to the signature in the `X-UMAaaS-Signature` header  If the values match, the webhook is authentic. If not, it should be rejected.  This webhook is purely for testing your endpoint integration and signature verification. 
-
-        :param test_webhook_request: (required)
-        :type test_webhook_request: TestWebhookRequest
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :type _request_timeout: int, tuple(int, int), optional
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the
-                              authentication in the spec for a single request.
-        :type _request_auth: dict, optional
-        :param _content_type: force content-type for the request.
-        :type _content_type: str, Optional
-        :param _headers: set to override the headers for a single
-                         request; this effectively ignores the headers
-                         in the spec for a single request.
-        :type _headers: dict, optional
-        :param _host_index: set to override the host_index for a single
-                            request; this effectively ignores the host_index
-                            in the spec for a single request.
-        :type _host_index: int, optional
-        :return: Returns the result object.
-        """ # noqa: E501
-
-        _param = self._test_webhook_serialize(
-            test_webhook_request=test_webhook_request,
-            _request_auth=_request_auth,
-            _content_type=_content_type,
-            _headers=_headers,
-            _host_index=_host_index
-        )
-
-        _response_types_map: Dict[str, Optional[str]] = {
-            '200': None,
-            '400': "Error",
-            '401': "Error",
-            '409': "Error",
-        }
-        response_data = self.api_client.call_api(
-            *_param,
-            _request_timeout=_request_timeout
-        )
-        return response_data.response
-
-
-    def _test_webhook_serialize(
-        self,
-        test_webhook_request,
-        _request_auth,
-        _content_type,
-        _headers,
-        _host_index,
-    ) -> RequestSerialized:
-
-        _host = None
-
-        _collection_formats: Dict[str, str] = {
-        }
-
-        _path_params: Dict[str, str] = {}
-        _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
-        _form_params: List[Tuple[str, str]] = []
-        _files: Dict[
-            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
-        ] = {}
-        _body_params: Optional[bytes] = None
-
-        # process the path parameters
-        # process the query parameters
-        # process the header parameters
-        # process the form parameters
-        # process the body parameter
-        if test_webhook_request is not None:
-            _body_params = test_webhook_request
-
-
-        # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
-            _header_params['Accept'] = self.api_client.select_header_accept(
-                [
-                    'application/json'
-                ]
-            )
-
-        # set the HTTP header `Content-Type`
-        if _content_type:
-            _header_params['Content-Type'] = _content_type
-        else:
-            _default_content_type = (
-                self.api_client.select_header_content_type(
-                    [
-                        'application/json'
-                    ]
-                )
-            )
-            if _default_content_type is not None:
-                _header_params['Content-Type'] = _default_content_type
-
-        # authentication setting
-        _auth_settings: List[str] = [
-            'WebhookSignature'
-        ]
-
-        return self.api_client.param_serialize(
-            method='POST',
-            resource_path='/test-webhook',
+            resource_path='/webhooks/test',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
