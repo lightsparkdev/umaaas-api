@@ -25,7 +25,7 @@ To start integrating UMA as a Service, follow these steps:
 2. [Configure your users](/docs/configuring-users)
 3. [Send payments](/docs/sending-payments)
 4. [Receive payments](/docs/receiving-payments)
-5. [Handle webhooks](/docs/webhook-verification)
+5. [Handle webhooks](/docs/webhooks)
 
 ## Authentication
 
