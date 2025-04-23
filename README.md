@@ -46,7 +46,7 @@ We provide detailed guides for common workflows with the UMAaaS API:
 - [Configuring Users](./docusaurus-docs/docs/configuring-users.md) - Comprehensive guide to user management, types, and bank account requirements
 - [Sending Payments](./docusaurus-docs/docs/sending-payments.md) - Step-by-step guide to sending payments to UMA addresses
 - [Receiving Payments](./docusaurus-docs/docs/receiving-payments.md) - How to receive payments from UMA addresses
-- [Webhook Verification](./docusaurus-docs/docs/webhook-verification.md) - Security best practices for webhook verification
+- [Webhooks](./docusaurus-docs/docs/webhooks.md) - Security best practices for webhook verification
 
 ## Key Endpoints
 

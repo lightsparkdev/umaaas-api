@@ -109,7 +109,7 @@ Response:
 }
 ```
 
-Note: The `webhookSecret` is not returned in the response. It can only be retrieved from the UMAaaS dashboard. Store this securely as it's used to verify the authenticity of webhooks (see the [Webhook Verification Guide](webhook-verification.md)).
+Note: The `webhookSecret` is not returned in the response. It can only be retrieved from the UMAaaS dashboard. Store this securely as it's used to verify the authenticity of webhooks (see the [Webhook Verification Guide](/docs/webhooks)).
 
 ## Configuration Parameters
 
@@ -132,7 +132,7 @@ The `webhookEndpoint` parameter specifies the URL where UMAaaS will send webhook
 
 - Be publicly accessible over HTTPS
 - Respond with appropriate HTTP status codes
-- Handle webhook verification (see [Webhook Verification Guide](webhook-verification.md))
+- Handle webhook verification (see [Webhook Verification Guide](/docs/webhooks))
 - Process webhook payloads within a reasonable time (recommended: under 5 seconds)
 
 ### Required Counterparty Fields
@@ -180,7 +180,7 @@ Example test webhook payload:
 
 Your webhook handler should:
 
-1. Verify the webhook signature (see [Webhook Verification Guide](webhook-verification.md))
+1. Verify the webhook signature (see [Webhook Verification Guide](/docs/webhooks))
 2. Identify the webhook as a test event
 3. Respond with a 200 OK status
 

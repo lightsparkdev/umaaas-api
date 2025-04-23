@@ -2,7 +2,7 @@
 sidebar_position: 5
 ---
 
-# Webhook Verification Guide
+# Webhooks Guide
 
 All webhooks sent by the UMAaaS API include a signature in the `X-UMAaaS-Signature` header, which allows you to verify the authenticity of the webhook. This is critical for security, as it ensures that only legitimate webhooks from UMAaaS are processed by your system.
 
@@ -186,3 +186,14 @@ You should verify the signature of the webhook using the UMAaaS public key and t
 - **Use HTTPS**: Ensure your webhook endpoint uses HTTPS to prevent man-in-the-middle attacks.
 - **Implement idempotency**: Use the `webhookId` field to prevent processing duplicate webhooks.
 - **Timeout handling**: Implement proper timeout handling and respond to webhooks promptly.
+
+## Retry Policy
+
+UMAaaS will retry webhooks with the following policy based on the webhook type:
+
+| Webhook Type | Retry Policy | Notes |
+|-------------|-------------|-------|
+| TEST | No retries | Used for testing webhook configuration |
+| OUTGOING_PAYMENT | Retry with exponential backoff up to 7 days with maximum interval of 30 mins | No retry on 409 (duplicate webhooks) |
+| INCOMING_PAYMENT | Retry with exponential backoff up to 7 days with maximum interval of 30 mins | No retry on: 409 (duplicate webhook) or PENDING status since it is served as an approval mechanism in-flow |
+| BULK_UPLOAD | Retry with exponential backoff up to 7 days with maximum interval of 30 mins | No retry on 409 (duplicate webhooks) |

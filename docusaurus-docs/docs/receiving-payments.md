@@ -90,7 +90,7 @@ See the [Configuring Users](/docs/configuring-users) guide for more details.
 
 ## Step 3: Webhook setup (one-time setup)
 
-Configure your webhook endpoints to receive notifications about incoming payments. You'll need to implement the webhook endpoints on your server. Remember to validate webhook signatures to ensure they are authentic. See the [Webhook Verification](/docs/webhook-verification) guide for more details.
+Configure your webhook endpoints to receive notifications about incoming payments. You'll need to implement the webhook endpoints on your server. Remember to validate webhook signatures to ensure they are authentic. See the [Webhook Verification](/docs/webhooks) guide for more details.
 
 ## Step 4: Receive and approve incoming payments
 
