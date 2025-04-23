@@ -71,16 +71,10 @@ class PlatformConfig(BaseModel):
         * OpenAPI `readOnly` fields are excluded.
         * OpenAPI `readOnly` fields are excluded.
         """
-        excluded_fields: Set[str] = set([
-            "id",
-            "created_at",
-            "updated_at",
-        ])
 
         _dict = self.model_dump(
             mode="json",
             by_alias=True,
-            exclude=excluded_fields,
             exclude_none=True,
         )
         # override the default output from pydantic by calling `to_dict()` of each item in supported_currencies (list)

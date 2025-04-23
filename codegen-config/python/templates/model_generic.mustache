@@ -151,19 +151,10 @@ class {{classname}}({{#parent}}{{{.}}}{{/parent}}{{^parent}}BaseModel{{/parent}}
         * Fields in `self.additional_properties` are added to the output dict.
         {{/isAdditionalPropertiesTrue}}
         """
-        excluded_fields: Set[str] = set([
-            {{#vendorExtensions.x-py-readonly}}
-            "{{{.}}}",
-            {{/vendorExtensions.x-py-readonly}}
-            {{#isAdditionalPropertiesTrue}}
-            "additional_properties",
-            {{/isAdditionalPropertiesTrue}}
-        ])
 
         _dict = self.model_dump(
             mode="json",
             by_alias=True,
-            exclude=excluded_fields,
             exclude_none=True,
         )
         {{#allVars}}

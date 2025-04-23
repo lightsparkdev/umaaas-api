@@ -70,13 +70,10 @@ class CreateQuoteRequest(BaseModel):
           were set at model initialization. Other fields with value `None`
           are ignored.
         """
-        excluded_fields: Set[str] = set([
-        ])
 
         _dict = self.model_dump(
             mode="json",
             by_alias=True,
-            exclude=excluded_fields,
             exclude_none=True,
         )
         return _dict
