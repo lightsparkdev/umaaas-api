@@ -8,7 +8,6 @@ Name | Type | Description | Notes
 **receiver_uma_address** | **str** | UMA address of the recipient | 
 **sender_uma_address** | **str** | UMA address of the sender (optional if userId or platformUserId is provided) | [optional] 
 **user_id** | **str** | System ID of the sender (optional if senderUmaAddress or platformUserId is provided) | [optional] 
-**platform_user_id** | **str** | Platform ID of the sender (optional if senderUmaAddress or userId is provided) | [optional] 
 **sending_currency_code** | **str** | Currency code for the sending amount | 
 **receiving_currency_code** | **str** | Currency code for the receiving amount | 
 **locked_currency_side** | [**QuoteLockSide**](QuoteLockSide.md) |  | 

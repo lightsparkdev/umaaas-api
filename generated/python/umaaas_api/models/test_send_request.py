@@ -18,25 +18,19 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
-from umaaas_api.models.quote_lock_side import QuoteLockSide
+from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from typing import Any, ClassVar, Dict, List
+from umaaas_api.models.currency_amount import CurrencyAmount
 from typing import Optional, Set
 from typing_extensions import Self
 
-class CreateQuoteRequest(BaseModel):
+class TestSendRequest(BaseModel):
     """
-    CreateQuoteRequest
+    TestSendRequest
     """ # noqa: E501
-    receiver_uma_address: StrictStr = Field(description="UMA address of the recipient", alias="receiverUmaAddress")
-    sender_uma_address: Optional[StrictStr] = Field(default=None, description="UMA address of the sender (optional if userId or platformUserId is provided)", alias="senderUmaAddress")
-    user_id: Optional[StrictStr] = Field(default=None, description="System ID of the sender (optional if senderUmaAddress or platformUserId is provided)", alias="userId")
-    sending_currency_code: StrictStr = Field(description="Currency code for the sending amount", alias="sendingCurrencyCode")
-    receiving_currency_code: StrictStr = Field(description="Currency code for the receiving amount", alias="receivingCurrencyCode")
-    locked_currency_side: QuoteLockSide = Field(alias="lockedCurrencySide")
-    locked_currency_amount: StrictInt = Field(description="The amount to send/receive in the smallest unit of the locked currency (eg. cents). See `lockedCurrencySide` for more information.", alias="lockedCurrencyAmount")
-    description: Optional[StrictStr] = Field(default=None, description="Optional description/memo for the payment")
-    __properties: ClassVar[List[str]] = ["receiverUmaAddress", "senderUmaAddress", "userId", "sendingCurrencyCode", "receivingCurrencyCode", "lockedCurrencySide", "lockedCurrencyAmount", "description"]
+    reference: StrictStr = Field(description="The unique reference code that was in the payment instructions")
+    amount: CurrencyAmount = Field(description="Amount sending to the instructed bank account")
+    __properties: ClassVar[List[str]] = ["reference", "amount"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -56,7 +50,7 @@ class CreateQuoteRequest(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of CreateQuoteRequest from a JSON string"""
+        """Create an instance of TestSendRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -78,11 +72,14 @@ class CreateQuoteRequest(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of amount
+        if self.amount:
+            _dict['amount'] = self.amount.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of CreateQuoteRequest from a dict"""
+        """Create an instance of TestSendRequest from a dict"""
         if obj is None:
             return None
 
@@ -90,14 +87,8 @@ class CreateQuoteRequest(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "receiverUmaAddress": obj.get("receiverUmaAddress"),
-            "senderUmaAddress": obj.get("senderUmaAddress"),
-            "userId": obj.get("userId"),
-            "sendingCurrencyCode": obj.get("sendingCurrencyCode"),
-            "receivingCurrencyCode": obj.get("receivingCurrencyCode"),
-            "lockedCurrencySide": obj.get("lockedCurrencySide"),
-            "lockedCurrencyAmount": obj.get("lockedCurrencyAmount"),
-            "description": obj.get("description")
+            "reference": obj.get("reference"),
+            "amount": CurrencyAmount.from_dict(obj["amount"]) if obj.get("amount") is not None else None
         })
         return _obj
 

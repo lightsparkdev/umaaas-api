@@ -54,7 +54,10 @@ docs/PlatformConfigurationApi.md
 docs/PlatformCurrencyConfig.md
 docs/Quote.md
 docs/QuoteLockSide.md
+docs/SandboxApi.md
 docs/SendingPaymentsApi.md
+docs/TestReceiveRequest.md
+docs/TestSendRequest.md
 docs/TestWebhookRequest.md
 docs/TestWebhookResponse.md
 docs/TokenCreate.md
@@ -84,6 +87,7 @@ umaaas_api/__init__.py
 umaaas_api/api/__init__.py
 umaaas_api/api/api_tokens_api.py
 umaaas_api/api/platform_configuration_api.py
+umaaas_api/api/sandbox_api.py
 umaaas_api/api/sending_payments_api.py
 umaaas_api/api/transactions_api.py
 umaaas_api/api/users_api.py
@@ -137,6 +141,8 @@ umaaas_api/models/platform_config.py
 umaaas_api/models/platform_currency_config.py
 umaaas_api/models/quote.py
 umaaas_api/models/quote_lock_side.py
+umaaas_api/models/test_receive_request.py
+umaaas_api/models/test_send_request.py
 umaaas_api/models/test_webhook_request.py
 umaaas_api/models/test_webhook_response.py
 umaaas_api/models/token_create.py
