@@ -95,6 +95,7 @@ class SandboxApi:
             '200': None,
             '400': "Error",
             '401': "Error",
+            '403': "Error",
             '404': "Error",
         }
         response_data = self.api_client.call_api(
@@ -165,6 +166,7 @@ class SandboxApi:
             '200': None,
             '400': "Error",
             '401': "Error",
+            '403': "Error",
             '404': "Error",
         }
         response_data = self.api_client.call_api(
@@ -235,6 +237,7 @@ class SandboxApi:
             '200': None,
             '400': "Error",
             '401': "Error",
+            '403': "Error",
             '404': "Error",
         }
         response_data = self.api_client.call_api(
@@ -378,6 +381,7 @@ class SandboxApi:
             '200': None,
             '400': "Error",
             '401': "Error",
+            '403': "Error",
             '404': "Error",
         }
         response_data = self.api_client.call_api(
@@ -448,6 +452,7 @@ class SandboxApi:
             '200': None,
             '400': "Error",
             '401': "Error",
+            '403': "Error",
             '404': "Error",
         }
         response_data = self.api_client.call_api(
@@ -518,6 +523,7 @@ class SandboxApi:
             '200': None,
             '400': "Error",
             '401': "Error",
+            '403': "Error",
             '404': "Error",
         }
         response_data = self.api_client.call_api(

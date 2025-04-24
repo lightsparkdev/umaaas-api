@@ -6,7 +6,8 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **reference** | **str** | The unique reference code that was in the payment instructions | 
-**amount** | [**CurrencyAmount**](CurrencyAmount.md) | Amount sending to the instructed bank account | 
+**currency_code** | **str** | Currency code for the funds to be sent | 
+**currency_amount** | **int** | The amount to send in the smallest unit of the currency (eg. cents) | 
 
 ## Example
 

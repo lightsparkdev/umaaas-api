@@ -2254,15 +2254,23 @@ paths:
               type: object
               required:
                 - reference
-                - amount
+                - currencyCode
+                - currencyAmount
               properties:
                 reference:
                   type: string
                   description: The unique reference code that was in the payment instructions
                   example: "UMA-Q12345-REF"
-                amount:
-                  $ref: '#/components/schemas/CurrencyAmount'
-                  description: Amount sending to the instructed bank account
+                currencyCode:
+                  type: string
+                  description: Currency code for the funds to be sent
+                  example: "USD"
+                currencyAmount:
+                  type: integer
+                  format: int64
+                  description: The amount to send in the smallest unit of the currency (eg. cents)
+                  exclusiveMinimum: 0
+                  example: 1000
       responses:
         '200':
           description: Funds received successfully
@@ -2273,7 +2281,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Unauthorized - request was made without a valid sandbox platform token
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden - request was made with a production platform token
           content:
             application/json:
               schema:
@@ -2331,7 +2345,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '401':
-          description: Unauthorized - request was made without a valid sandbox platform token
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden - request was made with a production platform token
           content:
             application/json:
               schema:
