@@ -18,9 +18,8 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List
-from umaaas_api.models.currency_amount import CurrencyAmount
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -29,8 +28,9 @@ class TestSendRequest(BaseModel):
     TestSendRequest
     """ # noqa: E501
     reference: StrictStr = Field(description="The unique reference code that was in the payment instructions")
-    amount: CurrencyAmount = Field(description="Amount sending to the instructed bank account")
-    __properties: ClassVar[List[str]] = ["reference", "amount"]
+    currency_code: StrictStr = Field(description="Currency code for the funds to be sent", alias="currencyCode")
+    currency_amount: StrictInt = Field(description="The amount to send in the smallest unit of the currency (eg. cents)", alias="currencyAmount")
+    __properties: ClassVar[List[str]] = ["reference", "currencyCode", "currencyAmount"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -69,9 +69,6 @@ class TestSendRequest(BaseModel):
             by_alias=True,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of amount
-        if self.amount:
-            _dict['amount'] = self.amount.to_dict()
         return _dict
 
     @classmethod
@@ -85,7 +82,8 @@ class TestSendRequest(BaseModel):
 
         _obj = cls.model_validate({
             "reference": obj.get("reference"),
-            "amount": CurrencyAmount.from_dict(obj["amount"]) if obj.get("amount") is not None else None
+            "currencyCode": obj.get("currencyCode"),
+            "currencyAmount": obj.get("currencyAmount")
         })
         return _obj
 

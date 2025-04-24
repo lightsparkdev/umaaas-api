@@ -2730,15 +2730,8 @@ BasicAuth
 ```javascript
 const inputBody = '{
   "reference": "UMA-Q12345-REF",
-  "amount": {
-    "amount": 12550,
-    "currency": {
-      "code": "USD",
-      "name": "United States Dollar",
-      "symbol": "$",
-      "decimals": 2
-    }
-  }
+  "currencyCode": "USD",
+  "currencyAmount": 1000
 }';
 const headers = {
   'Content-Type':'application/json',
@@ -2784,15 +2777,8 @@ This endpoint is only for the sandbox environment and will fail for production p
 ```json
 {
   "reference": "UMA-Q12345-REF",
-  "amount": {
-    "amount": 12550,
-    "currency": {
-      "code": "USD",
-      "name": "United States Dollar",
-      "symbol": "$",
-      "decimals": 2
-    }
-  }
+  "currencyCode": "USD",
+  "currencyAmount": 1000
 }
 ```
 
@@ -2802,13 +2788,8 @@ This endpoint is only for the sandbox environment and will fail for production p
 |---|---|---|---|---|
 |body|body|object|true|none|
 |» reference|body|string|true|The unique reference code that was in the payment instructions|
-|» amount|body|[CurrencyAmount](#schemacurrencyamount)|true|none|
-|»» amount|body|integer(int64)|true|Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)|
-|»» currency|body|[Currency](#schemacurrency)|true|none|
-|»»» code|body|string|false|Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "SAT" for satoshis, "USDC" for USDCoin, etc.)|
-|»»» name|body|string|false|Full name of the currency|
-|»»» symbol|body|string|false|Symbol of the currency|
-|»»» decimals|body|integer|false|Number of decimal places for the currency|
+|» currencyCode|body|string|true|Currency code for the funds to be sent|
+|» currencyAmount|body|integer(int64)|true|The amount to send in the smallest unit of the currency (eg. cents)|
 
 > Example responses
 
@@ -2828,7 +2809,8 @@ This endpoint is only for the sandbox environment and will fail for production p
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Funds received successfully|None|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|[Error](#schemaerror)|
-|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized - request was made without a valid sandbox platform token|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|Forbidden - request was made with a production platform token|[Error](#schemaerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Reference not found|[Error](#schemaerror)|
 
 <aside class="warning">
@@ -2949,7 +2931,8 @@ This endpoint is only for the sandbox environment and will fail for production p
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Payment triggered successfully|None|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|[Error](#schemaerror)|
-|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized - request was made without a valid sandbox platform token|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|Forbidden - request was made with a production platform token|[Error](#schemaerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Sender or receiver not found|[Error](#schemaerror)|
 
 <aside class="warning">

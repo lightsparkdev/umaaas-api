@@ -83,7 +83,8 @@ void (empty response body)
 |-------------|-------------|------------------|
 **200** | Payment triggered successfully |  -  |
 **400** | Bad request |  -  |
-**401** | Unauthorized - request was made without a valid sandbox platform token |  -  |
+**401** | Unauthorized |  -  |
+**403** | Forbidden - request was made with a production platform token |  -  |
 **404** | Sender or receiver not found |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
@@ -163,7 +164,8 @@ void (empty response body)
 |-------------|-------------|------------------|
 **200** | Funds received successfully |  -  |
 **400** | Bad request |  -  |
-**401** | Unauthorized - request was made without a valid sandbox platform token |  -  |
+**401** | Unauthorized |  -  |
+**403** | Forbidden - request was made with a production platform token |  -  |
 **404** | Reference not found |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
