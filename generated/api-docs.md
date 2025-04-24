@@ -1901,7 +1901,6 @@ must be followed precisely, including any reference codes provided.
 |» receiverUmaAddress|body|string|true|UMA address of the recipient|
 |» senderUmaAddress|body|string|false|UMA address of the sender (optional if userId or platformUserId is provided)|
 |» userId|body|string|false|System ID of the sender (optional if senderUmaAddress or platformUserId is provided)|
-|» platformUserId|body|string|false|Platform ID of the sender (optional if senderUmaAddress or userId is provided)|
 |» sendingCurrencyCode|body|string|true|Currency code for the sending amount|
 |» receivingCurrencyCode|body|string|true|Currency code for the receiving amount|
 |» lockedCurrencySide|body|[QuoteLockSide](#schemaquotelockside)|true|The side of the quote which should be locked and specified in the `lockedCurrencyAmount`. For example, if I want to send exactly $5 MXN from my wallet, I would set this to "sending", and the `lockedCurrencyAmount` to 500 (in cents). If I want the receiver to receive exactly $10 USD, I would set this to "receiving" and the `lockedCurrencyAmount` to 10000 (in cents).|
@@ -2714,6 +2713,244 @@ Delete an API token by their system-generated ID
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|[Error](#schemaerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Token not found|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BasicAuth
+</aside>
+
+<h1 id="uma-as-a-service-umaaas-api-sandbox">Sandbox</h1>
+
+## testSend
+
+<a id="opIdtestSend"></a>
+
+> Code samples
+
+```javascript
+const inputBody = '{
+  "reference": "UMA-Q12345-REF",
+  "amount": {
+    "amount": 12550,
+    "currency": {
+      "code": "USD",
+      "name": "United States Dollar",
+      "symbol": "$",
+      "decimals": 2
+    }
+  }
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+};
+
+fetch('https://api.lightspark.com/umaaas/v1/sandbox/send',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('https://api.lightspark.com/umaaas/v1/sandbox/send', headers = headers)
+
+print(r.json())
+
+```
+
+`POST /sandbox/send`
+
+*Simulate sending funds*
+
+Simulate sending funds to the bank account as instructed in the quote. 
+This endpoint is only for the sandbox environment and will fail for production platforms/keys.
+
+> Body parameter
+
+```json
+{
+  "reference": "UMA-Q12345-REF",
+  "amount": {
+    "amount": 12550,
+    "currency": {
+      "code": "USD",
+      "name": "United States Dollar",
+      "symbol": "$",
+      "decimals": 2
+    }
+  }
+}
+```
+
+<h3 id="testsend-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|body|body|object|true|none|
+|» reference|body|string|true|The unique reference code that was in the payment instructions|
+|» amount|body|[CurrencyAmount](#schemacurrencyamount)|true|none|
+|»» amount|body|integer(int64)|true|Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)|
+|»» currency|body|[Currency](#schemacurrency)|true|none|
+|»»» code|body|string|false|Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "SAT" for satoshis, "USDC" for USDCoin, etc.)|
+|»»» name|body|string|false|Full name of the currency|
+|»»» symbol|body|string|false|Symbol of the currency|
+|»»» decimals|body|integer|false|Number of decimal places for the currency|
+
+> Example responses
+
+> 400 Response
+
+```json
+{
+  "code": "string",
+  "message": "string",
+  "details": {}
+}
+```
+
+<h3 id="testsend-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Funds received successfully|None|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized - request was made without a valid sandbox platform token|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Reference not found|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BasicAuth
+</aside>
+
+## testReceive
+
+<a id="opIdtestReceive"></a>
+
+> Code samples
+
+```javascript
+const inputBody = '{
+  "senderUmaAddress": "$success.usd@sandbox.uma.money",
+  "receiverUmaAddress": "$receiver@uma.domain",
+  "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
+  "receivingAmount": {
+    "amount": 12550,
+    "currency": {
+      "code": "USD",
+      "name": "United States Dollar",
+      "symbol": "$",
+      "decimals": 2
+    }
+  }
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+};
+
+fetch('https://api.lightspark.com/umaaas/v1/sandbox/receive',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('https://api.lightspark.com/umaaas/v1/sandbox/receive', headers = headers)
+
+print(r.json())
+
+```
+
+`POST /sandbox/receive`
+
+*Simulate payment send to test receiving a payment*
+
+Simulate sending payment from an sandbox uma address to a platform user to test payment receive.
+This endpoint is only for the sandbox environment and will fail for production platforms/keys.
+
+> Body parameter
+
+```json
+{
+  "senderUmaAddress": "$success.usd@sandbox.uma.money",
+  "receiverUmaAddress": "$receiver@uma.domain",
+  "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
+  "receivingAmount": {
+    "amount": 12550,
+    "currency": {
+      "code": "USD",
+      "name": "United States Dollar",
+      "symbol": "$",
+      "decimals": 2
+    }
+  }
+}
+```
+
+<h3 id="testreceive-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|body|body|object|true|none|
+|» senderUmaAddress|body|string|true|UMA address of the sender from the sandbox|
+|» receiverUmaAddress|body|string|false|UMA address of the receiver (optional if userId is provided)|
+|» userId|body|string|false|System ID of the receiver (optional if receiverUmaAddress is provided)|
+|» receivingAmount|body|[CurrencyAmount](#schemacurrencyamount)|true|none|
+|»» amount|body|integer(int64)|true|Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)|
+|»» currency|body|[Currency](#schemacurrency)|true|none|
+|»»» code|body|string|false|Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "SAT" for satoshis, "USDC" for USDCoin, etc.)|
+|»»» name|body|string|false|Full name of the currency|
+|»»» symbol|body|string|false|Symbol of the currency|
+|»»» decimals|body|integer|false|Number of decimal places for the currency|
+
+> Example responses
+
+> 400 Response
+
+```json
+{
+  "code": "string",
+  "message": "string",
+  "details": {}
+}
+```
+
+<h3 id="testreceive-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Payment triggered successfully|None|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized - request was made without a valid sandbox platform token|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Sender or receiver not found|[Error](#schemaerror)|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:

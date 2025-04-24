@@ -1792,10 +1792,6 @@ paths:
                   type: string
                   description: System ID of the sender (optional if senderUmaAddress or platformUserId is provided)
                   example: "User:019542f5-b3e7-1d02-0000-000000000001"
-                platformUserId:
-                  type: string
-                  description: Platform ID of the sender (optional if senderUmaAddress or userId is provided)
-                  example: "18d3e5f7b4a9c2"
                 sendingCurrencyCode:
                   type: string
                   description: Currency code for the sending amount
@@ -2234,6 +2230,114 @@ paths:
                 $ref: '#/components/schemas/Error'
         '404':
           description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /sandbox/send:
+    post:
+      summary: Simulate sending funds
+      description: |
+        Simulate sending funds to the bank account as instructed in the quote. 
+        This endpoint is only for the sandbox environment and will fail for production platforms/keys.
+      operationId: testSend
+      tags:
+        - Sandbox
+      security:
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - reference
+                - amount
+              properties:
+                reference:
+                  type: string
+                  description: The unique reference code that was in the payment instructions
+                  example: "UMA-Q12345-REF"
+                amount:
+                  $ref: '#/components/schemas/CurrencyAmount'
+                  description: Amount sending to the instructed bank account
+      responses:
+        '200':
+          description: Funds received successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized - request was made without a valid sandbox platform token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Reference not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /sandbox/receive:
+    post:
+      summary: Simulate payment send to test receiving a payment
+      description: |
+        Simulate sending payment from an sandbox uma address to a platform user to test payment receive.
+        This endpoint is only for the sandbox environment and will fail for production platforms/keys.
+      operationId: testReceive
+      tags:
+        - Sandbox
+      security:
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - senderUmaAddress
+                - receivingAmount
+              properties:
+                senderUmaAddress:
+                  type: string
+                  description: UMA address of the sender from the sandbox
+                  example: "$success.usd@sandbox.uma.money"
+                receiverUmaAddress:
+                  type: string
+                  description: UMA address of the receiver (optional if userId is provided)
+                  example: "$receiver@uma.domain"
+                userId:
+                  type: string
+                  description: System ID of the receiver (optional if receiverUmaAddress is provided)
+                  example: "User:019542f5-b3e7-1d02-0000-000000000001"
+                receivingAmount:
+                  $ref: '#/components/schemas/CurrencyAmount'
+                  description: Amount to be received by recipient in the recipient's currency
+      responses:
+        '200':
+          description: Payment triggered successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized - request was made without a valid sandbox platform token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Sender or receiver not found
           content:
             application/json:
               schema:
