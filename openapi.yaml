@@ -441,7 +441,7 @@ components:
 
     TransactionStatus:
       type: string
-      enum: [PENDING, COMPLETED, FAILED, REFUNDED]
+      enum: [CREATED, PENDING, PROCESSING, COMPLETED, REJECTED, FAILED, REFUNDED]
       description: Status of a payment transaction
 
     TransactionType:
@@ -1729,6 +1729,10 @@ paths:
                     description: Fields required by the receiving institution about the payer before payment can be completed
                     items:
                       $ref: '#/components/schemas/CounterpartyFieldDefinition'
+                  lookupId:
+                    type: string
+                    description: Unique identifier for the lookup. Needed in the subsequent create quote request.
+                    example: "LookupRequest:019542f5-b3e7-1d02-0000-000000000009"
         '400':
           description: Bad request - Missing or invalid parameters
           content:
@@ -1774,12 +1778,17 @@ paths:
             schema:
               type: object
               required:
+                - lookupId
                 - receiverUmaAddress
                 - sendingCurrencyCode
                 - receivingCurrencyCode
                 - lockedCurrencySide
                 - lockedCurrencyAmount
               properties:
+                lookupId:
+                  type: string
+                  description: Unique identifier for the prior receiver uma address lookup request.
+                  example: "LookupRequest:019542f5-b3e7-1d02-0000-000000000009"
                 receiverUmaAddress:
                   type: string
                   description: UMA address of the recipient

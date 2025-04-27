@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **receiving_uma_address** | **str** | The UMA address that was looked up | 
 **supported_currencies** | [**List[CurrencyPreference]**](CurrencyPreference.md) | List of currencies supported by the receiving UMA address | 
 **required_payer_data_fields** | [**List[CounterpartyFieldDefinition]**](CounterpartyFieldDefinition.md) | Fields required by the receiving institution about the payer before payment can be completed | [optional] 
+**lookup_id** | **str** | Unique identifier for the lookup. Needed in the subsequent create quote request. | [optional] 
 
 ## Example
 

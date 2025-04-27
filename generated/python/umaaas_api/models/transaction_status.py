@@ -27,8 +27,11 @@ class TransactionStatus(str, Enum):
     """
     allowed enum values
     """
+    CREATED = 'CREATED'
     PENDING = 'PENDING'
+    PROCESSING = 'PROCESSING'
     COMPLETED = 'COMPLETED'
+    REJECTED = 'REJECTED'
     FAILED = 'FAILED'
     REFUNDED = 'REFUNDED'
 
