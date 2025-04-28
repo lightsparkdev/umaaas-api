@@ -1409,7 +1409,7 @@ Retrieve detailed information about a specific transaction
 ```json
 {
   "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
-  "status": "PENDING",
+  "status": "CREATED",
   "type": "INCOMING",
   "senderUmaAddress": "$sender@external.domain",
   "receiverUmaAddress": "$recipient@uma.domain",
@@ -1448,8 +1448,11 @@ Retrieve detailed information about a specific transaction
 
 |Property|Value|
 |---|---|
+|status|CREATED|
 |status|PENDING|
+|status|PROCESSING|
 |status|COMPLETED|
+|status|REJECTED|
 |status|FAILED|
 |status|REFUNDED|
 |type|INCOMING|
@@ -1531,8 +1534,11 @@ date range, status, and transaction type.
 
 |Parameter|Value|
 |---|---|
+|status|CREATED|
 |status|PENDING|
+|status|PROCESSING|
 |status|COMPLETED|
+|status|REJECTED|
 |status|FAILED|
 |status|REFUNDED|
 |type|INCOMING|
@@ -1549,7 +1555,7 @@ date range, status, and transaction type.
   "data": [
     {
       "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
-      "status": "PENDING",
+      "status": "CREATED",
       "type": "INCOMING",
       "senderUmaAddress": "$sender@external.domain",
       "receiverUmaAddress": "$recipient@uma.domain",
@@ -1668,8 +1674,11 @@ Status Code **200**
 
 |Property|Value|
 |---|---|
+|status|CREATED|
 |status|PENDING|
+|status|PROCESSING|
 |status|COMPLETED|
+|status|REJECTED|
 |status|FAILED|
 |status|REFUNDED|
 |type|INCOMING|
@@ -1767,7 +1776,8 @@ This endpoint helps platforms determine what currencies they can send to a given
       "name": "FULL_NAME",
       "mandatory": true
     }
-  ]
+  ],
+  "lookupId": "LookupRequest:019542f5-b3e7-1d02-0000-000000000009"
 }
 ```
 
@@ -1799,6 +1809,7 @@ Status Code **200**
 |» requiredPayerDataFields|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|false|none|Fields required by the receiving institution about the payer before payment can be completed|
 |»» name|string|true|none|Name of the counterparty field|
 |»» mandatory|boolean|true|none|Whether the field is mandatory|
+|» lookupId|string|false|none|Unique identifier for the lookup. Needed in the subsequent create quote request.|
 
 #### Enumerated Values
 
@@ -1898,6 +1909,7 @@ must be followed precisely, including any reference codes provided.
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
 |body|body|object|true|none|
+|» lookupId|body|string|true|Unique identifier for the prior receiver uma address lookup request.|
 |» receiverUmaAddress|body|string|true|UMA address of the recipient|
 |» senderUmaAddress|body|string|false|UMA address of the sender (optional if userId or platformUserId is provided)|
 |» userId|body|string|false|System ID of the sender (optional if senderUmaAddress or platformUserId is provided)|
@@ -2149,7 +2161,7 @@ payment instructions has been received and processed.
   "statusMessage": "Payment received and being processed",
   "transaction": {
     "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
-    "status": "PENDING",
+    "status": "CREATED",
     "type": "INCOMING",
     "senderUmaAddress": "$sender@external.domain",
     "receiverUmaAddress": "$recipient@uma.domain",
@@ -2251,8 +2263,11 @@ Status Code **200**
 |status|COMPLETED|
 |status|FAILED|
 |status|EXPIRED|
+|status|CREATED|
 |status|PENDING|
+|status|PROCESSING|
 |status|COMPLETED|
+|status|REJECTED|
 |status|FAILED|
 |status|REFUNDED|
 |type|INCOMING|
@@ -3514,7 +3529,7 @@ and
 <a id="tocstransactionstatus"></a>
 
 ```json
-"PENDING"
+"CREATED"
 
 ```
 
@@ -3530,8 +3545,11 @@ Status of a payment transaction
 
 |Property|Value|
 |---|---|
+|*anonymous*|CREATED|
 |*anonymous*|PENDING|
+|*anonymous*|PROCESSING|
 |*anonymous*|COMPLETED|
+|*anonymous*|REJECTED|
 |*anonymous*|FAILED|
 |*anonymous*|REFUNDED|
 
@@ -3678,7 +3696,7 @@ Type of webhook event, used by the receiver to identify which webhook is being r
 ```json
 {
   "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
-  "status": "PENDING",
+  "status": "CREATED",
   "type": "INCOMING",
   "senderUmaAddress": "$sender@external.domain",
   "receiverUmaAddress": "$recipient@uma.domain",
@@ -3721,7 +3739,7 @@ Type of webhook event, used by the receiver to identify which webhook is being r
 ```json
 {
   "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
-  "status": "PENDING",
+  "status": "CREATED",
   "type": "INCOMING",
   "senderUmaAddress": "$sender@external.domain",
   "receiverUmaAddress": "$recipient@uma.domain",
@@ -3773,7 +3791,7 @@ and
 ```json
 {
   "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
-  "status": "PENDING",
+  "status": "CREATED",
   "type": "INCOMING",
   "senderUmaAddress": "$sender@external.domain",
   "receiverUmaAddress": "$recipient@uma.domain",

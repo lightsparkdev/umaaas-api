@@ -28,6 +28,7 @@ class CreateQuoteRequest(BaseModel):
     """
     CreateQuoteRequest
     """ # noqa: E501
+    lookup_id: StrictStr = Field(description="Unique identifier for the prior receiver uma address lookup request.", alias="lookupId")
     receiver_uma_address: StrictStr = Field(description="UMA address of the recipient", alias="receiverUmaAddress")
     sender_uma_address: Optional[StrictStr] = Field(default=None, description="UMA address of the sender (optional if userId or platformUserId is provided)", alias="senderUmaAddress")
     user_id: Optional[StrictStr] = Field(default=None, description="System ID of the sender (optional if senderUmaAddress or platformUserId is provided)", alias="userId")
@@ -36,7 +37,7 @@ class CreateQuoteRequest(BaseModel):
     locked_currency_side: QuoteLockSide = Field(alias="lockedCurrencySide")
     locked_currency_amount: StrictInt = Field(description="The amount to send/receive in the smallest unit of the locked currency (eg. cents). See `lockedCurrencySide` for more information.", alias="lockedCurrencyAmount")
     description: Optional[StrictStr] = Field(default=None, description="Optional description/memo for the payment")
-    __properties: ClassVar[List[str]] = ["receiverUmaAddress", "senderUmaAddress", "userId", "sendingCurrencyCode", "receivingCurrencyCode", "lockedCurrencySide", "lockedCurrencyAmount", "description"]
+    __properties: ClassVar[List[str]] = ["lookupId", "receiverUmaAddress", "senderUmaAddress", "userId", "sendingCurrencyCode", "receivingCurrencyCode", "lockedCurrencySide", "lockedCurrencyAmount", "description"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -87,6 +88,7 @@ class CreateQuoteRequest(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
+            "lookupId": obj.get("lookupId"),
             "receiverUmaAddress": obj.get("receiverUmaAddress"),
             "senderUmaAddress": obj.get("senderUmaAddress"),
             "userId": obj.get("userId"),

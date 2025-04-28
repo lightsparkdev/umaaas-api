@@ -5,6 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**lookup_id** | **str** | Unique identifier for the prior receiver uma address lookup request. | 
 **receiver_uma_address** | **str** | UMA address of the recipient | 
 **sender_uma_address** | **str** | UMA address of the sender (optional if userId or platformUserId is provided) | [optional] 
 **user_id** | **str** | System ID of the sender (optional if senderUmaAddress or platformUserId is provided) | [optional] 
