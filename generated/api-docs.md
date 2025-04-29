@@ -412,8 +412,7 @@ Register a new user in the system with UMA address and bank account information
     "country": "US"
   },
   "bankAccountInfo": {
-    "accountType": "US_ACCOUNT",
-    "accountHolderName": "John Doe",
+    "accountType": "CLABE",
     "platformAccountId": "acc_123456789"
   }
 }
@@ -440,6 +439,7 @@ Register a new user in the system with UMA address and bank account information
 |accountType|US_ACCOUNT|
 |accountType|PIX|
 |accountType|IBAN|
+|accountType|FBO|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -538,8 +538,7 @@ the specified filters. If no filters are provided, returns all users (paginated)
         "country": "US"
       },
       "bankAccountInfo": {
-        "accountType": "US_ACCOUNT",
-        "accountHolderName": "John Doe",
+        "accountType": "CLABE",
         "platformAccountId": "acc_123456789"
       }
     }
@@ -599,9 +598,8 @@ Status Code **200**
 |»»»»» state|string|false|none|State/Province/Region|
 |»»»»» postalCode|string|true|none|Postal/ZIP code|
 |»»»»» country|string|true|none|Country code (ISO 3166-1 alpha-2)|
-|»»»» bankAccountInfo|[BankAccountInfo](#schemabankaccountinfo)|true|none|none|
-|»»»»» accountType|string|true|none|Type of bank account information|
-|»»»»» accountHolderName|string|false|none|Name of the account holder|
+|»»»» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|true|none|none|
+|»»»»» accountType|[BankAccountType](#schemabankaccounttype)|true|none|Type of bank account information|
 |»»»»» platformAccountId|string|false|none|Platform-specific identifier for this bank account. This optional field allows platforms<br>to link bank accounts to their internal account systems. The value can be any string<br>that helps identify the account in your system (e.g. database IDs, custom references, etc.).<br><br>This field is particularly useful when:<br>- Tracking multiple bank accounts for the same user<br>- Linking accounts to internal accounting systems<br>- Maintaining consistency between UMAaS and your platform's account records|
 
 *xor*
@@ -622,7 +620,7 @@ Status Code **200**
 |---|---|---|---|---|
 |»»» *anonymous*|object|false|none|none|
 |»»»» address|[Address](#schemaaddress)|true|none|none|
-|»»»» bankAccountInfo|[BankAccountInfo](#schemabankaccountinfo)|true|none|none|
+|»»»» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|true|none|none|
 |»»»» businessInfo|object|true|none|Additional information required for business entities|
 |»»»»» legalName|string|true|none|Legal name of the business|
 |»»»»» registrationNumber|string|false|none|Business registration number|
@@ -646,6 +644,7 @@ Status Code **200**
 |accountType|US_ACCOUNT|
 |accountType|PIX|
 |accountType|IBAN|
+|accountType|FBO|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -726,8 +725,7 @@ Retrieve a user by their system-generated ID
     "country": "US"
   },
   "bankAccountInfo": {
-    "accountType": "US_ACCOUNT",
-    "accountHolderName": "John Doe",
+    "accountType": "CLABE",
     "platformAccountId": "acc_123456789"
   }
 }
@@ -753,6 +751,7 @@ Retrieve a user by their system-generated ID
 |accountType|US_ACCOUNT|
 |accountType|PIX|
 |accountType|IBAN|
+|accountType|FBO|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -880,8 +879,7 @@ Update a user's metadata by their system-generated ID
     "country": "US"
   },
   "bankAccountInfo": {
-    "accountType": "US_ACCOUNT",
-    "accountHolderName": "John Doe",
+    "accountType": "CLABE",
     "platformAccountId": "acc_123456789"
   }
 }
@@ -908,6 +906,7 @@ Update a user's metadata by their system-generated ID
 |accountType|US_ACCOUNT|
 |accountType|PIX|
 |accountType|IBAN|
+|accountType|FBO|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -988,8 +987,7 @@ Delete a user by their system-generated ID
     "country": "US"
   },
   "bankAccountInfo": {
-    "accountType": "US_ACCOUNT",
-    "accountHolderName": "John Doe",
+    "accountType": "CLABE",
     "platformAccountId": "acc_123456789"
   }
 }
@@ -1016,6 +1014,7 @@ Delete a user by their system-generated ID
 |accountType|US_ACCOUNT|
 |accountType|PIX|
 |accountType|IBAN|
+|accountType|FBO|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -1132,7 +1131,7 @@ For IBAN:
 - iban: International Bank Account Number
 - swiftBic: SWIFT/BIC code (8 or 11 characters)
 
-See the BankAccountInfo and UserInfo schemas for more details on the required and optional fields.
+See the UserBankAccountInfo and UserInfo schemas for more details on the required and optional fields.
 
 ### Example CSV
 ```csv
@@ -1954,11 +1953,7 @@ must be followed precisely, including any reference codes provided.
     "reference": "UMA-Q12345-REF",
     "instructionsNotes": "Please ensure the reference code is included in the payment memo/description field",
     "bankAccountInfo": {
-      "accountType": "US_ACCOUNT",
-      "accountHolderName": "John Doe",
-      "platformAccountId": "acc_123456789",
-      "clabeNumber": "123456789012345678",
-      "bankName": "BBVA Mexico"
+      "accountType": "CLABE"
     }
   },
   "status": "PENDING",
@@ -2068,11 +2063,7 @@ from quote creation to settlement.
     "reference": "UMA-Q12345-REF",
     "instructionsNotes": "Please ensure the reference code is included in the payment memo/description field",
     "bankAccountInfo": {
-      "accountType": "US_ACCOUNT",
-      "accountHolderName": "John Doe",
-      "platformAccountId": "acc_123456789",
-      "clabeNumber": "123456789012345678",
-      "bankName": "BBVA Mexico"
+      "accountType": "CLABE"
     }
   },
   "status": "PENDING",
@@ -2988,39 +2979,6 @@ BasicAuth
 |postalCode|string|true|none|Postal/ZIP code|
 |country|string|true|none|Country code (ISO 3166-1 alpha-2)|
 
-<h2 id="tocS_BankAccountInfo">BankAccountInfo</h2>
-<!-- backwards compatibility -->
-<a id="schemabankaccountinfo"></a>
-<a id="schema_BankAccountInfo"></a>
-<a id="tocSbankaccountinfo"></a>
-<a id="tocsbankaccountinfo"></a>
-
-```json
-{
-  "accountType": "US_ACCOUNT",
-  "accountHolderName": "John Doe",
-  "platformAccountId": "acc_123456789"
-}
-
-```
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|accountType|string|true|none|Type of bank account information|
-|accountHolderName|string|false|none|Name of the account holder|
-|platformAccountId|string|false|none|Platform-specific identifier for this bank account. This optional field allows platforms<br>to link bank accounts to their internal account systems. The value can be any string<br>that helps identify the account in your system (e.g. database IDs, custom references, etc.).<br><br>This field is particularly useful when:<br>- Tracking multiple bank accounts for the same user<br>- Linking accounts to internal accounting systems<br>- Maintaining consistency between UMAaS and your platform's account records|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|accountType|CLABE|
-|accountType|US_ACCOUNT|
-|accountType|PIX|
-|accountType|IBAN|
-
 <h2 id="tocS_ClabeAccountInfo">ClabeAccountInfo</h2>
 <!-- backwards compatibility -->
 <a id="schemaclabeaccountinfo"></a>
@@ -3030,30 +2988,20 @@ BasicAuth
 
 ```json
 {
-  "accountType": "US_ACCOUNT",
-  "accountHolderName": "John Doe",
-  "platformAccountId": "acc_123456789",
   "clabeNumber": "123456789012345678",
-  "bankName": "BBVA Mexico"
+  "bankName": "BBVA Mexico",
+  "accountHolderName": "John Doe"
 }
 
 ```
 
 ### Properties
 
-allOf - discriminator: BankAccountInfo.accountType
-
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|*anonymous*|[BankAccountInfo](#schemabankaccountinfo)|false|none|none|
-
-and
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|*anonymous*|object|false|none|none|
-|» clabeNumber|string|true|none|18-digit CLABE number (Mexican banking standard)|
-|» bankName|string|true|none|Name of the bank|
+|clabeNumber|string|true|none|18-digit CLABE number (Mexican banking standard)|
+|bankName|string|true|none|Name of the bank|
+|accountHolderName|string|false|none|Name of the account holder|
 
 <h2 id="tocS_UsAccountInfo">UsAccountInfo</h2>
 <!-- backwards compatibility -->
@@ -3064,34 +3012,24 @@ and
 
 ```json
 {
-  "accountType": "US_ACCOUNT",
-  "accountHolderName": "John Doe",
-  "platformAccountId": "acc_123456789",
   "accountNumber": "123456789",
   "routingNumber": "987654321",
   "accountCategory": "CHECKING",
-  "bankName": "Chase Bank"
+  "bankName": "Chase Bank",
+  "accountHolderName": "John Doe"
 }
 
 ```
 
 ### Properties
 
-allOf - discriminator: BankAccountInfo.accountType
-
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|*anonymous*|[BankAccountInfo](#schemabankaccountinfo)|false|none|none|
-
-and
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|*anonymous*|object|false|none|none|
-|» accountNumber|string|true|none|US bank account number|
-|» routingNumber|string|true|none|ACH routing number (9 digits)|
-|» accountCategory|string|true|none|Type of account (checking or savings)|
-|» bankName|string|false|none|Name of the bank|
+|accountNumber|string|true|none|US bank account number|
+|routingNumber|string|true|none|ACH routing number (9 digits)|
+|accountCategory|string|true|none|Type of account (checking or savings)|
+|bankName|string|false|none|Name of the bank|
+|accountHolderName|string|false|none|Name of the account holder|
 
 #### Enumerated Values
 
@@ -3109,32 +3047,22 @@ and
 
 ```json
 {
-  "accountType": "US_ACCOUNT",
-  "accountHolderName": "John Doe",
-  "platformAccountId": "acc_123456789",
   "pixKey": "55119876543210",
   "pixKeyType": "PHONE",
-  "bankName": "Nubank"
+  "bankName": "Nubank",
+  "accountHolderName": "John Doe"
 }
 
 ```
 
 ### Properties
 
-allOf - discriminator: BankAccountInfo.accountType
-
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|*anonymous*|[BankAccountInfo](#schemabankaccountinfo)|false|none|none|
-
-and
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|*anonymous*|object|false|none|none|
-|» pixKey|string|true|none|PIX key for Brazilian instant payments|
-|» pixKeyType|string|true|none|Type of PIX key being used|
-|» bankName|string|false|none|Name of the bank|
+|pixKey|string|true|none|PIX key for Brazilian instant payments|
+|pixKeyType|string|true|none|Type of PIX key being used|
+|bankName|string|false|none|Name of the bank|
+|accountHolderName|string|false|none|Name of the account holder|
 
 #### Enumerated Values
 
@@ -3155,32 +3083,261 @@ and
 
 ```json
 {
-  "accountType": "US_ACCOUNT",
-  "accountHolderName": "John Doe",
-  "platformAccountId": "acc_123456789",
   "iban": "DE89370400440532013000",
   "swiftBic": "DEUTDEFF",
-  "bankName": "Deutsche Bank"
+  "bankName": "Deutsche Bank",
+  "accountHolderName": "John Doe"
 }
 
 ```
 
 ### Properties
 
-allOf - discriminator: BankAccountInfo.accountType
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|iban|string|true|none|International Bank Account Number|
+|swiftBic|string|false|none|SWIFT/BIC code (8 or 11 characters)|
+|bankName|string|true|none|Name of the bank|
+|accountHolderName|string|false|none|Name of the account holder|
+
+<h2 id="tocS_BankAccountType">BankAccountType</h2>
+<!-- backwards compatibility -->
+<a id="schemabankaccounttype"></a>
+<a id="schema_BankAccountType"></a>
+<a id="tocSbankaccounttype"></a>
+<a id="tocsbankaccounttype"></a>
+
+```json
+"CLABE"
+
+```
+
+Type of bank account information
+
+### Properties
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|*anonymous*|[BankAccountInfo](#schemabankaccountinfo)|false|none|none|
+|*anonymous*|string|false|none|Type of bank account information|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|*anonymous*|CLABE|
+|*anonymous*|US_ACCOUNT|
+|*anonymous*|PIX|
+|*anonymous*|IBAN|
+|*anonymous*|FBO|
+
+<h2 id="tocS_UserBankAccountInfo">UserBankAccountInfo</h2>
+<!-- backwards compatibility -->
+<a id="schemauserbankaccountinfo"></a>
+<a id="schema_UserBankAccountInfo"></a>
+<a id="tocSuserbankaccountinfo"></a>
+<a id="tocsuserbankaccountinfo"></a>
+
+```json
+{
+  "accountType": "CLABE",
+  "platformAccountId": "acc_123456789"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|accountType|[BankAccountType](#schemabankaccounttype)|true|none|Type of bank account information|
+|platformAccountId|string|false|none|Platform-specific identifier for this bank account. This optional field allows platforms<br>to link bank accounts to their internal account systems. The value can be any string<br>that helps identify the account in your system (e.g. database IDs, custom references, etc.).<br><br>This field is particularly useful when:<br>- Tracking multiple bank accounts for the same user<br>- Linking accounts to internal accounting systems<br>- Maintaining consistency between UMAaS and your platform's account records|
+
+<h2 id="tocS_UserClabeAccountInfo">UserClabeAccountInfo</h2>
+<!-- backwards compatibility -->
+<a id="schemauserclabeaccountinfo"></a>
+<a id="schema_UserClabeAccountInfo"></a>
+<a id="tocSuserclabeaccountinfo"></a>
+<a id="tocsuserclabeaccountinfo"></a>
+
+```json
+{
+  "accountType": "CLABE",
+  "platformAccountId": "acc_123456789",
+  "clabeNumber": "123456789012345678",
+  "bankName": "BBVA Mexico",
+  "accountHolderName": "John Doe"
+}
+
+```
+
+### Properties
+
+allOf - discriminator: UserBankAccountInfo.accountType
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[UserBankAccountInfo](#schemauserbankaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[ClabeAccountInfo](#schemaclabeaccountinfo)|false|none|none|
 
 and
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |*anonymous*|object|false|none|none|
-|» iban|string|true|none|International Bank Account Number|
-|» swiftBic|string|false|none|SWIFT/BIC code (8 or 11 characters)|
-|» bankName|string|true|none|Name of the bank|
+
+<h2 id="tocS_UserUsAccountInfo">UserUsAccountInfo</h2>
+<!-- backwards compatibility -->
+<a id="schemauserusaccountinfo"></a>
+<a id="schema_UserUsAccountInfo"></a>
+<a id="tocSuserusaccountinfo"></a>
+<a id="tocsuserusaccountinfo"></a>
+
+```json
+{
+  "accountType": "CLABE",
+  "platformAccountId": "acc_123456789",
+  "accountNumber": "123456789",
+  "routingNumber": "987654321",
+  "accountCategory": "CHECKING",
+  "bankName": "Chase Bank",
+  "accountHolderName": "John Doe"
+}
+
+```
+
+### Properties
+
+allOf - discriminator: UserBankAccountInfo.accountType
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[UserBankAccountInfo](#schemauserbankaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[UsAccountInfo](#schemausaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+
+<h2 id="tocS_UserPixAccountInfo">UserPixAccountInfo</h2>
+<!-- backwards compatibility -->
+<a id="schemauserpixaccountinfo"></a>
+<a id="schema_UserPixAccountInfo"></a>
+<a id="tocSuserpixaccountinfo"></a>
+<a id="tocsuserpixaccountinfo"></a>
+
+```json
+{
+  "accountType": "CLABE",
+  "platformAccountId": "acc_123456789",
+  "pixKey": "55119876543210",
+  "pixKeyType": "PHONE",
+  "bankName": "Nubank",
+  "accountHolderName": "John Doe"
+}
+
+```
+
+### Properties
+
+allOf - discriminator: UserBankAccountInfo.accountType
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[UserBankAccountInfo](#schemauserbankaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[PixAccountInfo](#schemapixaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+
+<h2 id="tocS_UserIbanAccountInfo">UserIbanAccountInfo</h2>
+<!-- backwards compatibility -->
+<a id="schemauseribanaccountinfo"></a>
+<a id="schema_UserIbanAccountInfo"></a>
+<a id="tocSuseribanaccountinfo"></a>
+<a id="tocsuseribanaccountinfo"></a>
+
+```json
+{
+  "accountType": "CLABE",
+  "platformAccountId": "acc_123456789",
+  "iban": "DE89370400440532013000",
+  "swiftBic": "DEUTDEFF",
+  "bankName": "Deutsche Bank",
+  "accountHolderName": "John Doe"
+}
+
+```
+
+### Properties
+
+allOf - discriminator: UserBankAccountInfo.accountType
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[UserBankAccountInfo](#schemauserbankaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[IbanAccountInfo](#schemaibanaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+
+<h2 id="tocS_UserFboAccountInfo">UserFboAccountInfo</h2>
+<!-- backwards compatibility -->
+<a id="schemauserfboaccountinfo"></a>
+<a id="schema_UserFboAccountInfo"></a>
+<a id="tocSuserfboaccountinfo"></a>
+<a id="tocsuserfboaccountinfo"></a>
+
+```json
+{
+  "accountType": "CLABE",
+  "platformAccountId": "acc_123456789",
+  "currencyCode": "USD"
+}
+
+```
+
+### Properties
+
+allOf - discriminator: UserBankAccountInfo.accountType
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[UserBankAccountInfo](#schemauserbankaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+|» currencyCode|string|true|none|Three-letter currency code (ISO 4217)|
 
 <h2 id="tocS_PaymentInstructions">PaymentInstructions</h2>
 <!-- backwards compatibility -->
@@ -3194,11 +3351,7 @@ and
   "reference": "UMA-Q12345-REF",
   "instructionsNotes": "Please ensure the reference code is included in the payment memo/description field",
   "bankAccountInfo": {
-    "accountType": "US_ACCOUNT",
-    "accountHolderName": "John Doe",
-    "platformAccountId": "acc_123456789",
-    "clabeNumber": "123456789012345678",
-    "bankName": "BBVA Mexico"
+    "accountType": "CLABE"
   }
 }
 
@@ -3210,31 +3363,218 @@ and
 |---|---|---|---|---|
 |reference|string|true|none|Unique reference code that must be included with the payment to properly credit it|
 |instructionsNotes|string|false|none|Additional human-readable instructions for making the payment|
-|bankAccountInfo|any|true|none|none|
+|bankAccountInfo|[PaymentBankAccountInfo](#schemapaymentbankaccountinfo)|true|none|none|
 
-oneOf
+<h2 id="tocS_PaymentBankAccountInfo">PaymentBankAccountInfo</h2>
+<!-- backwards compatibility -->
+<a id="schemapaymentbankaccountinfo"></a>
+<a id="schema_PaymentBankAccountInfo"></a>
+<a id="tocSpaymentbankaccountinfo"></a>
+<a id="tocspaymentbankaccountinfo"></a>
 
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|» *anonymous*|[ClabeAccountInfo](#schemaclabeaccountinfo)|false|none|none|
+```json
+{
+  "accountType": "CLABE"
+}
 
-xor
+```
 
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|» *anonymous*|[UsAccountInfo](#schemausaccountinfo)|false|none|none|
-
-xor
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|» *anonymous*|[PixAccountInfo](#schemapixaccountinfo)|false|none|none|
-
-xor
+### Properties
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|» *anonymous*|[IbanAccountInfo](#schemaibanaccountinfo)|false|none|none|
+|accountType|[BankAccountType](#schemabankaccounttype)|true|none|Type of bank account information|
+
+<h2 id="tocS_PaymentClabeAccountInfo">PaymentClabeAccountInfo</h2>
+<!-- backwards compatibility -->
+<a id="schemapaymentclabeaccountinfo"></a>
+<a id="schema_PaymentClabeAccountInfo"></a>
+<a id="tocSpaymentclabeaccountinfo"></a>
+<a id="tocspaymentclabeaccountinfo"></a>
+
+```json
+{
+  "accountType": "CLABE",
+  "clabeNumber": "123456789012345678",
+  "bankName": "BBVA Mexico",
+  "accountHolderName": "John Doe"
+}
+
+```
+
+### Properties
+
+allOf - discriminator: PaymentBankAccountInfo.accountType
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[PaymentBankAccountInfo](#schemapaymentbankaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[ClabeAccountInfo](#schemaclabeaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+
+<h2 id="tocS_PaymentUsAccountInfo">PaymentUsAccountInfo</h2>
+<!-- backwards compatibility -->
+<a id="schemapaymentusaccountinfo"></a>
+<a id="schema_PaymentUsAccountInfo"></a>
+<a id="tocSpaymentusaccountinfo"></a>
+<a id="tocspaymentusaccountinfo"></a>
+
+```json
+{
+  "accountType": "CLABE",
+  "accountNumber": "123456789",
+  "routingNumber": "987654321",
+  "accountCategory": "CHECKING",
+  "bankName": "Chase Bank",
+  "accountHolderName": "John Doe"
+}
+
+```
+
+### Properties
+
+allOf - discriminator: PaymentBankAccountInfo.accountType
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[PaymentBankAccountInfo](#schemapaymentbankaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[UsAccountInfo](#schemausaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+
+<h2 id="tocS_PaymentPixAccountInfo">PaymentPixAccountInfo</h2>
+<!-- backwards compatibility -->
+<a id="schemapaymentpixaccountinfo"></a>
+<a id="schema_PaymentPixAccountInfo"></a>
+<a id="tocSpaymentpixaccountinfo"></a>
+<a id="tocspaymentpixaccountinfo"></a>
+
+```json
+{
+  "accountType": "CLABE",
+  "pixKey": "55119876543210",
+  "pixKeyType": "PHONE",
+  "bankName": "Nubank",
+  "accountHolderName": "John Doe"
+}
+
+```
+
+### Properties
+
+allOf - discriminator: PaymentBankAccountInfo.accountType
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[PaymentBankAccountInfo](#schemapaymentbankaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[PixAccountInfo](#schemapixaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+
+<h2 id="tocS_PaymentIbanAccountInfo">PaymentIbanAccountInfo</h2>
+<!-- backwards compatibility -->
+<a id="schemapaymentibanaccountinfo"></a>
+<a id="schema_PaymentIbanAccountInfo"></a>
+<a id="tocSpaymentibanaccountinfo"></a>
+<a id="tocspaymentibanaccountinfo"></a>
+
+```json
+{
+  "accountType": "CLABE",
+  "iban": "DE89370400440532013000",
+  "swiftBic": "DEUTDEFF",
+  "bankName": "Deutsche Bank",
+  "accountHolderName": "John Doe"
+}
+
+```
+
+### Properties
+
+allOf - discriminator: PaymentBankAccountInfo.accountType
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[PaymentBankAccountInfo](#schemapaymentbankaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[IbanAccountInfo](#schemaibanaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+
+<h2 id="tocS_PaymentFboAccountInfo">PaymentFboAccountInfo</h2>
+<!-- backwards compatibility -->
+<a id="schemapaymentfboaccountinfo"></a>
+<a id="schema_PaymentFboAccountInfo"></a>
+<a id="tocSpaymentfboaccountinfo"></a>
+<a id="tocspaymentfboaccountinfo"></a>
+
+```json
+{
+  "accountType": "CLABE",
+  "paymentUrl": "https://api.umaaas.uma.money/confirm",
+  "paymentMethod": "POST"
+}
+
+```
+
+### Properties
+
+allOf - discriminator: PaymentBankAccountInfo.accountType
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[PaymentBankAccountInfo](#schemapaymentbankaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+|» paymentUrl|string(uri)|true|none|The url to make request to in order to confirm payment|
+|» paymentMethod|string|true|none|The HTTP method to use for confirming the payment|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|paymentMethod|POST|
+|paymentMethod|GET|
 
 <h2 id="tocS_User">User</h2>
 <!-- backwards compatibility -->
@@ -3300,8 +3640,7 @@ xor
     "country": "US"
   },
   "bankAccountInfo": {
-    "accountType": "US_ACCOUNT",
-    "accountHolderName": "John Doe",
+    "accountType": "CLABE",
     "platformAccountId": "acc_123456789"
   }
 }
@@ -3325,7 +3664,7 @@ and
 |» dateOfBirth|string(date)|true|none|Date of birth in ISO 8601 format (YYYY-MM-DD)|
 |» nationality|string|false|none|Country code (ISO 3166-1 alpha-2)|
 |» address|[Address](#schemaaddress)|true|none|none|
-|» bankAccountInfo|[BankAccountInfo](#schemabankaccountinfo)|true|none|none|
+|» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|true|none|none|
 
 <h2 id="tocS_BusinessUser">BusinessUser</h2>
 <!-- backwards compatibility -->
@@ -3351,8 +3690,7 @@ and
     "country": "US"
   },
   "bankAccountInfo": {
-    "accountType": "US_ACCOUNT",
-    "accountHolderName": "John Doe",
+    "accountType": "CLABE",
     "platformAccountId": "acc_123456789"
   },
   "businessInfo": {
@@ -3378,7 +3716,7 @@ and
 |---|---|---|---|---|
 |*anonymous*|object|false|none|none|
 |» address|[Address](#schemaaddress)|true|none|none|
-|» bankAccountInfo|[BankAccountInfo](#schemabankaccountinfo)|true|none|none|
+|» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|true|none|none|
 |» businessInfo|object|true|none|Additional information required for business entities|
 |»» legalName|string|true|none|Legal name of the business|
 |»» registrationNumber|string|false|none|Business registration number|
@@ -3919,11 +4257,7 @@ The side of the quote which should be locked and specified in the `lockedCurrenc
     "reference": "UMA-Q12345-REF",
     "instructionsNotes": "Please ensure the reference code is included in the payment memo/description field",
     "bankAccountInfo": {
-      "accountType": "US_ACCOUNT",
-      "accountHolderName": "John Doe",
-      "platformAccountId": "acc_123456789",
-      "clabeNumber": "123456789012345678",
-      "bankName": "BBVA Mexico"
+      "accountType": "CLABE"
     }
   },
   "status": "PENDING",

@@ -22,7 +22,7 @@ from datetime import date
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from umaaas_api.models.address import Address
-from umaaas_api.models.bank_account_info import BankAccountInfo
+from umaaas_api.models.user_bank_account_info import UserBankAccountInfo
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -35,7 +35,7 @@ class IndividualUpdate(BaseModel):
     date_of_birth: Optional[date] = Field(default=None, description="Date of birth in ISO 8601 format (YYYY-MM-DD)", alias="dateOfBirth")
     nationality: Optional[StrictStr] = Field(default=None, description="Country code (ISO 3166-1 alpha-2)")
     address: Optional[Address] = None
-    bank_account_info: Optional[BankAccountInfo] = Field(default=None, alias="bankAccountInfo")
+    bank_account_info: Optional[UserBankAccountInfo] = Field(default=None, alias="bankAccountInfo")
     __properties: ClassVar[List[str]] = ["umaAddress", "fullName", "dateOfBirth", "nationality", "address", "bankAccountInfo"]
 
     model_config = ConfigDict(
@@ -98,7 +98,7 @@ class IndividualUpdate(BaseModel):
             "dateOfBirth": obj.get("dateOfBirth"),
             "nationality": obj.get("nationality"),
             "address": Address.from_dict(obj["address"]) if obj.get("address") is not None else None,
-            "bankAccountInfo": BankAccountInfo.from_dict(obj["bankAccountInfo"]) if obj.get("bankAccountInfo") is not None else None
+            "bankAccountInfo": UserBankAccountInfo.from_dict(obj["bankAccountInfo"]) if obj.get("bankAccountInfo") is not None else None
         })
         return _obj
 

@@ -7,7 +7,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **reference** | **str** | Unique reference code that must be included with the payment to properly credit it | 
 **instructions_notes** | **str** | Additional human-readable instructions for making the payment | [optional] 
-**bank_account_info** | [**PaymentInstructionsBankAccountInfo**](PaymentInstructionsBankAccountInfo.md) |  | 
+**bank_account_info** | [**PaymentBankAccountInfo**](PaymentBankAccountInfo.md) |  | 
 
 ## Example
 

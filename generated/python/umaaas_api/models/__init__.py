@@ -17,7 +17,7 @@
 # import models into model package
 from umaaas_api.models.address import Address
 from umaaas_api.models.api_token import ApiToken
-from umaaas_api.models.bank_account_info import BankAccountInfo
+from umaaas_api.models.bank_account_type import BankAccountType
 from umaaas_api.models.bulk_upload_webhook_request import BulkUploadWebhookRequest
 from umaaas_api.models.bulk_upload_webhook_request_errors_inner import BulkUploadWebhookRequestErrorsInner
 from umaaas_api.models.bulk_upload_webhook_request_progress import BulkUploadWebhookRequestProgress
@@ -51,8 +51,13 @@ from umaaas_api.models.list_users200_response_data_inner import ListUsers200Resp
 from umaaas_api.models.lookup_uma200_response import LookupUma200Response
 from umaaas_api.models.outgoing_payment_webhook_request import OutgoingPaymentWebhookRequest
 from umaaas_api.models.outgoing_transaction import OutgoingTransaction
+from umaaas_api.models.payment_bank_account_info import PaymentBankAccountInfo
+from umaaas_api.models.payment_clabe_account_info import PaymentClabeAccountInfo
+from umaaas_api.models.payment_fbo_account_info import PaymentFboAccountInfo
+from umaaas_api.models.payment_iban_account_info import PaymentIbanAccountInfo
 from umaaas_api.models.payment_instructions import PaymentInstructions
-from umaaas_api.models.payment_instructions_bank_account_info import PaymentInstructionsBankAccountInfo
+from umaaas_api.models.payment_pix_account_info import PaymentPixAccountInfo
+from umaaas_api.models.payment_us_account_info import PaymentUsAccountInfo
 from umaaas_api.models.permission import Permission
 from umaaas_api.models.pix_account_info import PixAccountInfo
 from umaaas_api.models.platform_config import PlatformConfig
@@ -74,4 +79,10 @@ from umaaas_api.models.upload_users_csv202_response_validation_summary import Up
 from umaaas_api.models.upload_users_csv202_response_validation_summary_errors_inner import UploadUsersCsv202ResponseValidationSummaryErrorsInner
 from umaaas_api.models.us_account_info import UsAccountInfo
 from umaaas_api.models.user import User
+from umaaas_api.models.user_bank_account_info import UserBankAccountInfo
+from umaaas_api.models.user_clabe_account_info import UserClabeAccountInfo
+from umaaas_api.models.user_fbo_account_info import UserFboAccountInfo
+from umaaas_api.models.user_iban_account_info import UserIbanAccountInfo
+from umaaas_api.models.user_pix_account_info import UserPixAccountInfo
+from umaaas_api.models.user_us_account_info import UserUsAccountInfo
 from umaaas_api.models.webhook_type import WebhookType

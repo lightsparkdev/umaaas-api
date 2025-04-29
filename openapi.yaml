@@ -97,43 +97,8 @@ components:
           description: Country code (ISO 3166-1 alpha-2)
           example: "US"
 
-    BankAccountInfo:
-      type: object
-      required:
-        - accountType
-      properties:
-        accountType:
-          type: string
-          enum: [CLABE, US_ACCOUNT, PIX, IBAN]
-          description: Type of bank account information
-          example: "US_ACCOUNT"
-        accountHolderName:
-          type: string
-          description: Name of the account holder
-          example: "John Doe"
-        platformAccountId:
-          type: string
-          description: |
-            Platform-specific identifier for this bank account. This optional field allows platforms
-            to link bank accounts to their internal account systems. The value can be any string
-            that helps identify the account in your system (e.g. database IDs, custom references, etc.).
-
-            This field is particularly useful when:
-            - Tracking multiple bank accounts for the same user
-            - Linking accounts to internal accounting systems
-            - Maintaining consistency between UMAaS and your platform's account records
-          example: "acc_123456789"
-      discriminator:
-        propertyName: accountType
-        mapping:
-          CLABE: '#/components/schemas/ClabeAccountInfo'
-          US_ACCOUNT: '#/components/schemas/UsAccountInfo'
-          PIX: '#/components/schemas/PixAccountInfo'
-          IBAN: '#/components/schemas/IbanAccountInfo'
-
     ClabeAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/BankAccountInfo'
         - type: object
           required:
             - clabeNumber
@@ -150,10 +115,13 @@ components:
               type: string
               description: Name of the bank
               example: "BBVA Mexico"
+            accountHolderName:
+              type: string
+              description: Name of the account holder
+              example: "John Doe"
 
     UsAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/BankAccountInfo'
         - type: object
           required:
             - accountNumber
@@ -180,10 +148,13 @@ components:
               type: string
               description: Name of the bank
               example: "Chase Bank"
+            accountHolderName:
+              type: string
+              description: Name of the account holder
+              example: "John Doe"
 
     PixAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/BankAccountInfo'
         - type: object
           required:
             - pixKey
@@ -202,10 +173,13 @@ components:
               type: string
               description: Name of the bank
               example: "Nubank"
+            accountHolderName:
+              type: string
+              description: Name of the account holder
+              example: "John Doe"
 
     IbanAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/BankAccountInfo'
         - type: object
           required:
             - iban
@@ -227,7 +201,80 @@ components:
               type: string
               description: Name of the bank
               example: "Deutsche Bank"
-            
+            accountHolderName:
+              type: string
+              description: Name of the account holder
+              example: "John Doe"
+
+    BankAccountType:
+      type: string
+      enum: [CLABE, US_ACCOUNT, PIX, IBAN, FBO]
+      description: Type of bank account information
+
+    UserBankAccountInfo:
+      type: object
+      required:
+        - accountType
+      properties:
+        accountType:
+          $ref: '#/components/schemas/BankAccountType'
+        platformAccountId:
+          type: string
+          description: |
+            Platform-specific identifier for this bank account. This optional field allows platforms
+            to link bank accounts to their internal account systems. The value can be any string
+            that helps identify the account in your system (e.g. database IDs, custom references, etc.).
+
+            This field is particularly useful when:
+            - Tracking multiple bank accounts for the same user
+            - Linking accounts to internal accounting systems
+            - Maintaining consistency between UMAaS and your platform's account records
+          example: "acc_123456789"
+      discriminator:
+        propertyName: accountType
+        mapping:
+          CLABE: '#/components/schemas/UserClabeAccountInfo'
+          US_ACCOUNT: '#/components/schemas/UserUsAccountInfo'
+          PIX: '#/components/schemas/UserPixAccountInfo'
+          IBAN: '#/components/schemas/UserIbanAccountInfo'
+          FBO: '#/components/schemas/UserFboAccountInfo'
+
+    UserClabeAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/UserBankAccountInfo'
+        - $ref: '#/components/schemas/ClabeAccountInfo'
+        - type: object
+
+    UserUsAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/UserBankAccountInfo'
+        - $ref: '#/components/schemas/UsAccountInfo'
+        - type: object
+
+    UserPixAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/UserBankAccountInfo'
+        - $ref: '#/components/schemas/PixAccountInfo'
+        - type: object
+
+    UserIbanAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/UserBankAccountInfo'
+        - $ref: '#/components/schemas/IbanAccountInfo'
+        - type: object
+
+    UserFboAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/UserBankAccountInfo'
+        - type: object
+          required:
+            - currencyCode
+          properties:
+            currencyCode:
+              type: string
+              description: Three-letter currency code (ISO 4217)
+              example: "USD"
+
     PaymentInstructions:
       type: object
       required:
@@ -243,13 +290,66 @@ components:
           description: Additional human-readable instructions for making the payment
           example: "Please ensure the reference code is included in the payment memo/description field"
         bankAccountInfo:
-          oneOf:
-            - $ref: '#/components/schemas/ClabeAccountInfo'
-            - $ref: '#/components/schemas/UsAccountInfo'
-            - $ref: '#/components/schemas/PixAccountInfo'
-            - $ref: '#/components/schemas/IbanAccountInfo'
-          discriminator:
-            propertyName: accountType
+          $ref: '#/components/schemas/PaymentBankAccountInfo'
+
+    PaymentBankAccountInfo:
+      type: object
+      required:
+        - accountType
+      properties:
+        accountType:
+          $ref: '#/components/schemas/BankAccountType'
+      discriminator:
+        propertyName: accountType
+        mapping:
+          CLABE: '#/components/schemas/PaymentClabeAccountInfo'
+          US_ACCOUNT: '#/components/schemas/PaymentUsAccountInfo'
+          PIX: '#/components/schemas/PaymentPixAccountInfo'
+          IBAN: '#/components/schemas/PaymentIbanAccountInfo'
+          FBO: '#/components/schemas/PaymentFboAccountInfo'
+
+    PaymentClabeAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: '#/components/schemas/ClabeAccountInfo'
+        - type: object
+
+    PaymentUsAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: '#/components/schemas/UsAccountInfo'
+        - type: object
+
+    PaymentPixAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: '#/components/schemas/PixAccountInfo'
+        - type: object
+
+    PaymentIbanAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: '#/components/schemas/IbanAccountInfo'
+        - type: object
+
+    PaymentFboAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - type: object
+          required:
+            - paymentUrl
+            - paymentMethod
+          properties:
+            paymentUrl:
+              type: string
+              format: uri
+              description: The url to make request to in order to confirm payment
+              example: "https://api.umaaas.uma.money/confirm"
+            paymentMethod:
+              type: string
+              enum: [POST, GET]
+              description: The HTTP method to use for confirming the payment
+              example: "POST"
 
     User:
       type: object
@@ -320,7 +420,7 @@ components:
             address:
               $ref: '#/components/schemas/Address'
             bankAccountInfo:
-              $ref: '#/components/schemas/BankAccountInfo'
+              $ref: '#/components/schemas/UserBankAccountInfo'
 
     BusinessUser:
       allOf:
@@ -334,7 +434,7 @@ components:
             address:
               $ref: '#/components/schemas/Address'
             bankAccountInfo:
-              $ref: '#/components/schemas/BankAccountInfo'
+              $ref: '#/components/schemas/UserBankAccountInfo'
             businessInfo:
               type: object
               required:
@@ -1046,7 +1146,7 @@ paths:
                     address:
                       $ref: '#/components/schemas/Address'
                     bankAccountInfo:
-                      $ref: '#/components/schemas/BankAccountInfo'
+                      $ref: '#/components/schemas/UserBankAccountInfo'
                 - type: object
                   title: businessUpdate
                   properties:
@@ -1068,7 +1168,7 @@ paths:
                     address:
                       $ref: '#/components/schemas/Address'
                     bankAccountInfo:
-                      $ref: '#/components/schemas/BankAccountInfo'
+                      $ref: '#/components/schemas/UserBankAccountInfo'
             examples:
               individualUpdate:
                 summary: Update individual user example
@@ -2036,7 +2136,7 @@ paths:
         - iban: International Bank Account Number
         - swiftBic: SWIFT/BIC code (8 or 11 characters)
 
-        See the BankAccountInfo and UserInfo schemas for more details on the required and optional fields.
+        See the UserBankAccountInfo and UserInfo schemas for more details on the required and optional fields.
         
         ### Example CSV
         ```csv

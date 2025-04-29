@@ -18,14 +18,13 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import ConfigDict, Field, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
-from umaaas_api.models.bank_account_info import BankAccountInfo
 from typing import Optional, Set
 from typing_extensions import Self
 
-class UsAccountInfo(BankAccountInfo):
+class UsAccountInfo(BaseModel):
     """
     UsAccountInfo
     """ # noqa: E501
@@ -33,7 +32,8 @@ class UsAccountInfo(BankAccountInfo):
     routing_number: Annotated[str, Field(min_length=9, strict=True, max_length=9)] = Field(description="ACH routing number (9 digits)", alias="routingNumber")
     account_category: StrictStr = Field(description="Type of account (checking or savings)", alias="accountCategory")
     bank_name: Optional[StrictStr] = Field(default=None, description="Name of the bank", alias="bankName")
-    __properties: ClassVar[List[str]] = ["accountType", "accountHolderName", "platformAccountId", "accountNumber", "routingNumber", "accountCategory", "bankName"]
+    account_holder_name: Optional[StrictStr] = Field(default=None, description="Name of the account holder", alias="accountHolderName")
+    __properties: ClassVar[List[str]] = ["accountNumber", "routingNumber", "accountCategory", "bankName", "accountHolderName"]
 
     @field_validator('routing_number')
     def routing_number_validate_regular_expression(cls, value):
@@ -98,13 +98,11 @@ class UsAccountInfo(BankAccountInfo):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "accountType": obj.get("accountType"),
-            "accountHolderName": obj.get("accountHolderName"),
-            "platformAccountId": obj.get("platformAccountId"),
             "accountNumber": obj.get("accountNumber"),
             "routingNumber": obj.get("routingNumber"),
             "accountCategory": obj.get("accountCategory"),
-            "bankName": obj.get("bankName")
+            "bankName": obj.get("bankName"),
+            "accountHolderName": obj.get("accountHolderName")
         })
         return _obj
 

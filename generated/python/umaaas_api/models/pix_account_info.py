@@ -18,20 +18,20 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import ConfigDict, Field, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
-from umaaas_api.models.bank_account_info import BankAccountInfo
 from typing import Optional, Set
 from typing_extensions import Self
 
-class PixAccountInfo(BankAccountInfo):
+class PixAccountInfo(BaseModel):
     """
     PixAccountInfo
     """ # noqa: E501
     pix_key: StrictStr = Field(description="PIX key for Brazilian instant payments", alias="pixKey")
     pix_key_type: StrictStr = Field(description="Type of PIX key being used", alias="pixKeyType")
     bank_name: Optional[StrictStr] = Field(default=None, description="Name of the bank", alias="bankName")
-    __properties: ClassVar[List[str]] = ["accountType", "accountHolderName", "platformAccountId", "pixKey", "pixKeyType", "bankName"]
+    account_holder_name: Optional[StrictStr] = Field(default=None, description="Name of the account holder", alias="accountHolderName")
+    __properties: ClassVar[List[str]] = ["pixKey", "pixKeyType", "bankName", "accountHolderName"]
 
     @field_validator('pix_key_type')
     def pix_key_type_validate_enum(cls, value):
@@ -89,12 +89,10 @@ class PixAccountInfo(BankAccountInfo):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "accountType": obj.get("accountType"),
-            "accountHolderName": obj.get("accountHolderName"),
-            "platformAccountId": obj.get("platformAccountId"),
             "pixKey": obj.get("pixKey"),
             "pixKeyType": obj.get("pixKeyType"),
-            "bankName": obj.get("bankName")
+            "bankName": obj.get("bankName"),
+            "accountHolderName": obj.get("accountHolderName")
         })
         return _obj
 

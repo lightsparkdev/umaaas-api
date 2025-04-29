@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **iban** | **str** | International Bank Account Number | 
 **swift_bic** | **str** | SWIFT/BIC code (8 or 11 characters) | [optional] 
 **bank_name** | **str** | Name of the bank | 
+**account_holder_name** | **str** | Name of the account holder | [optional] 
 
 ## Example
 

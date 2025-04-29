@@ -6,16 +6,17 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **account_type** | **str** | Type of bank account information | 
-**account_holder_name** | **str** | Name of the account holder | [optional] 
-**platform_account_id** | **str** | Platform-specific identifier for this bank account. This optional field allows platforms to link bank accounts to their internal account systems. The value can be any string that helps identify the account in your system (e.g. database IDs, custom references, etc.).  This field is particularly useful when: - Tracking multiple bank accounts for the same user - Linking accounts to internal accounting systems - Maintaining consistency between UMAaS and your platform&#39;s account records  | [optional] 
 **account_number** | **str** | US bank account number | 
 **routing_number** | **str** | ACH routing number (9 digits) | 
 **account_category** | **str** | Type of account (checking or savings) | 
 **bank_name** | **str** | Name of the bank | 
+**account_holder_name** | **str** | Name of the account holder | [optional] 
 **pix_key** | **str** | PIX key for Brazilian instant payments | 
 **pix_key_type** | **str** | Type of PIX key being used | 
 **iban** | **str** | International Bank Account Number | 
 **swift_bic** | **str** | SWIFT/BIC code (8 or 11 characters) | [optional] 
+**payment_url** | **str** | The url to make request to in order to confirm payment | 
+**payment_method** | **str** | The HTTP method to use for confirming the payment | 
 
 ## Example
 
