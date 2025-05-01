@@ -881,9 +881,8 @@ class SendingPaymentsApi:
     def lookup_uma(
         self,
         receiver_uma_address: Annotated[StrictStr, Field(description="UMA address of the intended recipient")],
-        sending_uma_address: Annotated[Optional[StrictStr], Field(description="UMA address of the sender (mutually exclusive with userId and platformUserId)")] = None,
-        user_id: Annotated[Optional[StrictStr], Field(description="System ID of the sender (mutually exclusive with sendingUmaAddress and platformUserId)")] = None,
-        platform_user_id: Annotated[Optional[StrictStr], Field(description="Platform ID of the sender (mutually exclusive with sendingUmaAddress and userId)")] = None,
+        sending_uma_address: Annotated[Optional[StrictStr], Field(description="UMA address of the sender (optional if userId is provided)")] = None,
+        user_id: Annotated[Optional[StrictStr], Field(description="System ID of the sender (optional if sendingUmaAddress is provided)")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -903,12 +902,10 @@ class SendingPaymentsApi:
 
         :param receiver_uma_address: UMA address of the intended recipient (required)
         :type receiver_uma_address: str
-        :param sending_uma_address: UMA address of the sender (mutually exclusive with userId and platformUserId)
+        :param sending_uma_address: UMA address of the sender (optional if userId is provided)
         :type sending_uma_address: str
-        :param user_id: System ID of the sender (mutually exclusive with sendingUmaAddress and platformUserId)
+        :param user_id: System ID of the sender (optional if sendingUmaAddress is provided)
         :type user_id: str
-        :param platform_user_id: Platform ID of the sender (mutually exclusive with sendingUmaAddress and userId)
-        :type platform_user_id: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -935,7 +932,6 @@ class SendingPaymentsApi:
             receiver_uma_address=receiver_uma_address,
             sending_uma_address=sending_uma_address,
             user_id=user_id,
-            platform_user_id=platform_user_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -963,9 +959,8 @@ class SendingPaymentsApi:
     def lookup_uma_with_http_info(
         self,
         receiver_uma_address: Annotated[StrictStr, Field(description="UMA address of the intended recipient")],
-        sending_uma_address: Annotated[Optional[StrictStr], Field(description="UMA address of the sender (mutually exclusive with userId and platformUserId)")] = None,
-        user_id: Annotated[Optional[StrictStr], Field(description="System ID of the sender (mutually exclusive with sendingUmaAddress and platformUserId)")] = None,
-        platform_user_id: Annotated[Optional[StrictStr], Field(description="Platform ID of the sender (mutually exclusive with sendingUmaAddress and userId)")] = None,
+        sending_uma_address: Annotated[Optional[StrictStr], Field(description="UMA address of the sender (optional if userId is provided)")] = None,
+        user_id: Annotated[Optional[StrictStr], Field(description="System ID of the sender (optional if sendingUmaAddress is provided)")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -985,12 +980,10 @@ class SendingPaymentsApi:
 
         :param receiver_uma_address: UMA address of the intended recipient (required)
         :type receiver_uma_address: str
-        :param sending_uma_address: UMA address of the sender (mutually exclusive with userId and platformUserId)
+        :param sending_uma_address: UMA address of the sender (optional if userId is provided)
         :type sending_uma_address: str
-        :param user_id: System ID of the sender (mutually exclusive with sendingUmaAddress and platformUserId)
+        :param user_id: System ID of the sender (optional if sendingUmaAddress is provided)
         :type user_id: str
-        :param platform_user_id: Platform ID of the sender (mutually exclusive with sendingUmaAddress and userId)
-        :type platform_user_id: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1017,7 +1010,6 @@ class SendingPaymentsApi:
             receiver_uma_address=receiver_uma_address,
             sending_uma_address=sending_uma_address,
             user_id=user_id,
-            platform_user_id=platform_user_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1045,9 +1037,8 @@ class SendingPaymentsApi:
     def lookup_uma_without_preload_content(
         self,
         receiver_uma_address: Annotated[StrictStr, Field(description="UMA address of the intended recipient")],
-        sending_uma_address: Annotated[Optional[StrictStr], Field(description="UMA address of the sender (mutually exclusive with userId and platformUserId)")] = None,
-        user_id: Annotated[Optional[StrictStr], Field(description="System ID of the sender (mutually exclusive with sendingUmaAddress and platformUserId)")] = None,
-        platform_user_id: Annotated[Optional[StrictStr], Field(description="Platform ID of the sender (mutually exclusive with sendingUmaAddress and userId)")] = None,
+        sending_uma_address: Annotated[Optional[StrictStr], Field(description="UMA address of the sender (optional if userId is provided)")] = None,
+        user_id: Annotated[Optional[StrictStr], Field(description="System ID of the sender (optional if sendingUmaAddress is provided)")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1067,12 +1058,10 @@ class SendingPaymentsApi:
 
         :param receiver_uma_address: UMA address of the intended recipient (required)
         :type receiver_uma_address: str
-        :param sending_uma_address: UMA address of the sender (mutually exclusive with userId and platformUserId)
+        :param sending_uma_address: UMA address of the sender (optional if userId is provided)
         :type sending_uma_address: str
-        :param user_id: System ID of the sender (mutually exclusive with sendingUmaAddress and platformUserId)
+        :param user_id: System ID of the sender (optional if sendingUmaAddress is provided)
         :type user_id: str
-        :param platform_user_id: Platform ID of the sender (mutually exclusive with sendingUmaAddress and userId)
-        :type platform_user_id: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1099,7 +1088,6 @@ class SendingPaymentsApi:
             receiver_uma_address=receiver_uma_address,
             sending_uma_address=sending_uma_address,
             user_id=user_id,
-            platform_user_id=platform_user_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1124,7 +1112,6 @@ class SendingPaymentsApi:
         receiver_uma_address,
         sending_uma_address,
         user_id,
-        platform_user_id,
         _request_auth,
         _content_type,
         _headers,
@@ -1156,10 +1143,6 @@ class SendingPaymentsApi:
         if user_id is not None:
             
             _query_params.append(('userId', user_id))
-            
-        if platform_user_id is not None:
-            
-            _query_params.append(('platformUserId', platform_user_id))
             
         # process the header parameters
         # process the form parameters

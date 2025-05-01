@@ -30,8 +30,8 @@ class CreateQuoteRequest(BaseModel):
     """ # noqa: E501
     lookup_id: StrictStr = Field(description="Unique identifier for the prior receiver uma address lookup request.", alias="lookupId")
     receiver_uma_address: StrictStr = Field(description="UMA address of the recipient", alias="receiverUmaAddress")
-    sender_uma_address: Optional[StrictStr] = Field(default=None, description="UMA address of the sender (optional if userId or platformUserId is provided)", alias="senderUmaAddress")
-    user_id: Optional[StrictStr] = Field(default=None, description="System ID of the sender (optional if senderUmaAddress or platformUserId is provided)", alias="userId")
+    sender_uma_address: Optional[StrictStr] = Field(default=None, description="UMA address of the sender (optional if userId is provided)", alias="senderUmaAddress")
+    user_id: Optional[StrictStr] = Field(default=None, description="System ID of the sender (optional if senderUmaAddress is provided)", alias="userId")
     sending_currency_code: StrictStr = Field(description="Currency code for the sending amount", alias="sendingCurrencyCode")
     receiving_currency_code: StrictStr = Field(description="Currency code for the receiving amount", alias="receivingCurrencyCode")
     locked_currency_side: QuoteLockSide = Field(alias="lockedCurrencySide")

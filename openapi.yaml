@@ -1688,19 +1688,13 @@ paths:
             type: string
         - name: sendingUmaAddress
           in: query
-          description: UMA address of the sender (mutually exclusive with userId and platformUserId)
+          description: UMA address of the sender (optional if userId is provided)
           required: false
           schema:
             type: string
         - name: userId
           in: query
-          description: System ID of the sender (mutually exclusive with sendingUmaAddress and platformUserId)
-          required: false
-          schema:
-            type: string
-        - name: platformUserId
-          in: query
-          description: Platform ID of the sender (mutually exclusive with sendingUmaAddress and userId)
+          description: System ID of the sender (optional if sendingUmaAddress is provided)
           required: false
           schema:
             type: string
@@ -1795,11 +1789,11 @@ paths:
                   example: "$receiver@uma.domain"
                 senderUmaAddress:
                   type: string
-                  description: UMA address of the sender (optional if userId or platformUserId is provided)
+                  description: UMA address of the sender (optional if userId is provided)
                   example: "$sender@uma.domain"
                 userId:
                   type: string
-                  description: System ID of the sender (optional if senderUmaAddress or platformUserId is provided)
+                  description: System ID of the sender (optional if senderUmaAddress is provided)
                   example: "User:019542f5-b3e7-1d02-0000-000000000001"
                 sendingCurrencyCode:
                   type: string
