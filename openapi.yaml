@@ -739,7 +739,7 @@ components:
         id:
           type: string
           description: System-generated unique identifier
-          example: "User:019542f5-b3e7-1d02-0000-000000000001"
+          example: "Token:019542f5-b3e7-1d02-0000-000000000001"
         name:
           type: string
           description: Name of the token
@@ -1686,7 +1686,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: sendingUmaAddress
+        - name: senderUmaAddress
           in: query
           description: UMA address of the sender (optional if userId is provided)
           required: false
@@ -1694,7 +1694,7 @@ paths:
             type: string
         - name: userId
           in: query
-          description: System ID of the sender (optional if sendingUmaAddress is provided)
+          description: System ID of the sender (optional if senderUmaAddress is provided)
           required: false
           schema:
             type: string
@@ -1706,10 +1706,11 @@ paths:
               schema:
                 type: object
                 required:
-                  - receivingUmaAddress
+                  - receiverUmaAddress
                   - supportedCurrencies
+                  - lookupId
                 properties:
-                  receivingUmaAddress:
+                  receiverUmaAddress:
                     type: string
                     description: The UMA address that was looked up
                     example: "$receiver@uma.domain"
@@ -1726,7 +1727,7 @@ paths:
                   lookupId:
                     type: string
                     description: Unique identifier for the lookup. Needed in the subsequent create quote request.
-                    example: "LookupRequest:019542f5-b3e7-1d02-0000-000000000009"
+                    example: "Lookup:019542f5-b3e7-1d02-0000-000000000009"
         '400':
           description: Bad request - Missing or invalid parameters
           content:
@@ -1773,7 +1774,6 @@ paths:
               type: object
               required:
                 - lookupId
-                - receiverUmaAddress
                 - sendingCurrencyCode
                 - receivingCurrencyCode
                 - lockedCurrencySide
@@ -1783,18 +1783,6 @@ paths:
                   type: string
                   description: Unique identifier for the prior receiver uma address lookup request.
                   example: "LookupRequest:019542f5-b3e7-1d02-0000-000000000009"
-                receiverUmaAddress:
-                  type: string
-                  description: UMA address of the recipient
-                  example: "$receiver@uma.domain"
-                senderUmaAddress:
-                  type: string
-                  description: UMA address of the sender (optional if userId is provided)
-                  example: "$sender@uma.domain"
-                userId:
-                  type: string
-                  description: System ID of the sender (optional if senderUmaAddress is provided)
-                  example: "User:019542f5-b3e7-1d02-0000-000000000001"
                 sendingCurrencyCode:
                   type: string
                   description: Currency code for the sending amount
@@ -2321,7 +2309,8 @@ paths:
               type: object
               required:
                 - senderUmaAddress
-                - receivingAmount
+                - receivingCurrencyCode
+                - receivingCurrencyAmount
               properties:
                 senderUmaAddress:
                   type: string
@@ -2335,9 +2324,16 @@ paths:
                   type: string
                   description: System ID of the receiver (optional if receiverUmaAddress is provided)
                   example: "User:019542f5-b3e7-1d02-0000-000000000001"
-                receivingAmount:
-                  $ref: '#/components/schemas/CurrencyAmount'
-                  description: Amount to be received by recipient in the recipient's currency
+                receivingCurrencyCode:
+                  type: string
+                  description: The currency code for the receiving amount
+                  example: "USD"
+                receivingCurrencyAmount:
+                  type: integer
+                  format: int64
+                  description: The amount to be received in the smallest unit of the currency (eg. cents)
+                  exclusiveMinimum: 0
+                  example: 1000
       responses:
         '200':
           description: Payment triggered successfully

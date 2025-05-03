@@ -1747,9 +1747,8 @@ This endpoint helps platforms determine what currencies they can send to a given
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
 |receiverUmaAddress|path|string|true|UMA address of the intended recipient|
-|sendingUmaAddress|query|string|false|UMA address of the sender (mutually exclusive with userId and platformUserId)|
-|userId|query|string|false|System ID of the sender (mutually exclusive with sendingUmaAddress and platformUserId)|
-|platformUserId|query|string|false|Platform ID of the sender (mutually exclusive with sendingUmaAddress and userId)|
+|senderUmaAddress|query|string|false|UMA address of the sender (optional if userId is provided)|
+|userId|query|string|false|System ID of the sender (optional if senderUmaAddress is provided)|
 
 > Example responses
 
@@ -1757,7 +1756,7 @@ This endpoint helps platforms determine what currencies they can send to a given
 
 ```json
 {
-  "receivingUmaAddress": "$receiver@uma.domain",
+  "receiverUmaAddress": "$receiver@uma.domain",
   "supportedCurrencies": [
     {
       "currency": {
@@ -1777,7 +1776,7 @@ This endpoint helps platforms determine what currencies they can send to a given
       "mandatory": true
     }
   ],
-  "lookupId": "LookupRequest:019542f5-b3e7-1d02-0000-000000000009"
+  "lookupId": "Lookup:019542f5-b3e7-1d02-0000-000000000009"
 }
 ```
 
@@ -1796,7 +1795,7 @@ Status Code **200**
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|» receivingUmaAddress|string|true|none|The UMA address that was looked up|
+|» receiverUmaAddress|string|true|none|The UMA address that was looked up|
 |» supportedCurrencies|[[CurrencyPreference](#schemacurrencypreference)]|true|none|List of currencies supported by the receiving UMA address|
 |»» currency|[Currency](#schemacurrency)|true|none|none|
 |»»» code|string|false|none|Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "SAT" for satoshis, "USDC" for USDCoin, etc.)|
@@ -1809,7 +1808,7 @@ Status Code **200**
 |» requiredPayerDataFields|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|false|none|Fields required by the receiving institution about the payer before payment can be completed|
 |»» name|string|true|none|Name of the counterparty field|
 |»» mandatory|boolean|true|none|Whether the field is mandatory|
-|» lookupId|string|false|none|Unique identifier for the lookup. Needed in the subsequent create quote request.|
+|» lookupId|string|true|none|Unique identifier for the lookup. Needed in the subsequent create quote request.|
 
 #### Enumerated Values
 
@@ -1910,9 +1909,6 @@ must be followed precisely, including any reference codes provided.
 |---|---|---|---|---|
 |body|body|object|true|none|
 |» lookupId|body|string|true|Unique identifier for the prior receiver uma address lookup request.|
-|» receiverUmaAddress|body|string|true|UMA address of the recipient|
-|» senderUmaAddress|body|string|false|UMA address of the sender (optional if userId or platformUserId is provided)|
-|» userId|body|string|false|System ID of the sender (optional if senderUmaAddress or platformUserId is provided)|
 |» sendingCurrencyCode|body|string|true|Currency code for the sending amount|
 |» receivingCurrencyCode|body|string|true|Currency code for the receiving amount|
 |» lockedCurrencySide|body|[QuoteLockSide](#schemaquotelockside)|true|The side of the quote which should be locked and specified in the `lockedCurrencyAmount`. For example, if I want to send exactly $5 MXN from my wallet, I would set this to "sending", and the `lockedCurrencyAmount` to 500 (in cents). If I want the receiver to receive exactly $10 USD, I would set this to "receiving" and the `lockedCurrencyAmount` to 10000 (in cents).|
@@ -2439,7 +2435,7 @@ Create a new API token to access the UMAaaS APIs.
 
 ```json
 {
-  "id": "User:019542f5-b3e7-1d02-0000-000000000001",
+  "id": "Token:019542f5-b3e7-1d02-0000-000000000001",
   "name": "Sandbox read-only token",
   "permissions": [
     "VIEW"
@@ -2529,7 +2525,7 @@ the specified filters. If no filters are provided, returns all tokens (paginated
 {
   "data": [
     {
-      "id": "User:019542f5-b3e7-1d02-0000-000000000001",
+      "id": "Token:019542f5-b3e7-1d02-0000-000000000001",
       "name": "Sandbox read-only token",
       "permissions": [
         "VIEW"
@@ -2633,7 +2629,7 @@ Retrieve an API token by their system-generated ID
 
 ```json
 {
-  "id": "User:019542f5-b3e7-1d02-0000-000000000001",
+  "id": "Token:019542f5-b3e7-1d02-0000-000000000001",
   "name": "Sandbox read-only token",
   "permissions": [
     "VIEW"
@@ -2844,15 +2840,8 @@ const inputBody = '{
   "senderUmaAddress": "$success.usd@sandbox.uma.money",
   "receiverUmaAddress": "$receiver@uma.domain",
   "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
-  "receivingAmount": {
-    "amount": 12550,
-    "currency": {
-      "code": "USD",
-      "name": "United States Dollar",
-      "symbol": "$",
-      "decimals": 2
-    }
-  }
+  "receivingCurrencyCode": "USD",
+  "receivingCurrencyAmount": 1000
 }';
 const headers = {
   'Content-Type':'application/json',
@@ -2900,15 +2889,8 @@ This endpoint is only for the sandbox environment and will fail for production p
   "senderUmaAddress": "$success.usd@sandbox.uma.money",
   "receiverUmaAddress": "$receiver@uma.domain",
   "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
-  "receivingAmount": {
-    "amount": 12550,
-    "currency": {
-      "code": "USD",
-      "name": "United States Dollar",
-      "symbol": "$",
-      "decimals": 2
-    }
-  }
+  "receivingCurrencyCode": "USD",
+  "receivingCurrencyAmount": 1000
 }
 ```
 
@@ -2920,13 +2902,8 @@ This endpoint is only for the sandbox environment and will fail for production p
 |» senderUmaAddress|body|string|true|UMA address of the sender from the sandbox|
 |» receiverUmaAddress|body|string|false|UMA address of the receiver (optional if userId is provided)|
 |» userId|body|string|false|System ID of the receiver (optional if receiverUmaAddress is provided)|
-|» receivingAmount|body|[CurrencyAmount](#schemacurrencyamount)|true|none|
-|»» amount|body|integer(int64)|true|Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)|
-|»» currency|body|[Currency](#schemacurrency)|true|none|
-|»»» code|body|string|false|Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "SAT" for satoshis, "USDC" for USDCoin, etc.)|
-|»»» name|body|string|false|Full name of the currency|
-|»»» symbol|body|string|false|Symbol of the currency|
-|»»» decimals|body|integer|false|Number of decimal places for the currency|
+|» receivingCurrencyCode|body|string|true|The currency code for the receiving amount|
+|» receivingCurrencyAmount|body|integer(int64)|true|The amount to be received in the smallest unit of the currency (eg. cents)|
 
 > Example responses
 
@@ -4019,7 +3996,7 @@ Permission of an API token that determines what actions the token can perform: V
 
 ```json
 {
-  "id": "User:019542f5-b3e7-1d02-0000-000000000001",
+  "id": "Token:019542f5-b3e7-1d02-0000-000000000001",
   "name": "Sandbox read-only token",
   "permissions": [
     "VIEW"

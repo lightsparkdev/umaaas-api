@@ -8,7 +8,8 @@ Name | Type | Description | Notes
 **sender_uma_address** | **str** | UMA address of the sender from the sandbox | 
 **receiver_uma_address** | **str** | UMA address of the receiver (optional if userId is provided) | [optional] 
 **user_id** | **str** | System ID of the receiver (optional if receiverUmaAddress is provided) | [optional] 
-**receiving_amount** | [**CurrencyAmount**](CurrencyAmount.md) | Amount to be received by recipient in the recipient&#39;s currency | 
+**receiving_currency_code** | **str** | The currency code for the receiving amount | 
+**receiving_currency_amount** | **int** | The amount to be received in the smallest unit of the currency (eg. cents) | 
 
 ## Example
 
