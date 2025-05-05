@@ -6,9 +6,6 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **lookup_id** | **str** | Unique identifier for the prior receiver uma address lookup request. | 
-**receiver_uma_address** | **str** | UMA address of the recipient | 
-**sender_uma_address** | **str** | UMA address of the sender (optional if userId is provided) | [optional] 
-**user_id** | **str** | System ID of the sender (optional if senderUmaAddress is provided) | [optional] 
 **sending_currency_code** | **str** | Currency code for the sending amount | 
 **receiving_currency_code** | **str** | Currency code for the receiving amount | 
 **locked_currency_side** | [**QuoteLockSide**](QuoteLockSide.md) |  | 

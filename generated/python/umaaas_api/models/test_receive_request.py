@@ -18,9 +18,8 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
-from umaaas_api.models.currency_amount import CurrencyAmount
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -31,8 +30,9 @@ class TestReceiveRequest(BaseModel):
     sender_uma_address: StrictStr = Field(description="UMA address of the sender from the sandbox", alias="senderUmaAddress")
     receiver_uma_address: Optional[StrictStr] = Field(default=None, description="UMA address of the receiver (optional if userId is provided)", alias="receiverUmaAddress")
     user_id: Optional[StrictStr] = Field(default=None, description="System ID of the receiver (optional if receiverUmaAddress is provided)", alias="userId")
-    receiving_amount: CurrencyAmount = Field(description="Amount to be received by recipient in the recipient's currency", alias="receivingAmount")
-    __properties: ClassVar[List[str]] = ["senderUmaAddress", "receiverUmaAddress", "userId", "receivingAmount"]
+    receiving_currency_code: StrictStr = Field(description="The currency code for the receiving amount", alias="receivingCurrencyCode")
+    receiving_currency_amount: StrictInt = Field(description="The amount to be received in the smallest unit of the currency (eg. cents)", alias="receivingCurrencyAmount")
+    __properties: ClassVar[List[str]] = ["senderUmaAddress", "receiverUmaAddress", "userId", "receivingCurrencyCode", "receivingCurrencyAmount"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -71,9 +71,6 @@ class TestReceiveRequest(BaseModel):
             by_alias=True,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of receiving_amount
-        if self.receiving_amount:
-            _dict['receivingAmount'] = self.receiving_amount.to_dict()
         return _dict
 
     @classmethod
@@ -89,7 +86,8 @@ class TestReceiveRequest(BaseModel):
             "senderUmaAddress": obj.get("senderUmaAddress"),
             "receiverUmaAddress": obj.get("receiverUmaAddress"),
             "userId": obj.get("userId"),
-            "receivingAmount": CurrencyAmount.from_dict(obj["receivingAmount"]) if obj.get("receivingAmount") is not None else None
+            "receivingCurrencyCode": obj.get("receivingCurrencyCode"),
+            "receivingCurrencyAmount": obj.get("receivingCurrencyAmount")
         })
         return _obj
 

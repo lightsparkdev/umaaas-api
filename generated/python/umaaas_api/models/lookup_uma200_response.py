@@ -29,11 +29,11 @@ class LookupUma200Response(BaseModel):
     """
     LookupUma200Response
     """ # noqa: E501
-    receiving_uma_address: StrictStr = Field(description="The UMA address that was looked up", alias="receivingUmaAddress")
+    receiver_uma_address: StrictStr = Field(description="The UMA address that was looked up", alias="receiverUmaAddress")
     supported_currencies: List[CurrencyPreference] = Field(description="List of currencies supported by the receiving UMA address", alias="supportedCurrencies")
     required_payer_data_fields: Optional[List[CounterpartyFieldDefinition]] = Field(default=None, description="Fields required by the receiving institution about the payer before payment can be completed", alias="requiredPayerDataFields")
-    lookup_id: Optional[StrictStr] = Field(default=None, description="Unique identifier for the lookup. Needed in the subsequent create quote request.", alias="lookupId")
-    __properties: ClassVar[List[str]] = ["receivingUmaAddress", "supportedCurrencies", "requiredPayerDataFields", "lookupId"]
+    lookup_id: StrictStr = Field(description="Unique identifier for the lookup. Needed in the subsequent create quote request.", alias="lookupId")
+    __properties: ClassVar[List[str]] = ["receiverUmaAddress", "supportedCurrencies", "requiredPayerDataFields", "lookupId"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -98,7 +98,7 @@ class LookupUma200Response(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "receivingUmaAddress": obj.get("receivingUmaAddress"),
+            "receiverUmaAddress": obj.get("receiverUmaAddress"),
             "supportedCurrencies": [CurrencyPreference.from_dict(_item) for _item in obj["supportedCurrencies"]] if obj.get("supportedCurrencies") is not None else None,
             "requiredPayerDataFields": [CounterpartyFieldDefinition.from_dict(_item) for _item in obj["requiredPayerDataFields"]] if obj.get("requiredPayerDataFields") is not None else None,
             "lookupId": obj.get("lookupId")

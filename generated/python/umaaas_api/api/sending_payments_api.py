@@ -881,8 +881,8 @@ class SendingPaymentsApi:
     def lookup_uma(
         self,
         receiver_uma_address: Annotated[StrictStr, Field(description="UMA address of the intended recipient")],
-        sending_uma_address: Annotated[Optional[StrictStr], Field(description="UMA address of the sender (optional if userId is provided)")] = None,
-        user_id: Annotated[Optional[StrictStr], Field(description="System ID of the sender (optional if sendingUmaAddress is provided)")] = None,
+        sender_uma_address: Annotated[Optional[StrictStr], Field(description="UMA address of the sender (optional if userId is provided)")] = None,
+        user_id: Annotated[Optional[StrictStr], Field(description="System ID of the sender (optional if senderUmaAddress is provided)")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -902,9 +902,9 @@ class SendingPaymentsApi:
 
         :param receiver_uma_address: UMA address of the intended recipient (required)
         :type receiver_uma_address: str
-        :param sending_uma_address: UMA address of the sender (optional if userId is provided)
-        :type sending_uma_address: str
-        :param user_id: System ID of the sender (optional if sendingUmaAddress is provided)
+        :param sender_uma_address: UMA address of the sender (optional if userId is provided)
+        :type sender_uma_address: str
+        :param user_id: System ID of the sender (optional if senderUmaAddress is provided)
         :type user_id: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -930,7 +930,7 @@ class SendingPaymentsApi:
 
         _param = self._lookup_uma_serialize(
             receiver_uma_address=receiver_uma_address,
-            sending_uma_address=sending_uma_address,
+            sender_uma_address=sender_uma_address,
             user_id=user_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -959,8 +959,8 @@ class SendingPaymentsApi:
     def lookup_uma_with_http_info(
         self,
         receiver_uma_address: Annotated[StrictStr, Field(description="UMA address of the intended recipient")],
-        sending_uma_address: Annotated[Optional[StrictStr], Field(description="UMA address of the sender (optional if userId is provided)")] = None,
-        user_id: Annotated[Optional[StrictStr], Field(description="System ID of the sender (optional if sendingUmaAddress is provided)")] = None,
+        sender_uma_address: Annotated[Optional[StrictStr], Field(description="UMA address of the sender (optional if userId is provided)")] = None,
+        user_id: Annotated[Optional[StrictStr], Field(description="System ID of the sender (optional if senderUmaAddress is provided)")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -980,9 +980,9 @@ class SendingPaymentsApi:
 
         :param receiver_uma_address: UMA address of the intended recipient (required)
         :type receiver_uma_address: str
-        :param sending_uma_address: UMA address of the sender (optional if userId is provided)
-        :type sending_uma_address: str
-        :param user_id: System ID of the sender (optional if sendingUmaAddress is provided)
+        :param sender_uma_address: UMA address of the sender (optional if userId is provided)
+        :type sender_uma_address: str
+        :param user_id: System ID of the sender (optional if senderUmaAddress is provided)
         :type user_id: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -1008,7 +1008,7 @@ class SendingPaymentsApi:
 
         _param = self._lookup_uma_serialize(
             receiver_uma_address=receiver_uma_address,
-            sending_uma_address=sending_uma_address,
+            sender_uma_address=sender_uma_address,
             user_id=user_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1037,8 +1037,8 @@ class SendingPaymentsApi:
     def lookup_uma_without_preload_content(
         self,
         receiver_uma_address: Annotated[StrictStr, Field(description="UMA address of the intended recipient")],
-        sending_uma_address: Annotated[Optional[StrictStr], Field(description="UMA address of the sender (optional if userId is provided)")] = None,
-        user_id: Annotated[Optional[StrictStr], Field(description="System ID of the sender (optional if sendingUmaAddress is provided)")] = None,
+        sender_uma_address: Annotated[Optional[StrictStr], Field(description="UMA address of the sender (optional if userId is provided)")] = None,
+        user_id: Annotated[Optional[StrictStr], Field(description="System ID of the sender (optional if senderUmaAddress is provided)")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1058,9 +1058,9 @@ class SendingPaymentsApi:
 
         :param receiver_uma_address: UMA address of the intended recipient (required)
         :type receiver_uma_address: str
-        :param sending_uma_address: UMA address of the sender (optional if userId is provided)
-        :type sending_uma_address: str
-        :param user_id: System ID of the sender (optional if sendingUmaAddress is provided)
+        :param sender_uma_address: UMA address of the sender (optional if userId is provided)
+        :type sender_uma_address: str
+        :param user_id: System ID of the sender (optional if senderUmaAddress is provided)
         :type user_id: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -1086,7 +1086,7 @@ class SendingPaymentsApi:
 
         _param = self._lookup_uma_serialize(
             receiver_uma_address=receiver_uma_address,
-            sending_uma_address=sending_uma_address,
+            sender_uma_address=sender_uma_address,
             user_id=user_id,
             _request_auth=_request_auth,
             _content_type=_content_type,
@@ -1110,7 +1110,7 @@ class SendingPaymentsApi:
     def _lookup_uma_serialize(
         self,
         receiver_uma_address,
-        sending_uma_address,
+        sender_uma_address,
         user_id,
         _request_auth,
         _content_type,
@@ -1136,9 +1136,9 @@ class SendingPaymentsApi:
         if receiver_uma_address is not None:
             _path_params['receiverUmaAddress'] = receiver_uma_address
         # process the query parameters
-        if sending_uma_address is not None:
+        if sender_uma_address is not None:
             
-            _query_params.append(('sendingUmaAddress', sending_uma_address))
+            _query_params.append(('senderUmaAddress', sender_uma_address))
             
         if user_id is not None:
             

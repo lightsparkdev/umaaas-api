@@ -29,15 +29,12 @@ class CreateQuoteRequest(BaseModel):
     CreateQuoteRequest
     """ # noqa: E501
     lookup_id: StrictStr = Field(description="Unique identifier for the prior receiver uma address lookup request.", alias="lookupId")
-    receiver_uma_address: StrictStr = Field(description="UMA address of the recipient", alias="receiverUmaAddress")
-    sender_uma_address: Optional[StrictStr] = Field(default=None, description="UMA address of the sender (optional if userId is provided)", alias="senderUmaAddress")
-    user_id: Optional[StrictStr] = Field(default=None, description="System ID of the sender (optional if senderUmaAddress is provided)", alias="userId")
     sending_currency_code: StrictStr = Field(description="Currency code for the sending amount", alias="sendingCurrencyCode")
     receiving_currency_code: StrictStr = Field(description="Currency code for the receiving amount", alias="receivingCurrencyCode")
     locked_currency_side: QuoteLockSide = Field(alias="lockedCurrencySide")
     locked_currency_amount: StrictInt = Field(description="The amount to send/receive in the smallest unit of the locked currency (eg. cents). See `lockedCurrencySide` for more information.", alias="lockedCurrencyAmount")
     description: Optional[StrictStr] = Field(default=None, description="Optional description/memo for the payment")
-    __properties: ClassVar[List[str]] = ["lookupId", "receiverUmaAddress", "senderUmaAddress", "userId", "sendingCurrencyCode", "receivingCurrencyCode", "lockedCurrencySide", "lockedCurrencyAmount", "description"]
+    __properties: ClassVar[List[str]] = ["lookupId", "sendingCurrencyCode", "receivingCurrencyCode", "lockedCurrencySide", "lockedCurrencyAmount", "description"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -89,9 +86,6 @@ class CreateQuoteRequest(BaseModel):
 
         _obj = cls.model_validate({
             "lookupId": obj.get("lookupId"),
-            "receiverUmaAddress": obj.get("receiverUmaAddress"),
-            "senderUmaAddress": obj.get("senderUmaAddress"),
-            "userId": obj.get("userId"),
             "sendingCurrencyCode": obj.get("sendingCurrencyCode"),
             "receivingCurrencyCode": obj.get("receivingCurrencyCode"),
             "lockedCurrencySide": obj.get("lockedCurrencySide"),
