@@ -37,7 +37,8 @@ class TestClabeAccountInfo(unittest.TestCase):
         if include_optional:
             return ClabeAccountInfo(
                 clabe_number = '123456789012345678',
-                bank_name = 'BBVA Mexico'
+                bank_name = 'BBVA Mexico',
+                account_holder_name = 'John Doe'
             )
         else:
             return ClabeAccountInfo(

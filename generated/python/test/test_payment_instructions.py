@@ -38,12 +38,14 @@ class TestPaymentInstructions(unittest.TestCase):
             return PaymentInstructions(
                 reference = 'UMA-Q12345-REF',
                 instructions_notes = 'Please ensure the reference code is included in the payment memo/description field',
-                bank_account_info = None
+                bank_account_info = umaaas_api.models.payment_bank_account_info.PaymentBankAccountInfo(
+                    account_type = 'CLABE', )
             )
         else:
             return PaymentInstructions(
                 reference = 'UMA-Q12345-REF',
-                bank_account_info = None,
+                bank_account_info = umaaas_api.models.payment_bank_account_info.PaymentBankAccountInfo(
+                    account_type = 'CLABE', ),
         )
         """
 

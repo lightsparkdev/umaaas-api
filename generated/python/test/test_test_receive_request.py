@@ -39,24 +39,14 @@ class TestTestReceiveRequest(unittest.TestCase):
                 sender_uma_address = '$success.usd@sandbox.uma.money',
                 receiver_uma_address = '$receiver@uma.domain',
                 user_id = 'User:019542f5-b3e7-1d02-0000-000000000001',
-                receiving_amount = umaaas_api.models.currency_amount.CurrencyAmount(
-                    amount = 12550, 
-                    currency = umaaas_api.models.currency.Currency(
-                        code = 'USD', 
-                        name = 'United States Dollar', 
-                        symbol = '$', 
-                        decimals = 2, ), )
+                receiving_currency_code = 'USD',
+                receiving_currency_amount = 1000
             )
         else:
             return TestReceiveRequest(
                 sender_uma_address = '$success.usd@sandbox.uma.money',
-                receiving_amount = umaaas_api.models.currency_amount.CurrencyAmount(
-                    amount = 12550, 
-                    currency = umaaas_api.models.currency.Currency(
-                        code = 'USD', 
-                        name = 'United States Dollar', 
-                        symbol = '$', 
-                        decimals = 2, ), ),
+                receiving_currency_code = 'USD',
+                receiving_currency_amount = 1000,
         )
         """
 

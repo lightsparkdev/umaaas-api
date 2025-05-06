@@ -36,10 +36,7 @@ class TestCreateQuoteRequest(unittest.TestCase):
         model = CreateQuoteRequest()
         if include_optional:
             return CreateQuoteRequest(
-                receiver_uma_address = '$receiver@uma.domain',
-                sender_uma_address = '$sender@uma.domain',
-                user_id = 'User:019542f5-b3e7-1d02-0000-000000000001',
-                platform_user_id = '18d3e5f7b4a9c2',
+                lookup_id = 'LookupRequest:019542f5-b3e7-1d02-0000-000000000009',
                 sending_currency_code = 'USD',
                 receiving_currency_code = 'EUR',
                 locked_currency_side = 'SENDING',
@@ -48,7 +45,7 @@ class TestCreateQuoteRequest(unittest.TestCase):
             )
         else:
             return CreateQuoteRequest(
-                receiver_uma_address = '$receiver@uma.domain',
+                lookup_id = 'LookupRequest:019542f5-b3e7-1d02-0000-000000000009',
                 sending_currency_code = 'USD',
                 receiving_currency_code = 'EUR',
                 locked_currency_side = 'SENDING',

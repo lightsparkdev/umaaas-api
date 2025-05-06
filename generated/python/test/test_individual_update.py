@@ -47,9 +47,8 @@ class TestIndividualUpdate(unittest.TestCase):
                     state = 'CA', 
                     postal_code = '94105', 
                     country = 'US', ),
-                bank_account_info = umaaas_api.models.bank_account_info.BankAccountInfo(
-                    account_type = 'US_ACCOUNT', 
-                    account_holder_name = 'John Doe', 
+                bank_account_info = umaaas_api.models.user_bank_account_info.UserBankAccountInfo(
+                    account_type = 'CLABE', 
                     platform_account_id = 'acc_123456789', )
             )
         else:

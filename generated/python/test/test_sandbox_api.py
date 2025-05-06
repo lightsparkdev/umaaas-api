@@ -27,17 +27,17 @@ class TestSandboxApi(unittest.TestCase):
     def tearDown(self) -> None:
         pass
 
-    def test_simulate_send_funds(self) -> None:
-        """Test case for simulate_send_funds
+    def test_test_receive(self) -> None:
+        """Test case for test_receive
 
-        Simulate sending funds
+        Simulate payment send to test receiving a payment
         """
         pass
 
-    def test_simulate_send_payment(self) -> None:
-        """Test case for simulate_send_payment
+    def test_test_send(self) -> None:
+        """Test case for test_send
 
-        Simulate payment send to test receive
+        Simulate sending funds
         """
         pass
 

@@ -37,7 +37,7 @@ class TestIncomingTransaction(unittest.TestCase):
         if include_optional:
             return IncomingTransaction(
                 id = 'Transaction:019542f5-b3e7-1d02-0000-000000000004',
-                status = 'PENDING',
+                status = 'CREATED',
                 type = INCOMING,
                 sender_uma_address = '$sender@external.domain',
                 receiver_uma_address = '$recipient@uma.domain',
@@ -58,7 +58,7 @@ class TestIncomingTransaction(unittest.TestCase):
         else:
             return IncomingTransaction(
                 id = 'Transaction:019542f5-b3e7-1d02-0000-000000000004',
-                status = 'PENDING',
+                status = 'CREATED',
                 type = INCOMING,
                 sender_uma_address = '$sender@external.domain',
                 receiver_uma_address = '$recipient@uma.domain',

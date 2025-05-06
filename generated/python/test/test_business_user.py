@@ -43,9 +43,8 @@ class TestBusinessUser(unittest.TestCase):
                     state = 'CA', 
                     postal_code = '94105', 
                     country = 'US', ),
-                bank_account_info = umaaas_api.models.bank_account_info.BankAccountInfo(
-                    account_type = 'US_ACCOUNT', 
-                    account_holder_name = 'John Doe', 
+                bank_account_info = umaaas_api.models.user_bank_account_info.UserBankAccountInfo(
+                    account_type = 'CLABE', 
                     platform_account_id = 'acc_123456789', ),
                 business_info = umaaas_api.models.business_user_all_of_business_info.BusinessUser_allOf_businessInfo(
                     legal_name = 'Acme Corporation, Inc.', 
@@ -61,9 +60,8 @@ class TestBusinessUser(unittest.TestCase):
                     state = 'CA', 
                     postal_code = '94105', 
                     country = 'US', ),
-                bank_account_info = umaaas_api.models.bank_account_info.BankAccountInfo(
-                    account_type = 'US_ACCOUNT', 
-                    account_holder_name = 'John Doe', 
+                bank_account_info = umaaas_api.models.user_bank_account_info.UserBankAccountInfo(
+                    account_type = 'CLABE', 
                     platform_account_id = 'acc_123456789', ),
                 business_info = umaaas_api.models.business_user_all_of_business_info.BusinessUser_allOf_businessInfo(
                     legal_name = 'Acme Corporation, Inc.', 
