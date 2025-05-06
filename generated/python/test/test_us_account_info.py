@@ -39,7 +39,8 @@ class TestUsAccountInfo(unittest.TestCase):
                 account_number = '123456789',
                 routing_number = '987654321',
                 account_category = 'CHECKING',
-                bank_name = 'Chase Bank'
+                bank_name = 'Chase Bank',
+                account_holder_name = 'John Doe'
             )
         else:
             return UsAccountInfo(

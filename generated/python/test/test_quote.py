@@ -56,7 +56,8 @@ class TestQuote(unittest.TestCase):
                 payment_instructions = umaaas_api.models.payment_instructions.PaymentInstructions(
                     reference = 'UMA-Q12345-REF', 
                     instructions_notes = 'Please ensure the reference code is included in the payment memo/description field', 
-                    bank_account_info = null, ),
+                    bank_account_info = umaaas_api.models.payment_bank_account_info.PaymentBankAccountInfo(
+                        account_type = 'CLABE', ), ),
                 status = 'PENDING',
                 transaction_id = 'Transaction:019542f5-b3e7-1d02-0000-000000000005'
             )
@@ -81,7 +82,8 @@ class TestQuote(unittest.TestCase):
                 payment_instructions = umaaas_api.models.payment_instructions.PaymentInstructions(
                     reference = 'UMA-Q12345-REF', 
                     instructions_notes = 'Please ensure the reference code is included in the payment memo/description field', 
-                    bank_account_info = null, ),
+                    bank_account_info = umaaas_api.models.payment_bank_account_info.PaymentBankAccountInfo(
+                        account_type = 'CLABE', ), ),
         )
         """
 

@@ -36,12 +36,12 @@ class TestUserBankAccountInfo(unittest.TestCase):
         model = UserBankAccountInfo()
         if include_optional:
             return UserBankAccountInfo(
-                account_type = 'US_ACCOUNT',
+                account_type = 'CLABE',
                 platform_account_id = 'acc_123456789'
             )
         else:
             return UserBankAccountInfo(
-                account_type = 'US_ACCOUNT',
+                account_type = 'CLABE',
         )
         """
 

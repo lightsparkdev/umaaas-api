@@ -38,7 +38,8 @@ class TestIbanAccountInfo(unittest.TestCase):
             return IbanAccountInfo(
                 iban = 'DE89370400440532013000',
                 swift_bic = 'DEUTDEFF',
-                bank_name = 'Deutsche Bank'
+                bank_name = 'Deutsche Bank',
+                account_holder_name = 'John Doe'
             )
         else:
             return IbanAccountInfo(

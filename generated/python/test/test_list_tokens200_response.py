@@ -38,7 +38,7 @@ class TestListTokens200Response(unittest.TestCase):
             return ListTokens200Response(
                 data = [
                     umaaas_api.models.api_token.ApiToken(
-                        id = 'User:019542f5-b3e7-1d02-0000-000000000001', 
+                        id = 'Token:019542f5-b3e7-1d02-0000-000000000001', 
                         name = 'Sandbox read-only token', 
                         permissions = [
                             'VIEW'
@@ -56,7 +56,7 @@ class TestListTokens200Response(unittest.TestCase):
             return ListTokens200Response(
                 data = [
                     umaaas_api.models.api_token.ApiToken(
-                        id = 'User:019542f5-b3e7-1d02-0000-000000000001', 
+                        id = 'Token:019542f5-b3e7-1d02-0000-000000000001', 
                         name = 'Sandbox read-only token', 
                         permissions = [
                             'VIEW'

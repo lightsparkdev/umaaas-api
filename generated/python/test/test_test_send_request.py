@@ -37,24 +37,14 @@ class TestTestSendRequest(unittest.TestCase):
         if include_optional:
             return TestSendRequest(
                 reference = 'UMA-Q12345-REF',
-                amount = umaaas_api.models.currency_amount.CurrencyAmount(
-                    amount = 12550, 
-                    currency = umaaas_api.models.currency.Currency(
-                        code = 'USD', 
-                        name = 'United States Dollar', 
-                        symbol = '$', 
-                        decimals = 2, ), )
+                currency_code = 'USD',
+                currency_amount = 1000
             )
         else:
             return TestSendRequest(
                 reference = 'UMA-Q12345-REF',
-                amount = umaaas_api.models.currency_amount.CurrencyAmount(
-                    amount = 12550, 
-                    currency = umaaas_api.models.currency.Currency(
-                        code = 'USD', 
-                        name = 'United States Dollar', 
-                        symbol = '$', 
-                        decimals = 2, ), ),
+                currency_code = 'USD',
+                currency_amount = 1000,
         )
         """
 

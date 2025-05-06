@@ -38,7 +38,8 @@ class TestPixAccountInfo(unittest.TestCase):
             return PixAccountInfo(
                 pix_key = '55119876543210',
                 pix_key_type = 'PHONE',
-                bank_name = 'Nubank'
+                bank_name = 'Nubank',
+                account_holder_name = 'John Doe'
             )
         else:
             return PixAccountInfo(

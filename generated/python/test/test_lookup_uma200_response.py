@@ -36,7 +36,7 @@ class TestLookupUma200Response(unittest.TestCase):
         model = LookupUma200Response()
         if include_optional:
             return LookupUma200Response(
-                receiving_uma_address = '$receiver@uma.domain',
+                receiver_uma_address = '$receiver@uma.domain',
                 supported_currencies = [
                     umaaas_api.models.currency_preference.CurrencyPreference(
                         currency = umaaas_api.models.currency.Currency(
@@ -52,11 +52,12 @@ class TestLookupUma200Response(unittest.TestCase):
                     umaaas_api.models.counterparty_field_definition.CounterpartyFieldDefinition(
                         name = 'FULL_NAME', 
                         mandatory = True, )
-                    ]
+                    ],
+                lookup_id = 'Lookup:019542f5-b3e7-1d02-0000-000000000009'
             )
         else:
             return LookupUma200Response(
-                receiving_uma_address = '$receiver@uma.domain',
+                receiver_uma_address = '$receiver@uma.domain',
                 supported_currencies = [
                     umaaas_api.models.currency_preference.CurrencyPreference(
                         currency = umaaas_api.models.currency.Currency(
@@ -68,6 +69,7 @@ class TestLookupUma200Response(unittest.TestCase):
                         min = 1, 
                         max = 1000000, )
                     ],
+                lookup_id = 'Lookup:019542f5-b3e7-1d02-0000-000000000009',
         )
         """
 
