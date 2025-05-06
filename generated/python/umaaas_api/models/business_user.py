@@ -21,9 +21,9 @@ import json
 from pydantic import ConfigDict, Field
 from typing import Any, ClassVar, Dict, List
 from umaaas_api.models.address import Address
-from umaaas_api.models.bank_account_info import BankAccountInfo
 from umaaas_api.models.business_user_all_of_business_info import BusinessUserAllOfBusinessInfo
 from umaaas_api.models.user import User
+from umaaas_api.models.user_bank_account_info import UserBankAccountInfo
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -32,7 +32,7 @@ class BusinessUser(User):
     BusinessUser
     """ # noqa: E501
     address: Address
-    bank_account_info: BankAccountInfo = Field(alias="bankAccountInfo")
+    bank_account_info: UserBankAccountInfo = Field(alias="bankAccountInfo")
     business_info: BusinessUserAllOfBusinessInfo = Field(alias="businessInfo")
     __properties: ClassVar[List[str]] = ["id", "umaAddress", "platformUserId", "userType", "createdAt", "updatedAt", "address", "bankAccountInfo", "businessInfo"]
 
@@ -101,7 +101,7 @@ class BusinessUser(User):
             "createdAt": obj.get("createdAt"),
             "updatedAt": obj.get("updatedAt"),
             "address": Address.from_dict(obj["address"]) if obj.get("address") is not None else None,
-            "bankAccountInfo": BankAccountInfo.from_dict(obj["bankAccountInfo"]) if obj.get("bankAccountInfo") is not None else None,
+            "bankAccountInfo": UserBankAccountInfo.from_dict(obj["bankAccountInfo"]) if obj.get("bankAccountInfo") is not None else None,
             "businessInfo": BusinessUserAllOfBusinessInfo.from_dict(obj["businessInfo"]) if obj.get("businessInfo") is not None else None
         })
         return _obj

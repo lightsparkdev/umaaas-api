@@ -9,7 +9,7 @@ Name | Type | Description | Notes
 **date_of_birth** | **date** | Date of birth in ISO 8601 format (YYYY-MM-DD) | 
 **nationality** | **str** | Country code (ISO 3166-1 alpha-2) | [optional] 
 **address** | [**Address**](Address.md) |  | 
-**bank_account_info** | [**BankAccountInfo**](BankAccountInfo.md) |  | 
+**bank_account_info** | [**UserBankAccountInfo**](UserBankAccountInfo.md) |  | 
 
 ## Example
 

@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **routing_number** | **str** | ACH routing number (9 digits) | 
 **account_category** | **str** | Type of account (checking or savings) | 
 **bank_name** | **str** | Name of the bank | [optional] 
+**account_holder_name** | **str** | Name of the account holder | [optional] 
 
 ## Example
 

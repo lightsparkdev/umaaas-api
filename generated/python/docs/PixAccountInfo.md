@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **pix_key** | **str** | PIX key for Brazilian instant payments | 
 **pix_key_type** | **str** | Type of PIX key being used | 
 **bank_name** | **str** | Name of the bank | [optional] 
+**account_holder_name** | **str** | Name of the account holder | [optional] 
 
 ## Example
 

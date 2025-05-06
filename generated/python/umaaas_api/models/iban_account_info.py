@@ -18,21 +18,21 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import ConfigDict, Field, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
-from umaaas_api.models.bank_account_info import BankAccountInfo
 from typing import Optional, Set
 from typing_extensions import Self
 
-class IbanAccountInfo(BankAccountInfo):
+class IbanAccountInfo(BaseModel):
     """
     IbanAccountInfo
     """ # noqa: E501
     iban: Annotated[str, Field(min_length=15, strict=True, max_length=34)] = Field(description="International Bank Account Number")
     swift_bic: Optional[Annotated[str, Field(min_length=8, strict=True, max_length=11)]] = Field(default=None, description="SWIFT/BIC code (8 or 11 characters)", alias="swiftBic")
     bank_name: StrictStr = Field(description="Name of the bank", alias="bankName")
-    __properties: ClassVar[List[str]] = ["accountType", "accountHolderName", "platformAccountId", "iban", "swiftBic", "bankName"]
+    account_holder_name: Optional[StrictStr] = Field(default=None, description="Name of the account holder", alias="accountHolderName")
+    __properties: ClassVar[List[str]] = ["iban", "swiftBic", "bankName", "accountHolderName"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -83,12 +83,10 @@ class IbanAccountInfo(BankAccountInfo):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "accountType": obj.get("accountType"),
-            "accountHolderName": obj.get("accountHolderName"),
-            "platformAccountId": obj.get("platformAccountId"),
             "iban": obj.get("iban"),
             "swiftBic": obj.get("swiftBic"),
-            "bankName": obj.get("bankName")
+            "bankName": obj.get("bankName"),
+            "accountHolderName": obj.get("accountHolderName")
         })
         return _obj
 

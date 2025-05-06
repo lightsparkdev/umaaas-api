@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 **created_at** | **datetime** | Creation timestamp | [optional] [readonly] 
 **updated_at** | **datetime** | Last update timestamp | [optional] [readonly] 
 **address** | [**Address**](Address.md) |  | 
-**bank_account_info** | [**BankAccountInfo**](BankAccountInfo.md) |  | 
+**bank_account_info** | [**UserBankAccountInfo**](UserBankAccountInfo.md) |  | 
 **business_info** | [**BusinessUserAllOfBusinessInfo**](BusinessUserAllOfBusinessInfo.md) |  | 
 
 ## Example

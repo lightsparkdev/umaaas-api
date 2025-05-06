@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **address** | [**Address**](Address.md) |  | 
-**bank_account_info** | [**BankAccountInfo**](BankAccountInfo.md) |  | 
+**bank_account_info** | [**UserBankAccountInfo**](UserBankAccountInfo.md) |  | 
 **business_info** | [**BusinessUserAllOfBusinessInfo**](BusinessUserAllOfBusinessInfo.md) |  | 
 
 ## Example

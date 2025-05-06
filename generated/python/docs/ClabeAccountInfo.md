@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **clabe_number** | **str** | 18-digit CLABE number (Mexican banking standard) | 
 **bank_name** | **str** | Name of the bank | 
+**account_holder_name** | **str** | Name of the account holder | [optional] 
 
 ## Example
 

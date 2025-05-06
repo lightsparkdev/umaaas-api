@@ -20,7 +20,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
-from umaaas_api.models.payment_instructions_bank_account_info import PaymentInstructionsBankAccountInfo
+from umaaas_api.models.payment_bank_account_info import PaymentBankAccountInfo
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -30,7 +30,7 @@ class PaymentInstructions(BaseModel):
     """ # noqa: E501
     reference: StrictStr = Field(description="Unique reference code that must be included with the payment to properly credit it")
     instructions_notes: Optional[StrictStr] = Field(default=None, description="Additional human-readable instructions for making the payment", alias="instructionsNotes")
-    bank_account_info: PaymentInstructionsBankAccountInfo = Field(alias="bankAccountInfo")
+    bank_account_info: PaymentBankAccountInfo = Field(alias="bankAccountInfo")
     __properties: ClassVar[List[str]] = ["reference", "instructionsNotes", "bankAccountInfo"]
 
     model_config = ConfigDict(
@@ -87,7 +87,7 @@ class PaymentInstructions(BaseModel):
         _obj = cls.model_validate({
             "reference": obj.get("reference"),
             "instructionsNotes": obj.get("instructionsNotes"),
-            "bankAccountInfo": PaymentInstructionsBankAccountInfo.from_dict(obj["bankAccountInfo"]) if obj.get("bankAccountInfo") is not None else None
+            "bankAccountInfo": PaymentBankAccountInfo.from_dict(obj["bankAccountInfo"]) if obj.get("bankAccountInfo") is not None else None
         })
         return _obj
 

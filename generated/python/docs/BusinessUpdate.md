@@ -8,7 +8,7 @@ Name | Type | Description | Notes
 **uma_address** | **str** | Full UMA address | [optional] 
 **business_info** | [**BusinessUpdateBusinessInfo**](BusinessUpdateBusinessInfo.md) |  | [optional] 
 **address** | [**Address**](Address.md) |  | [optional] 
-**bank_account_info** | [**BankAccountInfo**](BankAccountInfo.md) |  | [optional] 
+**bank_account_info** | [**UserBankAccountInfo**](UserBankAccountInfo.md) |  | [optional] 
 
 ## Example
 

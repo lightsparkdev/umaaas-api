@@ -18,20 +18,20 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import ConfigDict, Field, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List
+from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
+from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
-from umaaas_api.models.bank_account_info import BankAccountInfo
 from typing import Optional, Set
 from typing_extensions import Self
 
-class ClabeAccountInfo(BankAccountInfo):
+class ClabeAccountInfo(BaseModel):
     """
     ClabeAccountInfo
     """ # noqa: E501
     clabe_number: Annotated[str, Field(min_length=18, strict=True, max_length=18)] = Field(description="18-digit CLABE number (Mexican banking standard)", alias="clabeNumber")
     bank_name: StrictStr = Field(description="Name of the bank", alias="bankName")
-    __properties: ClassVar[List[str]] = ["accountType", "accountHolderName", "platformAccountId", "clabeNumber", "bankName"]
+    account_holder_name: Optional[StrictStr] = Field(default=None, description="Name of the account holder", alias="accountHolderName")
+    __properties: ClassVar[List[str]] = ["clabeNumber", "bankName", "accountHolderName"]
 
     @field_validator('clabe_number')
     def clabe_number_validate_regular_expression(cls, value):
@@ -89,11 +89,9 @@ class ClabeAccountInfo(BankAccountInfo):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "accountType": obj.get("accountType"),
-            "accountHolderName": obj.get("accountHolderName"),
-            "platformAccountId": obj.get("platformAccountId"),
             "clabeNumber": obj.get("clabeNumber"),
-            "bankName": obj.get("bankName")
+            "bankName": obj.get("bankName"),
+            "accountHolderName": obj.get("accountHolderName")
         })
         return _obj
 
