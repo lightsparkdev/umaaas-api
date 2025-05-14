@@ -823,6 +823,7 @@ components:
         - updatedAt
         - inviterUma
         - status
+        - url
       properties:
         code:
           type: string
@@ -838,6 +839,10 @@ components:
           format: date-time
           description: When the invitation was last updated
           example: "2023-09-01T14:30:00Z"
+        url:
+          type: string
+          description: The URL where this invitation can be claimed.
+          example: "https://uma.me/i/019542f5"
         expiresAt:
           type: string
           format: date-time
@@ -853,7 +858,7 @@ components:
           example: "$invitee@uma.domain"
         status:
           type: string
-          enum: [PENDING, CLAIMED, EXPIRED]
+          enum: [PENDING, CLAIMED, EXPIRED, CANCELLED]
           description: The status of the invitation
           example: "PENDING"
           
@@ -1950,8 +1955,7 @@ paths:
               lockSendAmount:
                 summary: Lock sending amount
                 value:
-                  receiverUmaAddress: "$receiver@uma.domain"
-                  senderUmaAddress: "$sender@uma.domain"
+                  lookupId: "LookupRequest:019542f5-b3e7-1d02-0000-000000000009"
                   sendingCurrencyCode: "USD"
                   receivingCurrencyCode: "EUR"
                   lockedCurrencySide: "SENDING"
@@ -1960,8 +1964,7 @@ paths:
               lockReceiveAmount:
                 summary: Lock receiving amount
                 value:
-                  receiverUmaAddress: "$receiver@uma.domain"
-                  platformUserId: "2d8e7f3a9c5b1"
+                  lookupId: "LookupRequest:019542f5-b3e7-1d02-0000-000000000009"
                   sendingCurrencyCode: "USD"
                   receivingCurrencyCode: "EUR"
                   lockedCurrencySide: "RECEIVING"
@@ -2515,6 +2518,63 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
           
+  /invitations/{invitationCode}/cancel:
+    post:
+      summary: Cancel an UMA invitation
+      description: |
+        Cancel a pending UMA invitation. Only the inviter or platform can cancel an invitation.
+        
+        When an invitation is cancelled:
+        1. The invitation status changes from PENDING to CANCELLED
+        2. The invitation can no longer be claimed
+        3. The invitation URL will show as cancelled when accessed
+        
+        Only pending invitations can be cancelled. Attempting to cancel an invitation
+        that is already claimed, expired, or cancelled will result in an error.
+      operationId: cancelInvitation
+      tags:
+        - Invitations
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: invitationCode
+          in: path
+          description: The code of the invitation to cancel
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Invitation cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UmaInvitation'
+        '400':
+          description: Bad request - Invitation cannot be cancelled (already claimed, expired, or cancelled)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden - Only the inviter or platform can cancel an invitation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Invitation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /sandbox/send:
     post:
       summary: Simulate sending funds
@@ -3257,6 +3317,7 @@ webhooks:
                     inviterUma: "$inviter@uma.domain"
                     inviteeUma: "$invitee@uma.domain"
                     status: "CLAIMED"
+                    url: "https://uma.me/i/019542f5"
                   timestamp: "2023-09-01T15:45:00Z"
                   webhookId: "Webhook:019542f5-b3e7-1d02-0000-000000000008"
                   type: "INVITATION_CLAIMED"

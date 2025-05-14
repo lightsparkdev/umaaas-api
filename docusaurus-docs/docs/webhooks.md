@@ -197,3 +197,4 @@ UMAaaS will retry webhooks with the following policy based on the webhook type:
 | OUTGOING_PAYMENT | Retry with exponential backoff up to 7 days with maximum interval of 30 mins | No retry on 409 (duplicate webhooks) |
 | INCOMING_PAYMENT | Retry with exponential backoff up to 7 days with maximum interval of 30 mins | No retry on: 409 (duplicate webhook) or PENDING status since it is served as an approval mechanism in-flow |
 | BULK_UPLOAD | Retry with exponential backoff up to 7 days with maximum interval of 30 mins | No retry on 409 (duplicate webhooks) |
+| INVITATION_CLAIMED | Retry with exponential backoff up to 7 days with maximum interval of 30 mins | No retry on 409 (duplicate webhooks) |
