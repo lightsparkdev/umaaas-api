@@ -31,17 +31,18 @@ class UmaInvitation(BaseModel):
     code: StrictStr = Field(description="The unique code of the invitation")
     created_at: datetime = Field(description="When the invitation was created", alias="createdAt")
     updated_at: datetime = Field(description="When the invitation was last updated", alias="updatedAt")
+    url: StrictStr = Field(description="The URL where this invitation can be claimed.")
     expires_at: Optional[datetime] = Field(default=None, description="When the invitation expires (if at all)", alias="expiresAt")
     inviter_uma: StrictStr = Field(description="The UMA address of the inviter", alias="inviterUma")
     invitee_uma: Optional[StrictStr] = Field(default=None, description="The UMA address of the invitee", alias="inviteeUma")
     status: StrictStr = Field(description="The status of the invitation")
-    __properties: ClassVar[List[str]] = ["code", "createdAt", "updatedAt", "expiresAt", "inviterUma", "inviteeUma", "status"]
+    __properties: ClassVar[List[str]] = ["code", "createdAt", "updatedAt", "url", "expiresAt", "inviterUma", "inviteeUma", "status"]
 
     @field_validator('status')
     def status_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['PENDING', 'CLAIMED', 'EXPIRED']):
-            raise ValueError("must be one of enum values ('PENDING', 'CLAIMED', 'EXPIRED')")
+        if value not in set(['PENDING', 'CLAIMED', 'EXPIRED', 'CANCELLED']):
+            raise ValueError("must be one of enum values ('PENDING', 'CLAIMED', 'EXPIRED', 'CANCELLED')")
         return value
 
     model_config = ConfigDict(
@@ -96,6 +97,7 @@ class UmaInvitation(BaseModel):
             "code": obj.get("code"),
             "createdAt": obj.get("createdAt"),
             "updatedAt": obj.get("updatedAt"),
+            "url": obj.get("url"),
             "expiresAt": obj.get("expiresAt"),
             "inviterUma": obj.get("inviterUma"),
             "inviteeUma": obj.get("inviteeUma"),

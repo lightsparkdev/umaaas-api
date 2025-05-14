@@ -1833,8 +1833,7 @@ BasicAuth
 
 ```javascript
 const inputBody = '{
-  "receiverUmaAddress": "$receiver@uma.domain",
-  "senderUmaAddress": "$sender@uma.domain",
+  "lookupId": "LookupRequest:019542f5-b3e7-1d02-0000-000000000009",
   "sendingCurrencyCode": "USD",
   "receivingCurrencyCode": "EUR",
   "lockedCurrencySide": "SENDING",
@@ -1892,8 +1891,7 @@ must be followed precisely, including any reference codes provided.
 
 ```json
 {
-  "receiverUmaAddress": "$receiver@uma.domain",
-  "senderUmaAddress": "$sender@uma.domain",
+  "lookupId": "LookupRequest:019542f5-b3e7-1d02-0000-000000000009",
   "sendingCurrencyCode": "USD",
   "receivingCurrencyCode": "EUR",
   "lockedCurrencySide": "SENDING",
@@ -2419,6 +2417,7 @@ Create an UMA invitation from a given platform user.
   "code": "019542f5",
   "createdAt": "2023-09-01T14:30:00Z",
   "updatedAt": "2023-09-01T14:30:00Z",
+  "url": "https://uma.me/i/019542f5",
   "expiresAt": "2023-09-01T14:30:00Z",
   "inviterUma": "$inviter@uma.domain",
   "inviteeUma": "$invitee@uma.domain",
@@ -2498,6 +2497,7 @@ Get a specific UMA invitation by code.
   "code": "019542f5",
   "createdAt": "2023-09-01T14:30:00Z",
   "updatedAt": "2023-09-01T14:30:00Z",
+  "url": "https://uma.me/i/019542f5",
   "expiresAt": "2023-09-01T14:30:00Z",
   "inviterUma": "$inviter@uma.domain",
   "inviteeUma": "$invitee@uma.domain",
@@ -2598,6 +2598,7 @@ This endpoint allows users to accept invitations sent to them by other UMA users
   "code": "019542f5",
   "createdAt": "2023-09-01T14:30:00Z",
   "updatedAt": "2023-09-01T14:30:00Z",
+  "url": "https://uma.me/i/019542f5",
   "expiresAt": "2023-09-01T14:30:00Z",
   "inviterUma": "$inviter@uma.domain",
   "inviteeUma": "$invitee@uma.domain",
@@ -2612,6 +2613,96 @@ This endpoint allows users to accept invitations sent to them by other UMA users
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Invitation claimed successfully|[UmaInvitation](#schemaumainvitation)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|[Error](#schemaerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Invitation not found|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BasicAuth
+</aside>
+
+## cancelInvitation
+
+<a id="opIdcancelInvitation"></a>
+
+> Code samples
+
+```javascript
+
+const headers = {
+  'Accept':'application/json'
+};
+
+fetch('https://api.lightspark.com/umaaas/v1/invitations/{invitationCode}/cancel',
+{
+  method: 'POST',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.post('https://api.lightspark.com/umaaas/v1/invitations/{invitationCode}/cancel', headers = headers)
+
+print(r.json())
+
+```
+
+`POST /invitations/{invitationCode}/cancel`
+
+*Cancel an UMA invitation*
+
+Cancel a pending UMA invitation. Only the inviter or platform can cancel an invitation.
+
+When an invitation is cancelled:
+1. The invitation status changes from PENDING to CANCELLED
+2. The invitation can no longer be claimed
+3. The invitation URL will show as cancelled when accessed
+
+Only pending invitations can be cancelled. Attempting to cancel an invitation
+that is already claimed, expired, or cancelled will result in an error.
+
+<h3 id="cancelinvitation-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|invitationCode|path|string|true|The code of the invitation to cancel|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "code": "019542f5",
+  "createdAt": "2023-09-01T14:30:00Z",
+  "updatedAt": "2023-09-01T14:30:00Z",
+  "url": "https://uma.me/i/019542f5",
+  "expiresAt": "2023-09-01T14:30:00Z",
+  "inviterUma": "$inviter@uma.domain",
+  "inviteeUma": "$invitee@uma.domain",
+  "status": "PENDING"
+}
+```
+
+<h3 id="cancelinvitation-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Invitation cancelled successfully|[UmaInvitation](#schemaumainvitation)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request - Invitation cannot be cancelled (already claimed, expired, or cancelled)|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|Forbidden - Only the inviter or platform can cancel an invitation|[Error](#schemaerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Invitation not found|[Error](#schemaerror)|
 
 <aside class="warning">
@@ -4585,6 +4676,7 @@ The side of the quote which should be locked and specified in the `lockedCurrenc
   "code": "019542f5",
   "createdAt": "2023-09-01T14:30:00Z",
   "updatedAt": "2023-09-01T14:30:00Z",
+  "url": "https://uma.me/i/019542f5",
   "expiresAt": "2023-09-01T14:30:00Z",
   "inviterUma": "$inviter@uma.domain",
   "inviteeUma": "$invitee@uma.domain",
@@ -4600,6 +4692,7 @@ The side of the quote which should be locked and specified in the `lockedCurrenc
 |code|string|true|none|The unique code of the invitation|
 |createdAt|string(date-time)|true|none|When the invitation was created|
 |updatedAt|string(date-time)|true|none|When the invitation was last updated|
+|url|string|true|none|The URL where this invitation can be claimed.|
 |expiresAt|string(date-time)|false|none|When the invitation expires (if at all)|
 |inviterUma|string|true|none|The UMA address of the inviter|
 |inviteeUma|string|false|none|The UMA address of the invitee|
@@ -4612,6 +4705,7 @@ The side of the quote which should be locked and specified in the `lockedCurrenc
 |status|PENDING|
 |status|CLAIMED|
 |status|EXPIRED|
+|status|CANCELLED|
 
 <h2 id="tocS_Permission">Permission</h2>
 <!-- backwards compatibility -->

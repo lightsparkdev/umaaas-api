@@ -54,7 +54,7 @@ The response will include a unique invitation code that can be shared with the i
 ```
 
 The `url` field is the URL where the invitee can claim the invitation. For example, for the response above, you might want to generate a share message
-for the user with text like: "Get an UMA address so that I can send you some money! <https://uma.me/i/019542f5>". The inviter can then share this URL with the invitee.
+for the user with text like: "Get an UMA address so that I can send you some money! `https://uma.me/i/019542f5`". The inviter can then share this URL with the invitee.
 
 When the invitee clicks the URL, they will be presented with a list of UMA providers available in their region. The invitee can select one of the providers and onboard to create their UMA address.
 

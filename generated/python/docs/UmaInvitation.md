@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **code** | **str** | The unique code of the invitation | 
 **created_at** | **datetime** | When the invitation was created | 
 **updated_at** | **datetime** | When the invitation was last updated | 
+**url** | **str** | The URL where this invitation can be claimed. | 
 **expires_at** | **datetime** | When the invitation expires (if at all) | [optional] 
 **inviter_uma** | **str** | The UMA address of the inviter | 
 **invitee_uma** | **str** | The UMA address of the invitee | [optional] 

@@ -98,11 +98,6 @@ setup.cfg
 setup.py
 test-requirements.txt
 test/__init__.py
-test/test_claim_invitation_request.py
-test/test_create_invitation_request.py
-test/test_invitation_claimed_webhook_request.py
-test/test_invitations_api.py
-test/test_uma_invitation.py
 tox.ini
 umaaas_api/__init__.py
 umaaas_api/api/__init__.py

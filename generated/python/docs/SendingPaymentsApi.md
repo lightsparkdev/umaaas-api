@@ -59,7 +59,7 @@ configuration = umaaas_api.Configuration(
 with umaaas_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = umaaas_api.SendingPaymentsApi(api_client)
-    create_quote_request = {"receiverUmaAddress":"$receiver@uma.domain","senderUmaAddress":"$sender@uma.domain","sendingCurrencyCode":"USD","receivingCurrencyCode":"EUR","lockedCurrencySide":"SENDING","lockedCurrencyAmount":1000,"description":"Payment for invoice #1234"} # CreateQuoteRequest | 
+    create_quote_request = {"lookupId":"LookupRequest:019542f5-b3e7-1d02-0000-000000000009","sendingCurrencyCode":"USD","receivingCurrencyCode":"EUR","lockedCurrencySide":"SENDING","lockedCurrencyAmount":1000,"description":"Payment for invoice #1234"} # CreateQuoteRequest | 
 
     try:
         # Create a payment quote
