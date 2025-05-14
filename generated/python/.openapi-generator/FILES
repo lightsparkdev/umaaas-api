@@ -20,7 +20,9 @@ docs/BusinessUpdateBusinessInfo.md
 docs/BusinessUser.md
 docs/BusinessUserAllOfBusinessInfo.md
 docs/ClabeAccountInfo.md
+docs/ClaimInvitationRequest.md
 docs/CounterpartyFieldDefinition.md
+docs/CreateInvitationRequest.md
 docs/CreateQuote422Response.md
 docs/CreateQuoteRequest.md
 docs/Currency.md
@@ -38,6 +40,8 @@ docs/IncomingPaymentWebhookRequest.md
 docs/IncomingTransaction.md
 docs/IndividualUpdate.md
 docs/IndividualUser.md
+docs/InvitationClaimedWebhookRequest.md
+docs/InvitationsApi.md
 docs/ListTokens200Response.md
 docs/ListTransactions200Response.md
 docs/ListUsers200Response.md
@@ -70,6 +74,7 @@ docs/Transaction.md
 docs/TransactionStatus.md
 docs/TransactionType.md
 docs/TransactionsApi.md
+docs/UmaInvitation.md
 docs/UpdatePlatformConfigRequest.md
 docs/UpdateUserByIdRequest.md
 docs/UploadUsersCsv202Response.md
@@ -93,10 +98,16 @@ setup.cfg
 setup.py
 test-requirements.txt
 test/__init__.py
+test/test_claim_invitation_request.py
+test/test_create_invitation_request.py
+test/test_invitation_claimed_webhook_request.py
+test/test_invitations_api.py
+test/test_uma_invitation.py
 tox.ini
 umaaas_api/__init__.py
 umaaas_api/api/__init__.py
 umaaas_api/api/api_tokens_api.py
+umaaas_api/api/invitations_api.py
 umaaas_api/api/platform_configuration_api.py
 umaaas_api/api/sandbox_api.py
 umaaas_api/api/sending_payments_api.py
@@ -119,7 +130,9 @@ umaaas_api/models/business_update_business_info.py
 umaaas_api/models/business_user.py
 umaaas_api/models/business_user_all_of_business_info.py
 umaaas_api/models/clabe_account_info.py
+umaaas_api/models/claim_invitation_request.py
 umaaas_api/models/counterparty_field_definition.py
+umaaas_api/models/create_invitation_request.py
 umaaas_api/models/create_quote422_response.py
 umaaas_api/models/create_quote_request.py
 umaaas_api/models/currency.py
@@ -137,6 +150,7 @@ umaaas_api/models/incoming_payment_webhook_request.py
 umaaas_api/models/incoming_transaction.py
 umaaas_api/models/individual_update.py
 umaaas_api/models/individual_user.py
+umaaas_api/models/invitation_claimed_webhook_request.py
 umaaas_api/models/list_tokens200_response.py
 umaaas_api/models/list_transactions200_response.py
 umaaas_api/models/list_users200_response.py
@@ -165,6 +179,7 @@ umaaas_api/models/token_create.py
 umaaas_api/models/transaction.py
 umaaas_api/models/transaction_status.py
 umaaas_api/models/transaction_type.py
+umaaas_api/models/uma_invitation.py
 umaaas_api/models/update_platform_config_request.py
 umaaas_api/models/update_user_by_id_request.py
 umaaas_api/models/upload_users_csv202_response.py

@@ -31,6 +31,7 @@ class WebhookType(str, Enum):
     OUTGOING_PAYMENT = 'OUTGOING_PAYMENT'
     TEST = 'TEST'
     BULK_UPLOAD = 'BULK_UPLOAD'
+    INVITATION_CLAIMED = 'INVITATION_CLAIMED'
 
     @classmethod
     def from_json(cls, json_str: str) -> Self:

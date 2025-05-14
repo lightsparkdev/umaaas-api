@@ -2340,6 +2340,285 @@ To perform this operation, you must be authenticated by means of one of the foll
 BasicAuth
 </aside>
 
+<h1 id="uma-as-a-service-umaaas-api-invitations">Invitations</h1>
+
+Endpoints for creating, claiming and managing UMA invitations
+
+## createInvitation
+
+<a id="opIdcreateInvitation"></a>
+
+> Code samples
+
+```javascript
+const inputBody = '{
+  "inviterUma": "$inviter@uma.domain",
+  "expiresAt": "2023-09-01T14:30:00Z"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+};
+
+fetch('https://api.lightspark.com/umaaas/v1/invitations',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('https://api.lightspark.com/umaaas/v1/invitations', headers = headers)
+
+print(r.json())
+
+```
+
+`POST /invitations`
+
+*Create an UMA invitation from a given platform user.*
+
+Create an UMA invitation from a given platform user.
+
+> Body parameter
+
+```json
+{
+  "inviterUma": "$inviter@uma.domain",
+  "expiresAt": "2023-09-01T14:30:00Z"
+}
+```
+
+<h3 id="createinvitation-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|body|body|object|true|none|
+|» inviterUma|body|string|true|The UMA address of the user creating the invitation|
+|» expiresAt|body|string(date-time)|false|When the invitation expires (if at all)|
+
+> Example responses
+
+> 201 Response
+
+```json
+{
+  "code": "019542f5",
+  "createdAt": "2023-09-01T14:30:00Z",
+  "updatedAt": "2023-09-01T14:30:00Z",
+  "expiresAt": "2023-09-01T14:30:00Z",
+  "inviterUma": "$inviter@uma.domain",
+  "inviteeUma": "$invitee@uma.domain",
+  "status": "PENDING"
+}
+```
+
+<h3 id="createinvitation-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Invitation created successfully|[UmaInvitation](#schemaumainvitation)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BasicAuth
+</aside>
+
+## getInvitation
+
+<a id="opIdgetInvitation"></a>
+
+> Code samples
+
+```javascript
+
+const headers = {
+  'Accept':'application/json'
+};
+
+fetch('https://api.lightspark.com/umaaas/v1/invitations/{invitationCode}',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json'
+}
+
+r = requests.get('https://api.lightspark.com/umaaas/v1/invitations/{invitationCode}', headers = headers)
+
+print(r.json())
+
+```
+
+`GET /invitations/{invitationCode}`
+
+*Get a specific UMA invitation by code.*
+
+Get a specific UMA invitation by code.
+
+<h3 id="getinvitation-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|invitationCode|path|string|true|The code of the invitation to get|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "code": "019542f5",
+  "createdAt": "2023-09-01T14:30:00Z",
+  "updatedAt": "2023-09-01T14:30:00Z",
+  "expiresAt": "2023-09-01T14:30:00Z",
+  "inviterUma": "$inviter@uma.domain",
+  "inviteeUma": "$invitee@uma.domain",
+  "status": "PENDING"
+}
+```
+
+<h3 id="getinvitation-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Invitation retrieved successfully|[UmaInvitation](#schemaumainvitation)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Invitation not found|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BasicAuth
+</aside>
+
+## claimInvitation
+
+<a id="opIdclaimInvitation"></a>
+
+> Code samples
+
+```javascript
+const inputBody = '{
+  "inviteeUma": "$invitee@uma.domain"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+};
+
+fetch('https://api.lightspark.com/umaaas/v1/invitations/{invitationCode}/claim',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('https://api.lightspark.com/umaaas/v1/invitations/{invitationCode}/claim', headers = headers)
+
+print(r.json())
+
+```
+
+`POST /invitations/{invitationCode}/claim`
+
+*Claim an UMA invitation*
+
+Claim an UMA invitation by associating it with an invitee UMA address.
+
+When an invitation is successfully claimed:
+1. The invitation status changes from PENDING to CLAIMED
+2. The invitee UMA address is associated with the invitation
+3. An INVITATION_CLAIMED webhook is triggered to notify the platform that created the invitation
+
+This endpoint allows users to accept invitations sent to them by other UMA users.
+
+> Body parameter
+
+```json
+{
+  "inviteeUma": "$invitee@uma.domain"
+}
+```
+
+<h3 id="claiminvitation-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|invitationCode|path|string|true|The code of the invitation to claim|
+|body|body|object|true|none|
+|» inviteeUma|body|string|true|The UMA address of the user claiming the invitation|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "code": "019542f5",
+  "createdAt": "2023-09-01T14:30:00Z",
+  "updatedAt": "2023-09-01T14:30:00Z",
+  "expiresAt": "2023-09-01T14:30:00Z",
+  "inviterUma": "$inviter@uma.domain",
+  "inviteeUma": "$invitee@uma.domain",
+  "status": "PENDING"
+}
+```
+
+<h3 id="claiminvitation-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Invitation claimed successfully|[UmaInvitation](#schemaumainvitation)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Invitation not found|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BasicAuth
+</aside>
+
 <h1 id="uma-as-a-service-umaaas-api-api-tokens">API Tokens</h1>
 
 ## createToken
@@ -3923,6 +4202,7 @@ Type of webhook event, used by the receiver to identify which webhook is being r
 |*anonymous*|OUTGOING_PAYMENT|
 |*anonymous*|TEST|
 |*anonymous*|BULK_UPLOAD|
+|*anonymous*|INVITATION_CLAIMED|
 
 <h2 id="tocS_TestWebhookResponse">TestWebhookResponse</h2>
 <!-- backwards compatibility -->
@@ -4291,6 +4571,46 @@ The side of the quote which should be locked and specified in the `lockedCurrenc
 |status|PROCESSING|
 |status|COMPLETED|
 |status|FAILED|
+|status|EXPIRED|
+
+<h2 id="tocS_UmaInvitation">UmaInvitation</h2>
+<!-- backwards compatibility -->
+<a id="schemaumainvitation"></a>
+<a id="schema_UmaInvitation"></a>
+<a id="tocSumainvitation"></a>
+<a id="tocsumainvitation"></a>
+
+```json
+{
+  "code": "019542f5",
+  "createdAt": "2023-09-01T14:30:00Z",
+  "updatedAt": "2023-09-01T14:30:00Z",
+  "expiresAt": "2023-09-01T14:30:00Z",
+  "inviterUma": "$inviter@uma.domain",
+  "inviteeUma": "$invitee@uma.domain",
+  "status": "PENDING"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|code|string|true|none|The unique code of the invitation|
+|createdAt|string(date-time)|true|none|When the invitation was created|
+|updatedAt|string(date-time)|true|none|When the invitation was last updated|
+|expiresAt|string(date-time)|false|none|When the invitation expires (if at all)|
+|inviterUma|string|true|none|The UMA address of the inviter|
+|inviteeUma|string|false|none|The UMA address of the invitee|
+|status|string|true|none|The status of the invitation|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|status|PENDING|
+|status|CLAIMED|
 |status|EXPIRED|
 
 <h2 id="tocS_Permission">Permission</h2>

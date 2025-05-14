@@ -13,7 +13,9 @@ Method | HTTP request | Description
 
 Simulate payment send to test receiving a payment
 
-Simulate sending payment from an sandbox uma address to a platform user to test payment receive. This endpoint is only for the sandbox environment and will fail for production platforms/keys. 
+Simulate sending payment from an sandbox uma address to a platform user to test payment receive.
+This endpoint is only for the sandbox environment and will fail for production platforms/keys.
+
 
 ### Example
 
@@ -94,7 +96,9 @@ void (empty response body)
 
 Simulate sending funds
 
-Simulate sending funds to the bank account as instructed in the quote.  This endpoint is only for the sandbox environment and will fail for production platforms/keys. 
+Simulate sending funds to the bank account as instructed in the quote. 
+This endpoint is only for the sandbox environment and will fail for production platforms/keys.
+
 
 ### Example
 
