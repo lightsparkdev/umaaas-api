@@ -24,6 +24,8 @@ tags:
     description: Endpoints for creating and managing payment quotes and executing payments
   - name: Webhooks
     description: Webhook endpoints and configuration for receiving notifications
+  - name: Invitations
+    description: Endpoints for creating, claiming and managing UMA invitations
 
 servers:
   - url: https://api.lightspark.com/umaaas/v1
@@ -547,7 +549,7 @@ components:
 
     WebhookType:
       type: string
-      enum: [INCOMING_PAYMENT, OUTGOING_PAYMENT, TEST, BULK_UPLOAD]
+      enum: [INCOMING_PAYMENT, OUTGOING_PAYMENT, TEST, BULK_UPLOAD, INVITATION_CLAIMED]
       description: Type of webhook event, used by the receiver to identify which webhook is being received
 
     TestWebhookResponse:
@@ -812,6 +814,53 @@ components:
           type: string
           description: The ID of the transaction created from this quote. Only present if the quote has started processing.
           example: "Transaction:019542f5-b3e7-1d02-0000-000000000005"
+    
+    UmaInvitation:
+      type: object
+      required:
+        - code
+        - createdAt
+        - inviterUma
+        - status
+        - url
+      properties:
+        code:
+          type: string
+          description: The unique code of the invitation
+          example: "019542f5"
+        createdAt:
+          type: string
+          format: date-time
+          description: When the invitation was created
+          example: "2023-09-01T14:30:00Z"
+        claimedAt:
+          type: string
+          format: date-time
+          description: When the invitation was claimed if it has been claimed
+          example: "2023-09-01T14:30:00Z"
+        url:
+          type: string
+          description: The URL where this invitation can be claimed.
+          example: "https://uma.me/i/019542f5"
+        expiresAt:
+          type: string
+          format: date-time
+          description: When the invitation expires (if at all)
+          example: "2023-09-01T14:30:00Z"
+        inviterUma:
+          type: string
+          description: The UMA address of the inviter
+          example: "$inviter@uma.domain"
+        inviteeUma:
+          type: string
+          description: The UMA address of the invitee
+          example: "$invitee@uma.domain"
+        status:
+          type: string
+          enum: [PENDING, CLAIMED, EXPIRED, CANCELLED]
+          description: The status of the invitation
+          example: "PENDING"
+          
 
     Permission:
       type: string
@@ -1905,8 +1954,7 @@ paths:
               lockSendAmount:
                 summary: Lock sending amount
                 value:
-                  receiverUmaAddress: "$receiver@uma.domain"
-                  senderUmaAddress: "$sender@uma.domain"
+                  lookupId: "LookupRequest:019542f5-b3e7-1d02-0000-000000000009"
                   sendingCurrencyCode: "USD"
                   receivingCurrencyCode: "EUR"
                   lockedCurrencySide: "SENDING"
@@ -1915,8 +1963,7 @@ paths:
               lockReceiveAmount:
                 summary: Lock receiving amount
                 value:
-                  receiverUmaAddress: "$receiver@uma.domain"
-                  platformUserId: "2d8e7f3a9c5b1"
+                  lookupId: "LookupRequest:019542f5-b3e7-1d02-0000-000000000009"
                   sendingCurrencyCode: "USD"
                   receivingCurrencyCode: "EUR"
                   lockedCurrencySide: "RECEIVING"
@@ -2317,6 +2364,211 @@ paths:
                 $ref: '#/components/schemas/Error'
         '404':
           description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /invitations:
+    post:
+      summary: Create an UMA invitation from a given platform user.
+      description: |
+        Create an UMA invitation from a given platform user.
+      operationId: createInvitation
+      tags:
+        - Invitations
+      security:
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - inviterUma
+              properties:
+                inviterUma:
+                  type: string
+                  description: The UMA address of the user creating the invitation
+                  example: "$inviter@uma.domain"
+                expiresAt:
+                  type: string
+                  format: date-time
+                  description: When the invitation expires (if at all)
+                  example: "2023-09-01T14:30:00Z"
+      responses:
+        '201':
+          description: Invitation created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UmaInvitation'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /invitations/{invitationCode}:
+    get:
+      summary: Get a specific UMA invitation by code.
+      description: |
+        Get a specific UMA invitation by code.
+      operationId: getInvitation
+      tags:
+        - Invitations
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: invitationCode
+          in: path
+          description: The code of the invitation to get
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Invitation retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UmaInvitation'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Invitation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+  /invitations/{invitationCode}/claim:
+    post:
+      summary: Claim an UMA invitation
+      description: |
+        Claim an UMA invitation by associating it with an invitee UMA address.
+        
+        When an invitation is successfully claimed:
+        1. The invitation status changes from PENDING to CLAIMED
+        2. The invitee UMA address is associated with the invitation
+        3. An INVITATION_CLAIMED webhook is triggered to notify the platform that created the invitation
+        
+        This endpoint allows users to accept invitations sent to them by other UMA users.
+      operationId: claimInvitation
+      tags:
+        - Invitations
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: invitationCode
+          in: path
+          description: The code of the invitation to claim
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - inviteeUma
+              properties:
+                inviteeUma:
+                  type: string
+                  description: The UMA address of the user claiming the invitation
+                  example: "$invitee@uma.domain"
+      responses:
+        '200':
+          description: Invitation claimed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UmaInvitation'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Invitation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          
+  /invitations/{invitationCode}/cancel:
+    post:
+      summary: Cancel an UMA invitation
+      description: |
+        Cancel a pending UMA invitation. Only the inviter or platform can cancel an invitation.
+        
+        When an invitation is cancelled:
+        1. The invitation status changes from PENDING to CANCELLED
+        2. The invitation can no longer be claimed
+        3. The invitation URL will show as cancelled when accessed
+        
+        Only pending invitations can be cancelled. Attempting to cancel an invitation
+        that is already claimed, expired, or cancelled will result in an error.
+      operationId: cancelInvitation
+      tags:
+        - Invitations
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: invitationCode
+          in: path
+          description: The code of the invitation to cancel
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Invitation cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UmaInvitation'
+        '400':
+          description: Bad request - Invitation cannot be cancelled (already claimed, expired, or cancelled)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden - Only the platform which created the invitation can cancel it
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Invitation not found
           content:
             application/json:
               schema:
@@ -2971,6 +3223,103 @@ webhooks:
                         details:
                           reason: "missing_required_column"
                           column: "umaAddress"
+      responses:
+        '200':
+          description: Webhook received successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized - Signature validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict - Webhook has already been processed (duplicate webhookId)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  invitation-claimed:
+    post:
+      summary: Invitation claimed webhook
+      description: |
+        Webhook that is called when an invitation is claimed by a user.
+        This endpoint should be implemented by platform clients of the UMAaaS API.
+        
+        When a user claims an invitation, this webhook is triggered to notify the platform that:
+        1. The invitation has been successfully claimed
+        2. The invitee UMA address is now associated with the invitation
+        3. The invitation status has changed from PENDING to CLAIMED
+        
+        This allows platforms to:
+        - Track invitation usage and conversion rates
+        - Trigger onboarding flows for new users who joined via invitation
+        - Apply referral bonuses or rewards to the inviter
+        - Update their UI to reflect the claimed status
+        
+        ### Authentication
+        The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas.
+        To verify the signature:
+        1. Get the webhook secret provided to you during integration
+        2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key
+        3. Encode the hash in hexadecimal format
+        4. Compare this value to the signature in the `X-UMAaas-Signature` header
+        
+        If the values match, the webhook is authentic. If not, it should be rejected.
+      operationId: invitationClaimedWebhook
+      tags:
+        - Webhooks
+      security:
+        - WebhookSignature: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - invitation
+                - timestamp
+                - webhookId
+                - type
+              properties:
+                invitation:
+                  $ref: '#/components/schemas/UmaInvitation'
+                timestamp:
+                  type: string
+                  format: date-time
+                  description: ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)
+                  example: "2023-08-15T14:32:00Z"
+                webhookId:
+                  type: string
+                  description: Unique identifier for this webhook delivery (can be used for idempotency)
+                  example: "Webhook:019542f5-b3e7-1d02-0000-000000000008"
+                type:
+                  type: string
+                  enum: [INVITATION_CLAIMED]
+                  description: Type of webhook event
+                  example: "INVITATION_CLAIMED"
+            examples:
+              claimedInvitation:
+                summary: Invitation claimed notification
+                value:
+                  invitation:
+                    code: "019542f5"
+                    createdAt: "2023-09-01T14:30:00Z"
+                    claimedAt: "2023-09-01T15:45:00Z"
+                    inviterUma: "$inviter@uma.domain"
+                    inviteeUma: "$invitee@uma.domain"
+                    status: "CLAIMED"
+                    url: "https://uma.me/i/019542f5"
+                  timestamp: "2023-09-01T15:45:00Z"
+                  webhookId: "Webhook:019542f5-b3e7-1d02-0000-000000000008"
+                  type: "INVITATION_CLAIMED"
       responses:
         '200':
           description: Webhook received successfully
