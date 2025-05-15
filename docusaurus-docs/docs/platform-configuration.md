@@ -183,4 +183,3 @@ Your webhook handler should:
 1. Verify the webhook signature (see [Webhook Verification Guide](/docs/webhooks))
 2. Identify the webhook as a test event
 3. Respond with a 200 OK status
-
