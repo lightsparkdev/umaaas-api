@@ -59,11 +59,11 @@ The sandbox provides several test UMA addresses you can use to simulate differen
 
 | UMA Address | Description |
 |------------|-------------|
-| $<success.usd@sandbox.uma.money> | Always succeeds, sends USD |
-| $<success.eur@sandbox.uma.money> | Always succeeds, sends EUR |
-| $<pending.long@sandbox.uma.money> | Simulates a long-pending payment |
-| $<fail.insufficient@sandbox.uma.money> | Simulates insufficient funds failure |
-| $<fail.compliance@sandbox.uma.money> | Simulates compliance check failure |
+| `$success.usd@sandbox.uma.money` | Always succeeds, sends USD |
+| `$success.eur@sandbox.uma.money` | Always succeeds, sends EUR |
+| `$pending.long@sandbox.uma.money` | Simulates a long-pending payment |
+| `$fail.insufficient@sandbox.uma.money` | Simulates insufficient funds failure |
+| `$fail.compliance@sandbox.uma.money` | Simulates compliance check failure |
 
 ## Testing Outgoing Payments
 
