@@ -20,7 +20,7 @@ import json
 
 from datetime import datetime
 from importlib import import_module
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional, Union
 from typing import Optional, Set
 from typing_extensions import Self
@@ -40,7 +40,8 @@ class User(BaseModel):
     user_type: StrictStr = Field(description="Whether the user is an individual or a business entity", alias="userType")
     created_at: Optional[datetime] = Field(default=None, description="Creation timestamp", alias="createdAt")
     updated_at: Optional[datetime] = Field(default=None, description="Last update timestamp", alias="updatedAt")
-    __properties: ClassVar[List[str]] = ["id", "umaAddress", "platformUserId", "userType", "createdAt", "updatedAt"]
+    is_deleted: StrictBool = Field(description="Whether the user is marked as deleted", alias="isDeleted")
+    __properties: ClassVar[List[str]] = ["id", "umaAddress", "platformUserId", "userType", "createdAt", "updatedAt", "isDeleted"]
 
     @field_validator('user_type')
     def user_type_validate_enum(cls, value):
@@ -96,6 +97,7 @@ class User(BaseModel):
         * `None` is only added to the output dict for nullable fields that
           were set at model initialization. Other fields with value `None`
           are ignored.
+        * OpenAPI `readOnly` fields are excluded.
         * OpenAPI `readOnly` fields are excluded.
         * OpenAPI `readOnly` fields are excluded.
         * OpenAPI `readOnly` fields are excluded.

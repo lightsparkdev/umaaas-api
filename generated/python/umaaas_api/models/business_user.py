@@ -34,7 +34,7 @@ class BusinessUser(User):
     address: Address
     bank_account_info: UserBankAccountInfo = Field(alias="bankAccountInfo")
     business_info: BusinessUserAllOfBusinessInfo = Field(alias="businessInfo")
-    __properties: ClassVar[List[str]] = ["id", "umaAddress", "platformUserId", "userType", "createdAt", "updatedAt", "address", "bankAccountInfo", "businessInfo"]
+    __properties: ClassVar[List[str]] = ["id", "umaAddress", "platformUserId", "userType", "createdAt", "updatedAt", "isDeleted", "address", "bankAccountInfo", "businessInfo"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -100,6 +100,7 @@ class BusinessUser(User):
             "userType": obj.get("userType"),
             "createdAt": obj.get("createdAt"),
             "updatedAt": obj.get("updatedAt"),
+            "isDeleted": obj.get("isDeleted"),
             "address": Address.from_dict(obj["address"]) if obj.get("address") is not None else None,
             "bankAccountInfo": UserBankAccountInfo.from_dict(obj["bankAccountInfo"]) if obj.get("bankAccountInfo") is not None else None,
             "businessInfo": BusinessUserAllOfBusinessInfo.from_dict(obj["businessInfo"]) if obj.get("businessInfo") is not None else None

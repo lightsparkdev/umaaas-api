@@ -400,6 +400,7 @@ Register a new user in the system with UMA address and bank account information
   "userType": "INDIVIDUAL",
   "createdAt": "2023-07-21T17:32:28Z",
   "updatedAt": "2023-07-21T17:32:28Z",
+  "isDeleted": false,
   "fullName": "John Michael Doe",
   "dateOfBirth": "1990-01-15",
   "nationality": "US",
@@ -504,6 +505,7 @@ the specified filters. If no filters are provided, returns all users (paginated)
 |updatedBefore|query|string(date-time)|false|Filter users updated before this timestamp (inclusive)|
 |limit|query|integer|false|Maximum number of results to return (default 20, max 100)|
 |cursor|query|string|false|Cursor for pagination (returned from previous request)|
+|isIncludingDeleted|query|boolean|false|Whether to include deleted users in the results. Default is false.|
 
 #### Enumerated Values
 
@@ -526,6 +528,7 @@ the specified filters. If no filters are provided, returns all users (paginated)
       "userType": "INDIVIDUAL",
       "createdAt": "2023-07-21T17:32:28Z",
       "updatedAt": "2023-07-21T17:32:28Z",
+      "isDeleted": false,
       "fullName": "John Michael Doe",
       "dateOfBirth": "1990-01-15",
       "nationality": "US",
@@ -582,6 +585,7 @@ Status Code **200**
 |»»»» userType|string|true|none|Whether the user is an individual or a business entity|
 |»»»» createdAt|string(date-time)|false|read-only|Creation timestamp|
 |»»»» updatedAt|string(date-time)|false|read-only|Last update timestamp|
+|»»»» isDeleted|boolean|true|read-only|Whether the user is marked as deleted|
 
 *and*
 
@@ -713,6 +717,7 @@ Retrieve a user by their system-generated ID
   "userType": "INDIVIDUAL",
   "createdAt": "2023-07-21T17:32:28Z",
   "updatedAt": "2023-07-21T17:32:28Z",
+  "isDeleted": false,
   "fullName": "John Michael Doe",
   "dateOfBirth": "1990-01-15",
   "nationality": "US",
@@ -867,6 +872,7 @@ Update a user's metadata by their system-generated ID
   "userType": "INDIVIDUAL",
   "createdAt": "2023-07-21T17:32:28Z",
   "updatedAt": "2023-07-21T17:32:28Z",
+  "isDeleted": false,
   "fullName": "John Michael Doe",
   "dateOfBirth": "1990-01-15",
   "nationality": "US",
@@ -975,6 +981,7 @@ Delete a user by their system-generated ID
   "userType": "INDIVIDUAL",
   "createdAt": "2023-07-21T17:32:28Z",
   "updatedAt": "2023-07-21T17:32:28Z",
+  "isDeleted": false,
   "fullName": "John Michael Doe",
   "dateOfBirth": "1990-01-15",
   "nationality": "US",
@@ -3960,7 +3967,8 @@ and
   "platformUserId": "9f84e0c2a72c4fa",
   "userType": "INDIVIDUAL",
   "createdAt": "2023-07-21T17:32:28Z",
-  "updatedAt": "2023-07-21T17:32:28Z"
+  "updatedAt": "2023-07-21T17:32:28Z",
+  "isDeleted": false
 }
 
 ```
@@ -3975,6 +3983,7 @@ and
 |userType|string|true|none|Whether the user is an individual or a business entity|
 |createdAt|string(date-time)|false|read-only|Creation timestamp|
 |updatedAt|string(date-time)|false|read-only|Last update timestamp|
+|isDeleted|boolean|true|read-only|Whether the user is marked as deleted|
 
 #### Enumerated Values
 
@@ -3998,6 +4007,7 @@ and
   "userType": "INDIVIDUAL",
   "createdAt": "2023-07-21T17:32:28Z",
   "updatedAt": "2023-07-21T17:32:28Z",
+  "isDeleted": false,
   "fullName": "John Michael Doe",
   "dateOfBirth": "1990-01-15",
   "nationality": "US",
@@ -4051,6 +4061,7 @@ and
   "userType": "INDIVIDUAL",
   "createdAt": "2023-07-21T17:32:28Z",
   "updatedAt": "2023-07-21T17:32:28Z",
+  "isDeleted": false,
   "address": {
     "line1": "123 Main Street",
     "line2": "Apt 4B",

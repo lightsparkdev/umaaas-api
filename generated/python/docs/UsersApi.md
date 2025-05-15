@@ -182,15 +182,7 @@ Name | Type | Description  | Notes
 
 Get bulk import job status
 
-Retrieve the current status and results of a bulk user import job. This endpoint can be used
-to track the progress of both CSV uploads.
-
-The response includes:
-- Overall job status
-- Progress statistics
-- Detailed error information for failed entries
-- Completion timestamp when finished
-
+Retrieve the current status and results of a bulk user import job. This endpoint can be used to track the progress of both CSV uploads.  The response includes: - Overall job status - Progress statistics - Detailed error information for failed entries - Completion timestamp when finished 
 
 ### Example
 
@@ -348,13 +340,11 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **list_users**
-> ListUsers200Response list_users(platform_user_id=platform_user_id, uma_address=uma_address, user_type=user_type, created_after=created_after, created_before=created_before, updated_after=updated_after, updated_before=updated_before, limit=limit, cursor=cursor)
+> ListUsers200Response list_users(platform_user_id=platform_user_id, uma_address=uma_address, user_type=user_type, created_after=created_after, created_before=created_before, updated_after=updated_after, updated_before=updated_before, limit=limit, cursor=cursor, is_including_deleted=is_including_deleted)
 
 List users
 
-Retrieve a list of users with optional filtering parameters. Returns all users that match
-the specified filters. If no filters are provided, returns all users (paginated).
-
+Retrieve a list of users with optional filtering parameters. Returns all users that match the specified filters. If no filters are provided, returns all users (paginated). 
 
 ### Example
 
@@ -396,10 +386,11 @@ with umaaas_api.ApiClient(configuration) as api_client:
     updated_before = '2013-10-20T19:20:30+01:00' # datetime | Filter users updated before this timestamp (inclusive) (optional)
     limit = 20 # int | Maximum number of results to return (default 20, max 100) (optional) (default to 20)
     cursor = 'cursor_example' # str | Cursor for pagination (returned from previous request) (optional)
+    is_including_deleted = True # bool | Whether to include deleted users in the results. Default is false. (optional)
 
     try:
         # List users
-        api_response = api_instance.list_users(platform_user_id=platform_user_id, uma_address=uma_address, user_type=user_type, created_after=created_after, created_before=created_before, updated_after=updated_after, updated_before=updated_before, limit=limit, cursor=cursor)
+        api_response = api_instance.list_users(platform_user_id=platform_user_id, uma_address=uma_address, user_type=user_type, created_after=created_after, created_before=created_before, updated_after=updated_after, updated_before=updated_before, limit=limit, cursor=cursor, is_including_deleted=is_including_deleted)
         print("The response of UsersApi->list_users:\n")
         pprint(api_response)
     except Exception as e:
@@ -422,6 +413,7 @@ Name | Type | Description  | Notes
  **updated_before** | **datetime**| Filter users updated before this timestamp (inclusive) | [optional] 
  **limit** | **int**| Maximum number of results to return (default 20, max 100) | [optional] [default to 20]
  **cursor** | **str**| Cursor for pagination (returned from previous request) | [optional] 
+ **is_including_deleted** | **bool**| Whether to include deleted users in the results. Default is false. | [optional] 
 
 ### Return type
 
@@ -536,81 +528,7 @@ Name | Type | Description  | Notes
 
 Upload users via CSV file
 
-Upload a CSV file containing user information for bulk creation. The CSV file should follow
-a specific format with required and optional columns based on user type.
-
-### CSV Format
-The CSV file should have the following columns:
-
-Required columns for all users:
-- umaAddress: The user's UMA address (e.g., $john.doe@uma.domain.com)
-- platformUserId: Your platform's unique identifier for the user
-- userType: Either "INDIVIDUAL" or "BUSINESS"
-
-Required columns for individual users:
-- fullName: Individual's full name
-- dateOfBirth: Date of birth in YYYY-MM-DD format
-- addressLine1: Street address line 1
-- city: City
-- state: State/Province/Region
-- postalCode: Postal/ZIP code
-- country: Country code (ISO 3166-1 alpha-2)
-- accountType: Bank account type (CLABE, US_ACCOUNT, PIX, IBAN)
-- accountNumber: Bank account number
-- bankName: Name of the bank
-
-Required columns for business users:
-- businessLegalName: Legal name of the business
-- addressLine1: Street address line 1
-- city: City
-- state: State/Province/Region
-- postalCode: Postal/ZIP code
-- country: Country code (ISO 3166-1 alpha-2)
-- accountType: Bank account type (CLABE, US_ACCOUNT, PIX, IBAN)
-- accountNumber: Bank account number
-- bankName: Name of the bank
-
-Optional columns for all users:
-- addressLine2: Street address line 2
-- platformAccountId: Your platform's identifier for the bank account
-- description: Optional description for the user
-
-Optional columns for individual users:
-- email: User's email address
-
-Optional columns for business users:
-- businessRegistrationNumber: Business registration number
-- businessTaxId: Tax identification number
-
-Additional required columns based on account type:
-
-For US_ACCOUNT:
-- routingNumber: ACH routing number (9 digits)
-- accountCategory: Either "CHECKING" or "SAVINGS"
-
-For CLABE:
-- clabeNumber: 18-digit CLABE number
-
-For PIX:
-- pixKey: PIX key value
-- pixKeyType: Type of PIX key (CPF, CNPJ, EMAIL, PHONE, RANDOM)
-
-For IBAN:
-- iban: International Bank Account Number
-- swiftBic: SWIFT/BIC code (8 or 11 characters)
-
-See the UserBankAccountInfo and UserInfo schemas for more details on the required and optional fields.
-
-### Example CSV
-```csv
-umaAddress,platformUserId,userType,fullName,dateOfBirth,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId
-$john.doe@uma.domain.com,user123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,Chase Bank,chase_primary_1234
-$acme@uma.domain.com,biz456,BUSINESS,Acme Corp,400 Commerce Way,Austin,TX,78701,US,US_ACCOUNT,987654321,Bank of America,boa_business_5678
-```
-
-The upload process is asynchronous and will return a job ID that can be used to track progress.
-You can monitor the job status using the `/users/bulk/jobs/{jobId}` endpoint.
-
+Upload a CSV file containing user information for bulk creation. The CSV file should follow a specific format with required and optional columns based on user type.  ### CSV Format The CSV file should have the following columns:  Required columns for all users: - umaAddress: The user's UMA address (e.g., $john.doe@uma.domain.com) - platformUserId: Your platform's unique identifier for the user - userType: Either \"INDIVIDUAL\" or \"BUSINESS\"  Required columns for individual users: - fullName: Individual's full name - dateOfBirth: Date of birth in YYYY-MM-DD format - addressLine1: Street address line 1 - city: City - state: State/Province/Region - postalCode: Postal/ZIP code - country: Country code (ISO 3166-1 alpha-2) - accountType: Bank account type (CLABE, US_ACCOUNT, PIX, IBAN) - accountNumber: Bank account number - bankName: Name of the bank  Required columns for business users: - businessLegalName: Legal name of the business - addressLine1: Street address line 1 - city: City - state: State/Province/Region - postalCode: Postal/ZIP code - country: Country code (ISO 3166-1 alpha-2) - accountType: Bank account type (CLABE, US_ACCOUNT, PIX, IBAN) - accountNumber: Bank account number - bankName: Name of the bank  Optional columns for all users: - addressLine2: Street address line 2 - platformAccountId: Your platform's identifier for the bank account - description: Optional description for the user  Optional columns for individual users: - email: User's email address  Optional columns for business users: - businessRegistrationNumber: Business registration number - businessTaxId: Tax identification number  Additional required columns based on account type:  For US_ACCOUNT: - routingNumber: ACH routing number (9 digits) - accountCategory: Either \"CHECKING\" or \"SAVINGS\"  For CLABE: - clabeNumber: 18-digit CLABE number  For PIX: - pixKey: PIX key value - pixKeyType: Type of PIX key (CPF, CNPJ, EMAIL, PHONE, RANDOM)  For IBAN: - iban: International Bank Account Number - swiftBic: SWIFT/BIC code (8 or 11 characters)  See the UserBankAccountInfo and UserInfo schemas for more details on the required and optional fields.  ### Example CSV ```csv umaAddress,platformUserId,userType,fullName,dateOfBirth,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId $john.doe@uma.domain.com,user123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,Chase Bank,chase_primary_1234 $acme@uma.domain.com,biz456,BUSINESS,Acme Corp,400 Commerce Way,Austin,TX,78701,US,US_ACCOUNT,987654321,Bank of America,boa_business_5678 ```  The upload process is asynchronous and will return a job ID that can be used to track progress. You can monitor the job status using the `/users/bulk/jobs/{jobId}` endpoint. 
 
 ### Example
 
