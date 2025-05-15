@@ -21,6 +21,7 @@ import json
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
+from umaaas_api.models.currency_amount import CurrencyAmount
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -36,7 +37,8 @@ class UmaInvitation(BaseModel):
     inviter_uma: StrictStr = Field(description="The UMA address of the inviter", alias="inviterUma")
     invitee_uma: Optional[StrictStr] = Field(default=None, description="The UMA address of the invitee", alias="inviteeUma")
     status: StrictStr = Field(description="The status of the invitation")
-    __properties: ClassVar[List[str]] = ["code", "createdAt", "claimedAt", "url", "expiresAt", "inviterUma", "inviteeUma", "status"]
+    amount_to_send: Optional[CurrencyAmount] = Field(default=None, description="The amount to send to the invitee when the invitation is claimed. This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter platform either does not send the payment or the payment fails, the invitee will not receive this amount. This field is primarily used for display purposes on the claiming side of the invitation. This field is useful for \"send-by-link\" style user flows where an inviter can send a payment simply by sharing a link without knowing the receiver's UMA address. Note that these sends can only be sender-locked, meaning that the sender will not know ahead of time how much the receiver will receive in the receiving currency.", alias="amountToSend")
+    __properties: ClassVar[List[str]] = ["code", "createdAt", "claimedAt", "url", "expiresAt", "inviterUma", "inviteeUma", "status", "amountToSend"]
 
     @field_validator('status')
     def status_validate_enum(cls, value):
@@ -82,6 +84,9 @@ class UmaInvitation(BaseModel):
             by_alias=True,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of amount_to_send
+        if self.amount_to_send:
+            _dict['amountToSend'] = self.amount_to_send.to_dict()
         return _dict
 
     @classmethod
@@ -101,7 +106,8 @@ class UmaInvitation(BaseModel):
             "expiresAt": obj.get("expiresAt"),
             "inviterUma": obj.get("inviterUma"),
             "inviteeUma": obj.get("inviteeUma"),
-            "status": obj.get("status")
+            "status": obj.get("status"),
+            "amountToSend": CurrencyAmount.from_dict(obj["amountToSend"]) if obj.get("amountToSend") is not None else None
         })
         return _obj
 

@@ -21,6 +21,7 @@ import json
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
+from umaaas_api.models.currency_amount import CurrencyAmount
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -29,8 +30,9 @@ class CreateInvitationRequest(BaseModel):
     CreateInvitationRequest
     """ # noqa: E501
     inviter_uma: StrictStr = Field(description="The UMA address of the user creating the invitation", alias="inviterUma")
+    amount_to_send: Optional[CurrencyAmount] = Field(default=None, description="An amount to send to the invitee when the invitation is claimed. This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter platform either does not send the payment or the payment fails, the invitee will not receive this amount. This field is primarily used for display purposes on the claiming side of the invitation. ", alias="amountToSend")
     expires_at: Optional[datetime] = Field(default=None, description="When the invitation expires (if at all)", alias="expiresAt")
-    __properties: ClassVar[List[str]] = ["inviterUma", "expiresAt"]
+    __properties: ClassVar[List[str]] = ["inviterUma", "amountToSend", "expiresAt"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -69,6 +71,9 @@ class CreateInvitationRequest(BaseModel):
             by_alias=True,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of amount_to_send
+        if self.amount_to_send:
+            _dict['amountToSend'] = self.amount_to_send.to_dict()
         return _dict
 
     @classmethod
@@ -82,6 +87,7 @@ class CreateInvitationRequest(BaseModel):
 
         _obj = cls.model_validate({
             "inviterUma": obj.get("inviterUma"),
+            "amountToSend": CurrencyAmount.from_dict(obj["amountToSend"]) if obj.get("amountToSend") is not None else None,
             "expiresAt": obj.get("expiresAt")
         })
         return _obj

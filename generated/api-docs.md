@@ -2364,6 +2364,15 @@ Endpoints for creating, claiming and managing UMA invitations
 ```javascript
 const inputBody = '{
   "inviterUma": "$inviter@uma.domain",
+  "amountToSend": {
+    "amount": 12550,
+    "currency": {
+      "code": "USD",
+      "name": "United States Dollar",
+      "symbol": "$",
+      "decimals": 2
+    }
+  },
   "expiresAt": "2023-09-01T14:30:00Z"
 }';
 const headers = {
@@ -2409,6 +2418,15 @@ Create an UMA invitation from a given platform user.
 ```json
 {
   "inviterUma": "$inviter@uma.domain",
+  "amountToSend": {
+    "amount": 12550,
+    "currency": {
+      "code": "USD",
+      "name": "United States Dollar",
+      "symbol": "$",
+      "decimals": 2
+    }
+  },
   "expiresAt": "2023-09-01T14:30:00Z"
 }
 ```
@@ -2419,6 +2437,13 @@ Create an UMA invitation from a given platform user.
 |---|---|---|---|---|
 |body|body|object|true|none|
 |» inviterUma|body|string|true|The UMA address of the user creating the invitation|
+|» amountToSend|body|[CurrencyAmount](#schemacurrencyamount)|false|none|
+|»» amount|body|integer(int64)|true|Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)|
+|»» currency|body|[Currency](#schemacurrency)|true|none|
+|»»» code|body|string|false|Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "SAT" for satoshis, "USDC" for USDCoin, etc.)|
+|»»» name|body|string|false|Full name of the currency|
+|»»» symbol|body|string|false|Symbol of the currency|
+|»»» decimals|body|integer|false|Number of decimal places for the currency|
 |» expiresAt|body|string(date-time)|false|When the invitation expires (if at all)|
 
 > Example responses
@@ -2434,7 +2459,16 @@ Create an UMA invitation from a given platform user.
   "expiresAt": "2023-09-01T14:30:00Z",
   "inviterUma": "$inviter@uma.domain",
   "inviteeUma": "$invitee@uma.domain",
-  "status": "PENDING"
+  "status": "PENDING",
+  "amountToSend": {
+    "amount": 12550,
+    "currency": {
+      "code": "USD",
+      "name": "United States Dollar",
+      "symbol": "$",
+      "decimals": 2
+    }
+  }
 }
 ```
 
@@ -2514,7 +2548,16 @@ Get a specific UMA invitation by code.
   "expiresAt": "2023-09-01T14:30:00Z",
   "inviterUma": "$inviter@uma.domain",
   "inviteeUma": "$invitee@uma.domain",
-  "status": "PENDING"
+  "status": "PENDING",
+  "amountToSend": {
+    "amount": 12550,
+    "currency": {
+      "code": "USD",
+      "name": "United States Dollar",
+      "symbol": "$",
+      "decimals": 2
+    }
+  }
 }
 ```
 
@@ -2615,7 +2658,16 @@ This endpoint allows users to accept invitations sent to them by other UMA users
   "expiresAt": "2023-09-01T14:30:00Z",
   "inviterUma": "$inviter@uma.domain",
   "inviteeUma": "$invitee@uma.domain",
-  "status": "PENDING"
+  "status": "PENDING",
+  "amountToSend": {
+    "amount": 12550,
+    "currency": {
+      "code": "USD",
+      "name": "United States Dollar",
+      "symbol": "$",
+      "decimals": 2
+    }
+  }
 }
 ```
 
@@ -2704,7 +2756,16 @@ that is already claimed, expired, or cancelled will result in an error.
   "expiresAt": "2023-09-01T14:30:00Z",
   "inviterUma": "$inviter@uma.domain",
   "inviteeUma": "$invitee@uma.domain",
-  "status": "PENDING"
+  "status": "PENDING",
+  "amountToSend": {
+    "amount": 12550,
+    "currency": {
+      "code": "USD",
+      "name": "United States Dollar",
+      "symbol": "$",
+      "decimals": 2
+    }
+  }
 }
 ```
 
@@ -4700,7 +4761,16 @@ The side of the quote which should be locked and specified in the `lockedCurrenc
   "expiresAt": "2023-09-01T14:30:00Z",
   "inviterUma": "$inviter@uma.domain",
   "inviteeUma": "$invitee@uma.domain",
-  "status": "PENDING"
+  "status": "PENDING",
+  "amountToSend": {
+    "amount": 12550,
+    "currency": {
+      "code": "USD",
+      "name": "United States Dollar",
+      "symbol": "$",
+      "decimals": 2
+    }
+  }
 }
 
 ```
@@ -4717,6 +4787,7 @@ The side of the quote which should be locked and specified in the `lockedCurrenc
 |inviterUma|string|true|none|The UMA address of the inviter|
 |inviteeUma|string|false|none|The UMA address of the invitee|
 |status|string|true|none|The status of the invitation|
+|amountToSend|[CurrencyAmount](#schemacurrencyamount)|false|none|The amount to send to the invitee when the invitation is claimed. This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter platform either does not send the payment or the payment fails, the invitee will not receive this amount. This field is primarily used for display purposes on the claiming side of the invitation.<br>This field is useful for "send-by-link" style user flows where an inviter can send a payment simply by sharing a link without knowing the receiver's UMA address. Note that these sends can only be sender-locked, meaning that the sender will not know ahead of time how much the receiver will receive in the receiving currency.|
 
 #### Enumerated Values
 
