@@ -61,9 +61,9 @@ The sandbox provides several test UMA addresses you can use to simulate differen
 |------------|-------------|
 | `$success.usd@sandbox.uma.money` | Always succeeds, sends USD |
 | `$success.eur@sandbox.uma.money` | Always succeeds, sends EUR |
-| `$pending.long@sandbox.uma.money` | Simulates a long-pending payment |
-| `$fail.insufficient@sandbox.uma.money` | Simulates insufficient funds failure |
-| `$fail.compliance@sandbox.uma.money` | Simulates compliance check failure |
+| `$success.mxn@sandbox.uma.money` | Always succeeds, sends MXN |
+| `$pending.long.usd@sandbox.uma.money` | Simulates a long-pending payment |
+| `$fail.compliance.usd@sandbox.uma.money` | Simulates compliance check failure |
 
 ## Testing Outgoing Payments
 
@@ -193,25 +193,25 @@ POST /sandbox/send
 
 You can test various error scenarios using the special sandbox UMA addresses:
 
-1. Test insufficient funds:
+1. Test compliance failures:
 
 ```http
-GET /receiver/$fail.insufficient@sandbox.uma.money
+GET /receiver/$fail.compliance.usd@sandbox.uma.money
 # ... create quote and attempt payment
 ```
 
-2. Test compliance failures:
+2. Test long-pending payments:
 
 ```http
-GET /receiver/$fail.compliance@sandbox.uma.money
+GET /receiver/$pending.long.usd@sandbox.uma.money
 # ... create quote and attempt payment
 ```
 
-3. Test long-pending payments:
+3. Non-existent UMA address:
 
 ```http
-GET /receiver/$pending.long@sandbox.uma.money
-# ... create quote and attempt payment
+GET /receiver/$non.existent.usd@sandbox.uma.money
+# ... should return 404 Not Found
 ```
 
 Each of these will trigger appropriate error webhooks and status updates to help you test your error handling.
