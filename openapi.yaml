@@ -820,7 +820,6 @@ components:
       required:
         - code
         - createdAt
-        - updatedAt
         - inviterUma
         - status
         - url
@@ -834,10 +833,10 @@ components:
           format: date-time
           description: When the invitation was created
           example: "2023-09-01T14:30:00Z"
-        updatedAt:
+        claimedAt:
           type: string
           format: date-time
-          description: When the invitation was last updated
+          description: When the invitation was claimed if it has been claimed
           example: "2023-09-01T14:30:00Z"
         url:
           type: string
@@ -2563,7 +2562,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '403':
-          description: Forbidden - Only the inviter or platform can cancel an invitation
+          description: Forbidden - Only the platform which created the invitation can cancel it
           content:
             application/json:
               schema:
@@ -3313,7 +3312,7 @@ webhooks:
                   invitation:
                     code: "019542f5"
                     createdAt: "2023-09-01T14:30:00Z"
-                    updatedAt: "2023-09-01T15:45:00Z"
+                    claimedAt: "2023-09-01T15:45:00Z"
                     inviterUma: "$inviter@uma.domain"
                     inviteeUma: "$invitee@uma.domain"
                     status: "CLAIMED"

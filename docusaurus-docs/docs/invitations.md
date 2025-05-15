@@ -46,7 +46,6 @@ The response will include a unique invitation code that can be shared with the i
 {
   "code": "019542f5",
   "createdAt": "2023-09-01T14:30:00Z",
-  "updatedAt": "2023-09-01T14:30:00Z",
   "inviterUma": "$inviter@uma.domain",
   "url": "https://uma.me/i/019542f5",
   "status": "PENDING"
@@ -131,7 +130,7 @@ Example webhook payload:
   "invitation": {
     "code": "019542f5",
     "createdAt": "2023-09-01T14:30:00Z",
-    "updatedAt": "2023-09-01T15:45:00Z",
+    "claimedAt": "2023-09-01T15:45:00Z",
     "inviterUma": "$inviter@uma.domain",
     "inviteeUma": "$invitee@uma.domain",
     "url": "https://uma.me/i/019542f5",

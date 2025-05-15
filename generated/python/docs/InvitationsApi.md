@@ -97,7 +97,7 @@ Name | Type | Description  | Notes
 **200** | Invitation cancelled successfully |  -  |
 **400** | Bad request - Invitation cannot be cancelled (already claimed, expired, or cancelled) |  -  |
 **401** | Unauthorized |  -  |
-**403** | Forbidden - Only the inviter or platform can cancel an invitation |  -  |
+**403** | Forbidden - Only the platform which created the invitation can cancel it |  -  |
 **404** | Invitation not found |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

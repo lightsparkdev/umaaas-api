@@ -2416,7 +2416,7 @@ Create an UMA invitation from a given platform user.
 {
   "code": "019542f5",
   "createdAt": "2023-09-01T14:30:00Z",
-  "updatedAt": "2023-09-01T14:30:00Z",
+  "claimedAt": "2023-09-01T14:30:00Z",
   "url": "https://uma.me/i/019542f5",
   "expiresAt": "2023-09-01T14:30:00Z",
   "inviterUma": "$inviter@uma.domain",
@@ -2496,7 +2496,7 @@ Get a specific UMA invitation by code.
 {
   "code": "019542f5",
   "createdAt": "2023-09-01T14:30:00Z",
-  "updatedAt": "2023-09-01T14:30:00Z",
+  "claimedAt": "2023-09-01T14:30:00Z",
   "url": "https://uma.me/i/019542f5",
   "expiresAt": "2023-09-01T14:30:00Z",
   "inviterUma": "$inviter@uma.domain",
@@ -2597,7 +2597,7 @@ This endpoint allows users to accept invitations sent to them by other UMA users
 {
   "code": "019542f5",
   "createdAt": "2023-09-01T14:30:00Z",
-  "updatedAt": "2023-09-01T14:30:00Z",
+  "claimedAt": "2023-09-01T14:30:00Z",
   "url": "https://uma.me/i/019542f5",
   "expiresAt": "2023-09-01T14:30:00Z",
   "inviterUma": "$inviter@uma.domain",
@@ -2686,7 +2686,7 @@ that is already claimed, expired, or cancelled will result in an error.
 {
   "code": "019542f5",
   "createdAt": "2023-09-01T14:30:00Z",
-  "updatedAt": "2023-09-01T14:30:00Z",
+  "claimedAt": "2023-09-01T14:30:00Z",
   "url": "https://uma.me/i/019542f5",
   "expiresAt": "2023-09-01T14:30:00Z",
   "inviterUma": "$inviter@uma.domain",
@@ -2702,7 +2702,7 @@ that is already claimed, expired, or cancelled will result in an error.
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Invitation cancelled successfully|[UmaInvitation](#schemaumainvitation)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request - Invitation cannot be cancelled (already claimed, expired, or cancelled)|[Error](#schemaerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
-|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|Forbidden - Only the inviter or platform can cancel an invitation|[Error](#schemaerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|Forbidden - Only the platform which created the invitation can cancel it|[Error](#schemaerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Invitation not found|[Error](#schemaerror)|
 
 <aside class="warning">
@@ -4675,7 +4675,7 @@ The side of the quote which should be locked and specified in the `lockedCurrenc
 {
   "code": "019542f5",
   "createdAt": "2023-09-01T14:30:00Z",
-  "updatedAt": "2023-09-01T14:30:00Z",
+  "claimedAt": "2023-09-01T14:30:00Z",
   "url": "https://uma.me/i/019542f5",
   "expiresAt": "2023-09-01T14:30:00Z",
   "inviterUma": "$inviter@uma.domain",
@@ -4691,7 +4691,7 @@ The side of the quote which should be locked and specified in the `lockedCurrenc
 |---|---|---|---|---|
 |code|string|true|none|The unique code of the invitation|
 |createdAt|string(date-time)|true|none|When the invitation was created|
-|updatedAt|string(date-time)|true|none|When the invitation was last updated|
+|claimedAt|string(date-time)|false|none|When the invitation was claimed if it has been claimed|
 |url|string|true|none|The URL where this invitation can be claimed.|
 |expiresAt|string(date-time)|false|none|When the invitation expires (if at all)|
 |inviterUma|string|true|none|The UMA address of the inviter|

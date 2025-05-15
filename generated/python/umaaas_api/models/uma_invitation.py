@@ -30,13 +30,13 @@ class UmaInvitation(BaseModel):
     """ # noqa: E501
     code: StrictStr = Field(description="The unique code of the invitation")
     created_at: datetime = Field(description="When the invitation was created", alias="createdAt")
-    updated_at: datetime = Field(description="When the invitation was last updated", alias="updatedAt")
+    claimed_at: Optional[datetime] = Field(default=None, description="When the invitation was claimed if it has been claimed", alias="claimedAt")
     url: StrictStr = Field(description="The URL where this invitation can be claimed.")
     expires_at: Optional[datetime] = Field(default=None, description="When the invitation expires (if at all)", alias="expiresAt")
     inviter_uma: StrictStr = Field(description="The UMA address of the inviter", alias="inviterUma")
     invitee_uma: Optional[StrictStr] = Field(default=None, description="The UMA address of the invitee", alias="inviteeUma")
     status: StrictStr = Field(description="The status of the invitation")
-    __properties: ClassVar[List[str]] = ["code", "createdAt", "updatedAt", "url", "expiresAt", "inviterUma", "inviteeUma", "status"]
+    __properties: ClassVar[List[str]] = ["code", "createdAt", "claimedAt", "url", "expiresAt", "inviterUma", "inviteeUma", "status"]
 
     @field_validator('status')
     def status_validate_enum(cls, value):
@@ -96,7 +96,7 @@ class UmaInvitation(BaseModel):
         _obj = cls.model_validate({
             "code": obj.get("code"),
             "createdAt": obj.get("createdAt"),
-            "updatedAt": obj.get("updatedAt"),
+            "claimedAt": obj.get("claimedAt"),
             "url": obj.get("url"),
             "expiresAt": obj.get("expiresAt"),
             "inviterUma": obj.get("inviterUma"),
