@@ -15,7 +15,16 @@ Method | HTTP request | Description
 
 Cancel an UMA invitation
 
-Cancel a pending UMA invitation. Only the inviter or platform can cancel an invitation.  When an invitation is cancelled: 1. The invitation status changes from PENDING to CANCELLED 2. The invitation can no longer be claimed 3. The invitation URL will show as cancelled when accessed  Only pending invitations can be cancelled. Attempting to cancel an invitation that is already claimed, expired, or cancelled will result in an error. 
+Cancel a pending UMA invitation. Only the inviter or platform can cancel an invitation.
+
+When an invitation is cancelled:
+1. The invitation status changes from PENDING to CANCELLED
+2. The invitation can no longer be claimed
+3. The invitation URL will show as cancelled when accessed
+
+Only pending invitations can be cancelled. Attempting to cancel an invitation
+that is already claimed, expired, or cancelled will result in an error.
+
 
 ### Example
 
@@ -98,7 +107,15 @@ Name | Type | Description  | Notes
 
 Claim an UMA invitation
 
-Claim an UMA invitation by associating it with an invitee UMA address.  When an invitation is successfully claimed: 1. The invitation status changes from PENDING to CLAIMED 2. The invitee UMA address is associated with the invitation 3. An INVITATION_CLAIMED webhook is triggered to notify the platform that created the invitation  This endpoint allows users to accept invitations sent to them by other UMA users. 
+Claim an UMA invitation by associating it with an invitee UMA address.
+
+When an invitation is successfully claimed:
+1. The invitation status changes from PENDING to CLAIMED
+2. The invitee UMA address is associated with the invitation
+3. An INVITATION_CLAIMED webhook is triggered to notify the platform that created the invitation
+
+This endpoint allows users to accept invitations sent to them by other UMA users.
+
 
 ### Example
 
@@ -183,7 +200,8 @@ Name | Type | Description  | Notes
 
 Create an UMA invitation from a given platform user.
 
-Create an UMA invitation from a given platform user. 
+Create an UMA invitation from a given platform user.
+
 
 ### Example
 
@@ -265,7 +283,8 @@ Name | Type | Description  | Notes
 
 Get a specific UMA invitation by code.
 
-Get a specific UMA invitation by code. 
+Get a specific UMA invitation by code.
+
 
 ### Example
 
