@@ -2366,12 +2366,7 @@ const inputBody = '{
   "inviterUma": "$inviter@uma.domain",
   "amountToSend": {
     "amount": 12550,
-    "currency": {
-      "code": "USD",
-      "name": "United States Dollar",
-      "symbol": "$",
-      "decimals": 2
-    }
+    "currencyCode": "USD"
   },
   "expiresAt": "2023-09-01T14:30:00Z"
 }';
@@ -2420,12 +2415,7 @@ Create an UMA invitation from a given platform user.
   "inviterUma": "$inviter@uma.domain",
   "amountToSend": {
     "amount": 12550,
-    "currency": {
-      "code": "USD",
-      "name": "United States Dollar",
-      "symbol": "$",
-      "decimals": 2
-    }
+    "currencyCode": "USD"
   },
   "expiresAt": "2023-09-01T14:30:00Z"
 }
@@ -2437,14 +2427,18 @@ Create an UMA invitation from a given platform user.
 |---|---|---|---|---|
 |body|body|object|true|none|
 |» inviterUma|body|string|true|The UMA address of the user creating the invitation|
-|» amountToSend|body|[CurrencyAmount](#schemacurrencyamount)|false|none|
-|»» amount|body|integer(int64)|true|Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)|
-|»» currency|body|[Currency](#schemacurrency)|true|none|
-|»»» code|body|string|false|Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "SAT" for satoshis, "USDC" for USDCoin, etc.)|
-|»»» name|body|string|false|Full name of the currency|
-|»»» symbol|body|string|false|Symbol of the currency|
-|»»» decimals|body|integer|false|Number of decimal places for the currency|
+|» amountToSend|body|object|false|An amount to send to the invitee when the invitation is claimed. This is optional and if not provided,|
+|»» amount|body|integer(int64)|false|Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)|
+|»» currencyCode|body|string|false|Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "SAT" for satoshis, "USDC" for USDCoin, etc.)|
 |» expiresAt|body|string(date-time)|false|When the invitation expires (if at all)|
+
+#### Detailed descriptions
+
+**» amountToSend**: An amount to send to the invitee when the invitation is claimed. This is optional and if not provided,
+the invitee will not receive any amount. Note that the actual sending of the amount must be done by the
+inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter platform either does not
+send the payment or the payment fails, the invitee will not receive this amount. This field is primarily used
+for display purposes on the claiming side of the invitation.
 
 > Example responses
 

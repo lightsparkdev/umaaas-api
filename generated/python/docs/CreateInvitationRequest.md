@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **inviter_uma** | **str** | The UMA address of the user creating the invitation | 
-**amount_to_send** | [**CurrencyAmount**](CurrencyAmount.md) | An amount to send to the invitee when the invitation is claimed. This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter platform either does not send the payment or the payment fails, the invitee will not receive this amount. This field is primarily used for display purposes on the claiming side of the invitation.  | [optional] 
+**amount_to_send** | [**CreateInvitationRequestAmountToSend**](CreateInvitationRequestAmountToSend.md) |  | [optional] 
 **expires_at** | **datetime** | When the invitation expires (if at all) | [optional] 
 
 ## Example

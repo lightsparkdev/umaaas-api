@@ -18,21 +18,18 @@ import pprint
 import re  # noqa: F401
 import json
 
-from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
-from umaaas_api.models.create_invitation_request_amount_to_send import CreateInvitationRequestAmountToSend
 from typing import Optional, Set
 from typing_extensions import Self
 
-class CreateInvitationRequest(BaseModel):
+class CreateInvitationRequestAmountToSend(BaseModel):
     """
-    CreateInvitationRequest
+    An amount to send to the invitee when the invitation is claimed. This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter platform either does not send the payment or the payment fails, the invitee will not receive this amount. This field is primarily used for display purposes on the claiming side of the invitation. 
     """ # noqa: E501
-    inviter_uma: StrictStr = Field(description="The UMA address of the user creating the invitation", alias="inviterUma")
-    amount_to_send: Optional[CreateInvitationRequestAmountToSend] = Field(default=None, alias="amountToSend")
-    expires_at: Optional[datetime] = Field(default=None, description="When the invitation expires (if at all)", alias="expiresAt")
-    __properties: ClassVar[List[str]] = ["inviterUma", "amountToSend", "expiresAt"]
+    amount: Optional[StrictInt] = Field(default=None, description="Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)")
+    currency_code: Optional[StrictStr] = Field(default=None, description="Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. \"SAT\" for satoshis, \"USDC\" for USDCoin, etc.)", alias="currencyCode")
+    __properties: ClassVar[List[str]] = ["amount", "currencyCode"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -52,7 +49,7 @@ class CreateInvitationRequest(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of CreateInvitationRequest from a JSON string"""
+        """Create an instance of CreateInvitationRequestAmountToSend from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -71,14 +68,11 @@ class CreateInvitationRequest(BaseModel):
             by_alias=True,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of amount_to_send
-        if self.amount_to_send:
-            _dict['amountToSend'] = self.amount_to_send.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of CreateInvitationRequest from a dict"""
+        """Create an instance of CreateInvitationRequestAmountToSend from a dict"""
         if obj is None:
             return None
 
@@ -86,9 +80,8 @@ class CreateInvitationRequest(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "inviterUma": obj.get("inviterUma"),
-            "amountToSend": CreateInvitationRequestAmountToSend.from_dict(obj["amountToSend"]) if obj.get("amountToSend") is not None else None,
-            "expiresAt": obj.get("expiresAt")
+            "amount": obj.get("amount"),
+            "currencyCode": obj.get("currencyCode")
         })
         return _obj
 

@@ -69,12 +69,7 @@ POST /invitations
   "inviterUma": "$inviter@uma.domain",
   "amountToSend": {
     "amount": 5000,
-    "currency": {
-      "code": "USD",
-      "name": "United States Dollar",
-      "symbol": "$",
-      "decimals": 2
-    }
+    "currencyCode": "USD"
   },
   "expiresAt": "2024-12-31T23:59:59Z"  // It's best to set an expiration time for invitations with a payment amount.
 }
