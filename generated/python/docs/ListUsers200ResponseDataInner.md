@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 **user_type** | **str** | Whether the user is an individual or a business entity | 
 **created_at** | **datetime** | Creation timestamp | [optional] [readonly] 
 **updated_at** | **datetime** | Last update timestamp | [optional] [readonly] 
-**is_deleted** | **bool** | Whether the user is marked as deleted | [readonly] 
+**is_deleted** | **bool** | Whether the user is marked as deleted | [optional] [readonly] 
 **address** | [**Address**](Address.md) |  | 
 **bank_account_info** | [**UserBankAccountInfo**](UserBankAccountInfo.md) |  | 
 **business_info** | [**BusinessUserAllOfBusinessInfo**](BusinessUserAllOfBusinessInfo.md) |  | 

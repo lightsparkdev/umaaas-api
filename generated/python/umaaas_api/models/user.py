@@ -40,7 +40,7 @@ class User(BaseModel):
     user_type: StrictStr = Field(description="Whether the user is an individual or a business entity", alias="userType")
     created_at: Optional[datetime] = Field(default=None, description="Creation timestamp", alias="createdAt")
     updated_at: Optional[datetime] = Field(default=None, description="Last update timestamp", alias="updatedAt")
-    is_deleted: StrictBool = Field(description="Whether the user is marked as deleted", alias="isDeleted")
+    is_deleted: Optional[StrictBool] = Field(default=None, description="Whether the user is marked as deleted", alias="isDeleted")
     __properties: ClassVar[List[str]] = ["id", "umaAddress", "platformUserId", "userType", "createdAt", "updatedAt", "isDeleted"]
 
     @field_validator('user_type')

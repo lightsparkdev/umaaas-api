@@ -588,7 +588,7 @@ Status Code **200**
 |»»»» userType|string|true|none|Whether the user is an individual or a business entity|
 |»»»» createdAt|string(date-time)|false|read-only|Creation timestamp|
 |»»»» updatedAt|string(date-time)|false|read-only|Last update timestamp|
-|»»»» isDeleted|boolean|true|read-only|Whether the user is marked as deleted|
+|»»»» isDeleted|boolean|false|read-only|Whether the user is marked as deleted|
 
 *and*
 
@@ -3989,7 +3989,7 @@ and
 |userType|string|true|none|Whether the user is an individual or a business entity|
 |createdAt|string(date-time)|false|read-only|Creation timestamp|
 |updatedAt|string(date-time)|false|read-only|Last update timestamp|
-|isDeleted|boolean|true|read-only|Whether the user is marked as deleted|
+|isDeleted|boolean|false|read-only|Whether the user is marked as deleted|
 
 #### Enumerated Values
 

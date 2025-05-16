@@ -355,7 +355,6 @@ components:
         - umaAddress
         - platformUserId
         - userType
-        - isDeleted
       properties:
         id:
           type: string
