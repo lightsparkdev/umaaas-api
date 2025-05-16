@@ -18,7 +18,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
 from datetime import datetime
-from pydantic import Field, StrictBytes, StrictStr, field_validator
+from pydantic import Field, StrictBool, StrictBytes, StrictStr, field_validator
 from typing import Optional, Tuple, Union
 from typing_extensions import Annotated
 from umaaas_api.models.get_bulk_user_import_job200_response import GetBulkUserImportJob200Response
@@ -1144,6 +1144,7 @@ class UsersApi:
         updated_before: Annotated[Optional[datetime], Field(description="Filter users updated before this timestamp (inclusive)")] = None,
         limit: Annotated[Optional[Annotated[int, Field(le=100, strict=True, ge=1)]], Field(description="Maximum number of results to return (default 20, max 100)")] = None,
         cursor: Annotated[Optional[StrictStr], Field(description="Cursor for pagination (returned from previous request)")] = None,
+        is_including_deleted: Annotated[Optional[StrictBool], Field(description="Whether to include deleted users in the results. Default is false.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1179,6 +1180,8 @@ class UsersApi:
         :type limit: int
         :param cursor: Cursor for pagination (returned from previous request)
         :type cursor: str
+        :param is_including_deleted: Whether to include deleted users in the results. Default is false.
+        :type is_including_deleted: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1211,6 +1214,7 @@ class UsersApi:
             updated_before=updated_before,
             limit=limit,
             cursor=cursor,
+            is_including_deleted=is_including_deleted,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1245,6 +1249,7 @@ class UsersApi:
         updated_before: Annotated[Optional[datetime], Field(description="Filter users updated before this timestamp (inclusive)")] = None,
         limit: Annotated[Optional[Annotated[int, Field(le=100, strict=True, ge=1)]], Field(description="Maximum number of results to return (default 20, max 100)")] = None,
         cursor: Annotated[Optional[StrictStr], Field(description="Cursor for pagination (returned from previous request)")] = None,
+        is_including_deleted: Annotated[Optional[StrictBool], Field(description="Whether to include deleted users in the results. Default is false.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1280,6 +1285,8 @@ class UsersApi:
         :type limit: int
         :param cursor: Cursor for pagination (returned from previous request)
         :type cursor: str
+        :param is_including_deleted: Whether to include deleted users in the results. Default is false.
+        :type is_including_deleted: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1312,6 +1319,7 @@ class UsersApi:
             updated_before=updated_before,
             limit=limit,
             cursor=cursor,
+            is_including_deleted=is_including_deleted,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1346,6 +1354,7 @@ class UsersApi:
         updated_before: Annotated[Optional[datetime], Field(description="Filter users updated before this timestamp (inclusive)")] = None,
         limit: Annotated[Optional[Annotated[int, Field(le=100, strict=True, ge=1)]], Field(description="Maximum number of results to return (default 20, max 100)")] = None,
         cursor: Annotated[Optional[StrictStr], Field(description="Cursor for pagination (returned from previous request)")] = None,
+        is_including_deleted: Annotated[Optional[StrictBool], Field(description="Whether to include deleted users in the results. Default is false.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1381,6 +1390,8 @@ class UsersApi:
         :type limit: int
         :param cursor: Cursor for pagination (returned from previous request)
         :type cursor: str
+        :param is_including_deleted: Whether to include deleted users in the results. Default is false.
+        :type is_including_deleted: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1413,6 +1424,7 @@ class UsersApi:
             updated_before=updated_before,
             limit=limit,
             cursor=cursor,
+            is_including_deleted=is_including_deleted,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1442,6 +1454,7 @@ class UsersApi:
         updated_before,
         limit,
         cursor,
+        is_including_deleted,
         _request_auth,
         _content_type,
         _headers,
@@ -1535,6 +1548,10 @@ class UsersApi:
         if cursor is not None:
             
             _query_params.append(('cursor', cursor))
+            
+        if is_including_deleted is not None:
+            
+            _query_params.append(('isIncludingDeleted', is_including_deleted))
             
         # process the header parameters
         # process the form parameters

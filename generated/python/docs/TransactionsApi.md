@@ -94,10 +94,7 @@ Name | Type | Description  | Notes
 
 List transactions
 
-Retrieve a paginated list of transactions with optional filtering.
-The transactions can be filtered by user ID, platform user ID, UMA address, 
-date range, status, and transaction type.
-
+Retrieve a paginated list of transactions with optional filtering. The transactions can be filtered by user ID, platform user ID, UMA address,  date range, status, and transaction type. 
 
 ### Example
 

@@ -355,6 +355,7 @@ components:
         - umaAddress
         - platformUserId
         - userType
+        - isDeleted
       properties:
         id:
           type: string
@@ -386,6 +387,11 @@ components:
           description: Last update timestamp
           readOnly: true
           example: "2023-07-21T17:32:28Z"
+        isDeleted:
+          type: boolean
+          description: Whether the user is marked as deleted
+          example: false
+          readOnly: true
       discriminator:
         propertyName: userType
         mapping:
@@ -1081,6 +1087,12 @@ paths:
           required: false
           schema:
             type: string
+        - name: isIncludingDeleted
+          in: query
+          description: Whether to include deleted users in the results. Default is false.
+          required: false
+          schema:
+            type: boolean
       responses:
         '200':
           description: Successful operation

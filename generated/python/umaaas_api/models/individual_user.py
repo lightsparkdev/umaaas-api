@@ -36,7 +36,7 @@ class IndividualUser(User):
     nationality: Optional[StrictStr] = Field(default=None, description="Country code (ISO 3166-1 alpha-2)")
     address: Address
     bank_account_info: UserBankAccountInfo = Field(alias="bankAccountInfo")
-    __properties: ClassVar[List[str]] = ["id", "umaAddress", "platformUserId", "userType", "createdAt", "updatedAt", "fullName", "dateOfBirth", "nationality", "address", "bankAccountInfo"]
+    __properties: ClassVar[List[str]] = ["id", "umaAddress", "platformUserId", "userType", "createdAt", "updatedAt", "isDeleted", "fullName", "dateOfBirth", "nationality", "address", "bankAccountInfo"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -99,6 +99,7 @@ class IndividualUser(User):
             "userType": obj.get("userType"),
             "createdAt": obj.get("createdAt"),
             "updatedAt": obj.get("updatedAt"),
+            "isDeleted": obj.get("isDeleted"),
             "fullName": obj.get("fullName"),
             "dateOfBirth": obj.get("dateOfBirth"),
             "nationality": obj.get("nationality"),
