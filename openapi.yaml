@@ -463,7 +463,7 @@ components:
       properties:
         name:
           type: string
-          enum: [FULL_NAME, ADDRESS, DATE_OF_BIRTH, TAX_ID, REGISTRATION_NUMBER, ACCOUNT_NUMBER]
+          enum: [FULL_NAME, DATE_OF_BIRTH, NATIONALITY, PHONE_NUMBER, EMAIL, ADDRESS, TAX_ID, REGISTRATION_NUMBER, ACCOUNT_NUMBER]
           description: Name of the counterparty field
           example: "FULL_NAME"
         mandatory:
@@ -1600,12 +1600,10 @@ paths:
                   requiredCounterpartyFields:
                     - name: "FULL_NAME"
                       mandatory: true
-                    - name: "ADDRESS"
+                    - name: "NATIONALITY"
                       mandatory: true
                     - name: "DATE_OF_BIRTH"
                       mandatory: true
-                    - name: "TAX_ID"
-                      mandatory: false
       responses:
         '200':
           description: Configuration updated successfully

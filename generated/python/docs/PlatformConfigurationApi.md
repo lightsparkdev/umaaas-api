@@ -123,7 +123,7 @@ configuration = umaaas_api.Configuration(
 with umaaas_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = umaaas_api.PlatformConfigurationApi(api_client)
-    update_platform_config_request = {"umaDomain":"mycompany.com","webhookEndpoint":"https://api.mycompany.com/webhooks/uma","supportedCurrencies":[{"currencyCode":"USD","minAmount":100,"maxAmount":1000000,"requiredCounterpartyFields":[{"name":"FULL_NAME","mandatory":true},{"name":"ADDRESS","mandatory":true},{"name":"DATE_OF_BIRTH","mandatory":true},{"name":"TAX_ID","mandatory":false}]}]} # UpdatePlatformConfigRequest | 
+    update_platform_config_request = {"umaDomain":"mycompany.com","webhookEndpoint":"https://api.mycompany.com/webhooks/uma","supportedCurrencies":[{"currencyCode":"USD","minAmount":100,"maxAmount":1000000,"requiredCounterpartyFields":[{"name":"FULL_NAME","mandatory":true},{"name":"NATIONALITY","mandatory":true},{"name":"DATE_OF_BIRTH","mandatory":true}]}]} # UpdatePlatformConfigRequest | 
 
     try:
         # Update platform configuration

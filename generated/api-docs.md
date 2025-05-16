@@ -232,8 +232,11 @@ Update the platform configuration settings
 |Parameter|Value|
 |---|---|
 |»»» name|FULL_NAME|
-|»»» name|ADDRESS|
 |»»» name|DATE_OF_BIRTH|
+|»»» name|NATIONALITY|
+|»»» name|PHONE_NUMBER|
+|»»» name|EMAIL|
+|»»» name|ADDRESS|
 |»»» name|TAX_ID|
 |»»» name|REGISTRATION_NUMBER|
 |»»» name|ACCOUNT_NUMBER|
@@ -1821,8 +1824,11 @@ Status Code **200**
 |Property|Value|
 |---|---|
 |name|FULL_NAME|
-|name|ADDRESS|
 |name|DATE_OF_BIRTH|
+|name|NATIONALITY|
+|name|PHONE_NUMBER|
+|name|EMAIL|
+|name|ADDRESS|
 |name|TAX_ID|
 |name|REGISTRATION_NUMBER|
 |name|ACCOUNT_NUMBER|
@@ -4130,8 +4136,11 @@ and
 |Property|Value|
 |---|---|
 |name|FULL_NAME|
-|name|ADDRESS|
 |name|DATE_OF_BIRTH|
+|name|NATIONALITY|
+|name|PHONE_NUMBER|
+|name|EMAIL|
+|name|ADDRESS|
 |name|TAX_ID|
 |name|REGISTRATION_NUMBER|
 |name|ACCOUNT_NUMBER|
