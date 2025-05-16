@@ -23,6 +23,7 @@ docs/ClabeAccountInfo.md
 docs/ClaimInvitationRequest.md
 docs/CounterpartyFieldDefinition.md
 docs/CreateInvitationRequest.md
+docs/CreateInvitationRequestAmountToSend.md
 docs/CreateQuote422Response.md
 docs/CreateQuoteRequest.md
 docs/Currency.md
@@ -98,6 +99,7 @@ setup.cfg
 setup.py
 test-requirements.txt
 test/__init__.py
+test/test_create_invitation_request_amount_to_send.py
 tox.ini
 umaaas_api/__init__.py
 umaaas_api/api/__init__.py
@@ -128,6 +130,7 @@ umaaas_api/models/clabe_account_info.py
 umaaas_api/models/claim_invitation_request.py
 umaaas_api/models/counterparty_field_definition.py
 umaaas_api/models/create_invitation_request.py
+umaaas_api/models/create_invitation_request_amount_to_send.py
 umaaas_api/models/create_quote422_response.py
 umaaas_api/models/create_quote_request.py
 umaaas_api/models/currency.py

@@ -6,6 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **inviter_uma** | **str** | The UMA address of the user creating the invitation | 
+**amount_to_send** | [**CreateInvitationRequestAmountToSend**](CreateInvitationRequestAmountToSend.md) |  | [optional] 
 **expires_at** | **datetime** | When the invitation expires (if at all) | [optional] 
 
 ## Example

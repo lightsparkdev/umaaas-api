@@ -57,9 +57,64 @@ for the user with text like: "Get an UMA address so that I can send you some mon
 
 When the invitee clicks the URL, they will be presented with a list of UMA providers available in their region. The invitee can select one of the providers and onboard to create their UMA address.
 
+## Pay-by-Link Invitations
+
+UMAaaS supports a "pay-by-link" feature that allows users to create invitations that include a payment amount. This is useful for scenarios where you want to send money to someone who doesn't yet have a UMA address or where the sender doesn't know the receiver's UMA address. They can simply share a link via email, SMS, whatsapp, or other channels to send money.
+
+To create a pay-by-link invitation, include the `amountToSend` field when creating the invitation:
+
+```http
+POST /invitations
+{
+  "inviterUma": "$inviter@uma.domain",
+  "amountToSend": {
+    "amount": 5000,
+    "currencyCode": "USD"
+  },
+  "expiresAt": "2024-12-31T23:59:59Z"  // It's best to set an expiration time for invitations with a payment amount.
+}
+```
+
+This example creates an invitation that will send $50 to the invitee when they claim it. The response will include the payment amount in the invitation details:
+
+```json
+{
+  "code": "019542f5",
+  "createdAt": "2023-09-01T14:30:00Z",
+  "inviterUma": "$inviter@uma.domain",
+  "url": "https://uma.me/i/019542f5",
+  "status": "PENDING",
+  "amountToSend": {
+    "amount": 5000,
+    "currency": {
+      "code": "USD",
+      "name": "United States Dollar",
+      "symbol": "$",
+      "decimals": 2
+    }
+  }
+}
+```
+
+When the invitee claims the invitation, your platform will receive an `INVITATION_CLAIMED` webhook. At this point, you should:
+
+1. Check the `amountToSend` field in the webhook payload
+2. Create a quote for the payment amount (sender-locked)
+3. Execute the payment to the invitee's UMA address
+
+Note that the actual sending of the payment must be done by your platform after receiving the webhook. If your platform either does not send the payment or the payment fails, the invitee will not receive the amount. The `amountToSend` field is primarily used for display purposes on the claiming side of the invitation.
+
+These payments can only be sender-locked, meaning that the sender will not know ahead of time how much the receiver will receive in their local currency. The exchange rate will be determined at the time the payment is executed. If you'd like, you can also send a push notification to your sending user when you receive the `INVITATION_CLAIMED` webhook and have them approve the payment interactively instead.
+
+### Best practices
+
+1. Always set an expiration time for invitations with a payment amount to avoid huge swings in expected exchange rates or leaked links.
+2. Allow the inviter to cancel the invitation if they want to avoid sending a payment to the wrong person if the link is leaked.
+3. Notify the inviter when the invitation is claimed so that they can see the amount received by the invitee.
+
 ## Claiming Invitations
 
-Once onboarding is complete, the invitee's new VASP (which may or may not be the same as the inviter's UMAaaS platform) will need to claim the invitation by making a
+Once onboarding (or login from an invite link) is complete, the invitee's new VASP (which may or may not be the same as the inviter's UMAaaS platform) will need to claim the invitation by making a
 POST request to `/invitations/{invitationCode}/claim` including the invitee's newly-created UMA address:
 
 ```http
