@@ -257,7 +257,9 @@ Name | Type | Description  | Notes
 
 List tokens
 
-Retrieve a list of API tokens with optional filtering parameters. Returns all tokens that match the specified filters. If no filters are provided, returns all tokens (paginated). 
+Retrieve a list of API tokens with optional filtering parameters. Returns all tokens that match
+the specified filters. If no filters are provided, returns all tokens (paginated).
+
 
 ### Example
 
