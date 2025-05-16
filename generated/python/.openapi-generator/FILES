@@ -99,7 +99,6 @@ setup.cfg
 setup.py
 test-requirements.txt
 test/__init__.py
-test/test_create_invitation_request_amount_to_send.py
 tox.ini
 umaaas_api/__init__.py
 umaaas_api/api/__init__.py
