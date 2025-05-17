@@ -53,7 +53,6 @@ from umaaas_api.models.clabe_account_info import ClabeAccountInfo
 from umaaas_api.models.claim_invitation_request import ClaimInvitationRequest
 from umaaas_api.models.counterparty_field_definition import CounterpartyFieldDefinition
 from umaaas_api.models.create_invitation_request import CreateInvitationRequest
-from umaaas_api.models.create_invitation_request_amount_to_send import CreateInvitationRequestAmountToSend
 from umaaas_api.models.create_quote422_response import CreateQuote422Response
 from umaaas_api.models.create_quote_request import CreateQuoteRequest
 from umaaas_api.models.currency import Currency

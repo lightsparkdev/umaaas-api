@@ -67,15 +67,13 @@ To create a pay-by-link invitation, include the `amountToSend` field when creati
 POST /invitations
 {
   "inviterUma": "$inviter@uma.domain",
-  "amountToSend": {
-    "amount": 5000,
-    "currencyCode": "USD"
-  },
+  "amountToSend": 5000,
   "expiresAt": "2024-12-31T23:59:59Z"  // It's best to set an expiration time for invitations with a payment amount.
 }
 ```
 
-This example creates an invitation that will send $50 to the invitee when they claim it. The response will include the payment amount in the invitation details:
+Assuming the user's currency is USD, this example creates an invitation that will send $50 USD to the invitee when
+they claim it. The response will include the payment amount in the invitation details:
 
 ```json
 {
