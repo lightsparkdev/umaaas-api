@@ -23,7 +23,6 @@ docs/ClabeAccountInfo.md
 docs/ClaimInvitationRequest.md
 docs/CounterpartyFieldDefinition.md
 docs/CreateInvitationRequest.md
-docs/CreateInvitationRequestAmountToSend.md
 docs/CreateQuote422Response.md
 docs/CreateQuoteRequest.md
 docs/Currency.md
@@ -129,7 +128,6 @@ umaaas_api/models/clabe_account_info.py
 umaaas_api/models/claim_invitation_request.py
 umaaas_api/models/counterparty_field_definition.py
 umaaas_api/models/create_invitation_request.py
-umaaas_api/models/create_invitation_request_amount_to_send.py
 umaaas_api/models/create_quote422_response.py
 umaaas_api/models/create_quote_request.py
 umaaas_api/models/currency.py
