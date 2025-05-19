@@ -1947,7 +1947,6 @@ class UsersApi:
 
         _response_types_map: Dict[str, Optional[str]] = {
             '202': "UploadUsersCsv202Response",
-            '400': "Error",
             '401': "Error",
         }
         response_data = self.api_client.call_api(
@@ -2020,7 +2019,6 @@ class UsersApi:
 
         _response_types_map: Dict[str, Optional[str]] = {
             '202': "UploadUsersCsv202Response",
-            '400': "Error",
             '401': "Error",
         }
         response_data = self.api_client.call_api(
@@ -2093,7 +2091,6 @@ class UsersApi:
 
         _response_types_map: Dict[str, Optional[str]] = {
             '202': "UploadUsersCsv202Response",
-            '400': "Error",
             '401': "Error",
         }
         response_data = self.api_client.call_api(

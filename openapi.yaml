@@ -226,7 +226,7 @@ components:
             This field is particularly useful when:
             - Tracking multiple bank accounts for the same user
             - Linking accounts to internal accounting systems
-            - Maintaining consistency between UMAaS and your platform's account records
+            - Maintaining consistency between UMAaaS and your platform's account records
           example: "acc_123456789"
       discriminator:
         propertyName: accountType
@@ -2250,37 +2250,6 @@ paths:
                   status:
                     type: string
                     enum: [PENDING, PROCESSING]
-                  validationSummary:
-                    type: object
-                    description: Summary of CSV validation results
-                    properties:
-                      totalRows:
-                        type: integer
-                        description: Total number of rows in the CSV file
-                      validRows:
-                        type: integer
-                        description: Number of rows that passed initial validation
-                      invalidRows:
-                        type: integer
-                        description: Number of rows that failed validation
-                      errors:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            row:
-                              type: integer
-                              description: Row number in the CSV file (1-based)
-                            errors:
-                              type: array
-                              items:
-                                type: string
-        '400':
-          description: Bad request - Invalid CSV format or content
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
         '401':
           description: Unauthorized
           content:

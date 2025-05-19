@@ -181,7 +181,7 @@ Common use cases for `platformAccountId`:
 
 - Tracking multiple bank accounts and uma addresses for the same user
 - Linking accounts to internal accounting systems
-- Maintaining consistency between UMAaS and your platform's account records
+- Maintaining consistency between UMAaaS and your platform's account records
 - Facilitating account reconciliation and reporting
 
 ### Mexico: CLABE

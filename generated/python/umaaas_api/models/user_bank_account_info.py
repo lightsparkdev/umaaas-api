@@ -38,7 +38,7 @@ class UserBankAccountInfo(BaseModel):
     UserBankAccountInfo
     """ # noqa: E501
     account_type: BankAccountType = Field(alias="accountType")
-    platform_account_id: Optional[StrictStr] = Field(default=None, description="Platform-specific identifier for this bank account. This optional field allows platforms to link bank accounts to their internal account systems. The value can be any string that helps identify the account in your system (e.g. database IDs, custom references, etc.).  This field is particularly useful when: - Tracking multiple bank accounts for the same user - Linking accounts to internal accounting systems - Maintaining consistency between UMAaS and your platform's account records ", alias="platformAccountId")
+    platform_account_id: Optional[StrictStr] = Field(default=None, description="Platform-specific identifier for this bank account. This optional field allows platforms to link bank accounts to their internal account systems. The value can be any string that helps identify the account in your system (e.g. database IDs, custom references, etc.).  This field is particularly useful when: - Tracking multiple bank accounts for the same user - Linking accounts to internal accounting systems - Maintaining consistency between UMAaaS and your platform's account records ", alias="platformAccountId")
     __properties: ClassVar[List[str]] = ["accountType", "platformAccountId"]
 
     model_config = ConfigDict(
