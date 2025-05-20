@@ -7,7 +7,6 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **job_id** | **str** | Unique identifier for the bulk import job | 
 **status** | **str** |  | 
-**validation_summary** | [**UploadUsersCsv202ResponseValidationSummary**](UploadUsersCsv202ResponseValidationSummary.md) |  | [optional] 
 
 ## Example
 

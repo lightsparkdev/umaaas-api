@@ -78,8 +78,6 @@ docs/UmaInvitation.md
 docs/UpdatePlatformConfigRequest.md
 docs/UpdateUserByIdRequest.md
 docs/UploadUsersCsv202Response.md
-docs/UploadUsersCsv202ResponseValidationSummary.md
-docs/UploadUsersCsv202ResponseValidationSummaryErrorsInner.md
 docs/UsAccountInfo.md
 docs/User.md
 docs/UserBankAccountInfo.md
@@ -178,8 +176,6 @@ umaaas_api/models/uma_invitation.py
 umaaas_api/models/update_platform_config_request.py
 umaaas_api/models/update_user_by_id_request.py
 umaaas_api/models/upload_users_csv202_response.py
-umaaas_api/models/upload_users_csv202_response_validation_summary.py
-umaaas_api/models/upload_users_csv202_response_validation_summary_errors_inner.py
 umaaas_api/models/us_account_info.py
 umaaas_api/models/user.py
 umaaas_api/models/user_bank_account_info.py

@@ -19,8 +19,7 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List, Optional
-from umaaas_api.models.upload_users_csv202_response_validation_summary import UploadUsersCsv202ResponseValidationSummary
+from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -30,8 +29,7 @@ class UploadUsersCsv202Response(BaseModel):
     """ # noqa: E501
     job_id: StrictStr = Field(description="Unique identifier for the bulk import job", alias="jobId")
     status: StrictStr
-    validation_summary: Optional[UploadUsersCsv202ResponseValidationSummary] = Field(default=None, alias="validationSummary")
-    __properties: ClassVar[List[str]] = ["jobId", "status", "validationSummary"]
+    __properties: ClassVar[List[str]] = ["jobId", "status"]
 
     @field_validator('status')
     def status_validate_enum(cls, value):
@@ -77,9 +75,6 @@ class UploadUsersCsv202Response(BaseModel):
             by_alias=True,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of validation_summary
-        if self.validation_summary:
-            _dict['validationSummary'] = self.validation_summary.to_dict()
         return _dict
 
     @classmethod
@@ -93,8 +88,7 @@ class UploadUsersCsv202Response(BaseModel):
 
         _obj = cls.model_validate({
             "jobId": obj.get("jobId"),
-            "status": obj.get("status"),
-            "validationSummary": UploadUsersCsv202ResponseValidationSummary.from_dict(obj["validationSummary"]) if obj.get("validationSummary") is not None else None
+            "status": obj.get("status")
         })
         return _obj
 

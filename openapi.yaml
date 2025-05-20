@@ -226,7 +226,7 @@ components:
             This field is particularly useful when:
             - Tracking multiple bank accounts for the same user
             - Linking accounts to internal accounting systems
-            - Maintaining consistency between UMAaS and your platform's account records
+            - Maintaining consistency between UMAaaS and your platform's account records
           example: "acc_123456789"
       discriminator:
         propertyName: accountType
@@ -1947,7 +1947,7 @@ paths:
                 lookupId:
                   type: string
                   description: Unique identifier for the prior receiver uma address lookup request.
-                  example: "LookupRequest:019542f5-b3e7-1d02-0000-000000000009"
+                  example: "Lookup:019542f5-b3e7-1d02-0000-000000000009"
                 sendingCurrencyCode:
                   type: string
                   description: Currency code for the sending amount
@@ -2203,9 +2203,9 @@ paths:
         
         ### Example CSV
         ```csv
-        umaAddress,platformUserId,userType,fullName,dateOfBirth,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId
-        $john.doe@uma.domain.com,user123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,Chase Bank,chase_primary_1234
-        $acme@uma.domain.com,biz456,BUSINESS,Acme Corp,400 Commerce Way,Austin,TX,78701,US,US_ACCOUNT,987654321,Bank of America,boa_business_5678
+        umaAddress,platformUserId,userType,fullName,dateOfBirth,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId,businessLegalName,routingNumber,accountCategory
+        john.doe@uma.domain.com,user123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,Chase Bank,chase_primary_1234,,222888888,SAVINGS
+        acme@uma.domain.com,biz456,BUSINESS,,,400 Commerce Way,Austin,TX,78701,US,US_ACCOUNT,987654321,Bank of America,boa_business_5678,Acme Corp,121212121,CHECKING
         ```
         
         The upload process is asynchronous and will return a job ID that can be used to track progress.
@@ -2246,40 +2246,10 @@ paths:
                   jobId:
                     type: string
                     description: Unique identifier for the bulk import job
+                    example: "Job:019542f5-b3e7-1d02-0000-000000000006"
                   status:
                     type: string
                     enum: [PENDING, PROCESSING]
-                  validationSummary:
-                    type: object
-                    description: Summary of CSV validation results
-                    properties:
-                      totalRows:
-                        type: integer
-                        description: Total number of rows in the CSV file
-                      validRows:
-                        type: integer
-                        description: Number of rows that passed initial validation
-                      invalidRows:
-                        type: integer
-                        description: Number of rows that failed validation
-                      errors:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            row:
-                              type: integer
-                              description: Row number in the CSV file (1-based)
-                            errors:
-                              type: array
-                              items:
-                                type: string
-        '400':
-          description: Bad request - Invalid CSV format or content
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
         '401':
           description: Unauthorized
           content:
@@ -2326,7 +2296,7 @@ paths:
                   jobId:
                     type: string
                     description: Unique identifier for the bulk import job
-                    example: "job_123456789"
+                    example: "Job:019542f5-b3e7-1d02-0000-000000000006"
                   status:
                     type: string
                     enum: [PENDING, PROCESSING, COMPLETED, FAILED]
@@ -3218,7 +3188,7 @@ webhooks:
               completedUpload:
                 summary: Successful bulk upload completion
                 value:
-                  jobId: "job_123456789"
+                  jobId: "Job:019542f5-b3e7-1d02-0000-000000000006"
                   status: "SUCCESS"
                   timestamp: "2023-08-15T14:32:00Z"
                   webhookId: "Webhook:019542f5-b3e7-1d02-0000-000000000008"
@@ -3233,7 +3203,7 @@ webhooks:
               failedUpload:
                 summary: Failed bulk upload
                 value:
-                  jobId: "job_123456789"
+                  jobId: "Job:019542f5-b3e7-1d02-0000-000000000006"
                   status: "FAILED"
                   timestamp: "2023-08-15T14:32:00Z"
                   webhookId: "Webhook:019542f5-b3e7-1d02-0000-000000000008"

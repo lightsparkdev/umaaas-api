@@ -2,7 +2,7 @@ templateDir: codegen-config/python/templates
 additionalProperties:
   infoEmail: "info@lightspark.com"
   packageUrl: https://github.com/lightsparkdev/umaaas-api
-  packageVersion: 0.0.17
+  packageVersion: 0.0.18
 packageName: umaaas_api
 globalProperties:
   webhooks: "false"

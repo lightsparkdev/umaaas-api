@@ -15,7 +15,7 @@
 """  # noqa: E501
 
 
-__version__ = "0.0.17"
+__version__ = "0.0.18"
 
 # import apis into sdk package
 from umaaas_api.api.api_tokens_api import APITokensApi
@@ -103,8 +103,6 @@ from umaaas_api.models.uma_invitation import UmaInvitation
 from umaaas_api.models.update_platform_config_request import UpdatePlatformConfigRequest
 from umaaas_api.models.update_user_by_id_request import UpdateUserByIdRequest
 from umaaas_api.models.upload_users_csv202_response import UploadUsersCsv202Response
-from umaaas_api.models.upload_users_csv202_response_validation_summary import UploadUsersCsv202ResponseValidationSummary
-from umaaas_api.models.upload_users_csv202_response_validation_summary_errors_inner import UploadUsersCsv202ResponseValidationSummaryErrorsInner
 from umaaas_api.models.us_account_info import UsAccountInfo
 from umaaas_api.models.user import User
 from umaaas_api.models.user_bank_account_info import UserBankAccountInfo

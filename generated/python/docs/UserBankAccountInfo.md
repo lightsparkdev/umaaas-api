@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **account_type** | [**BankAccountType**](BankAccountType.md) |  | 
-**platform_account_id** | **str** | Platform-specific identifier for this bank account. This optional field allows platforms to link bank accounts to their internal account systems. The value can be any string that helps identify the account in your system (e.g. database IDs, custom references, etc.).  This field is particularly useful when: - Tracking multiple bank accounts for the same user - Linking accounts to internal accounting systems - Maintaining consistency between UMAaS and your platform&#39;s account records  | [optional] 
+**platform_account_id** | **str** | Platform-specific identifier for this bank account. This optional field allows platforms to link bank accounts to their internal account systems. The value can be any string that helps identify the account in your system (e.g. database IDs, custom references, etc.).  This field is particularly useful when: - Tracking multiple bank accounts for the same user - Linking accounts to internal accounting systems - Maintaining consistency between UMAaaS and your platform&#39;s account records  | [optional] 
 
 ## Example
 
