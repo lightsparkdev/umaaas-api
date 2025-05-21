@@ -18,23 +18,19 @@ import pprint
 import re  # noqa: F401
 import json
 
-from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing import Any, ClassVar, Dict, List
-from umaaas_api.models.bulk_user_import_job import BulkUserImportJob
-from umaaas_api.models.webhook_type import WebhookType
+from umaaas_api.models.error import Error
 from typing import Optional, Set
 from typing_extensions import Self
 
-class BulkUploadWebhookRequest(BaseModel):
+class BulkUserImportJobErrorsInner(BaseModel):
     """
-    BulkUploadWebhookRequest
+    BulkUserImportJobErrorsInner
     """ # noqa: E501
-    bulk_user_import_job: BulkUserImportJob = Field(alias="bulkUserImportJob")
-    timestamp: datetime = Field(description="ISO8601 timestamp when the webhook was sent")
-    webhook_id: StrictStr = Field(description="Unique identifier for this webhook delivery", alias="webhookId")
-    type: WebhookType = Field(description="Type of webhook event")
-    __properties: ClassVar[List[str]] = ["bulkUserImportJob", "timestamp", "webhookId", "type"]
+    correlation_id: StrictStr = Field(description="Platform user ID or row number for the failed entry", alias="correlationId")
+    error: Error
+    __properties: ClassVar[List[str]] = ["correlationId", "error"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -54,7 +50,7 @@ class BulkUploadWebhookRequest(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of BulkUploadWebhookRequest from a JSON string"""
+        """Create an instance of BulkUserImportJobErrorsInner from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -73,14 +69,14 @@ class BulkUploadWebhookRequest(BaseModel):
             by_alias=True,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of bulk_user_import_job
-        if self.bulk_user_import_job:
-            _dict['bulkUserImportJob'] = self.bulk_user_import_job.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of error
+        if self.error:
+            _dict['error'] = self.error.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of BulkUploadWebhookRequest from a dict"""
+        """Create an instance of BulkUserImportJobErrorsInner from a dict"""
         if obj is None:
             return None
 
@@ -88,10 +84,8 @@ class BulkUploadWebhookRequest(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "bulkUserImportJob": BulkUserImportJob.from_dict(obj["bulkUserImportJob"]) if obj.get("bulkUserImportJob") is not None else None,
-            "timestamp": obj.get("timestamp"),
-            "webhookId": obj.get("webhookId"),
-            "type": obj.get("type")
+            "correlationId": obj.get("correlationId"),
+            "error": Error.from_dict(obj["error"]) if obj.get("error") is not None else None
         })
         return _obj
 

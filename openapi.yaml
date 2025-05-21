@@ -933,6 +933,68 @@ components:
           format: date-time
           description: Last update timestamp
           example: "2023-07-21T17:32:28Z"
+    
+    BulkUserImportJob:
+      type: object
+      required:
+        - jobId
+        - status
+        - progress
+      properties:
+        jobId:
+          type: string
+          description: Unique identifier for the bulk import job
+          example: "Job:019542f5-b3e7-1d02-0000-000000000006"
+        status:
+          type: string
+          enum: [PENDING, PROCESSING, COMPLETED, FAILED]
+          description: Current status of the job
+          example: "PROCESSING"
+        progress:
+          type: object
+          required:
+            - total
+            - processed
+            - successful
+            - failed
+          properties:
+            total:
+              type: integer
+              description: Total number of users to process
+              example: 5000
+            processed:
+              type: integer
+              description: Number of users processed so far
+              example: 2500
+            successful:
+              type: integer
+              description: Number of users successfully created
+              example: 2450
+            failed:
+              type: integer
+              description: Number of users that failed to create
+              example: 50
+        errors:
+          type: array
+          description: Detailed error information for failed entries
+          items:
+            type: object
+            required:
+              - correlationId
+              - error
+            properties:
+              correlationId:
+                type: string
+                description: Platform user ID or row number for the failed entry
+                example: "biz456"
+              error:
+                $ref: '#/components/schemas/Error'
+        completedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the job completed (only present for COMPLETED or FAILED status)
+          example: "2023-08-15T14:32:00Z"
+
 paths:
   /users:
     post:
@@ -2287,65 +2349,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                required:
-                  - jobId
-                  - status
-                  - progress
-                properties:
-                  jobId:
-                    type: string
-                    description: Unique identifier for the bulk import job
-                    example: "Job:019542f5-b3e7-1d02-0000-000000000006"
-                  status:
-                    type: string
-                    enum: [PENDING, PROCESSING, COMPLETED, FAILED]
-                    description: Current status of the job
-                    example: "PROCESSING"
-                  progress:
-                    type: object
-                    required:
-                      - total
-                      - processed
-                      - successful
-                      - failed
-                    properties:
-                      total:
-                        type: integer
-                        description: Total number of users to process
-                        example: 5000
-                      processed:
-                        type: integer
-                        description: Number of users processed so far
-                        example: 2500
-                      successful:
-                        type: integer
-                        description: Number of users successfully created
-                        example: 2450
-                      failed:
-                        type: integer
-                        description: Number of users that failed to create
-                        example: 50
-                  errors:
-                    type: array
-                    description: Detailed error information for failed entries
-                    items:
-                      type: object
-                      required:
-                        - correlationId
-                        - error
-                      properties:
-                        correlationId:
-                          type: string
-                          description: Platform user ID or row number for the failed entry
-                          example: "biz456"
-                        error:
-                          $ref: '#/components/schemas/Error'
-                  completedAt:
-                    type: string
-                    format: date-time
-                    description: Timestamp when the job completed (only present for COMPLETED or FAILED status)
-                    example: "2023-08-15T14:32:00Z"
+                $ref: '#/components/schemas/BulkUserImportJob'
         '401':
           description: Unauthorized
           content:
@@ -3116,22 +3120,13 @@ webhooks:
             schema:
               type: object
               required:
-                - jobId
-                - status
+                - bulkUserImportJob
                 - timestamp
                 - webhookId
                 - type
-                - progress
               properties:
-                jobId:
-                  type: string
-                  description: ID of the bulk upload job
-                  example: "job_123456789"
-                status:
-                  type: string
-                  enum: [SUCCESS, PARTIAL_SUCCESS, FAILED]
-                  description: Final status of the bulk upload job
-                  example: "SUCCESS"
+                bulkUserImportJob:
+                  $ref: '#/components/schemas/BulkUserImportJob'
                 timestamp:
                   type: string
                   format: date-time
@@ -3144,83 +3139,46 @@ webhooks:
                 type:
                   $ref: '#/components/schemas/WebhookType'
                   description: Type of webhook event
-                  example: "BULK_UPLOAD"
-                progress:
-                  type: object
-                  required:
-                    - total
-                    - processed
-                    - successful
-                    - failed
-                  properties:
-                    total:
-                      type: integer
-                      description: Total number of users to process
-                      example: 5000
-                    processed:
-                      type: integer
-                      description: Number of users processed
-                      example: 5000
-                    successful:
-                      type: integer
-                      description: Number of users successfully created
-                      example: 4950
-                    failed:
-                      type: integer
-                      description: Number of users that failed to create
-                      example: 50
-                errors:
-                  type: array
-                  description: Detailed error information for failed entries
-                  items:
-                    type: object
-                    required:
-                      - correlationId
-                      - error
-                    properties:
-                      correlationId:
-                        type: string
-                        description: Platform user ID or row number for the failed entry
-                        example: "biz456"
-                      error:
-                        $ref: '#/components/schemas/Error'
+                  example: "BULK_UPLOAD" 
             examples:
               completedUpload:
                 summary: Successful bulk upload completion
                 value:
-                  jobId: "Job:019542f5-b3e7-1d02-0000-000000000006"
-                  status: "SUCCESS"
-                  timestamp: "2023-08-15T14:32:00Z"
+                  bulkUserImportJob:
+                    jobId: "Job:019542f5-b3e7-1d02-0000-000000000006"
+                    status: "SUCCESS"
+                    timestamp: "2023-08-15T14:32:00Z"
+                    progress:
+                      total: 5000
+                      processed: 5000
+                      successful: 5000
+                      failed: 0
+                    errors: []
                   webhookId: "Webhook:019542f5-b3e7-1d02-0000-000000000008"
                   type: "BULK_UPLOAD"
-                  progress:
-                    total: 5000
-                    processed: 5000
-                    successful: 5000
-                    failed: 0
-                  errors: []
                       
               failedUpload:
                 summary: Failed bulk upload
                 value:
-                  jobId: "Job:019542f5-b3e7-1d02-0000-000000000006"
-                  status: "FAILED"
-                  timestamp: "2023-08-15T14:32:00Z"
+                  bulkUserImportJob:
+                    jobId: "Job:019542f5-b3e7-1d02-0000-000000000006"
+                    status: "FAILED"
+                    timestamp: "2023-08-15T14:32:00Z"
+                    progress:
+                      total: 5000
+                      processed: 5000
+                      successful: 0
+                      failed: 5000
+                    errors:
+                      - correlationId: "row_1"
+                        error:
+                          code: "invalid_csv_format"
+                          message: "Invalid CSV format"
+                          details:
+                            reason: "missing_required_column"
+                            column: "umaAddress"
                   webhookId: "Webhook:019542f5-b3e7-1d02-0000-000000000008"
                   type: "BULK_UPLOAD"
-                  progress:
-                    total: 5000
-                    processed: 5000
-                    successful: 0
-                    failed: 5000
-                  errors:
-                    - correlationId: "row_1"
-                      error:
-                        code: "invalid_csv_format"
-                        message: "Invalid CSV format"
-                        details:
-                          reason: "missing_required_column"
-                          column: "umaAddress"
       responses:
         '200':
           description: Webhook received successfully

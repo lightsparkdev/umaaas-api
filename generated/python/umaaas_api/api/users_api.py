@@ -21,7 +21,7 @@ from datetime import datetime
 from pydantic import Field, StrictBool, StrictBytes, StrictStr, field_validator
 from typing import Optional, Tuple, Union
 from typing_extensions import Annotated
-from umaaas_api.models.get_bulk_user_import_job200_response import GetBulkUserImportJob200Response
+from umaaas_api.models.bulk_user_import_job import BulkUserImportJob
 from umaaas_api.models.list_users200_response import ListUsers200Response
 from umaaas_api.models.list_users200_response_data_inner import ListUsers200ResponseDataInner
 from umaaas_api.models.update_user_by_id_request import UpdateUserByIdRequest
@@ -614,7 +614,7 @@ class UsersApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> GetBulkUserImportJob200Response:
+    ) -> BulkUserImportJob:
         """Get bulk import job status
 
         Retrieve the current status and results of a bulk user import job. This endpoint can be used to track the progress of both CSV uploads.  The response includes: - Overall job status - Progress statistics - Detailed error information for failed entries - Completion timestamp when finished 
@@ -652,7 +652,7 @@ class UsersApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetBulkUserImportJob200Response",
+            '200': "BulkUserImportJob",
             '401': "Error",
             '404': "Error",
         }
@@ -683,7 +683,7 @@ class UsersApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[GetBulkUserImportJob200Response]:
+    ) -> ApiResponse[BulkUserImportJob]:
         """Get bulk import job status
 
         Retrieve the current status and results of a bulk user import job. This endpoint can be used to track the progress of both CSV uploads.  The response includes: - Overall job status - Progress statistics - Detailed error information for failed entries - Completion timestamp when finished 
@@ -721,7 +721,7 @@ class UsersApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetBulkUserImportJob200Response",
+            '200': "BulkUserImportJob",
             '401': "Error",
             '404': "Error",
         }
@@ -790,7 +790,7 @@ class UsersApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "GetBulkUserImportJob200Response",
+            '200': "BulkUserImportJob",
             '401': "Error",
             '404': "Error",
         }

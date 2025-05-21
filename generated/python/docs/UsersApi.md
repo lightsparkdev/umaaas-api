@@ -178,7 +178,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **get_bulk_user_import_job**
-> GetBulkUserImportJob200Response get_bulk_user_import_job(job_id)
+> BulkUserImportJob get_bulk_user_import_job(job_id)
 
 Get bulk import job status
 
@@ -198,7 +198,7 @@ The response includes:
 
 ```python
 import umaaas_api
-from umaaas_api.models.get_bulk_user_import_job200_response import GetBulkUserImportJob200Response
+from umaaas_api.models.bulk_user_import_job import BulkUserImportJob
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
@@ -245,7 +245,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**GetBulkUserImportJob200Response**](GetBulkUserImportJob200Response.md)
+[**BulkUserImportJob**](BulkUserImportJob.md)
 
 ### Authorization
 
