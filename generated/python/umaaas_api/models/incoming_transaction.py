@@ -22,6 +22,7 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from umaaas_api.models.currency_amount import CurrencyAmount
+from umaaas_api.models.reconciliation_instructions import ReconciliationInstructions
 from umaaas_api.models.transaction_status import TransactionStatus
 from umaaas_api.models.transaction_type import TransactionType
 from typing import Optional, Set
@@ -43,7 +44,8 @@ class IncomingTransaction(BaseModel):
     description: Optional[StrictStr] = Field(default=None, description="Optional memo or description for the payment")
     counterparty_information: Optional[Dict[str, Any]] = Field(default=None, description="Additional information about the counterparty, if available", alias="counterpartyInformation")
     received_amount: CurrencyAmount = Field(description="Amount received in the recipient's currency", alias="receivedAmount")
-    __properties: ClassVar[List[str]] = ["id", "status", "type", "senderUmaAddress", "receiverUmaAddress", "userId", "platformUserId", "settledAt", "createdAt", "description", "counterpartyInformation", "receivedAmount"]
+    reconciliation_instructions: ReconciliationInstructions = Field(alias="reconciliationInstructions")
+    __properties: ClassVar[List[str]] = ["id", "status", "type", "senderUmaAddress", "receiverUmaAddress", "userId", "platformUserId", "settledAt", "createdAt", "description", "counterpartyInformation", "receivedAmount", "reconciliationInstructions"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -85,6 +87,9 @@ class IncomingTransaction(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of received_amount
         if self.received_amount:
             _dict['receivedAmount'] = self.received_amount.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of reconciliation_instructions
+        if self.reconciliation_instructions:
+            _dict['reconciliationInstructions'] = self.reconciliation_instructions.to_dict()
         return _dict
 
     @classmethod
@@ -108,7 +113,8 @@ class IncomingTransaction(BaseModel):
             "createdAt": obj.get("createdAt"),
             "description": obj.get("description"),
             "counterpartyInformation": obj.get("counterpartyInformation"),
-            "receivedAmount": CurrencyAmount.from_dict(obj["receivedAmount"]) if obj.get("receivedAmount") is not None else None
+            "receivedAmount": CurrencyAmount.from_dict(obj["receivedAmount"]) if obj.get("receivedAmount") is not None else None,
+            "reconciliationInstructions": ReconciliationInstructions.from_dict(obj["reconciliationInstructions"]) if obj.get("reconciliationInstructions") is not None else None
         })
         return _obj
 

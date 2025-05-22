@@ -42,7 +42,7 @@ class Quote(BaseModel):
     counterparty_information: Optional[Dict[str, Any]] = Field(default=None, description="Information about the recipient, as required by the platform in their configuration.", alias="counterpartyInformation")
     payment_instructions: PaymentInstructions = Field(alias="paymentInstructions")
     status: Optional[StrictStr] = Field(default=None, description="Current status of the quote")
-    transaction_id: Optional[StrictStr] = Field(default=None, description="The ID of the transaction created from this quote. Only present if the quote has started processing.", alias="transactionId")
+    transaction_id: StrictStr = Field(description="The ID of the transaction created from this quote.", alias="transactionId")
     __properties: ClassVar[List[str]] = ["quoteId", "sendingCurrency", "receivingCurrency", "totalSendingAmount", "totalReceivingAmount", "exchangeRate", "expiresAt", "feesIncluded", "counterpartyInformation", "paymentInstructions", "status", "transactionId"]
 
     @field_validator('status')

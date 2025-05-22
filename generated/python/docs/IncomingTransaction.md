@@ -17,6 +17,7 @@ Name | Type | Description | Notes
 **description** | **str** | Optional memo or description for the payment | [optional] 
 **counterparty_information** | **Dict[str, object]** | Additional information about the counterparty, if available | [optional] 
 **received_amount** | [**CurrencyAmount**](CurrencyAmount.md) | Amount received in the recipient&#39;s currency | 
+**reconciliation_instructions** | [**ReconciliationInstructions**](ReconciliationInstructions.md) |  | 
 
 ## Example
 

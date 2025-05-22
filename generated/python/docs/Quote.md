@@ -16,7 +16,7 @@ Name | Type | Description | Notes
 **counterparty_information** | **Dict[str, object]** | Information about the recipient, as required by the platform in their configuration. | [optional] 
 **payment_instructions** | [**PaymentInstructions**](PaymentInstructions.md) |  | 
 **status** | **str** | Current status of the quote | [optional] 
-**transaction_id** | **str** | The ID of the transaction created from this quote. Only present if the quote has started processing. | [optional] 
+**transaction_id** | **str** | The ID of the transaction created from this quote. | 
 
 ## Example
 
