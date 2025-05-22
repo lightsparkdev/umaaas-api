@@ -13,8 +13,9 @@ docs/Address.md
 docs/ApiToken.md
 docs/BankAccountType.md
 docs/BulkUploadWebhookRequest.md
-docs/BulkUploadWebhookRequestErrorsInner.md
-docs/BulkUploadWebhookRequestProgress.md
+docs/BulkUserImportJob.md
+docs/BulkUserImportJobErrorsInner.md
+docs/BulkUserImportJobProgress.md
 docs/BusinessUpdate.md
 docs/BusinessUpdateBusinessInfo.md
 docs/BusinessUser.md
@@ -29,9 +30,6 @@ docs/Currency.md
 docs/CurrencyAmount.md
 docs/CurrencyPreference.md
 docs/Error.md
-docs/GetBulkUserImportJob200Response.md
-docs/GetBulkUserImportJob200ResponseErrorsInner.md
-docs/GetBulkUserImportJob200ResponseProgress.md
 docs/GetPaymentStatus200Response.md
 docs/GetTransactionById200Response.md
 docs/IbanAccountInfo.md
@@ -97,7 +95,6 @@ setup.cfg
 setup.py
 test-requirements.txt
 test/__init__.py
-test/test_reconciliation_instructions.py
 tox.ini
 umaaas_api/__init__.py
 umaaas_api/api/__init__.py
@@ -118,8 +115,9 @@ umaaas_api/models/address.py
 umaaas_api/models/api_token.py
 umaaas_api/models/bank_account_type.py
 umaaas_api/models/bulk_upload_webhook_request.py
-umaaas_api/models/bulk_upload_webhook_request_errors_inner.py
-umaaas_api/models/bulk_upload_webhook_request_progress.py
+umaaas_api/models/bulk_user_import_job.py
+umaaas_api/models/bulk_user_import_job_errors_inner.py
+umaaas_api/models/bulk_user_import_job_progress.py
 umaaas_api/models/business_update.py
 umaaas_api/models/business_update_business_info.py
 umaaas_api/models/business_user.py
@@ -134,9 +132,6 @@ umaaas_api/models/currency.py
 umaaas_api/models/currency_amount.py
 umaaas_api/models/currency_preference.py
 umaaas_api/models/error.py
-umaaas_api/models/get_bulk_user_import_job200_response.py
-umaaas_api/models/get_bulk_user_import_job200_response_errors_inner.py
-umaaas_api/models/get_bulk_user_import_job200_response_progress.py
 umaaas_api/models/get_payment_status200_response.py
 umaaas_api/models/get_transaction_by_id200_response.py
 umaaas_api/models/iban_account_info.py

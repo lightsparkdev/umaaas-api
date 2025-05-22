@@ -5,13 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**job_id** | **str** | ID of the bulk upload job | 
-**status** | **str** | Final status of the bulk upload job | 
+**bulk_user_import_job** | [**BulkUserImportJob**](BulkUserImportJob.md) |  | 
 **timestamp** | **datetime** | ISO8601 timestamp when the webhook was sent | 
 **webhook_id** | **str** | Unique identifier for this webhook delivery | 
 **type** | [**WebhookType**](WebhookType.md) | Type of webhook event | 
-**progress** | [**BulkUploadWebhookRequestProgress**](BulkUploadWebhookRequestProgress.md) |  | 
-**errors** | [**List[BulkUploadWebhookRequestErrorsInner]**](BulkUploadWebhookRequestErrorsInner.md) | Detailed error information for failed entries | [optional] 
 
 ## Example
 
