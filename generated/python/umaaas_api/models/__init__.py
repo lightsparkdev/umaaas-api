@@ -67,6 +67,7 @@ from umaaas_api.models.platform_config import PlatformConfig
 from umaaas_api.models.platform_currency_config import PlatformCurrencyConfig
 from umaaas_api.models.quote import Quote
 from umaaas_api.models.quote_lock_side import QuoteLockSide
+from umaaas_api.models.reconciliation_instructions import ReconciliationInstructions
 from umaaas_api.models.test_receive_request import TestReceiveRequest
 from umaaas_api.models.test_send_request import TestSendRequest
 from umaaas_api.models.test_webhook_request import TestWebhookRequest

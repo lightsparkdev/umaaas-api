@@ -290,6 +290,16 @@ components:
         bankAccountInfo:
           $ref: '#/components/schemas/PaymentBankAccountInfo'
 
+    ReconciliationInstructions:
+      type: object
+      required:
+        - reference
+      properties:
+        reference:
+          type: string
+          description: Unique reference code that must be included with the payment to match it with the correct incoming transaction
+          example: "UMA-Q12345-REF"
+
     PaymentBankAccountInfo:
       type: object
       required:
@@ -673,6 +683,7 @@ components:
         - type: object
           required:
             - receivedAmount
+            - reconciliationInstructions
           properties:
             type:
               $ref: '#/components/schemas/TransactionType'
@@ -681,6 +692,8 @@ components:
             receivedAmount:
               $ref: '#/components/schemas/CurrencyAmount'
               description: Amount received in the recipient's currency
+            reconciliationInstructions:
+              $ref: '#/components/schemas/ReconciliationInstructions'
 
     OutgoingTransaction:
       allOf:

@@ -63,6 +63,7 @@ docs/PlatformConfigurationApi.md
 docs/PlatformCurrencyConfig.md
 docs/Quote.md
 docs/QuoteLockSide.md
+docs/ReconciliationInstructions.md
 docs/SandboxApi.md
 docs/SendingPaymentsApi.md
 docs/TestReceiveRequest.md
@@ -96,6 +97,7 @@ setup.cfg
 setup.py
 test-requirements.txt
 test/__init__.py
+test/test_reconciliation_instructions.py
 tox.ini
 umaaas_api/__init__.py
 umaaas_api/api/__init__.py
@@ -164,6 +166,7 @@ umaaas_api/models/platform_config.py
 umaaas_api/models/platform_currency_config.py
 umaaas_api/models/quote.py
 umaaas_api/models/quote_lock_side.py
+umaaas_api/models/reconciliation_instructions.py
 umaaas_api/models/test_receive_request.py
 umaaas_api/models/test_send_request.py
 umaaas_api/models/test_webhook_request.py
