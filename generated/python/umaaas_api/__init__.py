@@ -60,7 +60,6 @@ from umaaas_api.models.currency import Currency
 from umaaas_api.models.currency_amount import CurrencyAmount
 from umaaas_api.models.currency_preference import CurrencyPreference
 from umaaas_api.models.error import Error
-from umaaas_api.models.get_payment_status200_response import GetPaymentStatus200Response
 from umaaas_api.models.get_transaction_by_id200_response import GetTransactionById200Response
 from umaaas_api.models.iban_account_info import IbanAccountInfo
 from umaaas_api.models.incoming_payment_webhook403_response import IncomingPaymentWebhook403Response

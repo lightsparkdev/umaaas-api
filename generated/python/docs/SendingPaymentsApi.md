@@ -5,7 +5,6 @@ All URIs are relative to *https://api.lightspark.com/umaaas/v1*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**create_quote**](SendingPaymentsApi.md#create_quote) | **POST** /quotes | Create a payment quote
-[**get_payment_status**](SendingPaymentsApi.md#get_payment_status) | **GET** /payments/status/{quoteId} | Check payment status for a quote
 [**get_quote_by_id**](SendingPaymentsApi.md#get_quote_by_id) | **GET** /quotes/{quoteId} | Get quote by ID
 [**lookup_uma**](SendingPaymentsApi.md#lookup_uma) | **GET** /receiver/{receiverUmaAddress} | Look up a UMA address for payment
 
@@ -100,92 +99,6 @@ Name | Type | Description  | Notes
 **400** | Bad request - Missing or invalid parameters |  -  |
 **401** | Unauthorized |  -  |
 **422** | Unprocessable Entity - Additional counterparty information required, or the payment cannot be completed for another reason.  |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
-
-# **get_payment_status**
-> GetPaymentStatus200Response get_payment_status(quote_id, reference=reference)
-
-Check payment status for a quote
-
-Check the status of a payment associated with a previously created quote.
-This allows clients to verify if a payment they've initiated using the 
-payment instructions has been received and processed.
-
-
-### Example
-
-* Basic Authentication (BasicAuth):
-
-```python
-import umaaas_api
-from umaaas_api.models.get_payment_status200_response import GetPaymentStatus200Response
-from umaaas_api.rest import ApiException
-from pprint import pprint
-
-# Defining the host is optional and defaults to https://api.lightspark.com/umaaas/v1
-# See configuration.py for a list of all supported configuration parameters.
-configuration = umaaas_api.Configuration(
-    host = "https://api.lightspark.com/umaaas/v1"
-)
-
-# The client must configure the authentication and authorization parameters
-# in accordance with the API server security policy.
-# Examples for each auth method are provided below, use the example that
-# satisfies your auth use case.
-
-# Configure HTTP basic authorization: BasicAuth
-configuration = umaaas_api.Configuration(
-    username = os.environ["USERNAME"],
-    password = os.environ["PASSWORD"]
-)
-
-# Enter a context with an instance of the API client
-with umaaas_api.ApiClient(configuration) as api_client:
-    # Create an instance of the API class
-    api_instance = umaaas_api.SendingPaymentsApi(api_client)
-    quote_id = 'quote_id_example' # str | ID of the quote to check payment status for
-    reference = 'reference_example' # str | Payment reference code (optional, but helps with verification) (optional)
-
-    try:
-        # Check payment status for a quote
-        api_response = api_instance.get_payment_status(quote_id, reference=reference)
-        print("The response of SendingPaymentsApi->get_payment_status:\n")
-        pprint(api_response)
-    except Exception as e:
-        print("Exception when calling SendingPaymentsApi->get_payment_status: %s\n" % e)
-```
-
-
-
-### Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **quote_id** | **str**| ID of the quote to check payment status for | 
- **reference** | **str**| Payment reference code (optional, but helps with verification) | [optional] 
-
-### Return type
-
-[**GetPaymentStatus200Response**](GetPaymentStatus200Response.md)
-
-### Authorization
-
-[BasicAuth](../README.md#BasicAuth)
-
-### HTTP request headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json
-
-### HTTP response details
-
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-**200** | Payment status retrieved successfully |  -  |
-**401** | Unauthorized |  -  |
-**404** | Quote not found |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

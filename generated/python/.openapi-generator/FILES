@@ -30,7 +30,6 @@ docs/Currency.md
 docs/CurrencyAmount.md
 docs/CurrencyPreference.md
 docs/Error.md
-docs/GetPaymentStatus200Response.md
 docs/GetTransactionById200Response.md
 docs/IbanAccountInfo.md
 docs/IncomingPaymentWebhook403Response.md
@@ -132,7 +131,6 @@ umaaas_api/models/currency.py
 umaaas_api/models/currency_amount.py
 umaaas_api/models/currency_preference.py
 umaaas_api/models/error.py
-umaaas_api/models/get_payment_status200_response.py
 umaaas_api/models/get_transaction_by_id200_response.py
 umaaas_api/models/iban_account_info.py
 umaaas_api/models/incoming_payment_webhook403_response.py
