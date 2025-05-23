@@ -467,14 +467,17 @@ components:
                   description: Tax identification number
                   example: "EIN-987654321"
 
+    CounterpartyFieldName:
+      type: string
+      enum: [FULL_NAME, DATE_OF_BIRTH, NATIONALITY, PHONE_NUMBER, EMAIL, ADDRESS, TAX_ID, REGISTRATION_NUMBER, ACCOUNT_NUMBER, USER_TYPE]
+      description: Name of the counterparty field
+      example: "FULL_NAME"
+
     CounterpartyFieldDefinition:
       type: object
       properties:
         name:
-          type: string
-          enum: [FULL_NAME, DATE_OF_BIRTH, NATIONALITY, PHONE_NUMBER, EMAIL, ADDRESS, TAX_ID, REGISTRATION_NUMBER, ACCOUNT_NUMBER, USER_TYPE]
-          description: Name of the counterparty field
-          example: "FULL_NAME"
+          $ref: '#/components/schemas/CounterpartyFieldName'
         mandatory:
           type: boolean
           description: Whether the field is mandatory
@@ -674,8 +677,9 @@ components:
           description: Additional information about the counterparty, if available
           additionalProperties: true
           example:
-            fullName: "John Sender"
-            country: "DE"
+            FULL_NAME: "John Sender"
+            DATE_OF_BIRTH: "1985-06-15"
+            NATIONALITY: "DE"
 
     IncomingTransaction:
       allOf:
@@ -820,8 +824,9 @@ components:
           description: Information about the recipient, as required by the platform in their configuration.
           additionalProperties: true
           example:
-            fullName: "Jane Receiver"
-            country: "FR"
+            FULL_NAME: "Jane Receiver"
+            DATE_OF_BIRTH: "1990-01-01"
+            NATIONALITY: "FR"
         paymentInstructions:
           $ref: '#/components/schemas/PaymentInstructions'
         status:
@@ -2743,9 +2748,12 @@ webhooks:
                         decimals: 2
                     userId: "User:019542f5-b3e7-1d02-0000-000000000001"
                     platformUserId: "18d3e5f7b4a9c2"
+                    reconciliationInstructions:
+                      reference: "REF-123456789"
                     counterpartyInformation:
-                      fullName: "John Sender"
-                      dateOfBirth: "1985-06-15"
+                      FULL_NAME: "John Sender"
+                      DATE_OF_BIRTH: "1985-06-15"
+                      NATIONALITY: "US"
                   timestamp: "2023-08-15T14:32:00Z"
                   webhookId: "Webhook:019542f5-b3e7-1d02-0000-000000000007"
                   type: "INCOMING_PAYMENT"
@@ -2770,6 +2778,8 @@ webhooks:
                     settledAt: "2023-08-15T14:30:00Z"
                     createdAt: "2023-08-15T14:25:18Z"
                     description: "Payment for services"
+                    reconciliationInstructions:
+                      reference: "REF-123456789"
                   timestamp: "2023-08-15T14:32:00Z"
                   webhookId: "Webhook:019542f5-b3e7-1d02-0000-000000000007"
                   type: "INCOMING_PAYMENT"
@@ -3095,8 +3105,7 @@ webhooks:
                 value:
                   bulkUserImportJob:
                     jobId: "Job:019542f5-b3e7-1d02-0000-000000000006"
-                    status: "SUCCESS"
-                    timestamp: "2023-08-15T14:32:00Z"
+                    status: "COMPLETED"
                     progress:
                       total: 5000
                       processed: 5000
@@ -3105,6 +3114,7 @@ webhooks:
                     errors: []
                   webhookId: "Webhook:019542f5-b3e7-1d02-0000-000000000008"
                   type: "BULK_UPLOAD"
+                  timestamp: "2023-08-15T14:32:00Z"
                       
               failedUpload:
                 summary: Failed bulk upload
@@ -3112,7 +3122,6 @@ webhooks:
                   bulkUserImportJob:
                     jobId: "Job:019542f5-b3e7-1d02-0000-000000000006"
                     status: "FAILED"
-                    timestamp: "2023-08-15T14:32:00Z"
                     progress:
                       total: 5000
                       processed: 5000
@@ -3128,6 +3137,7 @@ webhooks:
                             column: "umaAddress"
                   webhookId: "Webhook:019542f5-b3e7-1d02-0000-000000000008"
                   type: "BULK_UPLOAD"
+                  timestamp: "2023-08-15T14:32:00Z"
       responses:
         '200':
           description: Webhook received successfully

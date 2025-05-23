@@ -224,7 +224,7 @@ Update the platform configuration settings
 |»» minAmount|body|integer(int64)|true|Minimum amount that can be sent in the smallest unit of this currency|
 |»» maxAmount|body|integer(int64)|true|Maximum amount that can be sent in the smallest unit of this currency|
 |»» requiredCounterpartyFields|body|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|true|List of counterparty fields and their requirements|
-|»»» name|body|string|true|Name of the counterparty field|
+|»»» name|body|[CounterpartyFieldName](#schemacounterpartyfieldname)|true|Name of the counterparty field|
 |»»» mandatory|body|boolean|true|Whether the field is mandatory|
 
 #### Enumerated Values
@@ -1378,8 +1378,9 @@ Retrieve detailed information about a specific transaction
   "createdAt": "2023-08-15T14:25:18Z",
   "description": "Payment for invoice #1234",
   "counterpartyInformation": {
-    "fullName": "John Sender",
-    "country": "DE"
+    "FULL_NAME": "John Sender",
+    "DATE_OF_BIRTH": "1985-06-15",
+    "NATIONALITY": "DE"
   },
   "receivedAmount": {
     "amount": 12550,
@@ -1527,8 +1528,9 @@ date range, status, and transaction type.
       "createdAt": "2023-08-15T14:25:18Z",
       "description": "Payment for invoice #1234",
       "counterpartyInformation": {
-        "fullName": "John Sender",
-        "country": "DE"
+        "FULL_NAME": "John Sender",
+        "DATE_OF_BIRTH": "1985-06-15",
+        "NATIONALITY": "DE"
       },
       "receivedAmount": {
         "amount": 12550,
@@ -1773,7 +1775,7 @@ Status Code **200**
 |»» min|integer(int64)|true|none|The minimum amount that can be received in this currency.|
 |»» max|integer(int64)|true|none|The maximum amount that can be received in this currency.|
 |» requiredPayerDataFields|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|false|none|Fields required by the receiving institution about the payer before payment can be completed|
-|»» name|string|true|none|Name of the counterparty field|
+|»» name|[CounterpartyFieldName](#schemacounterpartyfieldname)|true|none|Name of the counterparty field|
 |»» mandatory|boolean|true|none|Whether the field is mandatory|
 |» lookupId|string|true|none|Unique identifier for the lookup. Needed in the subsequent create quote request.|
 
@@ -1916,8 +1918,9 @@ must be followed precisely, including any reference codes provided.
   "expiresAt": "2023-09-01T14:30:00Z",
   "feesIncluded": 10,
   "counterpartyInformation": {
-    "fullName": "Jane Receiver",
-    "country": "FR"
+    "FULL_NAME": "Jane Receiver",
+    "DATE_OF_BIRTH": "1990-01-01",
+    "NATIONALITY": "FR"
   },
   "paymentInstructions": {
     "reference": "UMA-Q12345-REF",
@@ -2026,8 +2029,9 @@ from quote creation to settlement.
   "expiresAt": "2023-09-01T14:30:00Z",
   "feesIncluded": 10,
   "counterpartyInformation": {
-    "fullName": "Jane Receiver",
-    "country": "FR"
+    "FULL_NAME": "Jane Receiver",
+    "DATE_OF_BIRTH": "1990-01-01",
+    "NATIONALITY": "FR"
   },
   "paymentInstructions": {
     "reference": "UMA-Q12345-REF",
@@ -3952,6 +3956,41 @@ and
 |»» registrationNumber|string|false|none|Business registration number|
 |»» taxId|string|false|none|Tax identification number|
 
+<h2 id="tocS_CounterpartyFieldName">CounterpartyFieldName</h2>
+<!-- backwards compatibility -->
+<a id="schemacounterpartyfieldname"></a>
+<a id="schema_CounterpartyFieldName"></a>
+<a id="tocScounterpartyfieldname"></a>
+<a id="tocscounterpartyfieldname"></a>
+
+```json
+"FULL_NAME"
+
+```
+
+Name of the counterparty field
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|string|false|none|Name of the counterparty field|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|*anonymous*|FULL_NAME|
+|*anonymous*|DATE_OF_BIRTH|
+|*anonymous*|NATIONALITY|
+|*anonymous*|PHONE_NUMBER|
+|*anonymous*|EMAIL|
+|*anonymous*|ADDRESS|
+|*anonymous*|TAX_ID|
+|*anonymous*|REGISTRATION_NUMBER|
+|*anonymous*|ACCOUNT_NUMBER|
+|*anonymous*|USER_TYPE|
+
 <h2 id="tocS_CounterpartyFieldDefinition">CounterpartyFieldDefinition</h2>
 <!-- backwards compatibility -->
 <a id="schemacounterpartyfielddefinition"></a>
@@ -3971,23 +4010,8 @@ and
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|name|string|true|none|Name of the counterparty field|
+|name|[CounterpartyFieldName](#schemacounterpartyfieldname)|true|none|Name of the counterparty field|
 |mandatory|boolean|true|none|Whether the field is mandatory|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|name|FULL_NAME|
-|name|DATE_OF_BIRTH|
-|name|NATIONALITY|
-|name|PHONE_NUMBER|
-|name|EMAIL|
-|name|ADDRESS|
-|name|TAX_ID|
-|name|REGISTRATION_NUMBER|
-|name|ACCOUNT_NUMBER|
-|name|USER_TYPE|
 
 <h2 id="tocS_PlatformCurrencyConfig">PlatformCurrencyConfig</h2>
 <!-- backwards compatibility -->
@@ -4256,8 +4280,9 @@ Type of webhook event, used by the receiver to identify which webhook is being r
   "createdAt": "2023-08-15T14:25:18Z",
   "description": "Payment for invoice #1234",
   "counterpartyInformation": {
-    "fullName": "John Sender",
-    "country": "DE"
+    "FULL_NAME": "John Sender",
+    "DATE_OF_BIRTH": "1985-06-15",
+    "NATIONALITY": "DE"
   }
 }
 
@@ -4299,8 +4324,9 @@ Type of webhook event, used by the receiver to identify which webhook is being r
   "createdAt": "2023-08-15T14:25:18Z",
   "description": "Payment for invoice #1234",
   "counterpartyInformation": {
-    "fullName": "John Sender",
-    "country": "DE"
+    "FULL_NAME": "John Sender",
+    "DATE_OF_BIRTH": "1985-06-15",
+    "NATIONALITY": "DE"
   },
   "receivedAmount": {
     "amount": 12550,
@@ -4355,8 +4381,9 @@ and
   "createdAt": "2023-08-15T14:25:18Z",
   "description": "Payment for invoice #1234",
   "counterpartyInformation": {
-    "fullName": "John Sender",
-    "country": "DE"
+    "FULL_NAME": "John Sender",
+    "DATE_OF_BIRTH": "1985-06-15",
+    "NATIONALITY": "DE"
   },
   "sentAmount": {
     "amount": 12550,
@@ -4489,8 +4516,9 @@ The side of the quote which should be locked and specified in the `lockedCurrenc
   "expiresAt": "2023-09-01T14:30:00Z",
   "feesIncluded": 10,
   "counterpartyInformation": {
-    "fullName": "Jane Receiver",
-    "country": "FR"
+    "FULL_NAME": "Jane Receiver",
+    "DATE_OF_BIRTH": "1990-01-01",
+    "NATIONALITY": "FR"
   },
   "paymentInstructions": {
     "reference": "UMA-Q12345-REF",
