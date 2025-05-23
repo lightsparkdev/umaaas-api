@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { UaasTest } from 'uaas-test';
 
 const client = new UaasTest({
-  username: process.env.clientId,
-  password: process.env.clientSecret,
+  username: process.env.CLIENT_ID,
+  password: process.env.CLIENT_SECRET,
 });
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+    console.log(body);
     const user = await client.users.create(body);
     
     return NextResponse.json(user, { status: 201 });
