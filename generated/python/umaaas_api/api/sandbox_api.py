@@ -17,6 +17,8 @@ from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
 from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
+from umaaas_api.models.incoming_transaction import IncomingTransaction
+from umaaas_api.models.outgoing_transaction import OutgoingTransaction
 from umaaas_api.models.test_receive_request import TestReceiveRequest
 from umaaas_api.models.test_send_request import TestSendRequest
 
@@ -54,7 +56,7 @@ class SandboxApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> None:
+    ) -> IncomingTransaction:
         """Simulate payment send to test receiving a payment
 
         Simulate sending payment from an sandbox uma address to a platform user to test payment receive. This endpoint is only for the sandbox environment and will fail for production platforms/keys. 
@@ -92,7 +94,7 @@ class SandboxApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': None,
+            '200': "IncomingTransaction",
             '400': "Error",
             '401': "Error",
             '403': "Error",
@@ -125,7 +127,7 @@ class SandboxApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[None]:
+    ) -> ApiResponse[IncomingTransaction]:
         """Simulate payment send to test receiving a payment
 
         Simulate sending payment from an sandbox uma address to a platform user to test payment receive. This endpoint is only for the sandbox environment and will fail for production platforms/keys. 
@@ -163,7 +165,7 @@ class SandboxApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': None,
+            '200': "IncomingTransaction",
             '400': "Error",
             '401': "Error",
             '403': "Error",
@@ -234,7 +236,7 @@ class SandboxApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': None,
+            '200': "IncomingTransaction",
             '400': "Error",
             '401': "Error",
             '403': "Error",
@@ -340,7 +342,7 @@ class SandboxApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> None:
+    ) -> OutgoingTransaction:
         """Simulate sending funds
 
         Simulate sending funds to the bank account as instructed in the quote.  This endpoint is only for the sandbox environment and will fail for production platforms/keys. 
@@ -378,7 +380,7 @@ class SandboxApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': None,
+            '200': "OutgoingTransaction",
             '400': "Error",
             '401': "Error",
             '403': "Error",
@@ -411,7 +413,7 @@ class SandboxApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[None]:
+    ) -> ApiResponse[OutgoingTransaction]:
         """Simulate sending funds
 
         Simulate sending funds to the bank account as instructed in the quote.  This endpoint is only for the sandbox environment and will fail for production platforms/keys. 
@@ -449,7 +451,7 @@ class SandboxApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': None,
+            '200': "OutgoingTransaction",
             '400': "Error",
             '401': "Error",
             '403': "Error",
@@ -520,7 +522,7 @@ class SandboxApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': None,
+            '200': "OutgoingTransaction",
             '400': "Error",
             '401': "Error",
             '403': "Error",

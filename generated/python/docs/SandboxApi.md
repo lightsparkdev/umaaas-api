@@ -9,7 +9,7 @@ Method | HTTP request | Description
 
 
 # **test_receive**
-> test_receive(test_receive_request)
+> IncomingTransaction test_receive(test_receive_request)
 
 Simulate payment send to test receiving a payment
 
@@ -23,6 +23,7 @@ This endpoint is only for the sandbox environment and will fail for production p
 
 ```python
 import umaaas_api
+from umaaas_api.models.incoming_transaction import IncomingTransaction
 from umaaas_api.models.test_receive_request import TestReceiveRequest
 from umaaas_api.rest import ApiException
 from pprint import pprint
@@ -52,7 +53,9 @@ with umaaas_api.ApiClient(configuration) as api_client:
 
     try:
         # Simulate payment send to test receiving a payment
-        api_instance.test_receive(test_receive_request)
+        api_response = api_instance.test_receive(test_receive_request)
+        print("The response of SandboxApi->test_receive:\n")
+        pprint(api_response)
     except Exception as e:
         print("Exception when calling SandboxApi->test_receive: %s\n" % e)
 ```
@@ -68,7 +71,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-void (empty response body)
+[**IncomingTransaction**](IncomingTransaction.md)
 
 ### Authorization
 
@@ -92,7 +95,7 @@ void (empty response body)
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **test_send**
-> test_send(test_send_request)
+> OutgoingTransaction test_send(test_send_request)
 
 Simulate sending funds
 
@@ -106,6 +109,7 @@ This endpoint is only for the sandbox environment and will fail for production p
 
 ```python
 import umaaas_api
+from umaaas_api.models.outgoing_transaction import OutgoingTransaction
 from umaaas_api.models.test_send_request import TestSendRequest
 from umaaas_api.rest import ApiException
 from pprint import pprint
@@ -135,7 +139,9 @@ with umaaas_api.ApiClient(configuration) as api_client:
 
     try:
         # Simulate sending funds
-        api_instance.test_send(test_send_request)
+        api_response = api_instance.test_send(test_send_request)
+        print("The response of SandboxApi->test_send:\n")
+        pprint(api_response)
     except Exception as e:
         print("Exception when calling SandboxApi->test_send: %s\n" % e)
 ```
@@ -151,7 +157,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-void (empty response body)
+[**OutgoingTransaction**](OutgoingTransaction.md)
 
 ### Authorization
 

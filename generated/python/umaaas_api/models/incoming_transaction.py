@@ -44,7 +44,7 @@ class IncomingTransaction(BaseModel):
     description: Optional[StrictStr] = Field(default=None, description="Optional memo or description for the payment")
     counterparty_information: Optional[Dict[str, Any]] = Field(default=None, description="Additional information about the counterparty, if available", alias="counterpartyInformation")
     received_amount: CurrencyAmount = Field(description="Amount received in the recipient's currency", alias="receivedAmount")
-    reconciliation_instructions: ReconciliationInstructions = Field(alias="reconciliationInstructions")
+    reconciliation_instructions: Optional[ReconciliationInstructions] = Field(default=None, alias="reconciliationInstructions")
     __properties: ClassVar[List[str]] = ["id", "status", "type", "senderUmaAddress", "receiverUmaAddress", "userId", "platformUserId", "settledAt", "createdAt", "description", "counterpartyInformation", "receivedAmount", "reconciliationInstructions"]
 
     model_config = ConfigDict(
