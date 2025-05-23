@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**name** | **str** | Name of the counterparty field | 
+**name** | [**CounterpartyFieldName**](CounterpartyFieldName.md) |  | 
 **mandatory** | **bool** | Whether the field is mandatory | 
 
 ## Example

@@ -15,7 +15,7 @@
 """  # noqa: E501
 
 
-__version__ = "0.0.20"
+__version__ = "0.0.21"
 
 # import apis into sdk package
 from umaaas_api.api.api_tokens_api import APITokensApi
@@ -53,6 +53,7 @@ from umaaas_api.models.business_user_all_of_business_info import BusinessUserAll
 from umaaas_api.models.clabe_account_info import ClabeAccountInfo
 from umaaas_api.models.claim_invitation_request import ClaimInvitationRequest
 from umaaas_api.models.counterparty_field_definition import CounterpartyFieldDefinition
+from umaaas_api.models.counterparty_field_name import CounterpartyFieldName
 from umaaas_api.models.create_invitation_request import CreateInvitationRequest
 from umaaas_api.models.create_quote422_response import CreateQuote422Response
 from umaaas_api.models.create_quote_request import CreateQuoteRequest

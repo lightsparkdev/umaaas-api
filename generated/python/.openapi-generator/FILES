@@ -23,6 +23,7 @@ docs/BusinessUserAllOfBusinessInfo.md
 docs/ClabeAccountInfo.md
 docs/ClaimInvitationRequest.md
 docs/CounterpartyFieldDefinition.md
+docs/CounterpartyFieldName.md
 docs/CreateInvitationRequest.md
 docs/CreateQuote422Response.md
 docs/CreateQuoteRequest.md
@@ -124,6 +125,7 @@ umaaas_api/models/business_user_all_of_business_info.py
 umaaas_api/models/clabe_account_info.py
 umaaas_api/models/claim_invitation_request.py
 umaaas_api/models/counterparty_field_definition.py
+umaaas_api/models/counterparty_field_name.py
 umaaas_api/models/create_invitation_request.py
 umaaas_api/models/create_quote422_response.py
 umaaas_api/models/create_quote_request.py
