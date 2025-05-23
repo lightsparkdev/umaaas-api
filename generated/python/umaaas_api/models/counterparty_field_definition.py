@@ -18,8 +18,9 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictBool
 from typing import Any, ClassVar, Dict, List
+from umaaas_api.models.counterparty_field_name import CounterpartyFieldName
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -27,16 +28,9 @@ class CounterpartyFieldDefinition(BaseModel):
     """
     CounterpartyFieldDefinition
     """ # noqa: E501
-    name: StrictStr = Field(description="Name of the counterparty field")
+    name: CounterpartyFieldName
     mandatory: StrictBool = Field(description="Whether the field is mandatory")
     __properties: ClassVar[List[str]] = ["name", "mandatory"]
-
-    @field_validator('name')
-    def name_validate_enum(cls, value):
-        """Validates the enum"""
-        if value not in set(['FULL_NAME', 'DATE_OF_BIRTH', 'NATIONALITY', 'PHONE_NUMBER', 'EMAIL', 'ADDRESS', 'TAX_ID', 'REGISTRATION_NUMBER', 'ACCOUNT_NUMBER', 'USER_TYPE']):
-            raise ValueError("must be one of enum values ('FULL_NAME', 'DATE_OF_BIRTH', 'NATIONALITY', 'PHONE_NUMBER', 'EMAIL', 'ADDRESS', 'TAX_ID', 'REGISTRATION_NUMBER', 'ACCOUNT_NUMBER', 'USER_TYPE')")
-        return value
 
     model_config = ConfigDict(
         populate_by_name=True,
