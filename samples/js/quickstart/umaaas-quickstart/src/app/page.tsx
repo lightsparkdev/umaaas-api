@@ -31,7 +31,7 @@ interface FormData {
 export default function Home() {
   const [formData, setFormData] = useState<FormData>(() => ({
     platformUserId: faker.string.uuid(),
-    umaAddress: `$${faker.internet.username()}@${typeof window !== 'undefined' ? window.location.hostname : 'localhost:3000'}`,
+    umaAddress: `$${faker.internet.username().toLowerCase()}@${process.env.NEXT_PUBLIC_UAAS_UMA_DOMAIN || (typeof window !== 'undefined' ? window.location.hostname : 'localhost:3000')}`,
     userType: 'INDIVIDUAL',
     fullName: faker.person.fullName(),
     dateOfBirth: faker.date.birthdate({ min: 18, max: 80, mode: 'age' }).toISOString().split('T')[0],
@@ -56,6 +56,26 @@ export default function Home() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [response, setResponse] = useState<{ status: number | string; data: unknown } | null>(null);
+  
+  const [users, setUsers] = useState<Array<{
+    id?: string;
+    umaAddress?: string;
+    fullName?: string;
+    platformUserId?: string;
+    createdAt?: string;
+  }>>([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  const [currUser, setCurrUser] = useState<{
+    id?: string;
+    umaAddress?: string;
+    fullName?: string;
+    platformUserId?: string;
+    createdAt?: string;
+  } | null>(null);
+
+  const [lookupAddress, setLookupAddress] = useState('$php@test.uma.me');
+  const [isLookingUp, setIsLookingUp] = useState(false);
+  const [lookupResponse, setLookupResponse] = useState<{ status: number | string; data: unknown } | null>(null);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => {
@@ -66,7 +86,7 @@ export default function Home() {
         return {
           ...prev,
           [keys[0]]: {
-            ...prev[keys[0] as keyof FormData],
+            ...(prev[keys[0] as keyof FormData] as Record<string, string>),
             [keys[1]]: value,
           },
         };
@@ -78,7 +98,7 @@ export default function Home() {
   const generateNewData = () => {
     setFormData({
       platformUserId: faker.string.uuid(),
-      umaAddress: `$${faker.internet.username()}@${typeof window !== 'undefined' ? window.location.hostname : 'localhost:3000'}`,
+      umaAddress: `$${faker.internet.username().toLowerCase()}@${process.env.NEXT_PUBLIC_UAAS_UMA_DOMAIN || (typeof window !== 'undefined' ? window.location.hostname : 'localhost:3000')}`,
       userType: 'INDIVIDUAL',
       fullName: faker.person.fullName(),
       dateOfBirth: faker.date.birthdate({ min: 18, max: 80, mode: 'age' }).toISOString().split('T')[0],
@@ -119,11 +139,65 @@ export default function Home() {
 
       const data = await res.json();
       setResponse({ status: res.status, data });
+      
+      // If user creation was successful, add to users list
+      if (res.status === 201 && data) {
+        setCurrUser(data);
+        setUsers(prevUsers => [data, ...prevUsers]);
+      }
     } catch {
       setResponse({ status: 'error', data: { error: 'Network error' } });
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const fetchUsers = async () => {
+    setIsLoadingUsers(true);
+    try {
+      const res = await fetch('/api/user');
+      const data = await res.json();
+      if (res.ok) {
+        setUsers(data.data || []);
+      } else {
+        console.error('Error fetching users:', data);
+        setUsers([]);
+      }
+    } catch (error) {
+      console.error('Network error fetching users:', error);
+      setUsers([]);
+    } finally {
+      setIsLoadingUsers(false);
+    }
+  };
+
+  const handleLookup = async () => {
+    if (!lookupAddress) return;
+    
+    setIsLookingUp(true);
+    setLookupResponse(null);
+
+    try {
+      const searchParams = new URLSearchParams({
+        receiverUmaAddress: lookupAddress,
+        userId: currUser?.id || 'test-user-id'
+      });
+      
+      const res = await fetch(`/api/payments/lookup?${searchParams}`);
+      const data = await res.json();
+      setLookupResponse({ status: res.status, data });
+    } catch {
+      setLookupResponse({ status: 'error', data: { error: 'Network error' } });
+    } finally {
+      setIsLookingUp(false);
+    }
+  };
+
+  const truncateText = (text: string, maxLength: number = 30) => {
+    if (text && text.length > maxLength) {
+      return text.substring(0, maxLength) + '...';
+    }
+    return text;
   };
 
   return (
@@ -134,6 +208,13 @@ export default function Home() {
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold">Add a new user</h2>
+            <button
+              type="button"
+              onClick={generateNewData}
+              className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+            >
+              Generate New Data
+            </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -341,6 +422,97 @@ export default function Home() {
               <pre className="bg-gray-100 p-3 rounded text-sm overflow-auto">
                 {JSON.stringify(response.data, null, 2)}
               </pre>
+            </div>
+          )}
+        </div>
+
+        <div className="bg-white rounded-lg shadow-lg p-6 mt-8">
+          <h2 className="text-xl font-semibold mb-6">UMA Address Lookup</h2>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">UMA Address to Lookup</label>
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  value={lookupAddress}
+                  onChange={(e) => setLookupAddress(e.target.value)}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter UMA address..."
+                />
+                <button
+                  onClick={handleLookup}
+                  disabled={isLookingUp || !lookupAddress}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isLookingUp ? 'Looking up...' : 'Lookup'}
+                </button>
+              </div>
+            </div>
+
+            {lookupResponse && (
+              <div className="p-4 rounded-md border">
+                <h3 className="text-lg font-medium mb-2">
+                  Lookup Response {lookupResponse.status === 200 ? '(Success)' : '(Error)'}:
+                </h3>
+                <pre className="bg-gray-100 p-3 rounded text-sm overflow-auto">
+                  {JSON.stringify(lookupResponse.data, null, 2)}
+                </pre>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-lg p-6 mt-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold">All Users</h2>
+            <button
+              onClick={fetchUsers}
+              disabled={isLoadingUsers}
+              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {isLoadingUsers ? 'Loading...' : 'Fetch Users'}
+            </button>
+          </div>
+
+          {users.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="min-w-full table-auto border-collapse">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="border border-gray-300 px-4 py-2 text-left font-medium text-gray-700">ID</th>
+                    <th className="border border-gray-300 px-4 py-2 text-left font-medium text-gray-700">UMA Address</th>
+                    <th className="border border-gray-300 px-4 py-2 text-left font-medium text-gray-700">Name</th>
+                    <th className="border border-gray-300 px-4 py-2 text-left font-medium text-gray-700">Platform User ID</th>
+                    <th className="border border-gray-300 px-4 py-2 text-left font-medium text-gray-700">Created At</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user, index) => (
+                    <tr key={user.id || index} className="hover:bg-gray-50">
+                      <td className="border border-gray-300 px-4 py-2 text-sm">
+                        {truncateText(user.id || 'N/A', 20)}
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2 text-sm">
+                        {truncateText(user.umaAddress || 'N/A', 40)}
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2 text-sm">
+                        {truncateText(user.fullName || 'N/A', 25)}
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2 text-sm">
+                        {truncateText(user.platformUserId || 'N/A', 25)}
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2 text-sm">
+                        {user.createdAt ? new Date(user.createdAt).toLocaleString() : 'N/A'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              {isLoadingUsers ? 'Loading users...' : 'No users found. Click "Fetch Users" to load users.'}
             </div>
           )}
         </div>
