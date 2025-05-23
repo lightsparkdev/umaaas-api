@@ -95,7 +95,6 @@ setup.cfg
 setup.py
 test-requirements.txt
 test/__init__.py
-test/test_counterparty_field_name.py
 tox.ini
 umaaas_api/__init__.py
 umaaas_api/api/__init__.py
