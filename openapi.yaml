@@ -2565,6 +2565,10 @@ paths:
       responses:
         '200':
           description: Funds received successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OutgoingTransaction'
         '400':
           description: Bad request
           content:
@@ -2637,6 +2641,10 @@ paths:
       responses:
         '200':
           description: Payment triggered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IncomingTransaction'
         '400':
           description: Bad request
           content:
