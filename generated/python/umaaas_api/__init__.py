@@ -15,7 +15,7 @@
 """  # noqa: E501
 
 
-__version__ = "0.0.19"
+__version__ = "0.0.20"
 
 # import apis into sdk package
 from umaaas_api.api.api_tokens_api import APITokensApi
