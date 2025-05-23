@@ -683,7 +683,6 @@ components:
         - type: object
           required:
             - receivedAmount
-            - reconciliationInstructions
           properties:
             type:
               $ref: '#/components/schemas/TransactionType'
