@@ -693,6 +693,7 @@ components:
               description: Amount received in the recipient's currency
             reconciliationInstructions:
               $ref: '#/components/schemas/ReconciliationInstructions'
+              description: Included for all transactions except those with "CREATED" status
 
     OutgoingTransaction:
       allOf:
