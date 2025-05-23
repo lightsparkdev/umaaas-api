@@ -472,7 +472,7 @@ components:
       properties:
         name:
           type: string
-          enum: [FULL_NAME, DATE_OF_BIRTH, NATIONALITY, PHONE_NUMBER, EMAIL, ADDRESS, TAX_ID, REGISTRATION_NUMBER, ACCOUNT_NUMBER]
+          enum: [FULL_NAME, DATE_OF_BIRTH, NATIONALITY, PHONE_NUMBER, EMAIL, ADDRESS, TAX_ID, REGISTRATION_NUMBER, ACCOUNT_NUMBER, USER_TYPE]
           description: Name of the counterparty field
           example: "FULL_NAME"
         mandatory:

@@ -34,8 +34,8 @@ class CounterpartyFieldDefinition(BaseModel):
     @field_validator('name')
     def name_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['FULL_NAME', 'DATE_OF_BIRTH', 'NATIONALITY', 'PHONE_NUMBER', 'EMAIL', 'ADDRESS', 'TAX_ID', 'REGISTRATION_NUMBER', 'ACCOUNT_NUMBER']):
-            raise ValueError("must be one of enum values ('FULL_NAME', 'DATE_OF_BIRTH', 'NATIONALITY', 'PHONE_NUMBER', 'EMAIL', 'ADDRESS', 'TAX_ID', 'REGISTRATION_NUMBER', 'ACCOUNT_NUMBER')")
+        if value not in set(['FULL_NAME', 'DATE_OF_BIRTH', 'NATIONALITY', 'PHONE_NUMBER', 'EMAIL', 'ADDRESS', 'TAX_ID', 'REGISTRATION_NUMBER', 'ACCOUNT_NUMBER', 'USER_TYPE']):
+            raise ValueError("must be one of enum values ('FULL_NAME', 'DATE_OF_BIRTH', 'NATIONALITY', 'PHONE_NUMBER', 'EMAIL', 'ADDRESS', 'TAX_ID', 'REGISTRATION_NUMBER', 'ACCOUNT_NUMBER', 'USER_TYPE')")
         return value
 
     model_config = ConfigDict(

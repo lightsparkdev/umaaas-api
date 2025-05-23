@@ -240,6 +240,7 @@ Update the platform configuration settings
 |»»» name|TAX_ID|
 |»»» name|REGISTRATION_NUMBER|
 |»»» name|ACCOUNT_NUMBER|
+|»»» name|USER_TYPE|
 
 > Example responses
 
@@ -1145,9 +1146,9 @@ See the UserBankAccountInfo and UserInfo schemas for more details on the require
 
 ### Example CSV
 ```csv
-umaAddress,platformUserId,userType,fullName,dateOfBirth,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId
-$john.doe@uma.domain.com,user123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,Chase Bank,chase_primary_1234
-$acme@uma.domain.com,biz456,BUSINESS,Acme Corp,400 Commerce Way,Austin,TX,78701,US,US_ACCOUNT,987654321,Bank of America,boa_business_5678
+umaAddress,platformUserId,userType,fullName,dateOfBirth,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId,businessLegalName,routingNumber,accountCategory
+john.doe@uma.domain.com,user123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,Chase Bank,chase_primary_1234,,222888888,SAVINGS
+acme@uma.domain.com,biz456,BUSINESS,,,400 Commerce Way,Austin,TX,78701,US,US_ACCOUNT,987654321,Bank of America,boa_business_5678,Acme Corp,121212121,CHECKING
 ```
 
 The upload process is asynchronous and will return a job ID that can be used to track progress.
@@ -1175,21 +1176,8 @@ webhookUrl: http://example.com
 
 ```json
 {
-  "jobId": "string",
-  "status": "PENDING",
-  "validationSummary": {
-    "totalRows": 0,
-    "validRows": 0,
-    "invalidRows": 0,
-    "errors": [
-      {
-        "row": 0,
-        "errors": [
-          "string"
-        ]
-      }
-    ]
-  }
+  "jobId": "Job:019542f5-b3e7-1d02-0000-000000000006",
+  "status": "PENDING"
 }
 ```
 
@@ -1198,7 +1186,6 @@ webhookUrl: http://example.com
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |202|[Accepted](https://tools.ietf.org/html/rfc7231#section-6.3.3)|CSV upload accepted for processing|Inline|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request - Invalid CSV format or content|[Error](#schemaerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
 
 <h3 id="uploaduserscsv-responseschema">Response Schema</h3>
@@ -1209,13 +1196,6 @@ Status Code **202**
 |---|---|---|---|---|
 |» jobId|string|true|none|Unique identifier for the bulk import job|
 |» status|string|true|none|none|
-|» validationSummary|object|false|none|Summary of CSV validation results|
-|»» totalRows|integer|false|none|Total number of rows in the CSV file|
-|»» validRows|integer|false|none|Number of rows that passed initial validation|
-|»» invalidRows|integer|false|none|Number of rows that failed validation|
-|»» errors|[object]|false|none|none|
-|»»» row|integer|false|none|Row number in the CSV file (1-based)|
-|»»» errors|[string]|false|none|none|
 
 #### Enumerated Values
 
@@ -1292,7 +1272,7 @@ The response includes:
 
 ```json
 {
-  "jobId": "job_123456789",
+  "jobId": "Job:019542f5-b3e7-1d02-0000-000000000006",
   "status": "PROCESSING",
   "progress": {
     "total": 5000,
@@ -1318,39 +1298,9 @@ The response includes:
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Job status retrieved successfully|Inline|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Job status retrieved successfully|[BulkUserImportJob](#schemabulkuserimportjob)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Job not found|[Error](#schemaerror)|
-
-<h3 id="getbulkuserimportjob-responseschema">Response Schema</h3>
-
-Status Code **200**
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|» jobId|string|true|none|Unique identifier for the bulk import job|
-|» status|string|true|none|Current status of the job|
-|» progress|object|true|none|none|
-|»» total|integer|true|none|Total number of users to process|
-|»» processed|integer|true|none|Number of users processed so far|
-|»» successful|integer|true|none|Number of users successfully created|
-|»» failed|integer|true|none|Number of users that failed to create|
-|» errors|[object]|false|none|Detailed error information for failed entries|
-|»» correlationId|string|true|none|Platform user ID or row number for the failed entry|
-|»» error|[Error](#schemaerror)|true|none|none|
-|»»» code|string|false|none|Error code|
-|»»» message|string|false|none|Error message|
-|»»» details|object|false|none|Additional error details|
-|» completedAt|string(date-time)|false|none|Timestamp when the job completed (only present for COMPLETED or FAILED status)|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|status|PENDING|
-|status|PROCESSING|
-|status|COMPLETED|
-|status|FAILED|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -1439,6 +1389,9 @@ Retrieve detailed information about a specific transaction
       "symbol": "$",
       "decimals": 2
     }
+  },
+  "reconciliationInstructions": {
+    "reference": "UMA-Q12345-REF"
   }
 }
 ```
@@ -1585,6 +1538,9 @@ date range, status, and transaction type.
           "symbol": "$",
           "decimals": 2
         }
+      },
+      "reconciliationInstructions": {
+        "reference": "UMA-Q12345-REF"
       }
     }
   ],
@@ -1646,6 +1602,8 @@ Status Code **200**
 |»»»»»» name|string|false|none|Full name of the currency|
 |»»»»»» symbol|string|false|none|Symbol of the currency|
 |»»»»»» decimals|integer|false|none|Number of decimal places for the currency|
+|»»»» reconciliationInstructions|[ReconciliationInstructions](#schemareconciliationinstructions)|true|none|none|
+|»»»»» reference|string|true|none|Unique reference code that must be included with the payment to match it with the correct incoming transaction|
 
 *xor*
 
@@ -1832,6 +1790,7 @@ Status Code **200**
 |name|TAX_ID|
 |name|REGISTRATION_NUMBER|
 |name|ACCOUNT_NUMBER|
+|name|USER_TYPE|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -2089,189 +2048,6 @@ from quote creation to settlement.
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Quote retrieved successfully|[Quote](#schemaquote)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Quote not found|[Error](#schemaerror)|
-
-<aside class="warning">
-To perform this operation, you must be authenticated by means of one of the following methods:
-BasicAuth
-</aside>
-
-## getPaymentStatus
-
-<a id="opIdgetPaymentStatus"></a>
-
-> Code samples
-
-```javascript
-
-const headers = {
-  'Accept':'application/json'
-};
-
-fetch('https://api.lightspark.com/umaaas/v1/payments/status/{quoteId}',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
-
-```python
-import requests
-headers = {
-  'Accept': 'application/json'
-}
-
-r = requests.get('https://api.lightspark.com/umaaas/v1/payments/status/{quoteId}', headers = headers)
-
-print(r.json())
-
-```
-
-`GET /payments/status/{quoteId}`
-
-*Check payment status for a quote*
-
-Check the status of a payment associated with a previously created quote.
-This allows clients to verify if a payment they've initiated using the 
-payment instructions has been received and processed.
-
-<h3 id="getpaymentstatus-parameters">Parameters</h3>
-
-|Name|In|Type|Required|Description|
-|---|---|---|---|---|
-|quoteId|path|string|true|ID of the quote to check payment status for|
-|reference|query|string|false|Payment reference code (optional, but helps with verification)|
-
-> Example responses
-
-> 200 Response
-
-```json
-{
-  "quoteId": "Quote:019542f5-b3e7-1d02-0000-000000000006",
-  "status": "RECEIVED",
-  "statusMessage": "Payment received and being processed",
-  "transaction": {
-    "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
-    "status": "CREATED",
-    "type": "INCOMING",
-    "senderUmaAddress": "$sender@external.domain",
-    "receiverUmaAddress": "$recipient@uma.domain",
-    "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
-    "platformUserId": "18d3e5f7b4a9c2",
-    "settledAt": "2023-08-15T14:30:00Z",
-    "createdAt": "2023-08-15T14:25:18Z",
-    "description": "Payment for invoice #1234",
-    "counterpartyInformation": {
-      "fullName": "John Sender",
-      "country": "DE"
-    },
-    "sentAmount": {
-      "amount": 12550,
-      "currency": {
-        "code": "USD",
-        "name": "United States Dollar",
-        "symbol": "$",
-        "decimals": 2
-      }
-    },
-    "receivedAmount": {
-      "amount": 12550,
-      "currency": {
-        "code": "USD",
-        "name": "United States Dollar",
-        "symbol": "$",
-        "decimals": 2
-      }
-    },
-    "exchangeRate": 1.08,
-    "fees": 10,
-    "quoteId": "Quote:019542f5-b3e7-1d02-0000-000000000006"
-  }
-}
-```
-
-<h3 id="getpaymentstatus-responses">Responses</h3>
-
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Payment status retrieved successfully|Inline|
-|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Quote not found|[Error](#schemaerror)|
-
-<h3 id="getpaymentstatus-responseschema">Response Schema</h3>
-
-Status Code **200**
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|» quoteId|string|true|none|ID of the quote|
-|» status|string|true|none|Current status of the payment|
-|» statusMessage|string|false|none|Human-readable description of the current status|
-|» transaction|any|false|none|none|
-
-*allOf*
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|»» *anonymous*|[Transaction](#schematransaction)|false|none|none|
-|»»» id|string|true|none|Unique identifier for the transaction|
-|»»» status|[TransactionStatus](#schematransactionstatus)|true|none|Status of a payment transaction|
-|»»» type|[TransactionType](#schematransactiontype)|true|none|Type of transaction (incoming payment or outgoing payment)|
-|»»» senderUmaAddress|string|true|none|UMA address of the payment sender|
-|»»» receiverUmaAddress|string|true|none|UMA address of the payment recipient|
-|»»» userId|string|true|none|System ID of the user (sender for outgoing, recipient for incoming)|
-|»»» platformUserId|string|true|none|Platform-specific ID of the user (sender for outgoing, recipient for incoming)|
-|»»» settledAt|string(date-time)|false|none|When the payment was or will be settled|
-|»»» createdAt|string(date-time)|false|none|When the transaction was created|
-|»»» description|string|false|none|Optional memo or description for the payment|
-|»»» counterpartyInformation|object|false|none|Additional information about the counterparty, if available|
-
-*and*
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|»» *anonymous*|object|false|none|none|
-|»»» type|[TransactionType](#schematransactiontype)|false|none|Type of transaction (incoming payment or outgoing payment)|
-|»»» sentAmount|[CurrencyAmount](#schemacurrencyamount)|true|none|none|
-|»»»» amount|integer(int64)|true|none|Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)|
-|»»»» currency|[Currency](#schemacurrency)|true|none|none|
-|»»»»» code|string|false|none|Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "SAT" for satoshis, "USDC" for USDCoin, etc.)|
-|»»»»» name|string|false|none|Full name of the currency|
-|»»»»» symbol|string|false|none|Symbol of the currency|
-|»»»»» decimals|integer|false|none|Number of decimal places for the currency|
-|»»» receivedAmount|[CurrencyAmount](#schemacurrencyamount)|false|none|none|
-|»»» exchangeRate|number|false|none|Number of sending currency units per receiving currency unit.|
-|»»» fees|integer(int64)|false|none|The fees associated with the quote in the smallest unit of the sending currency (eg. cents).|
-|»»» quoteId|string|false|none|The ID of the quote that was used to trigger this payment|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|status|PENDING|
-|status|RECEIVED|
-|status|PROCESSING|
-|status|COMPLETED|
-|status|FAILED|
-|status|EXPIRED|
-|status|CREATED|
-|status|PENDING|
-|status|PROCESSING|
-|status|COMPLETED|
-|status|REJECTED|
-|status|FAILED|
-|status|REFUNDED|
-|type|INCOMING|
-|type|OUTGOING|
-|type|INCOMING|
-|type|OUTGOING|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -3795,6 +3571,26 @@ and
 |instructionsNotes|string|false|none|Additional human-readable instructions for making the payment|
 |bankAccountInfo|[PaymentBankAccountInfo](#schemapaymentbankaccountinfo)|true|none|none|
 
+<h2 id="tocS_ReconciliationInstructions">ReconciliationInstructions</h2>
+<!-- backwards compatibility -->
+<a id="schemareconciliationinstructions"></a>
+<a id="schema_ReconciliationInstructions"></a>
+<a id="tocSreconciliationinstructions"></a>
+<a id="tocsreconciliationinstructions"></a>
+
+```json
+{
+  "reference": "UMA-Q12345-REF"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|reference|string|true|none|Unique reference code that must be included with the payment to match it with the correct incoming transaction|
+
 <h2 id="tocS_PaymentBankAccountInfo">PaymentBankAccountInfo</h2>
 <!-- backwards compatibility -->
 <a id="schemapaymentbankaccountinfo"></a>
@@ -4191,6 +3987,7 @@ and
 |name|TAX_ID|
 |name|REGISTRATION_NUMBER|
 |name|ACCOUNT_NUMBER|
+|name|USER_TYPE|
 
 <h2 id="tocS_PlatformCurrencyConfig">PlatformCurrencyConfig</h2>
 <!-- backwards compatibility -->
@@ -4513,6 +4310,9 @@ Type of webhook event, used by the receiver to identify which webhook is being r
       "symbol": "$",
       "decimals": 2
     }
+  },
+  "reconciliationInstructions": {
+    "reference": "UMA-Q12345-REF"
   }
 }
 
@@ -4533,6 +4333,7 @@ and
 |*anonymous*|object|false|none|none|
 |» type|[TransactionType](#schematransactiontype)|false|none|Always "INCOMING" for incoming transactions|
 |» receivedAmount|[CurrencyAmount](#schemacurrencyamount)|true|none|Amount received in the recipient's currency|
+|» reconciliationInstructions|[ReconciliationInstructions](#schemareconciliationinstructions)|true|none|none|
 
 <h2 id="tocS_OutgoingTransaction">OutgoingTransaction</h2>
 <!-- backwards compatibility -->
@@ -4719,7 +4520,7 @@ The side of the quote which should be locked and specified in the `lockedCurrenc
 |counterpartyInformation|object|false|none|Information about the recipient, as required by the platform in their configuration.|
 |paymentInstructions|[PaymentInstructions](#schemapaymentinstructions)|true|none|none|
 |status|string|false|none|Current status of the quote|
-|transactionId|string|false|none|The ID of the transaction created from this quote. Only present if the quote has started processing.|
+|transactionId|string|true|none|The ID of the transaction created from this quote.|
 
 #### Enumerated Values
 
@@ -4845,4 +4646,61 @@ Permission of an API token that determines what actions the token can perform: V
 |clientSecret|string|false|none|The secret that should be used to authenticate against UMAaaS API. This secret is not stored and will never be available again after creation.  Platform must keep this secret secure as it grants access to the account.|
 |createdAt|string(date-time)|true|none|Creation timestamp|
 |updatedAt|string(date-time)|true|none|Last update timestamp|
+
+<h2 id="tocS_BulkUserImportJob">BulkUserImportJob</h2>
+<!-- backwards compatibility -->
+<a id="schemabulkuserimportjob"></a>
+<a id="schema_BulkUserImportJob"></a>
+<a id="tocSbulkuserimportjob"></a>
+<a id="tocsbulkuserimportjob"></a>
+
+```json
+{
+  "jobId": "Job:019542f5-b3e7-1d02-0000-000000000006",
+  "status": "PROCESSING",
+  "progress": {
+    "total": 5000,
+    "processed": 2500,
+    "successful": 2450,
+    "failed": 50
+  },
+  "errors": [
+    {
+      "correlationId": "biz456",
+      "error": {
+        "code": "string",
+        "message": "string",
+        "details": {}
+      }
+    }
+  ],
+  "completedAt": "2023-08-15T14:32:00Z"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|jobId|string|true|none|Unique identifier for the bulk import job|
+|status|string|true|none|Current status of the job|
+|progress|object|true|none|none|
+|» total|integer|true|none|Total number of users to process|
+|» processed|integer|true|none|Number of users processed so far|
+|» successful|integer|true|none|Number of users successfully created|
+|» failed|integer|true|none|Number of users that failed to create|
+|errors|[object]|false|none|Detailed error information for failed entries|
+|» correlationId|string|true|none|Platform user ID or row number for the failed entry|
+|» error|[Error](#schemaerror)|true|none|none|
+|completedAt|string(date-time)|false|none|Timestamp when the job completed (only present for COMPLETED or FAILED status)|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|status|PENDING|
+|status|PROCESSING|
+|status|COMPLETED|
+|status|FAILED|
 
