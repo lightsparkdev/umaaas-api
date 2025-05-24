@@ -41,7 +41,8 @@ class TestUser(unittest.TestCase):
                 platform_user_id = '9f84e0c2a72c4fa',
                 user_type = 'INDIVIDUAL',
                 created_at = '2023-07-21T17:32:28Z',
-                updated_at = '2023-07-21T17:32:28Z'
+                updated_at = '2023-07-21T17:32:28Z',
+                is_deleted = False
             )
         else:
             return User(

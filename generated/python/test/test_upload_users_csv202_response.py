@@ -36,20 +36,12 @@ class TestUploadUsersCsv202Response(unittest.TestCase):
         model = UploadUsersCsv202Response()
         if include_optional:
             return UploadUsersCsv202Response(
-                job_id = '',
-                status = 'PENDING',
-                validation_summary = umaaas_api.models.upload_users_csv_202_response_validation_summary.uploadUsersCsv_202_response_validationSummary(
-                    total_rows = 56, 
-                    valid_rows = 56, 
-                    invalid_rows = 56, 
-                    errors = [
-                        umaaas_api.models.upload_users_csv_202_response_validation_summary_errors_inner.uploadUsersCsv_202_response_validationSummary_errors_inner(
-                            row = 56, )
-                        ], )
+                job_id = 'Job:019542f5-b3e7-1d02-0000-000000000006',
+                status = 'PENDING'
             )
         else:
             return UploadUsersCsv202Response(
-                job_id = '',
+                job_id = 'Job:019542f5-b3e7-1d02-0000-000000000006',
                 status = 'PENDING',
         )
         """

@@ -36,7 +36,7 @@ class TestCreateQuoteRequest(unittest.TestCase):
         model = CreateQuoteRequest()
         if include_optional:
             return CreateQuoteRequest(
-                lookup_id = 'LookupRequest:019542f5-b3e7-1d02-0000-000000000009',
+                lookup_id = 'Lookup:019542f5-b3e7-1d02-0000-000000000009',
                 sending_currency_code = 'USD',
                 receiving_currency_code = 'EUR',
                 locked_currency_side = 'SENDING',
@@ -45,7 +45,7 @@ class TestCreateQuoteRequest(unittest.TestCase):
             )
         else:
             return CreateQuoteRequest(
-                lookup_id = 'LookupRequest:019542f5-b3e7-1d02-0000-000000000009',
+                lookup_id = 'Lookup:019542f5-b3e7-1d02-0000-000000000009',
                 sending_currency_code = 'USD',
                 receiving_currency_code = 'EUR',
                 locked_currency_side = 'SENDING',

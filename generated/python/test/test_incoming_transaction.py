@@ -46,14 +46,16 @@ class TestIncomingTransaction(unittest.TestCase):
                 settled_at = '2023-08-15T14:30:00Z',
                 created_at = '2023-08-15T14:25:18Z',
                 description = 'Payment for invoice #1234',
-                counterparty_information = {fullName=John Sender, country=DE},
+                counterparty_information = {FULL_NAME=John Sender, DATE_OF_BIRTH=1985-06-15, NATIONALITY=DE},
                 received_amount = umaaas_api.models.currency_amount.CurrencyAmount(
                     amount = 12550, 
                     currency = umaaas_api.models.currency.Currency(
                         code = 'USD', 
                         name = 'United States Dollar', 
                         symbol = '$', 
-                        decimals = 2, ), )
+                        decimals = 2, ), ),
+                reconciliation_instructions = umaaas_api.models.reconciliation_instructions.ReconciliationInstructions(
+                    reference = 'UMA-Q12345-REF', )
             )
         else:
             return IncomingTransaction(

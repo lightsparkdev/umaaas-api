@@ -34,13 +34,6 @@ class TestSendingPaymentsApi(unittest.TestCase):
         """
         pass
 
-    def test_get_payment_status(self) -> None:
-        """Test case for get_payment_status
-
-        Check payment status for a quote
-        """
-        pass
-
     def test_get_quote_by_id(self) -> None:
         """Test case for get_quote_by_id
 

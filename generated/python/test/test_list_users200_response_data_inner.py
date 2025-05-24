@@ -42,6 +42,7 @@ class TestListUsers200ResponseDataInner(unittest.TestCase):
                 user_type = 'INDIVIDUAL',
                 created_at = '2023-07-21T17:32:28Z',
                 updated_at = '2023-07-21T17:32:28Z',
+                is_deleted = False,
                 address = umaaas_api.models.address.Address(
                     line1 = '123 Main Street', 
                     line2 = 'Apt 4B', 
