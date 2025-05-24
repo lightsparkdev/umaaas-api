@@ -46,7 +46,7 @@ class TestTransaction(unittest.TestCase):
                 settled_at = '2023-08-15T14:30:00Z',
                 created_at = '2023-08-15T14:25:18Z',
                 description = 'Payment for invoice #1234',
-                counterparty_information = {fullName=John Sender, country=DE}
+                counterparty_information = {FULL_NAME=John Sender, DATE_OF_BIRTH=1985-06-15, NATIONALITY=DE}
             )
         else:
             return Transaction(

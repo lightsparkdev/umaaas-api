@@ -36,37 +36,49 @@ class TestBulkUploadWebhookRequest(unittest.TestCase):
         model = BulkUploadWebhookRequest()
         if include_optional:
             return BulkUploadWebhookRequest(
-                job_id = 'job_123456789',
-                status = 'SUCCESS',
+                bulk_user_import_job = umaaas_api.models.bulk_user_import_job.BulkUserImportJob(
+                    job_id = 'Job:019542f5-b3e7-1d02-0000-000000000006', 
+                    status = 'PROCESSING', 
+                    progress = umaaas_api.models.bulk_user_import_job_progress.BulkUserImportJob_progress(
+                        total = 5000, 
+                        processed = 2500, 
+                        successful = 2450, 
+                        failed = 50, ), 
+                    errors = [
+                        umaaas_api.models.bulk_user_import_job_errors_inner.BulkUserImportJob_errors_inner(
+                            correlation_id = 'biz456', 
+                            error = umaaas_api.models.error.Error(
+                                code = '', 
+                                message = '', 
+                                details = umaaas_api.models.details.details(), ), )
+                        ], 
+                    completed_at = '2023-08-15T14:32:00Z', ),
                 timestamp = '2023-08-15T14:32:00Z',
                 webhook_id = 'Webhook:019542f5-b3e7-1d02-0000-000000000008',
-                type = BULK_UPLOAD,
-                progress = umaaas_api.models.bulk_upload_webhook_request_progress.bulkUploadWebhook_request_progress(
-                    total = 5000, 
-                    processed = 5000, 
-                    successful = 4950, 
-                    failed = 50, ),
-                errors = [
-                    umaaas_api.models.bulk_upload_webhook_request_errors_inner.bulkUploadWebhook_request_errors_inner(
-                        correlation_id = 'biz456', 
-                        error = umaaas_api.models.error.Error(
-                            code = '', 
-                            message = '', 
-                            details = umaaas_api.models.details.details(), ), )
-                    ]
+                type = BULK_UPLOAD
             )
         else:
             return BulkUploadWebhookRequest(
-                job_id = 'job_123456789',
-                status = 'SUCCESS',
+                bulk_user_import_job = umaaas_api.models.bulk_user_import_job.BulkUserImportJob(
+                    job_id = 'Job:019542f5-b3e7-1d02-0000-000000000006', 
+                    status = 'PROCESSING', 
+                    progress = umaaas_api.models.bulk_user_import_job_progress.BulkUserImportJob_progress(
+                        total = 5000, 
+                        processed = 2500, 
+                        successful = 2450, 
+                        failed = 50, ), 
+                    errors = [
+                        umaaas_api.models.bulk_user_import_job_errors_inner.BulkUserImportJob_errors_inner(
+                            correlation_id = 'biz456', 
+                            error = umaaas_api.models.error.Error(
+                                code = '', 
+                                message = '', 
+                                details = umaaas_api.models.details.details(), ), )
+                        ], 
+                    completed_at = '2023-08-15T14:32:00Z', ),
                 timestamp = '2023-08-15T14:32:00Z',
                 webhook_id = 'Webhook:019542f5-b3e7-1d02-0000-000000000008',
                 type = BULK_UPLOAD,
-                progress = umaaas_api.models.bulk_upload_webhook_request_progress.bulkUploadWebhook_request_progress(
-                    total = 5000, 
-                    processed = 5000, 
-                    successful = 4950, 
-                    failed = 50, ),
         )
         """
 

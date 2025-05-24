@@ -27,6 +27,13 @@ class TestInvitationsApi(unittest.TestCase):
     def tearDown(self) -> None:
         pass
 
+    def test_cancel_invitation(self) -> None:
+        """Test case for cancel_invitation
+
+        Cancel an UMA invitation
+        """
+        pass
+
     def test_claim_invitation(self) -> None:
         """Test case for claim_invitation
 

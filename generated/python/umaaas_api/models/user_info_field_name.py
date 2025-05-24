@@ -19,9 +19,9 @@ from enum import Enum
 from typing_extensions import Self
 
 
-class CounterpartyFieldName(str, Enum):
+class UserInfoFieldName(str, Enum):
     """
-    Name of the counterparty field
+    Name of a type of field containing info about a platform's user or counterparty user.
     """
 
     """
@@ -40,7 +40,7 @@ class CounterpartyFieldName(str, Enum):
 
     @classmethod
     def from_json(cls, json_str: str) -> Self:
-        """Create an instance of CounterpartyFieldName from a JSON string"""
+        """Create an instance of UserInfoFieldName from a JSON string"""
         return cls(json.loads(json_str))
 
 

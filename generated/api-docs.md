@@ -224,7 +224,7 @@ Update the platform configuration settings
 |»» minAmount|body|integer(int64)|true|Minimum amount that can be sent in the smallest unit of this currency|
 |»» maxAmount|body|integer(int64)|true|Maximum amount that can be sent in the smallest unit of this currency|
 |»» requiredCounterpartyFields|body|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|true|List of counterparty fields and their requirements|
-|»»» name|body|[CounterpartyFieldName](#schemacounterpartyfieldname)|true|Name of the counterparty field|
+|»»» name|body|[UserInfoFieldName](#schemauserinfofieldname)|true|Name of a type of field containing info about a platform's user or counterparty user.|
 |»»» mandatory|body|boolean|true|Whether the field is mandatory|
 
 #### Enumerated Values
@@ -1604,7 +1604,7 @@ Status Code **200**
 |»»»»»» name|string|false|none|Full name of the currency|
 |»»»»»» symbol|string|false|none|Symbol of the currency|
 |»»»»»» decimals|integer|false|none|Number of decimal places for the currency|
-|»»»» reconciliationInstructions|[ReconciliationInstructions](#schemareconciliationinstructions)|true|none|none|
+|»»»» reconciliationInstructions|[ReconciliationInstructions](#schemareconciliationinstructions)|false|none|none|
 |»»»»» reference|string|true|none|Unique reference code that must be included with the payment to match it with the correct incoming transaction|
 
 *xor*
@@ -1775,7 +1775,7 @@ Status Code **200**
 |»» min|integer(int64)|true|none|The minimum amount that can be received in this currency.|
 |»» max|integer(int64)|true|none|The maximum amount that can be received in this currency.|
 |» requiredPayerDataFields|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|false|none|Fields required by the receiving institution about the payer before payment can be completed|
-|»» name|[CounterpartyFieldName](#schemacounterpartyfieldname)|true|none|Name of the counterparty field|
+|»» name|[UserInfoFieldName](#schemauserinfofieldname)|true|none|Name of a type of field containing info about a platform's user or counterparty user.|
 |»» mandatory|boolean|true|none|Whether the field is mandatory|
 |» lookupId|string|true|none|Unique identifier for the lookup. Needed in the subsequent create quote request.|
 
@@ -3005,13 +3005,46 @@ This endpoint is only for the sandbox environment and will fail for production p
 
 > Example responses
 
-> 400 Response
+> 200 Response
 
 ```json
 {
-  "code": "string",
-  "message": "string",
-  "details": {}
+  "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
+  "status": "CREATED",
+  "type": "INCOMING",
+  "senderUmaAddress": "$sender@external.domain",
+  "receiverUmaAddress": "$recipient@uma.domain",
+  "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
+  "platformUserId": "18d3e5f7b4a9c2",
+  "settledAt": "2023-08-15T14:30:00Z",
+  "createdAt": "2023-08-15T14:25:18Z",
+  "description": "Payment for invoice #1234",
+  "counterpartyInformation": {
+    "FULL_NAME": "John Sender",
+    "DATE_OF_BIRTH": "1985-06-15",
+    "NATIONALITY": "DE"
+  },
+  "sentAmount": {
+    "amount": 12550,
+    "currency": {
+      "code": "USD",
+      "name": "United States Dollar",
+      "symbol": "$",
+      "decimals": 2
+    }
+  },
+  "receivedAmount": {
+    "amount": 12550,
+    "currency": {
+      "code": "USD",
+      "name": "United States Dollar",
+      "symbol": "$",
+      "decimals": 2
+    }
+  },
+  "exchangeRate": 1.08,
+  "fees": 10,
+  "quoteId": "Quote:019542f5-b3e7-1d02-0000-000000000006"
 }
 ```
 
@@ -3019,7 +3052,7 @@ This endpoint is only for the sandbox environment and will fail for production p
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Funds received successfully|None|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Funds received successfully|[OutgoingTransaction](#schemaoutgoingtransaction)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|[Error](#schemaerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|Forbidden - request was made with a production platform token|[Error](#schemaerror)|
@@ -3108,13 +3141,37 @@ This endpoint is only for the sandbox environment and will fail for production p
 
 > Example responses
 
-> 400 Response
+> 200 Response
 
 ```json
 {
-  "code": "string",
-  "message": "string",
-  "details": {}
+  "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
+  "status": "CREATED",
+  "type": "INCOMING",
+  "senderUmaAddress": "$sender@external.domain",
+  "receiverUmaAddress": "$recipient@uma.domain",
+  "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
+  "platformUserId": "18d3e5f7b4a9c2",
+  "settledAt": "2023-08-15T14:30:00Z",
+  "createdAt": "2023-08-15T14:25:18Z",
+  "description": "Payment for invoice #1234",
+  "counterpartyInformation": {
+    "FULL_NAME": "John Sender",
+    "DATE_OF_BIRTH": "1985-06-15",
+    "NATIONALITY": "DE"
+  },
+  "receivedAmount": {
+    "amount": 12550,
+    "currency": {
+      "code": "USD",
+      "name": "United States Dollar",
+      "symbol": "$",
+      "decimals": 2
+    }
+  },
+  "reconciliationInstructions": {
+    "reference": "UMA-Q12345-REF"
+  }
 }
 ```
 
@@ -3122,7 +3179,7 @@ This endpoint is only for the sandbox environment and will fail for production p
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Payment triggered successfully|None|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Payment triggered successfully|[IncomingTransaction](#schemaincomingtransaction)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|[Error](#schemaerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|Forbidden - request was made with a production platform token|[Error](#schemaerror)|
@@ -3956,25 +4013,25 @@ and
 |»» registrationNumber|string|false|none|Business registration number|
 |»» taxId|string|false|none|Tax identification number|
 
-<h2 id="tocS_CounterpartyFieldName">CounterpartyFieldName</h2>
+<h2 id="tocS_UserInfoFieldName">UserInfoFieldName</h2>
 <!-- backwards compatibility -->
-<a id="schemacounterpartyfieldname"></a>
-<a id="schema_CounterpartyFieldName"></a>
-<a id="tocScounterpartyfieldname"></a>
-<a id="tocscounterpartyfieldname"></a>
+<a id="schemauserinfofieldname"></a>
+<a id="schema_UserInfoFieldName"></a>
+<a id="tocSuserinfofieldname"></a>
+<a id="tocsuserinfofieldname"></a>
 
 ```json
 "FULL_NAME"
 
 ```
 
-Name of the counterparty field
+Name of a type of field containing info about a platform's user or counterparty user.
 
 ### Properties
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|*anonymous*|string|false|none|Name of the counterparty field|
+|*anonymous*|string|false|none|Name of a type of field containing info about a platform's user or counterparty user.|
 
 #### Enumerated Values
 
@@ -4010,7 +4067,7 @@ Name of the counterparty field
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|name|[CounterpartyFieldName](#schemacounterpartyfieldname)|true|none|Name of the counterparty field|
+|name|[UserInfoFieldName](#schemauserinfofieldname)|true|none|Name of a type of field containing info about a platform's user or counterparty user.|
 |mandatory|boolean|true|none|Whether the field is mandatory|
 
 <h2 id="tocS_PlatformCurrencyConfig">PlatformCurrencyConfig</h2>
@@ -4359,7 +4416,7 @@ and
 |*anonymous*|object|false|none|none|
 |» type|[TransactionType](#schematransactiontype)|false|none|Always "INCOMING" for incoming transactions|
 |» receivedAmount|[CurrencyAmount](#schemacurrencyamount)|true|none|Amount received in the recipient's currency|
-|» reconciliationInstructions|[ReconciliationInstructions](#schemareconciliationinstructions)|true|none|none|
+|» reconciliationInstructions|[ReconciliationInstructions](#schemareconciliationinstructions)|false|none|Included for all transactions except those with "CREATED" status|
 
 <h2 id="tocS_OutgoingTransaction">OutgoingTransaction</h2>
 <!-- backwards compatibility -->

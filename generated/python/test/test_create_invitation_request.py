@@ -37,6 +37,7 @@ class TestCreateInvitationRequest(unittest.TestCase):
         if include_optional:
             return CreateInvitationRequest(
                 inviter_uma = '$inviter@uma.domain',
+                amount_to_send = 12550,
                 expires_at = '2023-09-01T14:30:00Z'
             )
         else:

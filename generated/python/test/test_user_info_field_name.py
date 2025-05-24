@@ -15,10 +15,10 @@
 
 import unittest
 
-from umaaas_api.models.counterparty_field_name import CounterpartyFieldName
+from umaaas_api.models.user_info_field_name import UserInfoFieldName
 
-class TestCounterpartyFieldName(unittest.TestCase):
-    """CounterpartyFieldName unit test stubs"""
+class TestUserInfoFieldName(unittest.TestCase):
+    """UserInfoFieldName unit test stubs"""
 
     def setUp(self):
         pass
@@ -26,9 +26,9 @@ class TestCounterpartyFieldName(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def testCounterpartyFieldName(self):
-        """Test CounterpartyFieldName"""
-        # inst = CounterpartyFieldName()
+    def testUserInfoFieldName(self):
+        """Test UserInfoFieldName"""
+        # inst = UserInfoFieldName()
 
 if __name__ == '__main__':
     unittest.main()

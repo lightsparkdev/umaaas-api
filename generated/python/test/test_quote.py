@@ -52,7 +52,7 @@ class TestQuote(unittest.TestCase):
                 exchange_rate = 1.337,
                 expires_at = '2023-09-01T14:30:00Z',
                 fees_included = 10,
-                counterparty_information = {fullName=Jane Receiver, country=FR},
+                counterparty_information = {FULL_NAME=Jane Receiver, DATE_OF_BIRTH=1990-01-01, NATIONALITY=FR},
                 payment_instructions = umaaas_api.models.payment_instructions.PaymentInstructions(
                     reference = 'UMA-Q12345-REF', 
                     instructions_notes = 'Please ensure the reference code is included in the payment memo/description field', 
@@ -84,6 +84,7 @@ class TestQuote(unittest.TestCase):
                     instructions_notes = 'Please ensure the reference code is included in the payment memo/description field', 
                     bank_account_info = umaaas_api.models.payment_bank_account_info.PaymentBankAccountInfo(
                         account_type = 'CLABE', ), ),
+                transaction_id = 'Transaction:019542f5-b3e7-1d02-0000-000000000005',
         )
         """
 

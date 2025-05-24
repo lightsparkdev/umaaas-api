@@ -20,7 +20,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool
 from typing import Any, ClassVar, Dict, List
-from umaaas_api.models.counterparty_field_name import CounterpartyFieldName
+from umaaas_api.models.user_info_field_name import UserInfoFieldName
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -28,7 +28,7 @@ class CounterpartyFieldDefinition(BaseModel):
     """
     CounterpartyFieldDefinition
     """ # noqa: E501
-    name: CounterpartyFieldName
+    name: UserInfoFieldName
     mandatory: StrictBool = Field(description="Whether the field is mandatory")
     __properties: ClassVar[List[str]] = ["name", "mandatory"]
 

@@ -29,7 +29,6 @@ from umaaas_api.models.business_user_all_of_business_info import BusinessUserAll
 from umaaas_api.models.clabe_account_info import ClabeAccountInfo
 from umaaas_api.models.claim_invitation_request import ClaimInvitationRequest
 from umaaas_api.models.counterparty_field_definition import CounterpartyFieldDefinition
-from umaaas_api.models.counterparty_field_name import CounterpartyFieldName
 from umaaas_api.models.create_invitation_request import CreateInvitationRequest
 from umaaas_api.models.create_quote422_response import CreateQuote422Response
 from umaaas_api.models.create_quote_request import CreateQuoteRequest
@@ -84,6 +83,7 @@ from umaaas_api.models.user_bank_account_info import UserBankAccountInfo
 from umaaas_api.models.user_clabe_account_info import UserClabeAccountInfo
 from umaaas_api.models.user_fbo_account_info import UserFboAccountInfo
 from umaaas_api.models.user_iban_account_info import UserIbanAccountInfo
+from umaaas_api.models.user_info_field_name import UserInfoFieldName
 from umaaas_api.models.user_pix_account_info import UserPixAccountInfo
 from umaaas_api.models.user_us_account_info import UserUsAccountInfo
 from umaaas_api.models.webhook_type import WebhookType
