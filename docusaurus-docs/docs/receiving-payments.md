@@ -115,9 +115,13 @@ When someone initiates a payment to one of your users' UMA addresses, you'll rec
     },
     "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
     "platformUserId": "9f84e0c2a72c4fa",
+    "description": "Payment for services",
     "counterpartyInformation": {
       "FULL_NAME": "Mary Sender",
       "DATE_OF_BIRTH": "1985-06-15"
+    },
+    "reconciliationInstructions": {
+      "reference": "REF-123456789"
     }
   },
   "timestamp": "2023-08-15T14:32:00Z",
@@ -171,7 +175,6 @@ When the payment completes, your webhook endpoint will receive another notificat
       "FULL_NAME": "Mary Sender",
       "DATE_OF_BIRTH": "1985-06-15"
     },
-    "quoteId": "Quote:019542f5-b3e7-1d02-0000-000000000006",
     "reconciliationInstructions": {
       "reference": "REF-123456789"
     }

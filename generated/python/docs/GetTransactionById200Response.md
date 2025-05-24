@@ -17,7 +17,7 @@ Name | Type | Description | Notes
 **description** | **str** | Optional memo or description for the payment | [optional] 
 **counterparty_information** | **Dict[str, object]** | Additional information about the counterparty, if available | [optional] 
 **received_amount** | [**CurrencyAmount**](CurrencyAmount.md) | Amount to be received by recipient in the recipient&#39;s currency | 
-**reconciliation_instructions** | [**ReconciliationInstructions**](ReconciliationInstructions.md) |  | 
+**reconciliation_instructions** | [**ReconciliationInstructions**](ReconciliationInstructions.md) | Included for all transactions except those with \&quot;CREATED\&quot; status | [optional] 
 **sent_amount** | [**CurrencyAmount**](CurrencyAmount.md) | Amount sent in the sender&#39;s currency | 
 **exchange_rate** | **float** | Number of sending currency units per receiving currency unit. | [optional] 
 **fees** | **int** | The fees associated with the quote in the smallest unit of the sending currency (eg. cents). | [optional] 

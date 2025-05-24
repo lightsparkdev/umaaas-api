@@ -687,7 +687,6 @@ components:
         - type: object
           required:
             - receivedAmount
-            - reconciliationInstructions
           properties:
             type:
               $ref: '#/components/schemas/TransactionType'
@@ -698,6 +697,7 @@ components:
               description: Amount received in the recipient's currency
             reconciliationInstructions:
               $ref: '#/components/schemas/ReconciliationInstructions'
+              description: Included for all transactions except those with "CREATED" status
 
     OutgoingTransaction:
       allOf:
@@ -2571,6 +2571,10 @@ paths:
       responses:
         '200':
           description: Funds received successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OutgoingTransaction'
         '400':
           description: Bad request
           content:
@@ -2643,6 +2647,10 @@ paths:
       responses:
         '200':
           description: Payment triggered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IncomingTransaction'
         '400':
           description: Bad request
           content:
