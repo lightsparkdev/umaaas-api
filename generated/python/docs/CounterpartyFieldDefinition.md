@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**name** | [**CounterpartyFieldName**](CounterpartyFieldName.md) |  | 
+**name** | [**UserInfoFieldName**](UserInfoFieldName.md) |  | 
 **mandatory** | **bool** | Whether the field is mandatory | 
 
 ## Example

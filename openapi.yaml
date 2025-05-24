@@ -467,17 +467,17 @@ components:
                   description: Tax identification number
                   example: "EIN-987654321"
 
-    CounterpartyFieldName:
+    UserInfoFieldName:
       type: string
       enum: [FULL_NAME, DATE_OF_BIRTH, NATIONALITY, PHONE_NUMBER, EMAIL, ADDRESS, TAX_ID, REGISTRATION_NUMBER, ACCOUNT_NUMBER, USER_TYPE]
-      description: Name of the counterparty field
+      description: Name of a type of field containing info about a platform's user or counterparty user.
       example: "FULL_NAME"
 
     CounterpartyFieldDefinition:
       type: object
       properties:
         name:
-          $ref: '#/components/schemas/CounterpartyFieldName'
+          $ref: '#/components/schemas/UserInfoFieldName'
         mandatory:
           type: boolean
           description: Whether the field is mandatory
