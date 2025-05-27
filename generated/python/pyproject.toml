@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "umaaas_api"
-version = "0.0.22"
+version = "0.0.23"
 description = "UMA as a Service (UMAaaS) API"
 authors = ["Lightspark Support <support@lightspark.com>"]
 license = "Proprietary"

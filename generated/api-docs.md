@@ -1487,6 +1487,7 @@ date range, status, and transaction type.
 |receiverUmaAddress|query|string|false|Filter by receiver UMA address|
 |status|query|[TransactionStatus](#schematransactionstatus)|false|Filter by transaction status|
 |type|query|[TransactionType](#schematransactiontype)|false|Filter by transaction type|
+|reference|query|string|false|Filter by reference|
 |startDate|query|string(date-time)|false|Filter by start date (inclusive) in ISO 8601 format|
 |endDate|query|string(date-time)|false|Filter by end date (inclusive) in ISO 8601 format|
 |limit|query|integer|false|Maximum number of results to return (default 20, max 100)|
@@ -1630,6 +1631,10 @@ Status Code **200**
 |»»»» exchangeRate|number|false|none|Number of sending currency units per receiving currency unit.|
 |»»»» fees|integer(int64)|false|none|The fees associated with the quote in the smallest unit of the sending currency (eg. cents).|
 |»»»» quoteId|string|false|none|The ID of the quote that was used to trigger this payment|
+|»»»» refund|[Refund](#schemarefund)|false|none|none|
+|»»»»» reference|string|true|none|The unique reference code of the refund|
+|»»»»» initiatedAt|string(date-time)|true|none|When the refund was initiated|
+|»»»»» settledAt|string(date-time)|false|none|When the refund was or will be settled|
 
 *continued*
 
@@ -3044,7 +3049,12 @@ This endpoint is only for the sandbox environment and will fail for production p
   },
   "exchangeRate": 1.08,
   "fees": 10,
-  "quoteId": "Quote:019542f5-b3e7-1d02-0000-000000000006"
+  "quoteId": "Quote:019542f5-b3e7-1d02-0000-000000000006",
+  "refund": {
+    "reference": "UMA-Q12345-REFUND",
+    "initiatedAt": "2023-08-15T14:30:00Z",
+    "settledAt": "2023-08-15T14:30:00Z"
+  }
 }
 ```
 
@@ -4317,6 +4327,30 @@ Type of webhook event, used by the receiver to identify which webhook is being r
 |amount|integer(int64)|true|none|Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)|
 |currency|[Currency](#schemacurrency)|true|none|none|
 
+<h2 id="tocS_Refund">Refund</h2>
+<!-- backwards compatibility -->
+<a id="schemarefund"></a>
+<a id="schema_Refund"></a>
+<a id="tocSrefund"></a>
+<a id="tocsrefund"></a>
+
+```json
+{
+  "reference": "UMA-Q12345-REFUND",
+  "initiatedAt": "2023-08-15T14:30:00Z",
+  "settledAt": "2023-08-15T14:30:00Z"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|reference|string|true|none|The unique reference code of the refund|
+|initiatedAt|string(date-time)|true|none|When the refund was initiated|
+|settledAt|string(date-time)|false|none|When the refund was or will be settled|
+
 <h2 id="tocS_Transaction">Transaction</h2>
 <!-- backwards compatibility -->
 <a id="schematransaction"></a>
@@ -4462,7 +4496,12 @@ and
   },
   "exchangeRate": 1.08,
   "fees": 10,
-  "quoteId": "Quote:019542f5-b3e7-1d02-0000-000000000006"
+  "quoteId": "Quote:019542f5-b3e7-1d02-0000-000000000006",
+  "refund": {
+    "reference": "UMA-Q12345-REFUND",
+    "initiatedAt": "2023-08-15T14:30:00Z",
+    "settledAt": "2023-08-15T14:30:00Z"
+  }
 }
 
 ```
@@ -4486,6 +4525,7 @@ and
 |» exchangeRate|number|false|none|Number of sending currency units per receiving currency unit.|
 |» fees|integer(int64)|false|none|The fees associated with the quote in the smallest unit of the sending currency (eg. cents).|
 |» quoteId|string|false|none|The ID of the quote that was used to trigger this payment|
+|» refund|[Refund](#schemarefund)|false|none|The refund if transaction was refunded.|
 
 <h2 id="tocS_CurrencyPreference">CurrencyPreference</h2>
 <!-- backwards compatibility -->

@@ -21,6 +21,7 @@ Name | Type | Description | Notes
 **exchange_rate** | **float** | Number of sending currency units per receiving currency unit. | [optional] 
 **fees** | **int** | The fees associated with the quote in the smallest unit of the sending currency (eg. cents). | [optional] 
 **quote_id** | **str** | The ID of the quote that was used to trigger this payment | [optional] 
+**refund** | [**Refund**](Refund.md) | The refund if transaction was refunded. | [optional] 
 
 ## Example
 

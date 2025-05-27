@@ -622,7 +622,28 @@ components:
           example: 12550
         currency:
           $ref: '#/components/schemas/Currency'
-    
+
+    Refund:
+      type: object
+      required:
+        - reference
+        - initiatedAt
+      properties:
+        reference:
+          type: string
+          description: The unique reference code of the refund
+          example: "UMA-Q12345-REFUND"
+        initiatedAt:
+          type: string
+          format: date-time
+          description: When the refund was initiated
+          example: "2023-08-15T14:30:00Z"
+        settledAt:
+          type: string
+          format: date-time
+          description: When the refund was or will be settled
+          example: "2023-08-15T14:30:00Z"
+
     Transaction:
       type: object
       required:
@@ -731,6 +752,9 @@ components:
               type: string
               description: The ID of the quote that was used to trigger this payment
               example: "Quote:019542f5-b3e7-1d02-0000-000000000006"
+            refund:
+              $ref: '#/components/schemas/Refund'
+              description: The refund if transaction was refunded.
 
     CurrencyPreference:
       type: object
