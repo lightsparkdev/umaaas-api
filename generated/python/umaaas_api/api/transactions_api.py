@@ -321,6 +321,7 @@ class TransactionsApi:
         receiver_uma_address: Annotated[Optional[StrictStr], Field(description="Filter by receiver UMA address")] = None,
         status: Annotated[Optional[TransactionStatus], Field(description="Filter by transaction status")] = None,
         type: Annotated[Optional[TransactionType], Field(description="Filter by transaction type")] = None,
+        reference: Annotated[Optional[StrictStr], Field(description="Filter by reference")] = None,
         start_date: Annotated[Optional[datetime], Field(description="Filter by start date (inclusive) in ISO 8601 format")] = None,
         end_date: Annotated[Optional[datetime], Field(description="Filter by end date (inclusive) in ISO 8601 format")] = None,
         limit: Annotated[Optional[Annotated[int, Field(le=100, strict=True, ge=1)]], Field(description="Maximum number of results to return (default 20, max 100)")] = None,
@@ -357,6 +358,8 @@ class TransactionsApi:
         :type status: TransactionStatus
         :param type: Filter by transaction type
         :type type: TransactionType
+        :param reference: Filter by reference
+        :type reference: str
         :param start_date: Filter by start date (inclusive) in ISO 8601 format
         :type start_date: datetime
         :param end_date: Filter by end date (inclusive) in ISO 8601 format
@@ -397,6 +400,7 @@ class TransactionsApi:
             receiver_uma_address=receiver_uma_address,
             status=status,
             type=type,
+            reference=reference,
             start_date=start_date,
             end_date=end_date,
             limit=limit,
@@ -434,6 +438,7 @@ class TransactionsApi:
         receiver_uma_address: Annotated[Optional[StrictStr], Field(description="Filter by receiver UMA address")] = None,
         status: Annotated[Optional[TransactionStatus], Field(description="Filter by transaction status")] = None,
         type: Annotated[Optional[TransactionType], Field(description="Filter by transaction type")] = None,
+        reference: Annotated[Optional[StrictStr], Field(description="Filter by reference")] = None,
         start_date: Annotated[Optional[datetime], Field(description="Filter by start date (inclusive) in ISO 8601 format")] = None,
         end_date: Annotated[Optional[datetime], Field(description="Filter by end date (inclusive) in ISO 8601 format")] = None,
         limit: Annotated[Optional[Annotated[int, Field(le=100, strict=True, ge=1)]], Field(description="Maximum number of results to return (default 20, max 100)")] = None,
@@ -470,6 +475,8 @@ class TransactionsApi:
         :type status: TransactionStatus
         :param type: Filter by transaction type
         :type type: TransactionType
+        :param reference: Filter by reference
+        :type reference: str
         :param start_date: Filter by start date (inclusive) in ISO 8601 format
         :type start_date: datetime
         :param end_date: Filter by end date (inclusive) in ISO 8601 format
@@ -510,6 +517,7 @@ class TransactionsApi:
             receiver_uma_address=receiver_uma_address,
             status=status,
             type=type,
+            reference=reference,
             start_date=start_date,
             end_date=end_date,
             limit=limit,
@@ -547,6 +555,7 @@ class TransactionsApi:
         receiver_uma_address: Annotated[Optional[StrictStr], Field(description="Filter by receiver UMA address")] = None,
         status: Annotated[Optional[TransactionStatus], Field(description="Filter by transaction status")] = None,
         type: Annotated[Optional[TransactionType], Field(description="Filter by transaction type")] = None,
+        reference: Annotated[Optional[StrictStr], Field(description="Filter by reference")] = None,
         start_date: Annotated[Optional[datetime], Field(description="Filter by start date (inclusive) in ISO 8601 format")] = None,
         end_date: Annotated[Optional[datetime], Field(description="Filter by end date (inclusive) in ISO 8601 format")] = None,
         limit: Annotated[Optional[Annotated[int, Field(le=100, strict=True, ge=1)]], Field(description="Maximum number of results to return (default 20, max 100)")] = None,
@@ -583,6 +592,8 @@ class TransactionsApi:
         :type status: TransactionStatus
         :param type: Filter by transaction type
         :type type: TransactionType
+        :param reference: Filter by reference
+        :type reference: str
         :param start_date: Filter by start date (inclusive) in ISO 8601 format
         :type start_date: datetime
         :param end_date: Filter by end date (inclusive) in ISO 8601 format
@@ -623,6 +634,7 @@ class TransactionsApi:
             receiver_uma_address=receiver_uma_address,
             status=status,
             type=type,
+            reference=reference,
             start_date=start_date,
             end_date=end_date,
             limit=limit,
@@ -655,6 +667,7 @@ class TransactionsApi:
         receiver_uma_address,
         status,
         type,
+        reference,
         start_date,
         end_date,
         limit,
@@ -709,6 +722,10 @@ class TransactionsApi:
         if type is not None:
             
             _query_params.append(('type', type.value))
+            
+        if reference is not None:
+            
+            _query_params.append(('reference', reference))
             
         if start_date is not None:
             if isinstance(start_date, datetime):

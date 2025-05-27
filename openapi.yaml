@@ -1837,6 +1837,12 @@ paths:
           required: false
           schema:
             $ref: '#/components/schemas/TransactionType'
+        - name: reference
+          in: query
+          description: Filter by reference
+          required: false
+          schema:
+            type: string
         - name: startDate
           in: query
           description: Filter by start date (inclusive) in ISO 8601 format

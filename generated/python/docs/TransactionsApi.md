@@ -90,7 +90,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **list_transactions**
-> ListTransactions200Response list_transactions(user_id=user_id, platform_user_id=platform_user_id, uma_address=uma_address, sender_uma_address=sender_uma_address, receiver_uma_address=receiver_uma_address, status=status, type=type, start_date=start_date, end_date=end_date, limit=limit, cursor=cursor, sort_order=sort_order)
+> ListTransactions200Response list_transactions(user_id=user_id, platform_user_id=platform_user_id, uma_address=uma_address, sender_uma_address=sender_uma_address, receiver_uma_address=receiver_uma_address, status=status, type=type, reference=reference, start_date=start_date, end_date=end_date, limit=limit, cursor=cursor, sort_order=sort_order)
 
 List transactions
 
@@ -139,6 +139,7 @@ with umaaas_api.ApiClient(configuration) as api_client:
     receiver_uma_address = 'receiver_uma_address_example' # str | Filter by receiver UMA address (optional)
     status = umaaas_api.TransactionStatus() # TransactionStatus | Filter by transaction status (optional)
     type = umaaas_api.TransactionType() # TransactionType | Filter by transaction type (optional)
+    reference = 'reference_example' # str | Filter by reference (optional)
     start_date = '2013-10-20T19:20:30+01:00' # datetime | Filter by start date (inclusive) in ISO 8601 format (optional)
     end_date = '2013-10-20T19:20:30+01:00' # datetime | Filter by end date (inclusive) in ISO 8601 format (optional)
     limit = 20 # int | Maximum number of results to return (default 20, max 100) (optional) (default to 20)
@@ -147,7 +148,7 @@ with umaaas_api.ApiClient(configuration) as api_client:
 
     try:
         # List transactions
-        api_response = api_instance.list_transactions(user_id=user_id, platform_user_id=platform_user_id, uma_address=uma_address, sender_uma_address=sender_uma_address, receiver_uma_address=receiver_uma_address, status=status, type=type, start_date=start_date, end_date=end_date, limit=limit, cursor=cursor, sort_order=sort_order)
+        api_response = api_instance.list_transactions(user_id=user_id, platform_user_id=platform_user_id, uma_address=uma_address, sender_uma_address=sender_uma_address, receiver_uma_address=receiver_uma_address, status=status, type=type, reference=reference, start_date=start_date, end_date=end_date, limit=limit, cursor=cursor, sort_order=sort_order)
         print("The response of TransactionsApi->list_transactions:\n")
         pprint(api_response)
     except Exception as e:
@@ -168,6 +169,7 @@ Name | Type | Description  | Notes
  **receiver_uma_address** | **str**| Filter by receiver UMA address | [optional] 
  **status** | [**TransactionStatus**](.md)| Filter by transaction status | [optional] 
  **type** | [**TransactionType**](.md)| Filter by transaction type | [optional] 
+ **reference** | **str**| Filter by reference | [optional] 
  **start_date** | **datetime**| Filter by start date (inclusive) in ISO 8601 format | [optional] 
  **end_date** | **datetime**| Filter by end date (inclusive) in ISO 8601 format | [optional] 
  **limit** | **int**| Maximum number of results to return (default 20, max 100) | [optional] [default to 20]
