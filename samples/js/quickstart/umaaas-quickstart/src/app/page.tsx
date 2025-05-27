@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { faker } from '@faker-js/faker';
 
 interface FormData {
@@ -26,6 +26,10 @@ interface FormData {
     bankName: string;
     platformAccountId: string;
   };
+}
+
+interface ExchangeRates {
+  [currency: string]: string;
 }
 
 export default function Home() {
@@ -76,6 +80,36 @@ export default function Home() {
   const [lookupAddress, setLookupAddress] = useState('$php@test.uma.me');
   const [isLookingUp, setIsLookingUp] = useState(false);
   const [lookupResponse, setLookupResponse] = useState<{ status: number | string; data: unknown } | null>(null);
+
+  const [usdAmount, setUsdAmount] = useState('');
+  const [receivingAmount, setReceivingAmount] = useState('');
+  const [receivingCurrency, setReceivingCurrency] = useState('');
+  const [isUpdatingAmounts, setIsUpdatingAmounts] = useState(false);
+  const [lastEditedField, setLastEditedField] = useState<'usd' | 'receiving'>('usd');
+  const [isCreatingQuote, setIsCreatingQuote] = useState(false);
+  const [quoteResponse, setQuoteResponse] = useState<{ status: number | string; data: unknown } | null>(null);
+
+  const [exchangeRates, setExchangeRates] = useState<ExchangeRates>({});
+  const [isLoadingRates, setIsLoadingRates] = useState(false);
+
+  const fetchExchangeRates = async () => {
+    setIsLoadingRates(true);
+    try {
+      const response = await fetch('https://api.coinbase.com/v2/exchange-rates?currency=BTC');
+      const data = await response.json();
+      if (data.data && data.data.rates) {
+        setExchangeRates(data.data.rates);
+      }
+    } catch (error) {
+      console.error('Error fetching exchange rates:', error);
+    } finally {
+      setIsLoadingRates(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchExchangeRates();
+  }, []);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => {
@@ -186,10 +220,83 @@ export default function Home() {
       const res = await fetch(`/api/payments/lookup?${searchParams}`);
       const data = await res.json();
       setLookupResponse({ status: res.status, data });
+      
+      if (res.status === 200 && data.supportedCurrencies?.length > 0) {
+        setReceivingCurrency(data.supportedCurrencies[0].currency.code);
+      }
     } catch {
       setLookupResponse({ status: 'error', data: { error: 'Network error' } });
     } finally {
       setIsLookingUp(false);
+    }
+  };
+
+  const calculateExchangeRate = (fromCurrency: string, toCurrency: string, amount: number) => {
+      const fc = fromCurrency.toUpperCase();
+      const rc = toCurrency.toUpperCase();
+
+      if(exchangeRates[fc] && exchangeRates[rc]) { 
+        return amount * (Number(exchangeRates[rc]) / Number(exchangeRates[fc]));
+      } else {
+        throw new Error("Unsupported Currency");
+      }
+      
+  };
+
+  const updateAmounts = (amount: string, field: 'usd' | 'receiving') => {
+    if (!amount || !receivingCurrency || isUpdatingAmounts || Object.keys(exchangeRates).length === 0) return;
+    
+    setIsUpdatingAmounts(true);
+    setLastEditedField(field);
+    
+    try {
+      if (field === 'usd') {
+        const convertedAmount = calculateExchangeRate('USD', receivingCurrency, Number(amount));
+        setReceivingAmount(convertedAmount.toFixed(6));
+      } else {
+        const convertedAmount = calculateExchangeRate(receivingCurrency, 'USD', Number(amount));
+        setUsdAmount(convertedAmount.toFixed(6));
+      }
+    } catch (error) {
+      console.error('Error updating amounts:', error);
+    } finally {
+      setIsUpdatingAmounts(false);
+    }
+  };
+
+  const handleCreateQuote = async () => {
+    if (!usdAmount && !receivingAmount) return;
+    
+    setIsCreatingQuote(true);
+    setQuoteResponse(null);
+
+    try {
+      const amount = lastEditedField === 'usd' ? usdAmount : receivingAmount;
+      const currencyCode = lastEditedField === 'usd' ? 'USD' : receivingCurrency;
+      const isReceiverLocked = lastEditedField === 'receiving';
+
+      const requestBody = {
+        sendingAmount: amount,
+        currencyCode,
+        receiverUmaAddress: lookupAddress,
+        userId: currUser?.id || 'test-user-id',
+        isReceiverLocked
+      };
+
+      const res = await fetch('/api/payments/quote', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      const data = await res.json();
+      setQuoteResponse({ status: res.status, data });
+    } catch {
+      setQuoteResponse({ status: 'error', data: { error: 'Network error' } });
+    } finally {
+      setIsCreatingQuote(false);
     }
   };
 
@@ -462,6 +569,73 @@ export default function Home() {
             )}
           </div>
         </div>
+
+        {lookupResponse && lookupResponse.status === 200 && (
+          <div className="bg-white rounded-lg shadow-lg p-6 mt-8">
+            <h2 className="text-xl font-semibold mb-6">Initiate Payment</h2>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Amount (USD)</label>
+                  <input
+                    type="number"
+                    value={usdAmount}
+                    onChange={(e) => {
+                      setUsdAmount(e.target.value);
+                      if (e.target.value) {
+                        updateAmounts(e.target.value, 'usd');
+                      }
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter USD amount..."
+                    disabled={isUpdatingAmounts}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Amount ({receivingCurrency || 'Receiving Currency'})
+                  </label>
+                  <input
+                    type="number"
+                    value={receivingAmount}
+                    onChange={(e) => {
+                      setReceivingAmount(e.target.value);
+                      if (e.target.value) {
+                        updateAmounts(e.target.value, 'receiving');
+                      }
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder={`Enter ${receivingCurrency || 'receiving'} amount...`}
+                    disabled={isUpdatingAmounts || !receivingCurrency}
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-center">
+                <button
+                  onClick={handleCreateQuote}
+                  disabled={isCreatingQuote || (!usdAmount && !receivingAmount) || !receivingCurrency}
+                  className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isCreatingQuote ? 'Creating Quote...' : 'Create Payment Quote'}
+                </button>
+              </div>
+
+              {quoteResponse && (
+                <div className="p-4 rounded-md border">
+                  <h3 className="text-lg font-medium mb-2">
+                    Quote Response {quoteResponse.status === 200 ? '(Success)' : '(Error)'}:
+                  </h3>
+                  <pre className="bg-gray-100 p-3 rounded text-sm overflow-auto">
+                    {JSON.stringify(quoteResponse.data, null, 2)}
+                  </pre>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         <div className="bg-white rounded-lg shadow-lg p-6 mt-8">
           <div className="flex justify-between items-center mb-6">

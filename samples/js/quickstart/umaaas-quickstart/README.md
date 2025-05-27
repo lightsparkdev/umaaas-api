@@ -57,6 +57,16 @@ This application showcases the core UMaaS functionality:
 - **UMA Address Lookup**: Enter a UMA address (like `$php@test.uma.me`) and click "Lookup" to retrieve receiver information
 - **View All Users**: Click "Fetch Users" to see all created users in a table format
 
+## Request Proxying
+
+This application automatically proxies certain well-known UMA requests to the configured `UMAAS_FORWARD_DOMAIN`:
+
+- `/.well-known/lnurlp/*` → `UMAAS_FORWARD_DOMAIN/.well-known/lnurlp/*`
+- `/.well-known/lnurlpubkey` → `UMAAS_FORWARD_DOMAIN/.well-known/lnurlpubkey`
+- `/.well-known/uma-configuration` → `UMAAS_FORWARD_DOMAIN/.well-known/uma-configuration`
+
+This allows your application to act as a proxy for UMA protocol requests, forwarding them to the appropriate UMaaS backend service. The proxying is configured in `next.config.ts` using Next.js rewrites.
+
 ## Project Structure
 
 - `src/app/page.tsx` - Main UI with user creation form and UMA lookup
