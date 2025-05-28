@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { faker } from '@faker-js/faker';
+import { convertToSmallestUnit } from '@/lib/currency-utils';
 
 interface FormData {
   platformUserId: string;
@@ -88,6 +89,9 @@ export default function Home() {
   const [lastEditedField, setLastEditedField] = useState<'usd' | 'receiving'>('usd');
   const [isCreatingQuote, setIsCreatingQuote] = useState(false);
   const [quoteResponse, setQuoteResponse] = useState<{ status: number | string; data: unknown } | null>(null);
+
+  const [isSendingPayment, setIsSendingPayment] = useState(false);
+  const [sendPaymentResponse, setSendPaymentResponse] = useState<{ status: number | string; data: unknown } | null>(null);
 
   const [exchangeRates, setExchangeRates] = useState<ExchangeRates>({});
   const [isLoadingRates, setIsLoadingRates] = useState(false);
@@ -265,22 +269,27 @@ export default function Home() {
   };
 
   const handleCreateQuote = async () => {
-    if (!usdAmount && !receivingAmount) return;
+    if (!usdAmount && !receivingAmount || !lookupResponse?.data) return;
     
     setIsCreatingQuote(true);
     setQuoteResponse(null);
 
     try {
-      const amount = lastEditedField === 'usd' ? usdAmount : receivingAmount;
-      const currencyCode = lastEditedField === 'usd' ? 'USD' : receivingCurrency;
-      const isReceiverLocked = lastEditedField === 'receiving';
-
+      const lookupData = lookupResponse.data as { lookupId: string };
+      const lockedCurrencySide = lastEditedField === 'receiving' ? 'RECEIVING' : 'SENDING';
+      
+      // Convert amount to smallest unit based on the locked currency's decimal places
+      const lockedCurrency = lastEditedField === 'receiving' ? receivingCurrency : 'USD';
+      const amountString = lastEditedField === 'usd' ? usdAmount : receivingAmount;
+      const lockedCurrencyAmount = convertToSmallestUnit(amountString, lockedCurrency);
+      
       const requestBody = {
-        sendingAmount: amount,
-        currencyCode,
-        receiverUmaAddress: lookupAddress,
-        userId: currUser?.id || 'test-user-id',
-        isReceiverLocked
+        lockedCurrencyAmount,
+        lockedCurrencySide,
+        lookupId: lookupData.lookupId,
+        sendingCurrencyCode: 'USD',
+        receivingCurrencyCode: receivingCurrency,
+        description: 'quickstart transaction'
       };
 
       const res = await fetch('/api/payments/quote', {
@@ -297,6 +306,42 @@ export default function Home() {
       setQuoteResponse({ status: 'error', data: { error: 'Network error' } });
     } finally {
       setIsCreatingQuote(false);
+    }
+  };
+
+  const handleSendPayment = async () => {
+    if (!quoteResponse?.data) return;
+    
+    setIsSendingPayment(true);
+    setSendPaymentResponse(null);
+
+    try {
+      const quoteData = quoteResponse.data as { 
+        totalSendingAmount: number;
+        sendingCurrency: { code: string };
+        paymentInstructions: { reference: string };
+      };
+
+      const requestBody = {
+        currencyAmount: quoteData.totalSendingAmount,
+        currencyCode: quoteData.sendingCurrency.code,
+        reference: quoteData.paymentInstructions.reference
+      };
+
+      const res = await fetch('/api/sandbox/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      const data = await res.json();
+      setSendPaymentResponse({ status: res.status, data });
+    } catch {
+      setSendPaymentResponse({ status: 'error', data: { error: 'Network error' } });
+    } finally {
+      setIsSendingPayment(false);
     }
   };
 
@@ -630,6 +675,39 @@ export default function Home() {
                   </h3>
                   <pre className="bg-gray-100 p-3 rounded text-sm overflow-auto">
                     {JSON.stringify(quoteResponse.data, null, 2)}
+                  </pre>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {quoteResponse && quoteResponse.status === 200 && (
+          <div className="bg-white rounded-lg shadow-lg p-6 mt-8">
+            <h2 className="text-xl font-semibold mb-6">Simulate Sandbox Payment</h2>
+            
+            <div className="space-y-4">
+              <p className="text-gray-600">
+                Simulate sending the payment to complete the quote. This will use the payment instructions from the quote above.
+              </p>
+
+              <div className="flex justify-center">
+                <button
+                  onClick={handleSendPayment}
+                  disabled={isSendingPayment}
+                  className="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isSendingPayment ? 'Sending Payment...' : 'Send Sandbox Payment'}
+                </button>
+              </div>
+
+              {sendPaymentResponse && (
+                <div className="p-4 rounded-md border">
+                  <h3 className="text-lg font-medium mb-2">
+                    Payment Response {sendPaymentResponse.status === 200 ? '(Success)' : '(Error)'}:
+                  </h3>
+                  <pre className="bg-gray-100 p-3 rounded text-sm overflow-auto">
+                    {JSON.stringify(sendPaymentResponse.data, null, 2)}
                   </pre>
                 </div>
               )}
