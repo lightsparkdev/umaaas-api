@@ -2938,9 +2938,9 @@ BasicAuth
 
 <h1 id="uma-as-a-service-umaaas-api-sandbox">Sandbox</h1>
 
-## testSend
+## sandboxSend
 
-<a id="opIdtestSend"></a>
+<a id="opIdsandboxSend"></a>
 
 > Code samples
 
@@ -2999,7 +2999,7 @@ This endpoint is only for the sandbox environment and will fail for production p
 }
 ```
 
-<h3 id="testsend-parameters">Parameters</h3>
+<h3 id="sandboxsend-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -3058,7 +3058,7 @@ This endpoint is only for the sandbox environment and will fail for production p
 }
 ```
 
-<h3 id="testsend-responses">Responses</h3>
+<h3 id="sandboxsend-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
@@ -3073,9 +3073,9 @@ To perform this operation, you must be authenticated by means of one of the foll
 BasicAuth
 </aside>
 
-## testReceive
+## sandboxReceive
 
-<a id="opIdtestReceive"></a>
+<a id="opIdsandboxReceive"></a>
 
 > Code samples
 
@@ -3138,7 +3138,7 @@ This endpoint is only for the sandbox environment and will fail for production p
 }
 ```
 
-<h3 id="testreceive-parameters">Parameters</h3>
+<h3 id="sandboxreceive-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -3185,7 +3185,7 @@ This endpoint is only for the sandbox environment and will fail for production p
 }
 ```
 
-<h3 id="testreceive-responses">Responses</h3>
+<h3 id="sandboxreceive-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|

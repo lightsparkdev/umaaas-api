@@ -23,9 +23,9 @@ from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
 
-class TestSendRequest(BaseModel):
+class SandboxSendRequest(BaseModel):
     """
-    TestSendRequest
+    SandboxSendRequest
     """ # noqa: E501
     reference: StrictStr = Field(description="The unique reference code that was in the payment instructions")
     currency_code: StrictStr = Field(description="Currency code for the funds to be sent", alias="currencyCode")
@@ -50,7 +50,7 @@ class TestSendRequest(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of TestSendRequest from a JSON string"""
+        """Create an instance of SandboxSendRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -73,7 +73,7 @@ class TestSendRequest(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of TestSendRequest from a dict"""
+        """Create an instance of SandboxSendRequest from a dict"""
         if obj is None:
             return None
 

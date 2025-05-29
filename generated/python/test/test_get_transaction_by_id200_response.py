@@ -65,7 +65,11 @@ class TestGetTransactionById200Response(unittest.TestCase):
                         decimals = 2, ), ),
                 exchange_rate = 1.08,
                 fees = 10,
-                quote_id = 'Quote:019542f5-b3e7-1d02-0000-000000000006'
+                quote_id = 'Quote:019542f5-b3e7-1d02-0000-000000000006',
+                refund = umaaas_api.models.refund.Refund(
+                    reference = 'UMA-Q12345-REFUND', 
+                    initiated_at = '2023-08-15T14:30:00Z', 
+                    settled_at = '2023-08-15T14:30:00Z', )
             )
         else:
             return GetTransactionById200Response(
