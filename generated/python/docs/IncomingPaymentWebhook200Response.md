@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**recipient_pii_provided** | **Dict[str, object]** | PII for the recipient, provided by the platform if requested in the webhook via &#x60;requiredRecipientPiiFields&#x60; and the payment is approved. | [optional] 
+**receiver_user_info** | **Dict[str, object]** | Information about the recipient, provided by the platform if requested in the webhook via &#x60;requestedReceiverUserInfoFields&#x60; and the payment is approved. | [optional] 
 
 ## Example
 

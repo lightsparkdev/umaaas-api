@@ -28,7 +28,7 @@ tags:
     description: Endpoints for creating, claiming and managing UMA invitations
 
 servers:
-  - url: https://api.lightspark.com/umaaas/v1
+  - url: https://api.uma.money/umaaas/rc
     description: Production server
 
 components:
@@ -518,7 +518,7 @@ components:
           items:
             $ref: '#/components/schemas/UserInfoFieldName'
           description: >-
-            List of user PII field names that are required by the underlying UMA provider when creating a user
+            List of user info field names that are required by the underlying UMA provider when creating a user
             for this currency. These fields must be supplied when creating or updating a user if this currency
             is intended to be used by that user. If no fields are required, this field is omitted.
           readOnly: true
@@ -2091,7 +2091,7 @@ paths:
                   type: string
                   description: Optional description/memo for the payment
                   example: "Invoice #1234 payment"
-                counterpartyInformation:
+                senderUserInfo:
                   type: object
                   additionalProperties: true
                   description: |
@@ -2788,11 +2788,11 @@ webhooks:
                   $ref: '#/components/schemas/WebhookType'
                   description: Type of webhook event
                   example: "INCOMING_PAYMENT"
-                requiredRecipientPiiFields:
+                requestedReceiverUserInfoFields:
                   type: array
                   items:
-                    $ref: '#/components/schemas/UserInfoFieldName'
-                  description: PII fields required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which UMAaaS does not already have from initial user registration.
+                    $ref: '#/components/schemas/CounterpartyFieldDefinition'
+                  description: Information required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which UMAaaS does not already have from initial user registration.
             examples:
               pendingPayment:
                 summary: Pending payment example requiring approval
@@ -2818,6 +2818,11 @@ webhooks:
                       FULL_NAME: "John Sender"
                       DATE_OF_BIRTH: "1985-06-15"
                       NATIONALITY: "US"
+                  requestedReceiverUserInfoFields:
+                    - name: "NATIONALITY"
+                      mandatory: true
+                    - name: "ADDRESS"
+                      mandatory: false
                   timestamp: "2023-08-15T14:32:00Z"
                   webhookId: "Webhook:019542f5-b3e7-1d02-0000-000000000007"
                   type: "INCOMING_PAYMENT"
@@ -2852,16 +2857,16 @@ webhooks:
           description: |
             Webhook received successfully. 
             For PENDING transactions, this indicates approval to proceed with the payment.
-            If `requiredRecipientPiiFields` were present in the webhook request, the corresponding PII for the recipient must be included in this response.
+            If `requestedReceiverUserInfoFields` were present in the webhook request, the corresponding fields for the recipient must be included in this response in the `receiverUserInfo` object.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  recipientPiiProvided:
+                  receiverUserInfo:
                     type: object
                     additionalProperties: true
-                    description: PII for the recipient, provided by the platform if requested in the webhook via `requiredRecipientPiiFields` and the payment is approved.
+                    description: Information about the recipient, provided by the platform if requested in the webhook via `requestedReceiverUserInfoFields` and the payment is approved.
         '400':
           description: Bad request
           content:

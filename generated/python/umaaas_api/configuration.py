@@ -227,7 +227,7 @@ conf = umaaas_api.Configuration(
     ) -> None:
         """Constructor
         """
-        self._base_path = "https://api.lightspark.com/umaaas/v1" if host is None else host
+        self._base_path = "https://api.uma.money/umaaas/rc" if host is None else host
         """Default Base url
         """
         self.server_index = 0 if server_index is None and host is None else server_index
@@ -566,7 +566,7 @@ conf = umaaas_api.Configuration(
         """
         return [
             {
-                'url': "https://api.lightspark.com/umaaas/v1",
+                'url': "https://api.uma.money/umaaas/rc",
                 'description': "Production server",
             }
         ]

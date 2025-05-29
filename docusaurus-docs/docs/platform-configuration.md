@@ -160,7 +160,7 @@ The `supportedCurrencies` array allows you to define settings for each currency 
 - `minAmount`: (Integer, required) Minimum transaction amount in the smallest unit of the currency.
 - `maxAmount`: (Integer, required) Maximum transaction amount in the smallest unit of the currency.
 - `requiredCounterpartyFields`: (Array, required) Defines PII your platform requires about *external counterparties* for transactions in this currency.
-- `umaProviderRequiredUserFields`: (Array, read-only) Lists PII field names (from `UserInfoFieldName`) that the UMA provider mandates for *your own users* to transact in this currency. This impacts user creation/updates.
+- `umaProviderRequiredUserFields`: (Array, read-only) Lists user info field names (from `UserInfoFieldName`) that the UMA provider mandates for *your own users* to transact in this currency. This impacts user creation/updates.
 
 ### Required Counterparty Fields
 
@@ -190,7 +190,7 @@ This information will be provided to your platform via webhooks for pending paym
 
 Also within each currency defined in `supportedCurrencies`, you will find the `umaProviderRequiredUserFields` array. This is a **read-only** list of `UserInfoFieldName` strings.
 
-This list specifies which PII fields are mandated by the underlying UMA provider for *your own registered users* if they intend to send or receive payments in that particular currency. For example, to allow a user to transact in "USD", the UMA provider might require that the user has a `NATIONALITY` on record.
+This list specifies which user information fields are mandated by the underlying UMA provider for *your own registered users* if they intend to send or receive payments in that particular currency. For example, to allow a user to transact in "USD", the UMA provider might require that the user has a `NATIONALITY` on record.
 
 These fields must be supplied when creating or updating a user via the `POST /users` or `PATCH /users/{userId}` endpoints if that user is expected to use the specified currency. Refer to the [Configuring Users](/docs/configuring-users) guide for more details on how this impacts user setup.
 

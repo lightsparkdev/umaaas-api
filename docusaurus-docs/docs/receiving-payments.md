@@ -123,7 +123,10 @@ When someone initiates a payment to one of your users' UMA addresses, you'll rec
     "reconciliationInstructions": {
       "reference": "REF-123456789"
     },
-    "requiredRecipientPiiFields": ["NATIONALITY", "FULL_NAME"]
+    "requestedReceiverUserInfoFields": [
+      { "name": "NATIONALITY", "mandatory": true },
+      { "name": "FULL_NAME", "mandatory": true }
+    ]
   },
   "timestamp": "2023-08-15T14:32:00Z",
   "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
@@ -131,18 +134,18 @@ When someone initiates a payment to one of your users' UMA addresses, you'll rec
 }
 ```
 
-The `counterpartyInformation` object contains PII about the *sender*, provided by their VASP. The `requiredRecipientPiiFields` array, if present, lists PII fields that the sender's VASP (or governing regulations) require about your user (the *recipient*). UMAaaS does not have this information and is requesting it from your platform to proceed with the payment.
+The `counterpartyInformation` object contains PII about the *sender*, provided by their VASP. The `requestedReceiverUserInfoFields` array, if present, lists information fields that the sender's VASP (or governing regulations) require about your user (the *recipient*). UMAaaS does not have this information and is requesting it from your platform to proceed with the payment. Each item in this array is an object specifying the `name` of the field (from `UserInfoFieldName`) and whether it's `mandatory`.
 
 To approve the payment, your platform must respond with a `200 OK` status.
 
-- If the `requiredRecipientPiiFields` array was present in the webhook request, your `200 OK` response **must** include a JSON body containing a `recipientPiiProvided` object. This object should contain the key-value pairs for the PII fields that were requested.
-- If `requiredRecipientPiiFields` was not present or was empty, your `200 OK` response, but the response body can be omitted.
+- If the `requestedReceiverUserInfoFields` array was present in the webhook request and contained mandatory fields, your `200 OK` response **must** include a JSON body containing a `receiverUserInfo` object. This object should contain the key-value pairs for the information fields that were requested.
+- If `requestedReceiverUserInfoFields` was not present, was empty, or contained only non-mandatory fields for which you have no information, your `200 OK` response can have an empty body.
 
-Example `200 OK` response body when PII was requested:
+Example `200 OK` response body when information was requested and provided:
 
 ```json
 {
-  "recipientPiiProvided": {
+  "receiverUserInfo": {
     "NATIONALITY": "US",
     "FULL_NAME": "John Receiver"
   }
@@ -232,3 +235,4 @@ sequenceDiagram
         UMAaaS->>Sender: Failed payreq response.
     end
 ```
+

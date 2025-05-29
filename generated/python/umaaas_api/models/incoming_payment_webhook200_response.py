@@ -27,8 +27,8 @@ class IncomingPaymentWebhook200Response(BaseModel):
     """
     IncomingPaymentWebhook200Response
     """ # noqa: E501
-    recipient_pii_provided: Optional[Dict[str, Any]] = Field(default=None, description="PII for the recipient, provided by the platform if requested in the webhook via `requiredRecipientPiiFields` and the payment is approved.", alias="recipientPiiProvided")
-    __properties: ClassVar[List[str]] = ["recipientPiiProvided"]
+    receiver_user_info: Optional[Dict[str, Any]] = Field(default=None, description="Information about the recipient, provided by the platform if requested in the webhook via `requestedReceiverUserInfoFields` and the payment is approved.", alias="receiverUserInfo")
+    __properties: ClassVar[List[str]] = ["receiverUserInfo"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -79,7 +79,7 @@ class IncomingPaymentWebhook200Response(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "recipientPiiProvided": obj.get("recipientPiiProvided")
+            "receiverUserInfo": obj.get("receiverUserInfo")
         })
         return _obj
 

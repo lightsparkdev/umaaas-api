@@ -9,7 +9,7 @@ This service facilitates cross-currency financial transactions using simple huma
 
 Base URLs:
 
-* <a href="https://api.lightspark.com/umaaas/v1">https://api.lightspark.com/umaaas/v1</a>
+* <a href="https://api.uma.money/umaaas/rc">https://api.uma.money/umaaas/rc</a>
 
 Email: <a href="mailto:support@lightspark.com">Lightspark Support</a> 
 License: <a href="https://lightspark.com/terms">Proprietary</a>
@@ -45,7 +45,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/config',
+fetch('https://api.uma.money/umaaas/rc/config',
 {
   method: 'GET',
 
@@ -65,7 +65,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaaas/v1/config', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/rc/config', headers = headers)
 
 print(r.json())
 
@@ -157,7 +157,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/config',
+fetch('https://api.uma.money/umaaas/rc/config',
 {
   method: 'PATCH',
   body: inputBody,
@@ -178,7 +178,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.patch('https://api.lightspark.com/umaaas/v1/config', headers = headers)
+r = requests.patch('https://api.uma.money/umaaas/rc/config', headers = headers)
 
 print(r.json())
 
@@ -230,7 +230,7 @@ Update the platform configuration settings
 |»» requiredCounterpartyFields|body|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|true|List of fields which the platform requires from the counterparty institutions about counterparty users. Platforms can set mandatory to false if the platform does not require the field, but would like to have it available. Some fields may be required by the underlying UMA provider.|
 |»»» name|body|[UserInfoFieldName](#schemauserinfofieldname)|true|Name of a type of field containing info about a platform's user or counterparty user.|
 |»»» mandatory|body|boolean|true|Whether the field is mandatory|
-|»» umaProviderRequiredUserFields|body|[[UserInfoFieldName](#schemauserinfofieldname)]|false|List of user PII field names that are required by the underlying UMA provider when creating a user for this currency. These fields must be supplied when creating or updating a user if this currency is intended to be used by that user. If no fields are required, this field is omitted.|
+|»» umaProviderRequiredUserFields|body|[[UserInfoFieldName](#schemauserinfofieldname)]|false|List of user info field names that are required by the underlying UMA provider when creating a user for this currency. These fields must be supplied when creating or updating a user if this currency is intended to be used by that user. If no fields are required, this field is omitted.|
 
 #### Enumerated Values
 
@@ -344,7 +344,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/users',
+fetch('https://api.uma.money/umaaas/rc/users',
 {
   method: 'POST',
   body: inputBody,
@@ -365,7 +365,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.lightspark.com/umaaas/v1/users', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/rc/users', headers = headers)
 
 print(r.json())
 
@@ -482,7 +482,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/users',
+fetch('https://api.uma.money/umaaas/rc/users',
 {
   method: 'GET',
 
@@ -502,7 +502,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaaas/v1/users', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/rc/users', headers = headers)
 
 print(r.json())
 
@@ -690,7 +690,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/users/{userId}',
+fetch('https://api.uma.money/umaaas/rc/users/{userId}',
 {
   method: 'GET',
 
@@ -710,7 +710,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaaas/v1/users/{userId}', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/rc/users/{userId}', headers = headers)
 
 print(r.json())
 
@@ -818,7 +818,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/users/{userId}',
+fetch('https://api.uma.money/umaaas/rc/users/{userId}',
 {
   method: 'PATCH',
   body: inputBody,
@@ -839,7 +839,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.patch('https://api.lightspark.com/umaaas/v1/users/{userId}', headers = headers)
+r = requests.patch('https://api.uma.money/umaaas/rc/users/{userId}', headers = headers)
 
 print(r.json())
 
@@ -954,7 +954,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/users/{userId}',
+fetch('https://api.uma.money/umaaas/rc/users/{userId}',
 {
   method: 'DELETE',
 
@@ -974,7 +974,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.delete('https://api.lightspark.com/umaaas/v1/users/{userId}', headers = headers)
+r = requests.delete('https://api.uma.money/umaaas/rc/users/{userId}', headers = headers)
 
 print(r.json())
 
@@ -1067,7 +1067,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/users/bulk/csv',
+fetch('https://api.uma.money/umaaas/rc/users/bulk/csv',
 {
   method: 'POST',
   body: inputBody,
@@ -1088,7 +1088,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.lightspark.com/umaaas/v1/users/bulk/csv', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/rc/users/bulk/csv', headers = headers)
 
 print(r.json())
 
@@ -1240,7 +1240,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/users/bulk/jobs/{jobId}',
+fetch('https://api.uma.money/umaaas/rc/users/bulk/jobs/{jobId}',
 {
   method: 'GET',
 
@@ -1260,7 +1260,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaaas/v1/users/bulk/jobs/{jobId}', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/rc/users/bulk/jobs/{jobId}', headers = headers)
 
 print(r.json())
 
@@ -1342,7 +1342,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/transactions/{transactionId}',
+fetch('https://api.uma.money/umaaas/rc/transactions/{transactionId}',
 {
   method: 'GET',
 
@@ -1362,7 +1362,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaaas/v1/transactions/{transactionId}', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/rc/transactions/{transactionId}', headers = headers)
 
 print(r.json())
 
@@ -1461,7 +1461,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/transactions',
+fetch('https://api.uma.money/umaaas/rc/transactions',
 {
   method: 'GET',
 
@@ -1481,7 +1481,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaaas/v1/transactions', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/rc/transactions', headers = headers)
 
 print(r.json())
 
@@ -1702,7 +1702,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/receiver/{receiverUmaAddress}',
+fetch('https://api.uma.money/umaaas/rc/receiver/{receiverUmaAddress}',
 {
   method: 'GET',
 
@@ -1722,7 +1722,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaaas/v1/receiver/{receiverUmaAddress}', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/rc/receiver/{receiverUmaAddress}', headers = headers)
 
 print(r.json())
 
@@ -1843,7 +1843,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/quotes',
+fetch('https://api.uma.money/umaaas/rc/quotes',
 {
   method: 'POST',
   body: inputBody,
@@ -1864,7 +1864,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.lightspark.com/umaaas/v1/quotes', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/rc/quotes', headers = headers)
 
 print(r.json())
 
@@ -1909,11 +1909,11 @@ must be followed precisely, including any reference codes provided.
 |» lockedCurrencySide|body|[QuoteLockSide](#schemaquotelockside)|true|The side of the quote which should be locked and specified in the `lockedCurrencyAmount`. For example, if I want to send exactly $5 MXN from my wallet, I would set this to "sending", and the `lockedCurrencyAmount` to 500 (in cents). If I want the receiver to receive exactly $10 USD, I would set this to "receiving" and the `lockedCurrencyAmount` to 10000 (in cents).|
 |» lockedCurrencyAmount|body|integer(int64)|true|The amount to send/receive in the smallest unit of the locked currency (eg. cents). See `lockedCurrencySide` for more information.|
 |» description|body|string|false|Optional description/memo for the payment|
-|» counterpartyInformation|body|object|false|Key-value pairs of information about the sender which was requested by the counterparty (recipient) institution.|
+|» senderUserInfo|body|object|false|Key-value pairs of information about the sender which was requested by the counterparty (recipient) institution.|
 
 #### Detailed descriptions
 
-**» counterpartyInformation**: Key-value pairs of information about the sender which was requested by the counterparty (recipient) institution.
+**» senderUserInfo**: Key-value pairs of information about the sender which was requested by the counterparty (recipient) institution.
 Any fields specified in `requiredPayerDataFields` from the response of the `/receiver/{receiverUmaAddress}` (lookupUma) endpoint
 MUST be provided here if they were requested. If the counterparty (recipient) institution did not request any information,
 this field can be omitted.
@@ -1996,7 +1996,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/quotes/{quoteId}',
+fetch('https://api.uma.money/umaaas/rc/quotes/{quoteId}',
 {
   method: 'GET',
 
@@ -2016,7 +2016,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaaas/v1/quotes/{quoteId}', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/rc/quotes/{quoteId}', headers = headers)
 
 print(r.json())
 
@@ -2106,7 +2106,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/webhooks/test',
+fetch('https://api.uma.money/umaaas/rc/webhooks/test',
 {
   method: 'POST',
 
@@ -2126,7 +2126,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.lightspark.com/umaaas/v1/webhooks/test', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/rc/webhooks/test', headers = headers)
 
 print(r.json())
 
@@ -2184,7 +2184,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/invitations',
+fetch('https://api.uma.money/umaaas/rc/invitations',
 {
   method: 'POST',
   body: inputBody,
@@ -2205,7 +2205,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.lightspark.com/umaaas/v1/invitations', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/rc/invitations', headers = headers)
 
 print(r.json())
 
@@ -2295,7 +2295,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/invitations/{invitationCode}',
+fetch('https://api.uma.money/umaaas/rc/invitations/{invitationCode}',
 {
   method: 'GET',
 
@@ -2315,7 +2315,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaaas/v1/invitations/{invitationCode}', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/rc/invitations/{invitationCode}', headers = headers)
 
 print(r.json())
 
@@ -2387,7 +2387,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/invitations/{invitationCode}/claim',
+fetch('https://api.uma.money/umaaas/rc/invitations/{invitationCode}/claim',
 {
   method: 'POST',
   body: inputBody,
@@ -2408,7 +2408,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.lightspark.com/umaaas/v1/invitations/{invitationCode}/claim', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/rc/invitations/{invitationCode}/claim', headers = headers)
 
 print(r.json())
 
@@ -2495,7 +2495,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/invitations/{invitationCode}/cancel',
+fetch('https://api.uma.money/umaaas/rc/invitations/{invitationCode}/cancel',
 {
   method: 'POST',
 
@@ -2515,7 +2515,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.lightspark.com/umaaas/v1/invitations/{invitationCode}/cancel', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/rc/invitations/{invitationCode}/cancel', headers = headers)
 
 print(r.json())
 
@@ -2602,7 +2602,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/tokens',
+fetch('https://api.uma.money/umaaas/rc/tokens',
 {
   method: 'POST',
   body: inputBody,
@@ -2623,7 +2623,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.lightspark.com/umaaas/v1/tokens', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/rc/tokens', headers = headers)
 
 print(r.json())
 
@@ -2705,7 +2705,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/tokens',
+fetch('https://api.uma.money/umaaas/rc/tokens',
 {
   method: 'GET',
 
@@ -2725,7 +2725,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaaas/v1/tokens', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/rc/tokens', headers = headers)
 
 print(r.json())
 
@@ -2818,7 +2818,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/tokens/{tokenId}',
+fetch('https://api.uma.money/umaaas/rc/tokens/{tokenId}',
 {
   method: 'GET',
 
@@ -2838,7 +2838,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.lightspark.com/umaaas/v1/tokens/{tokenId}', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/rc/tokens/{tokenId}', headers = headers)
 
 print(r.json())
 
@@ -2899,7 +2899,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/tokens/{tokenId}',
+fetch('https://api.uma.money/umaaas/rc/tokens/{tokenId}',
 {
   method: 'DELETE',
 
@@ -2919,7 +2919,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.delete('https://api.lightspark.com/umaaas/v1/tokens/{tokenId}', headers = headers)
+r = requests.delete('https://api.uma.money/umaaas/rc/tokens/{tokenId}', headers = headers)
 
 print(r.json())
 
@@ -2982,7 +2982,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/sandbox/send',
+fetch('https://api.uma.money/umaaas/rc/sandbox/send',
 {
   method: 'POST',
   body: inputBody,
@@ -3003,7 +3003,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.lightspark.com/umaaas/v1/sandbox/send', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/rc/sandbox/send', headers = headers)
 
 print(r.json())
 
@@ -3119,7 +3119,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.lightspark.com/umaaas/v1/sandbox/receive',
+fetch('https://api.uma.money/umaaas/rc/sandbox/receive',
 {
   method: 'POST',
   body: inputBody,
@@ -3140,7 +3140,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.lightspark.com/umaaas/v1/sandbox/receive', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/rc/sandbox/receive', headers = headers)
 
 print(r.json())
 
@@ -4145,7 +4145,7 @@ Name of a type of field containing info about a platform's user or counterparty 
 |minAmount|integer(int64)|true|none|Minimum amount that can be sent in the smallest unit of this currency|
 |maxAmount|integer(int64)|true|none|Maximum amount that can be sent in the smallest unit of this currency|
 |requiredCounterpartyFields|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|true|none|List of fields which the platform requires from the counterparty institutions about counterparty users. Platforms can set mandatory to false if the platform does not require the field, but would like to have it available. Some fields may be required by the underlying UMA provider.|
-|umaProviderRequiredUserFields|[[UserInfoFieldName](#schemauserinfofieldname)]|false|read-only|List of user PII field names that are required by the underlying UMA provider when creating a user for this currency. These fields must be supplied when creating or updating a user if this currency is intended to be used by that user. If no fields are required, this field is omitted.|
+|umaProviderRequiredUserFields|[[UserInfoFieldName](#schemauserinfofieldname)]|false|read-only|List of user info field names that are required by the underlying UMA provider when creating a user for this currency. These fields must be supplied when creating or updating a user if this currency is intended to be used by that user. If no fields are required, this field is omitted.|
 
 <h2 id="tocS_PlatformConfig">PlatformConfig</h2>
 <!-- backwards compatibility -->

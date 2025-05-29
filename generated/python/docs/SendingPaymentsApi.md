@@ -1,6 +1,6 @@
 # umaaas_api.SendingPaymentsApi
 
-All URIs are relative to *https://api.lightspark.com/umaaas/v1*
+All URIs are relative to *https://api.uma.money/umaaas/rc*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -37,10 +37,10 @@ from umaaas_api.models.quote import Quote
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.lightspark.com/umaaas/v1
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.lightspark.com/umaaas/v1"
+    host = "https://api.uma.money/umaaas/rc"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -122,10 +122,10 @@ from umaaas_api.models.quote import Quote
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.lightspark.com/umaaas/v1
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.lightspark.com/umaaas/v1"
+    host = "https://api.uma.money/umaaas/rc"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -205,10 +205,10 @@ from umaaas_api.models.lookup_uma200_response import LookupUma200Response
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.lightspark.com/umaaas/v1
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.lightspark.com/umaaas/v1"
+    host = "https://api.uma.money/umaaas/rc"
 )
 
 # The client must configure the authentication and authorization parameters

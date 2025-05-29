@@ -9,7 +9,7 @@ Name | Type | Description | Notes
 **min_amount** | **int** | Minimum amount that can be sent in the smallest unit of this currency | 
 **max_amount** | **int** | Maximum amount that can be sent in the smallest unit of this currency | 
 **required_counterparty_fields** | [**List[CounterpartyFieldDefinition]**](CounterpartyFieldDefinition.md) | List of fields which the platform requires from the counterparty institutions about counterparty users. Platforms can set mandatory to false if the platform does not require the field, but would like to have it available. Some fields may be required by the underlying UMA provider. | 
-**uma_provider_required_user_fields** | [**List[UserInfoFieldName]**](UserInfoFieldName.md) | List of user PII field names that are required by the underlying UMA provider when creating a user for this currency. These fields must be supplied when creating or updating a user if this currency is intended to be used by that user. If no fields are required, this field is omitted. | [optional] 
+**uma_provider_required_user_fields** | [**List[UserInfoFieldName]**](UserInfoFieldName.md) | List of user info field names that are required by the underlying UMA provider when creating a user for this currency. These fields must be supplied when creating or updating a user if this currency is intended to be used by that user. If no fields are required, this field is omitted. | [optional] 
 
 ## Example
 

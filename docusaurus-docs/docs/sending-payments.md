@@ -113,14 +113,14 @@ Request body:
   "lockedCurrencySide": "SENDING",
   "lockedCurrencyAmount": 10000,
   "description": "Invoice #1234 payment",
-  "counterpartyInformation": {
+  "senderUserInfo": {
     "FULL_NAME": "John Sender",
     "DATE_OF_BIRTH": "1985-06-15"
   }
 }
 ```
 
-If the `requiredPayerDataFields` array from the previous step (looking up the receiver) was not empty, you **must** include the `counterpartyInformation` object in your quote request. This object should contain key-value pairs for each field that was listed as mandatory in `requiredPayerDataFields`. This is PII about your user (the sender) that the recipient's VASP requires.
+If the `requiredPayerDataFields` array from the previous step (looking up the receiver) was not empty, you **must** include the `senderUserInfo` object in your quote request. This object should contain key-value pairs for each field that was listed as mandatory in `requiredPayerDataFields`. This is PII about your user (the sender) that the recipient's VASP requires.
 
 Response:
 

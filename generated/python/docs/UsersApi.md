@@ -1,6 +1,6 @@
 # umaaas_api.UsersApi
 
-All URIs are relative to *https://api.lightspark.com/umaaas/v1*
+All URIs are relative to *https://api.uma.money/umaaas/rc*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -30,10 +30,10 @@ from umaaas_api.models.list_users200_response_data_inner import ListUsers200Resp
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.lightspark.com/umaaas/v1
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.lightspark.com/umaaas/v1"
+    host = "https://api.uma.money/umaaas/rc"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -112,10 +112,10 @@ from umaaas_api.models.list_users200_response_data_inner import ListUsers200Resp
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.lightspark.com/umaaas/v1
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.lightspark.com/umaaas/v1"
+    host = "https://api.uma.money/umaaas/rc"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -202,10 +202,10 @@ from umaaas_api.models.bulk_user_import_job import BulkUserImportJob
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.lightspark.com/umaaas/v1
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.lightspark.com/umaaas/v1"
+    host = "https://api.uma.money/umaaas/rc"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -283,10 +283,10 @@ from umaaas_api.models.list_users200_response_data_inner import ListUsers200Resp
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.lightspark.com/umaaas/v1
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.lightspark.com/umaaas/v1"
+    host = "https://api.uma.money/umaaas/rc"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -366,10 +366,10 @@ from umaaas_api.models.list_users200_response import ListUsers200Response
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.lightspark.com/umaaas/v1
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.lightspark.com/umaaas/v1"
+    host = "https://api.uma.money/umaaas/rc"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -466,10 +466,10 @@ from umaaas_api.models.update_user_by_id_request import UpdateUserByIdRequest
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.lightspark.com/umaaas/v1
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.lightspark.com/umaaas/v1"
+    host = "https://api.uma.money/umaaas/rc"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -624,10 +624,10 @@ from umaaas_api.models.upload_users_csv202_response import UploadUsersCsv202Resp
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.lightspark.com/umaaas/v1
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.lightspark.com/umaaas/v1"
+    host = "https://api.uma.money/umaaas/rc"
 )
 
 # The client must configure the authentication and authorization parameters
