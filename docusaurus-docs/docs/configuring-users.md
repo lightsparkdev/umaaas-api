@@ -8,33 +8,41 @@ This guide provides comprehensive information about user configuration in the UM
 
 ## User Types
 
-The UMAaaS API supports both individual and business users, with different required information for each user type:
+The UMAaaS API supports both individual and business users. While the API schema itself makes most Personally Identifiable Information (PII) optional at the initial user creation, specific fields may become mandatory based on the currencies the user will transact with and the requirements of the underlying UMA provider.
 
-### Individual Users
+Your platform's configuration (retrieved via `GET /config`) includes a `supportedCurrencies` array. Each currency object within this array has a `umaProviderRequiredUserFields` list. If a user is intended to use a specific currency, any fields listed in `umaProviderRequiredUserFields` for that currency **must** be provided when creating or updating the user.
 
-Required information for individual users:
+The base required information for all users is only:
 
 - UMA address (e.g., `$john.doe@mycompany.com`)
 - Platform user ID (your internal user identifier)
+- User Type (`INDIVIDUAL` or `BUSINESS`)
+
+### Individual Users
+
+In some cases, only the above fields are required at user creation! Beyond those base requirements, additional fields commonly associated with individual users include:
+
 - Full name
 - Date of birth (YYYY-MM-DD format)
-- Physical address (including country, state, city, postal code)
+- Physical address (including country, state, city, postalCode)
 - Bank account information (see below for supported formats)
+
+**Note:** Check the `umaProviderRequiredUserFields` for each relevant currency in your platform's configuration to determine which of these fields are strictly mandatory at user creation/update time for that user to transact in those currencies.
 
 ### Business Users
 
-Required information for business users:
+Beyond the base requirements, additional fields commonly associated with business users include:
 
-- UMA address (e.g., `$acme.corp@mycompany.com`)
-- Platform user ID (your internal business identifier)
 - Business information:
-  - Legal name (required)
-  - Registration number (optional)
-  - Tax ID (optional)
-- Physical address (including country, state, city, postal code)
+  - Legal name (this is often required, check `umaProviderRequiredUserFields`)
+  - Registration number (optional, unless specified by `umaProviderRequiredUserFields`)
+  - Tax ID (optional, unless specified by `umaProviderRequiredUserFields`)
+- Physical address (including country, state, city, postalCode)
 - Bank account information (see below for supported formats)
 
-When creating or updating users, the `userType` field must be specified as either `INDIVIDUAL` or `BUSINESS`, and the appropriate properties for that user type must be provided.
+**Note:** Check the `umaProviderRequiredUserFields` for each relevant currency in your platform's configuration to determine which of these fields are strictly mandatory at user creation/update time for that user to transact in those currencies.
+
+When creating or updating users, the `userType` field must be specified as either `INDIVIDUAL` or `BUSINESS`.
 
 :::tip
 There can be multiple users with the same platformUserId, but different uma addresses. This is useful if you want to track multiple uma addresses and/or bank accounts for the same user in your platform.
@@ -50,7 +58,23 @@ To register a new user in the system, use the `POST /users` endpoint:
 POST /users
 ```
 
-Example request body for an individual user:
+The API allows creating a user with minimal PII. However, to enable transactions for the user in specific currencies, you must include any PII fields mandated by the `umaProviderRequiredUserFields` for those currencies (found in your platform's configuration via `GET /config`).
+
+Here is an example of a user creation request body where no additional PII fields are required in the `umaProviderRequiredUserFields` for the currency the user will transact in:
+
+```json
+{
+  "umaAddress": "$john.sender@mycompany.com",
+  "platformUserId": "9f84e0c2a72c4fa",
+  "userType": "INDIVIDUAL",
+}
+```
+
+Simple! In this case, all that's needed is to map an UMA address to an identifier in your platform.
+
+The examples below show a more comprehensive set of data. Not all fields are strictly required by the API for user creation itself, but become necessary based on currency and UMA provider requirements.
+
+Example request body for an individual user (ensure all `umaProviderRequiredUserFields` for intended currencies are included):
 
 ```json
 {

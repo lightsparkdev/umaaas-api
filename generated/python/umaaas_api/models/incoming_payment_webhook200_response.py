@@ -18,25 +18,17 @@ import pprint
 import re  # noqa: F401
 import json
 
-from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Any, ClassVar, Dict, List, Optional
-from umaaas_api.models.incoming_transaction import IncomingTransaction
-from umaaas_api.models.user_info_field_name import UserInfoFieldName
-from umaaas_api.models.webhook_type import WebhookType
 from typing import Optional, Set
 from typing_extensions import Self
 
-class IncomingPaymentWebhookRequest(BaseModel):
+class IncomingPaymentWebhook200Response(BaseModel):
     """
-    IncomingPaymentWebhookRequest
+    IncomingPaymentWebhook200Response
     """ # noqa: E501
-    transaction: IncomingTransaction
-    timestamp: datetime = Field(description="ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)")
-    webhook_id: StrictStr = Field(description="Unique identifier for this webhook delivery (can be used for idempotency)", alias="webhookId")
-    type: WebhookType = Field(description="Type of webhook event")
-    required_recipient_pii_fields: Optional[List[UserInfoFieldName]] = Field(default=None, description="PII fields required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which UMAaaS does not already have from initial user registration.", alias="requiredRecipientPiiFields")
-    __properties: ClassVar[List[str]] = ["transaction", "timestamp", "webhookId", "type", "requiredRecipientPiiFields"]
+    recipient_pii_provided: Optional[Dict[str, Any]] = Field(default=None, description="PII for the recipient, provided by the platform if requested in the webhook via `requiredRecipientPiiFields` and the payment is approved.", alias="recipientPiiProvided")
+    __properties: ClassVar[List[str]] = ["recipientPiiProvided"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -56,7 +48,7 @@ class IncomingPaymentWebhookRequest(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of IncomingPaymentWebhookRequest from a JSON string"""
+        """Create an instance of IncomingPaymentWebhook200Response from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -75,14 +67,11 @@ class IncomingPaymentWebhookRequest(BaseModel):
             by_alias=True,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of transaction
-        if self.transaction:
-            _dict['transaction'] = self.transaction.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of IncomingPaymentWebhookRequest from a dict"""
+        """Create an instance of IncomingPaymentWebhook200Response from a dict"""
         if obj is None:
             return None
 
@@ -90,11 +79,7 @@ class IncomingPaymentWebhookRequest(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "transaction": IncomingTransaction.from_dict(obj["transaction"]) if obj.get("transaction") is not None else None,
-            "timestamp": obj.get("timestamp"),
-            "webhookId": obj.get("webhookId"),
-            "type": obj.get("type"),
-            "requiredRecipientPiiFields": obj.get("requiredRecipientPiiFields")
+            "recipientPiiProvided": obj.get("recipientPiiProvided")
         })
         return _obj
 

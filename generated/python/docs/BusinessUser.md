@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**address** | [**Address**](Address.md) |  | 
-**bank_account_info** | [**UserBankAccountInfo**](UserBankAccountInfo.md) |  | 
-**business_info** | [**BusinessUserAllOfBusinessInfo**](BusinessUserAllOfBusinessInfo.md) |  | 
+**address** | [**Address**](Address.md) |  | [optional] 
+**bank_account_info** | [**UserBankAccountInfo**](UserBankAccountInfo.md) |  | [optional] 
+**business_info** | [**BusinessUserAllOfBusinessInfo**](BusinessUserAllOfBusinessInfo.md) |  | [optional] 
 
 ## Example
 

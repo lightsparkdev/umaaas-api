@@ -31,11 +31,11 @@ class IndividualUser(User):
     """
     IndividualUser
     """ # noqa: E501
-    full_name: StrictStr = Field(description="Individual's full name", alias="fullName")
-    date_of_birth: date = Field(description="Date of birth in ISO 8601 format (YYYY-MM-DD)", alias="dateOfBirth")
+    full_name: Optional[StrictStr] = Field(default=None, description="Individual's full name", alias="fullName")
+    date_of_birth: Optional[date] = Field(default=None, description="Date of birth in ISO 8601 format (YYYY-MM-DD)", alias="dateOfBirth")
     nationality: Optional[StrictStr] = Field(default=None, description="Country code (ISO 3166-1 alpha-2)")
-    address: Address
-    bank_account_info: UserBankAccountInfo = Field(alias="bankAccountInfo")
+    address: Optional[Address] = None
+    bank_account_info: Optional[UserBankAccountInfo] = Field(default=None, alias="bankAccountInfo")
     __properties: ClassVar[List[str]] = ["id", "umaAddress", "platformUserId", "userType", "createdAt", "updatedAt", "isDeleted", "fullName", "dateOfBirth", "nationality", "address", "bankAccountInfo"]
 
     model_config = ConfigDict(

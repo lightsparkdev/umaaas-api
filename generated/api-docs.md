@@ -100,6 +100,10 @@ Retrieve the current platform configuration
           "name": "DATE_OF_BIRTH",
           "mandatory": true
         }
+      ],
+      "umaProviderRequiredUserFields": [
+        "NATIONALITY",
+        "DATE_OF_BIRTH"
       ]
     }
   ],
@@ -223,9 +227,10 @@ Update the platform configuration settings
 |»» currencyCode|body|string|true|Three-letter currency code (ISO 4217)|
 |»» minAmount|body|integer(int64)|true|Minimum amount that can be sent in the smallest unit of this currency|
 |»» maxAmount|body|integer(int64)|true|Maximum amount that can be sent in the smallest unit of this currency|
-|»» requiredCounterpartyFields|body|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|true|List of counterparty fields and their requirements|
+|»» requiredCounterpartyFields|body|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|true|List of fields which the platform requires from the counterparty institutions about counterparty users. Platforms can set mandatory to false if the platform does not require the field, but would like to have it available. Some fields may be required by the underlying UMA provider.|
 |»»» name|body|[UserInfoFieldName](#schemauserinfofieldname)|true|Name of a type of field containing info about a platform's user or counterparty user.|
 |»»» mandatory|body|boolean|true|Whether the field is mandatory|
+|»» umaProviderRequiredUserFields|body|[[UserInfoFieldName](#schemauserinfofieldname)]|false|List of user PII field names that are required by the underlying UMA provider when creating a user for this currency. These fields must be supplied when creating or updating a user if this currency is intended to be used by that user. If no fields are required, this field is omitted.|
 
 #### Enumerated Values
 
@@ -241,6 +246,16 @@ Update the platform configuration settings
 |»»» name|REGISTRATION_NUMBER|
 |»»» name|ACCOUNT_NUMBER|
 |»»» name|USER_TYPE|
+|»» umaProviderRequiredUserFields|FULL_NAME|
+|»» umaProviderRequiredUserFields|DATE_OF_BIRTH|
+|»» umaProviderRequiredUserFields|NATIONALITY|
+|»» umaProviderRequiredUserFields|PHONE_NUMBER|
+|»» umaProviderRequiredUserFields|EMAIL|
+|»» umaProviderRequiredUserFields|ADDRESS|
+|»» umaProviderRequiredUserFields|TAX_ID|
+|»» umaProviderRequiredUserFields|REGISTRATION_NUMBER|
+|»» umaProviderRequiredUserFields|ACCOUNT_NUMBER|
+|»» umaProviderRequiredUserFields|USER_TYPE|
 
 > Example responses
 
@@ -265,6 +280,10 @@ Update the platform configuration settings
           "name": "DATE_OF_BIRTH",
           "mandatory": true
         }
+      ],
+      "umaProviderRequiredUserFields": [
+        "NATIONALITY",
+        "DATE_OF_BIRTH"
       ]
     }
   ],
@@ -596,17 +615,17 @@ Status Code **200**
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |»»» *anonymous*|object|false|none|none|
-|»»»» fullName|string|true|none|Individual's full name|
-|»»»» dateOfBirth|string(date)|true|none|Date of birth in ISO 8601 format (YYYY-MM-DD)|
+|»»»» fullName|string|false|none|Individual's full name|
+|»»»» dateOfBirth|string(date)|false|none|Date of birth in ISO 8601 format (YYYY-MM-DD)|
 |»»»» nationality|string|false|none|Country code (ISO 3166-1 alpha-2)|
-|»»»» address|[Address](#schemaaddress)|true|none|none|
+|»»»» address|[Address](#schemaaddress)|false|none|none|
 |»»»»» line1|string|true|none|Street address line 1|
 |»»»»» line2|string|false|none|Street address line 2|
 |»»»»» city|string|false|none|City|
 |»»»»» state|string|false|none|State/Province/Region|
 |»»»»» postalCode|string|true|none|Postal/ZIP code|
 |»»»»» country|string|true|none|Country code (ISO 3166-1 alpha-2)|
-|»»»» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|true|none|none|
+|»»»» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|false|none|none|
 |»»»»» accountType|[BankAccountType](#schemabankaccounttype)|true|none|Type of bank account information|
 |»»»»» platformAccountId|string|false|none|Platform-specific identifier for this bank account. This optional field allows platforms<br>to link bank accounts to their internal account systems. The value can be any string<br>that helps identify the account in your system (e.g. database IDs, custom references, etc.).<br><br>This field is particularly useful when:<br>- Tracking multiple bank accounts for the same user<br>- Linking accounts to internal accounting systems<br>- Maintaining consistency between UMAaaS and your platform's account records|
 
@@ -627,9 +646,9 @@ Status Code **200**
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |»»» *anonymous*|object|false|none|none|
-|»»»» address|[Address](#schemaaddress)|true|none|none|
-|»»»» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|true|none|none|
-|»»»» businessInfo|object|true|none|Additional information required for business entities|
+|»»»» address|[Address](#schemaaddress)|false|none|none|
+|»»»» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|false|none|none|
+|»»»» businessInfo|object|false|none|Additional information required for business entities|
 |»»»»» legalName|string|true|none|Legal name of the business|
 |»»»»» registrationNumber|string|false|none|Business registration number|
 |»»»»» taxId|string|false|none|Tax identification number|
@@ -1890,6 +1909,14 @@ must be followed precisely, including any reference codes provided.
 |» lockedCurrencySide|body|[QuoteLockSide](#schemaquotelockside)|true|The side of the quote which should be locked and specified in the `lockedCurrencyAmount`. For example, if I want to send exactly $5 MXN from my wallet, I would set this to "sending", and the `lockedCurrencyAmount` to 500 (in cents). If I want the receiver to receive exactly $10 USD, I would set this to "receiving" and the `lockedCurrencyAmount` to 10000 (in cents).|
 |» lockedCurrencyAmount|body|integer(int64)|true|The amount to send/receive in the smallest unit of the locked currency (eg. cents). See `lockedCurrencySide` for more information.|
 |» description|body|string|false|Optional description/memo for the payment|
+|» counterpartyInformation|body|object|false|Key-value pairs of information about the sender which was requested by the counterparty (recipient) institution.|
+
+#### Detailed descriptions
+
+**» counterpartyInformation**: Key-value pairs of information about the sender which was requested by the counterparty (recipient) institution.
+Any fields specified in `requiredPayerDataFields` from the response of the `/receiver/{receiverUmaAddress}` (lookupUma) endpoint
+MUST be provided here if they were requested. If the counterparty (recipient) institution did not request any information,
+this field can be omitted.
 
 #### Enumerated Values
 
@@ -3960,11 +3987,11 @@ and
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |*anonymous*|object|false|none|none|
-|» fullName|string|true|none|Individual's full name|
-|» dateOfBirth|string(date)|true|none|Date of birth in ISO 8601 format (YYYY-MM-DD)|
+|» fullName|string|false|none|Individual's full name|
+|» dateOfBirth|string(date)|false|none|Date of birth in ISO 8601 format (YYYY-MM-DD)|
 |» nationality|string|false|none|Country code (ISO 3166-1 alpha-2)|
-|» address|[Address](#schemaaddress)|true|none|none|
-|» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|true|none|none|
+|» address|[Address](#schemaaddress)|false|none|none|
+|» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|false|none|none|
 
 <h2 id="tocS_BusinessUser">BusinessUser</h2>
 <!-- backwards compatibility -->
@@ -4016,9 +4043,9 @@ and
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |*anonymous*|object|false|none|none|
-|» address|[Address](#schemaaddress)|true|none|none|
-|» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|true|none|none|
-|» businessInfo|object|true|none|Additional information required for business entities|
+|» address|[Address](#schemaaddress)|false|none|none|
+|» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|false|none|none|
+|» businessInfo|object|false|none|Additional information required for business entities|
 |»» legalName|string|true|none|Legal name of the business|
 |»» registrationNumber|string|false|none|Business registration number|
 |»» taxId|string|false|none|Tax identification number|
@@ -4101,6 +4128,10 @@ Name of a type of field containing info about a platform's user or counterparty 
       "name": "DATE_OF_BIRTH",
       "mandatory": true
     }
+  ],
+  "umaProviderRequiredUserFields": [
+    "NATIONALITY",
+    "DATE_OF_BIRTH"
   ]
 }
 
@@ -4113,7 +4144,8 @@ Name of a type of field containing info about a platform's user or counterparty 
 |currencyCode|string|true|none|Three-letter currency code (ISO 4217)|
 |minAmount|integer(int64)|true|none|Minimum amount that can be sent in the smallest unit of this currency|
 |maxAmount|integer(int64)|true|none|Maximum amount that can be sent in the smallest unit of this currency|
-|requiredCounterpartyFields|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|true|none|List of counterparty fields and their requirements|
+|requiredCounterpartyFields|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|true|none|List of fields which the platform requires from the counterparty institutions about counterparty users. Platforms can set mandatory to false if the platform does not require the field, but would like to have it available. Some fields may be required by the underlying UMA provider.|
+|umaProviderRequiredUserFields|[[UserInfoFieldName](#schemauserinfofieldname)]|false|read-only|List of user PII field names that are required by the underlying UMA provider when creating a user for this currency. These fields must be supplied when creating or updating a user if this currency is intended to be used by that user. If no fields are required, this field is omitted.|
 
 <h2 id="tocS_PlatformConfig">PlatformConfig</h2>
 <!-- backwards compatibility -->
@@ -4141,6 +4173,10 @@ Name of a type of field containing info about a platform's user or counterparty 
           "name": "DATE_OF_BIRTH",
           "mandatory": true
         }
+      ],
+      "umaProviderRequiredUserFields": [
+        "NATIONALITY",
+        "DATE_OF_BIRTH"
       ]
     }
   ],

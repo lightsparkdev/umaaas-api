@@ -38,6 +38,7 @@ from umaaas_api.models.currency_preference import CurrencyPreference
 from umaaas_api.models.error import Error
 from umaaas_api.models.get_transaction_by_id200_response import GetTransactionById200Response
 from umaaas_api.models.iban_account_info import IbanAccountInfo
+from umaaas_api.models.incoming_payment_webhook200_response import IncomingPaymentWebhook200Response
 from umaaas_api.models.incoming_payment_webhook403_response import IncomingPaymentWebhook403Response
 from umaaas_api.models.incoming_payment_webhook_request import IncomingPaymentWebhookRequest
 from umaaas_api.models.incoming_transaction import IncomingTransaction

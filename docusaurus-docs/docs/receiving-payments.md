@@ -28,7 +28,7 @@ sequenceDiagram
     UMAaaS->>Client: Webhook: INCOMING_PAYMENT (PENDING)
     
     alt Payment approved
-        Client-->>UMAaaS: HTTP 200 OK (approve payment)
+        Client-->>UMAaaS: HTTP 200 OK (approve payment, provide PII if requested)
         UMAaaS->>Bank: Execute payment to user's bank account
         UMAaaS->>Client: Webhook: INCOMING_PAYMENT (COMPLETED)
         Client-->>UMAaaS: HTTP 200 OK (acknowledge completion)
@@ -122,7 +122,8 @@ When someone initiates a payment to one of your users' UMA addresses, you'll rec
     },
     "reconciliationInstructions": {
       "reference": "REF-123456789"
-    }
+    },
+    "requiredRecipientPiiFields": ["NATIONALITY", "FULL_NAME"]
   },
   "timestamp": "2023-08-15T14:32:00Z",
   "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
@@ -130,7 +131,23 @@ When someone initiates a payment to one of your users' UMA addresses, you'll rec
 }
 ```
 
-To approve the payment, respond with a 200 OK status.
+The `counterpartyInformation` object contains PII about the *sender*, provided by their VASP. The `requiredRecipientPiiFields` array, if present, lists PII fields that the sender's VASP (or governing regulations) require about your user (the *recipient*). UMAaaS does not have this information and is requesting it from your platform to proceed with the payment.
+
+To approve the payment, your platform must respond with a `200 OK` status.
+
+- If the `requiredRecipientPiiFields` array was present in the webhook request, your `200 OK` response **must** include a JSON body containing a `recipientPiiProvided` object. This object should contain the key-value pairs for the PII fields that were requested.
+- If `requiredRecipientPiiFields` was not present or was empty, your `200 OK` response, but the response body can be omitted.
+
+Example `200 OK` response body when PII was requested:
+
+```json
+{
+  "recipientPiiProvided": {
+    "NATIONALITY": "US",
+    "FULL_NAME": "John Receiver"
+  }
+}
+```
 
 To reject the payment, respond with a 400 Bad Request status and a JSON body with the following fields:
 
@@ -204,7 +221,7 @@ sequenceDiagram
     UMAaaS->>Client: Webhook: INCOMING_PAYMENT (PENDING)
     
     alt Payment approved
-        Client-->>UMAaaS: HTTP 200 OK with payee and bank account info to pay out
+        Client-->>UMAaaS: HTTP 200 OK (approve payment, provide recipient PII if requested)
         UMAaaS-->>Sender: Payreq response with payee info and a Lightning Invoice
         Note over Sender: Sender pays Lightning Invoice
         UMAaaS->>Bank: Execute payment to user's bank account

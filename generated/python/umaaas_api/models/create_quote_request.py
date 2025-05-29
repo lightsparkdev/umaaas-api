@@ -34,7 +34,8 @@ class CreateQuoteRequest(BaseModel):
     locked_currency_side: QuoteLockSide = Field(alias="lockedCurrencySide")
     locked_currency_amount: StrictInt = Field(description="The amount to send/receive in the smallest unit of the locked currency (eg. cents). See `lockedCurrencySide` for more information.", alias="lockedCurrencyAmount")
     description: Optional[StrictStr] = Field(default=None, description="Optional description/memo for the payment")
-    __properties: ClassVar[List[str]] = ["lookupId", "sendingCurrencyCode", "receivingCurrencyCode", "lockedCurrencySide", "lockedCurrencyAmount", "description"]
+    counterparty_information: Optional[Dict[str, Any]] = Field(default=None, description="Key-value pairs of information about the sender which was requested by the counterparty (recipient) institution. Any fields specified in `requiredPayerDataFields` from the response of the `/receiver/{receiverUmaAddress}` (lookupUma) endpoint MUST be provided here if they were requested. If the counterparty (recipient) institution did not request any information, this field can be omitted. ", alias="counterpartyInformation")
+    __properties: ClassVar[List[str]] = ["lookupId", "sendingCurrencyCode", "receivingCurrencyCode", "lockedCurrencySide", "lockedCurrencyAmount", "description", "counterpartyInformation"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -90,7 +91,8 @@ class CreateQuoteRequest(BaseModel):
             "receivingCurrencyCode": obj.get("receivingCurrencyCode"),
             "lockedCurrencySide": obj.get("lockedCurrencySide"),
             "lockedCurrencyAmount": obj.get("lockedCurrencyAmount"),
-            "description": obj.get("description")
+            "description": obj.get("description"),
+            "counterpartyInformation": obj.get("counterpartyInformation")
         })
         return _obj
 
