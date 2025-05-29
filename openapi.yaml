@@ -411,6 +411,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/User'
         - type: object
+          required:
+            - bankAccountInfo
           properties:
             fullName:
               type: string
@@ -434,6 +436,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/User'
         - type: object
+          required:
+            - bankAccountInfo
           properties:
             address:
               $ref: '#/components/schemas/Address'

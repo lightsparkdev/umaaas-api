@@ -625,7 +625,7 @@ Status Code **200**
 |»»»»» state|string|false|none|State/Province/Region|
 |»»»»» postalCode|string|true|none|Postal/ZIP code|
 |»»»»» country|string|true|none|Country code (ISO 3166-1 alpha-2)|
-|»»»» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|false|none|none|
+|»»»» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|true|none|none|
 |»»»»» accountType|[BankAccountType](#schemabankaccounttype)|true|none|Type of bank account information|
 |»»»»» platformAccountId|string|false|none|Platform-specific identifier for this bank account. This optional field allows platforms<br>to link bank accounts to their internal account systems. The value can be any string<br>that helps identify the account in your system (e.g. database IDs, custom references, etc.).<br><br>This field is particularly useful when:<br>- Tracking multiple bank accounts for the same user<br>- Linking accounts to internal accounting systems<br>- Maintaining consistency between UMAaaS and your platform's account records|
 
@@ -647,7 +647,7 @@ Status Code **200**
 |---|---|---|---|---|
 |»»» *anonymous*|object|false|none|none|
 |»»»» address|[Address](#schemaaddress)|false|none|none|
-|»»»» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|false|none|none|
+|»»»» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|true|none|none|
 |»»»» businessInfo|object|false|none|Additional information required for business entities|
 |»»»»» legalName|string|true|none|Legal name of the business|
 |»»»»» registrationNumber|string|false|none|Business registration number|
@@ -3991,7 +3991,7 @@ and
 |» dateOfBirth|string(date)|false|none|Date of birth in ISO 8601 format (YYYY-MM-DD)|
 |» nationality|string|false|none|Country code (ISO 3166-1 alpha-2)|
 |» address|[Address](#schemaaddress)|false|none|none|
-|» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|false|none|none|
+|» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|true|none|none|
 
 <h2 id="tocS_BusinessUser">BusinessUser</h2>
 <!-- backwards compatibility -->
@@ -4044,7 +4044,7 @@ and
 |---|---|---|---|---|
 |*anonymous*|object|false|none|none|
 |» address|[Address](#schemaaddress)|false|none|none|
-|» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|false|none|none|
+|» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|true|none|none|
 |» businessInfo|object|false|none|Additional information required for business entities|
 |»» legalName|string|true|none|Legal name of the business|
 |»» registrationNumber|string|false|none|Business registration number|

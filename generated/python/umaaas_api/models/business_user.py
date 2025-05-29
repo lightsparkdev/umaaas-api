@@ -32,7 +32,7 @@ class BusinessUser(User):
     BusinessUser
     """ # noqa: E501
     address: Optional[Address] = None
-    bank_account_info: Optional[UserBankAccountInfo] = Field(default=None, alias="bankAccountInfo")
+    bank_account_info: UserBankAccountInfo = Field(alias="bankAccountInfo")
     business_info: Optional[BusinessUserAllOfBusinessInfo] = Field(default=None, alias="businessInfo")
     __properties: ClassVar[List[str]] = ["id", "umaAddress", "platformUserId", "userType", "createdAt", "updatedAt", "isDeleted", "address", "bankAccountInfo", "businessInfo"]
 

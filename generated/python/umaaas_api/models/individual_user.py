@@ -35,7 +35,7 @@ class IndividualUser(User):
     date_of_birth: Optional[date] = Field(default=None, description="Date of birth in ISO 8601 format (YYYY-MM-DD)", alias="dateOfBirth")
     nationality: Optional[StrictStr] = Field(default=None, description="Country code (ISO 3166-1 alpha-2)")
     address: Optional[Address] = None
-    bank_account_info: Optional[UserBankAccountInfo] = Field(default=None, alias="bankAccountInfo")
+    bank_account_info: UserBankAccountInfo = Field(alias="bankAccountInfo")
     __properties: ClassVar[List[str]] = ["id", "umaAddress", "platformUserId", "userType", "createdAt", "updatedAt", "isDeleted", "fullName", "dateOfBirth", "nationality", "address", "bankAccountInfo"]
 
     model_config = ConfigDict(

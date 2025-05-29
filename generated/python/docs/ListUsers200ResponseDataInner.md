@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 **updated_at** | **datetime** | Last update timestamp | [optional] [readonly] 
 **is_deleted** | **bool** | Whether the user is marked as deleted | [optional] [readonly] 
 **address** | [**Address**](Address.md) |  | [optional] 
-**bank_account_info** | [**UserBankAccountInfo**](UserBankAccountInfo.md) |  | [optional] 
+**bank_account_info** | [**UserBankAccountInfo**](UserBankAccountInfo.md) |  | 
 **business_info** | [**BusinessUserAllOfBusinessInfo**](BusinessUserAllOfBusinessInfo.md) |  | [optional] 
 
 ## Example

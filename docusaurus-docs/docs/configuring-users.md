@@ -17,6 +17,7 @@ The base required information for all users is only:
 - UMA address (e.g., `$john.doe@mycompany.com`)
 - Platform user ID (your internal user identifier)
 - User Type (`INDIVIDUAL` or `BUSINESS`)
+- Bank account information (see below for supported formats)
 
 ### Individual Users
 
@@ -25,7 +26,6 @@ In some cases, only the above fields are required at user creation! Beyond those
 - Full name
 - Date of birth (YYYY-MM-DD format)
 - Physical address (including country, state, city, postalCode)
-- Bank account information (see below for supported formats)
 
 **Note:** Check the `umaProviderRequiredUserFields` for each relevant currency in your platform's configuration to determine which of these fields are strictly mandatory at user creation/update time for that user to transact in those currencies.
 
@@ -38,7 +38,6 @@ Beyond the base requirements, additional fields commonly associated with busines
   - Registration number (optional, unless specified by `umaProviderRequiredUserFields`)
   - Tax ID (optional, unless specified by `umaProviderRequiredUserFields`)
 - Physical address (including country, state, city, postalCode)
-- Bank account information (see below for supported formats)
 
 **Note:** Check the `umaProviderRequiredUserFields` for each relevant currency in your platform's configuration to determine which of these fields are strictly mandatory at user creation/update time for that user to transact in those currencies.
 
@@ -60,17 +59,24 @@ POST /users
 
 The API allows creating a user with minimal PII. However, to enable transactions for the user in specific currencies, you must include any PII fields mandated by the `umaProviderRequiredUserFields` for those currencies (found in your platform's configuration via `GET /config`).
 
-Here is an example of a user creation request body where no additional PII fields are required in the `umaProviderRequiredUserFields` for the currency the user will transact in:
+Here is an example of a user creation request body where no additional PII fields are required in the `umaProviderRequiredUserFields` for the currency the user will transact in (though `bankAccountInfo` is always required):
 
 ```json
 {
   "umaAddress": "$john.sender@mycompany.com",
   "platformUserId": "9f84e0c2a72c4fa",
   "userType": "INDIVIDUAL",
+  "bankAccountInfo": {
+    "accountType": "US_ACCOUNT",
+    "accountNumber": "123450000",
+    "routingNumber": "000123456",
+    "accountCategory": "CHECKING",
+    "bankName": "Example Bank"
+  }
 }
 ```
 
-Simple! In this case, all that's needed is to map an UMA address to an identifier in your platform.
+Simple! In this case, all that's needed is to map an UMA address to an identifier in your platform and provide their bank details to help route inbound payments to them.
 
 The examples below show a more comprehensive set of data. Not all fields are strictly required by the API for user creation itself, but become necessary based on currency and UMA provider requirements.
 
