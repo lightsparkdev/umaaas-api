@@ -66,8 +66,8 @@ from umaaas_api.models.quote import Quote
 from umaaas_api.models.quote_lock_side import QuoteLockSide
 from umaaas_api.models.reconciliation_instructions import ReconciliationInstructions
 from umaaas_api.models.refund import Refund
-from umaaas_api.models.test_receive_request import TestReceiveRequest
-from umaaas_api.models.test_send_request import TestSendRequest
+from umaaas_api.models.sandbox_receive_request import SandboxReceiveRequest
+from umaaas_api.models.sandbox_send_request import SandboxSendRequest
 from umaaas_api.models.test_webhook_request import TestWebhookRequest
 from umaaas_api.models.test_webhook_response import TestWebhookResponse
 from umaaas_api.models.token_create import TokenCreate

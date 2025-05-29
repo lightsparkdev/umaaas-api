@@ -23,9 +23,9 @@ from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
-class TestReceiveRequest(BaseModel):
+class SandboxReceiveRequest(BaseModel):
     """
-    TestReceiveRequest
+    SandboxReceiveRequest
     """ # noqa: E501
     sender_uma_address: StrictStr = Field(description="UMA address of the sender from the sandbox", alias="senderUmaAddress")
     receiver_uma_address: Optional[StrictStr] = Field(default=None, description="UMA address of the receiver (optional if userId is provided)", alias="receiverUmaAddress")
@@ -52,7 +52,7 @@ class TestReceiveRequest(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of TestReceiveRequest from a JSON string"""
+        """Create an instance of SandboxReceiveRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -75,7 +75,7 @@ class TestReceiveRequest(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of TestReceiveRequest from a dict"""
+        """Create an instance of SandboxReceiveRequest from a dict"""
         if obj is None:
             return None
 

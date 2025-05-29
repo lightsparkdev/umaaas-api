@@ -15,10 +15,10 @@
 
 import unittest
 
-from umaaas_api.models.test_receive_request import TestReceiveRequest
+from umaaas_api.models.sandbox_receive_request import SandboxReceiveRequest
 
-class TestTestReceiveRequest(unittest.TestCase):
-    """TestReceiveRequest unit test stubs"""
+class TestSandboxReceiveRequest(unittest.TestCase):
+    """SandboxReceiveRequest unit test stubs"""
 
     def setUp(self):
         pass
@@ -26,16 +26,16 @@ class TestTestReceiveRequest(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> TestReceiveRequest:
-        """Test TestReceiveRequest
+    def make_instance(self, include_optional) -> SandboxReceiveRequest:
+        """Test SandboxReceiveRequest
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `TestReceiveRequest`
+        # uncomment below to create an instance of `SandboxReceiveRequest`
         """
-        model = TestReceiveRequest()
+        model = SandboxReceiveRequest()
         if include_optional:
-            return TestReceiveRequest(
+            return SandboxReceiveRequest(
                 sender_uma_address = '$success.usd@sandbox.uma.money',
                 receiver_uma_address = '$receiver@uma.domain',
                 user_id = 'User:019542f5-b3e7-1d02-0000-000000000001',
@@ -43,15 +43,15 @@ class TestTestReceiveRequest(unittest.TestCase):
                 receiving_currency_amount = 1000
             )
         else:
-            return TestReceiveRequest(
+            return SandboxReceiveRequest(
                 sender_uma_address = '$success.usd@sandbox.uma.money',
                 receiving_currency_code = 'USD',
                 receiving_currency_amount = 1000,
         )
         """
 
-    def testTestReceiveRequest(self):
-        """Test TestReceiveRequest"""
+    def testSandboxReceiveRequest(self):
+        """Test SandboxReceiveRequest"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

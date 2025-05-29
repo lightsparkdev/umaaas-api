@@ -19,8 +19,8 @@ from typing_extensions import Annotated
 
 from umaaas_api.models.incoming_transaction import IncomingTransaction
 from umaaas_api.models.outgoing_transaction import OutgoingTransaction
-from umaaas_api.models.test_receive_request import TestReceiveRequest
-from umaaas_api.models.test_send_request import TestSendRequest
+from umaaas_api.models.sandbox_receive_request import SandboxReceiveRequest
+from umaaas_api.models.sandbox_send_request import SandboxSendRequest
 
 from umaaas_api.api_client import ApiClient, RequestSerialized
 from umaaas_api.api_response import ApiResponse
@@ -41,9 +41,9 @@ class SandboxApi:
 
 
     @validate_call
-    def test_receive(
+    def sandbox_receive(
         self,
-        test_receive_request: TestReceiveRequest,
+        sandbox_receive_request: SandboxReceiveRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -61,8 +61,8 @@ class SandboxApi:
 
         Simulate sending payment from an sandbox uma address to a platform user to test payment receive. This endpoint is only for the sandbox environment and will fail for production platforms/keys. 
 
-        :param test_receive_request: (required)
-        :type test_receive_request: TestReceiveRequest
+        :param sandbox_receive_request: (required)
+        :type sandbox_receive_request: SandboxReceiveRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -85,8 +85,8 @@ class SandboxApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._test_receive_serialize(
-            test_receive_request=test_receive_request,
+        _param = self._sandbox_receive_serialize(
+            sandbox_receive_request=sandbox_receive_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -112,9 +112,9 @@ class SandboxApi:
 
 
     @validate_call
-    def test_receive_with_http_info(
+    def sandbox_receive_with_http_info(
         self,
-        test_receive_request: TestReceiveRequest,
+        sandbox_receive_request: SandboxReceiveRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -132,8 +132,8 @@ class SandboxApi:
 
         Simulate sending payment from an sandbox uma address to a platform user to test payment receive. This endpoint is only for the sandbox environment and will fail for production platforms/keys. 
 
-        :param test_receive_request: (required)
-        :type test_receive_request: TestReceiveRequest
+        :param sandbox_receive_request: (required)
+        :type sandbox_receive_request: SandboxReceiveRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -156,8 +156,8 @@ class SandboxApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._test_receive_serialize(
-            test_receive_request=test_receive_request,
+        _param = self._sandbox_receive_serialize(
+            sandbox_receive_request=sandbox_receive_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -183,9 +183,9 @@ class SandboxApi:
 
 
     @validate_call
-    def test_receive_without_preload_content(
+    def sandbox_receive_without_preload_content(
         self,
-        test_receive_request: TestReceiveRequest,
+        sandbox_receive_request: SandboxReceiveRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -203,8 +203,8 @@ class SandboxApi:
 
         Simulate sending payment from an sandbox uma address to a platform user to test payment receive. This endpoint is only for the sandbox environment and will fail for production platforms/keys. 
 
-        :param test_receive_request: (required)
-        :type test_receive_request: TestReceiveRequest
+        :param sandbox_receive_request: (required)
+        :type sandbox_receive_request: SandboxReceiveRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -227,8 +227,8 @@ class SandboxApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._test_receive_serialize(
-            test_receive_request=test_receive_request,
+        _param = self._sandbox_receive_serialize(
+            sandbox_receive_request=sandbox_receive_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -249,9 +249,9 @@ class SandboxApi:
         return response_data.response
 
 
-    def _test_receive_serialize(
+    def _sandbox_receive_serialize(
         self,
-        test_receive_request,
+        sandbox_receive_request,
         _request_auth,
         _content_type,
         _headers,
@@ -277,8 +277,8 @@ class SandboxApi:
         # process the header parameters
         # process the form parameters
         # process the body parameter
-        if test_receive_request is not None:
-            _body_params = test_receive_request
+        if sandbox_receive_request is not None:
+            _body_params = sandbox_receive_request
 
 
         # set the HTTP header `Accept`
@@ -327,9 +327,9 @@ class SandboxApi:
 
 
     @validate_call
-    def test_send(
+    def sandbox_send(
         self,
-        test_send_request: TestSendRequest,
+        sandbox_send_request: SandboxSendRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -347,8 +347,8 @@ class SandboxApi:
 
         Simulate sending funds to the bank account as instructed in the quote.  This endpoint is only for the sandbox environment and will fail for production platforms/keys. 
 
-        :param test_send_request: (required)
-        :type test_send_request: TestSendRequest
+        :param sandbox_send_request: (required)
+        :type sandbox_send_request: SandboxSendRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -371,8 +371,8 @@ class SandboxApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._test_send_serialize(
-            test_send_request=test_send_request,
+        _param = self._sandbox_send_serialize(
+            sandbox_send_request=sandbox_send_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -398,9 +398,9 @@ class SandboxApi:
 
 
     @validate_call
-    def test_send_with_http_info(
+    def sandbox_send_with_http_info(
         self,
-        test_send_request: TestSendRequest,
+        sandbox_send_request: SandboxSendRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -418,8 +418,8 @@ class SandboxApi:
 
         Simulate sending funds to the bank account as instructed in the quote.  This endpoint is only for the sandbox environment and will fail for production platforms/keys. 
 
-        :param test_send_request: (required)
-        :type test_send_request: TestSendRequest
+        :param sandbox_send_request: (required)
+        :type sandbox_send_request: SandboxSendRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -442,8 +442,8 @@ class SandboxApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._test_send_serialize(
-            test_send_request=test_send_request,
+        _param = self._sandbox_send_serialize(
+            sandbox_send_request=sandbox_send_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -469,9 +469,9 @@ class SandboxApi:
 
 
     @validate_call
-    def test_send_without_preload_content(
+    def sandbox_send_without_preload_content(
         self,
-        test_send_request: TestSendRequest,
+        sandbox_send_request: SandboxSendRequest,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -489,8 +489,8 @@ class SandboxApi:
 
         Simulate sending funds to the bank account as instructed in the quote.  This endpoint is only for the sandbox environment and will fail for production platforms/keys. 
 
-        :param test_send_request: (required)
-        :type test_send_request: TestSendRequest
+        :param sandbox_send_request: (required)
+        :type sandbox_send_request: SandboxSendRequest
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -513,8 +513,8 @@ class SandboxApi:
         :return: Returns the result object.
         """ # noqa: E501
 
-        _param = self._test_send_serialize(
-            test_send_request=test_send_request,
+        _param = self._sandbox_send_serialize(
+            sandbox_send_request=sandbox_send_request,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -535,9 +535,9 @@ class SandboxApi:
         return response_data.response
 
 
-    def _test_send_serialize(
+    def _sandbox_send_serialize(
         self,
-        test_send_request,
+        sandbox_send_request,
         _request_auth,
         _content_type,
         _headers,
@@ -563,8 +563,8 @@ class SandboxApi:
         # process the header parameters
         # process the form parameters
         # process the body parameter
-        if test_send_request is not None:
-            _body_params = test_send_request
+        if sandbox_send_request is not None:
+            _body_params = sandbox_send_request
 
 
         # set the HTTP header `Accept`

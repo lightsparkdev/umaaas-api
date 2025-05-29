@@ -15,10 +15,10 @@
 
 import unittest
 
-from umaaas_api.models.test_send_request import TestSendRequest
+from umaaas_api.models.sandbox_send_request import SandboxSendRequest
 
-class TestTestSendRequest(unittest.TestCase):
-    """TestSendRequest unit test stubs"""
+class TestSandboxSendRequest(unittest.TestCase):
+    """SandboxSendRequest unit test stubs"""
 
     def setUp(self):
         pass
@@ -26,30 +26,30 @@ class TestTestSendRequest(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> TestSendRequest:
-        """Test TestSendRequest
+    def make_instance(self, include_optional) -> SandboxSendRequest:
+        """Test SandboxSendRequest
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `TestSendRequest`
+        # uncomment below to create an instance of `SandboxSendRequest`
         """
-        model = TestSendRequest()
+        model = SandboxSendRequest()
         if include_optional:
-            return TestSendRequest(
+            return SandboxSendRequest(
                 reference = 'UMA-Q12345-REF',
                 currency_code = 'USD',
                 currency_amount = 1000
             )
         else:
-            return TestSendRequest(
+            return SandboxSendRequest(
                 reference = 'UMA-Q12345-REF',
                 currency_code = 'USD',
                 currency_amount = 1000,
         )
         """
 
-    def testTestSendRequest(self):
-        """Test TestSendRequest"""
+    def testSandboxSendRequest(self):
+        """Test SandboxSendRequest"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

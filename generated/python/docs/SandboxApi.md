@@ -4,12 +4,12 @@ All URIs are relative to *https://api.lightspark.com/umaaas/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**test_receive**](SandboxApi.md#test_receive) | **POST** /sandbox/receive | Simulate payment send to test receiving a payment
-[**test_send**](SandboxApi.md#test_send) | **POST** /sandbox/send | Simulate sending funds
+[**sandbox_receive**](SandboxApi.md#sandbox_receive) | **POST** /sandbox/receive | Simulate payment send to test receiving a payment
+[**sandbox_send**](SandboxApi.md#sandbox_send) | **POST** /sandbox/send | Simulate sending funds
 
 
-# **test_receive**
-> IncomingTransaction test_receive(test_receive_request)
+# **sandbox_receive**
+> IncomingTransaction sandbox_receive(sandbox_receive_request)
 
 Simulate payment send to test receiving a payment
 
@@ -24,7 +24,7 @@ This endpoint is only for the sandbox environment and will fail for production p
 ```python
 import umaaas_api
 from umaaas_api.models.incoming_transaction import IncomingTransaction
-from umaaas_api.models.test_receive_request import TestReceiveRequest
+from umaaas_api.models.sandbox_receive_request import SandboxReceiveRequest
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
@@ -49,15 +49,15 @@ configuration = umaaas_api.Configuration(
 with umaaas_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = umaaas_api.SandboxApi(api_client)
-    test_receive_request = umaaas_api.TestReceiveRequest() # TestReceiveRequest | 
+    sandbox_receive_request = umaaas_api.SandboxReceiveRequest() # SandboxReceiveRequest | 
 
     try:
         # Simulate payment send to test receiving a payment
-        api_response = api_instance.test_receive(test_receive_request)
-        print("The response of SandboxApi->test_receive:\n")
+        api_response = api_instance.sandbox_receive(sandbox_receive_request)
+        print("The response of SandboxApi->sandbox_receive:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling SandboxApi->test_receive: %s\n" % e)
+        print("Exception when calling SandboxApi->sandbox_receive: %s\n" % e)
 ```
 
 
@@ -67,7 +67,7 @@ with umaaas_api.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **test_receive_request** | [**TestReceiveRequest**](TestReceiveRequest.md)|  | 
+ **sandbox_receive_request** | [**SandboxReceiveRequest**](SandboxReceiveRequest.md)|  | 
 
 ### Return type
 
@@ -94,8 +94,8 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **test_send**
-> OutgoingTransaction test_send(test_send_request)
+# **sandbox_send**
+> OutgoingTransaction sandbox_send(sandbox_send_request)
 
 Simulate sending funds
 
@@ -110,7 +110,7 @@ This endpoint is only for the sandbox environment and will fail for production p
 ```python
 import umaaas_api
 from umaaas_api.models.outgoing_transaction import OutgoingTransaction
-from umaaas_api.models.test_send_request import TestSendRequest
+from umaaas_api.models.sandbox_send_request import SandboxSendRequest
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
@@ -135,15 +135,15 @@ configuration = umaaas_api.Configuration(
 with umaaas_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = umaaas_api.SandboxApi(api_client)
-    test_send_request = umaaas_api.TestSendRequest() # TestSendRequest | 
+    sandbox_send_request = umaaas_api.SandboxSendRequest() # SandboxSendRequest | 
 
     try:
         # Simulate sending funds
-        api_response = api_instance.test_send(test_send_request)
-        print("The response of SandboxApi->test_send:\n")
+        api_response = api_instance.sandbox_send(sandbox_send_request)
+        print("The response of SandboxApi->sandbox_send:\n")
         pprint(api_response)
     except Exception as e:
-        print("Exception when calling SandboxApi->test_send: %s\n" % e)
+        print("Exception when calling SandboxApi->sandbox_send: %s\n" % e)
 ```
 
 
@@ -153,7 +153,7 @@ with umaaas_api.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **test_send_request** | [**TestSendRequest**](TestSendRequest.md)|  | 
+ **sandbox_send_request** | [**SandboxSendRequest**](SandboxSendRequest.md)|  | 
 
 ### Return type
 
