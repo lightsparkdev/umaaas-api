@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { faker } from '@faker-js/faker';
 import { convertToSmallestUnit } from '@/lib/currency-utils';
+import type { WebhookEventData } from '@/lib/webhook-events';
 
 interface FormData {
   platformUserId: string;
@@ -27,10 +28,6 @@ interface FormData {
     bankName: string;
     platformAccountId: string;
   };
-}
-
-interface ExchangeRates {
-  [currency: string]: string;
 }
 
 export default function Home() {
@@ -93,26 +90,42 @@ export default function Home() {
   const [isSendingPayment, setIsSendingPayment] = useState(false);
   const [sendPaymentResponse, setSendPaymentResponse] = useState<{ status: number | string; data: unknown } | null>(null);
 
-  const [exchangeRates, setExchangeRates] = useState<ExchangeRates>({});
-  const [isLoadingRates, setIsLoadingRates] = useState(false);
+  const [webhookEvents, setWebhookEvents] = useState<WebhookEventData[]>([]);
+  const [isConnectedToWebhooks, setIsConnectedToWebhooks] = useState(false);
 
-  const fetchExchangeRates = async () => {
-    setIsLoadingRates(true);
-    try {
-      const response = await fetch('https://api.coinbase.com/v2/exchange-rates?currency=BTC');
-      const data = await response.json();
-      if (data.data && data.data.rates) {
-        setExchangeRates(data.data.rates);
-      }
-    } catch (error) {
-      console.error('Error fetching exchange rates:', error);
-    } finally {
-      setIsLoadingRates(false);
-    }
-  };
-
+  // Set up Server-Sent Events connection for webhooks
   useEffect(() => {
-    fetchExchangeRates();
+    const eventSource = new EventSource('/api/webhooks/events');
+    
+    eventSource.onopen = () => {
+      console.log('Connected to webhook events');
+      setIsConnectedToWebhooks(true);
+    };
+    
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        
+        if (data.type === 'connected' || data.type === 'heartbeat') {
+          return; // Ignore connection and heartbeat messages
+        }
+        
+        // Add new webhook event to the beginning of the array
+        setWebhookEvents(prev => [data, ...prev.slice(0, 9)]); // Keep only latest 10
+      } catch (error) {
+        console.error('Error parsing webhook event:', error);
+      }
+    };
+    
+    eventSource.onerror = (error) => {
+      console.error('SSE connection error:', error);
+      setIsConnectedToWebhooks(false);
+    };
+    
+    return () => {
+      eventSource.close();
+      setIsConnectedToWebhooks(false);
+    };
   }, []);
 
   const handleInputChange = (field: string, value: string) => {
@@ -235,30 +248,31 @@ export default function Home() {
     }
   };
 
-  const calculateExchangeRate = (fromCurrency: string, toCurrency: string, amount: number) => {
-      const fc = fromCurrency.toUpperCase();
-      const rc = toCurrency.toUpperCase();
-
-      if(exchangeRates[fc] && exchangeRates[rc]) { 
-        return amount * (Number(exchangeRates[rc]) / Number(exchangeRates[fc]));
-      } else {
-        throw new Error("Unsupported Currency");
-      }
-      
-  };
-
   const updateAmounts = (amount: string, field: 'usd' | 'receiving') => {
-    if (!amount || !receivingCurrency || isUpdatingAmounts || Object.keys(exchangeRates).length === 0) return;
+    if (!amount || !receivingCurrency || isUpdatingAmounts) return;
+    
+    // Check if we have a lookup response with supported currencies
+    const lookupData = lookupResponse?.data as { 
+      supportedCurrencies?: Array<{ 
+        currency: { code: string };
+        estimatedExchangeRate: number;
+      }> 
+    };
+    
+    const supportedCurrency = lookupData?.supportedCurrencies?.[0];
+    if (!supportedCurrency?.estimatedExchangeRate) return;
     
     setIsUpdatingAmounts(true);
     setLastEditedField(field);
     
     try {
       if (field === 'usd') {
-        const convertedAmount = calculateExchangeRate('USD', receivingCurrency, Number(amount));
+        // User updated sending amount: receiving = exchangeRate * sending
+        const convertedAmount = (supportedCurrency.estimatedExchangeRate/100) * parseFloat(amount);
         setReceivingAmount(convertedAmount.toFixed(6));
       } else {
-        const convertedAmount = calculateExchangeRate(receivingCurrency, 'USD', Number(amount));
+        // User updated receiving amount: sending = receiving / exchangeRate
+        const convertedAmount = parseFloat(amount) / (supportedCurrency.estimatedExchangeRate/100);
         setUsdAmount(convertedAmount.toFixed(6));
       }
     } catch (error) {
@@ -765,6 +779,47 @@ export default function Home() {
           ) : (
             <div className="text-center py-8 text-gray-500">
               {isLoadingUsers ? 'Loading users...' : 'No users found. Click "Fetch Users" to load users.'}
+            </div>
+          )}
+        </div>
+
+        <div className="bg-white rounded-lg shadow-lg p-6 mt-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold">Latest Webhooks</h2>
+            <div className="flex items-center space-x-2">
+              <div className={`w-3 h-3 rounded-full ${isConnectedToWebhooks ? 'bg-green-500' : 'bg-red-500'}`}></div>
+              <span className="text-sm text-gray-600">
+                {isConnectedToWebhooks ? 'Connected' : 'Disconnected'}
+              </span>
+            </div>
+          </div>
+
+          {webhookEvents.length > 0 ? (
+            <div className="space-y-4">
+              {webhookEvents.map((event, index) => (
+                <div key={`${event.id}-${index}`} className="border border-gray-200 rounded-lg p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <span className="font-medium text-blue-600">{event.type}</span>
+                      <span className="ml-2 text-sm text-gray-500">ID: {truncateText(event.id, 20)}</span>
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {new Date(event.receivedAt).toLocaleString()}
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 rounded p-3">
+                    <pre className="text-sm overflow-auto max-h-40">
+                      {JSON.stringify(event.data, null, 2)}
+                    </pre>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              {isConnectedToWebhooks 
+                ? 'No webhooks received yet. Webhooks will appear here in real-time.' 
+                : 'Connecting to webhook events...'}
             </div>
           )}
         </div>
