@@ -137,11 +137,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<{ receive
     const rawPayload = JSON.parse(rawBody);
     const webhookEvent = parseWebhookEvent(rawPayload);
     
-    console.log('Received webhook:', {
-      id: webhookEvent.id,
-      type: webhookEvent.type,
-      created: webhookEvent.created,
-    });
+    console.log('Received webhook:', JSON.stringify(webhookEvent));
 
     // Add to event queue for SSE broadcasting
     webhookEventQueue.addEvent({

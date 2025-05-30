@@ -786,11 +786,13 @@ export default function Home() {
         <div className="bg-white rounded-lg shadow-lg p-6 mt-8">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold">Latest Webhooks</h2>
-            <div className="flex items-center space-x-2">
-              <div className={`w-3 h-3 rounded-full ${isConnectedToWebhooks ? 'bg-green-500' : 'bg-red-500'}`}></div>
-              <span className="text-sm text-gray-600">
-                {isConnectedToWebhooks ? 'Connected' : 'Disconnected'}
-              </span>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <div className={`w-3 h-3 rounded-full ${isConnectedToWebhooks ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                <span className="text-sm text-gray-600">
+                  {isConnectedToWebhooks ? 'Connected' : 'Disconnected'}
+                </span>
+              </div>
             </div>
           </div>
 

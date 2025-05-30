@@ -2,49 +2,56 @@ import { NextRequest } from 'next/server';
 import { webhookEventQueue, WebhookEventData } from '@/lib/webhook-events';
 
 export async function GET(request: NextRequest) {
+  console.log('SSE connection established');
+  
   // Set up SSE headers
   const headers = new Headers({
     'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache',
+    'Cache-Control': 'no-cache, no-transform',
     'Connection': 'keep-alive',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Cache-Control',
+    'X-Accel-Buffering': 'no', // Disable nginx buffering
   });
+
+  const encoder = new TextEncoder();
+  let isAlive = true;
 
   // Create a readable stream
   const stream = new ReadableStream({
     start(controller) {
+      console.log('SSE stream started');
+      
       // Send initial connection message
-      const encoder = new TextEncoder();
-      controller.enqueue(
-        encoder.encode(`data: ${JSON.stringify({ type: 'connected', timestamp: Date.now() })}\n\n`)
-      );
+      const sendMessage = (data: any) => {
+        if (!isAlive) return;
+        try {
+          const message = `data: ${JSON.stringify(data)}\n\n`;
+          controller.enqueue(encoder.encode(message));
+        } catch (error) {
+          console.error('Error sending SSE message:', error);
+          isAlive = false;
+        }
+      };
+
+      // Send connection confirmation
+      sendMessage({ type: 'connected', timestamp: Date.now() });
 
       // Send latest events immediately
       const latestEvents = webhookEventQueue.getLatestEvents(10);
-      if (latestEvents.length > 0) {
-        latestEvents.forEach(event => {
-          controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify(event)}\n\n`)
-          );
-        });
-      }
+      console.log(`Sending ${latestEvents.length} latest webhook events`);
+      latestEvents.forEach(event => sendMessage(event));
 
       // Set up listener for new events
       const listener = (event: WebhookEventData) => {
-        try {
-          controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify(event)}\n\n`)
-          );
-        } catch (error) {
-          console.error('Error sending SSE event:', error);
-        }
+        console.log('Broadcasting webhook event via SSE:', event.type);
+        sendMessage(event);
       };
 
       const removeListener = webhookEventQueue.addListener(listener);
 
       // Clean up when client disconnects
       const cleanup = () => {
+        console.log('SSE connection cleanup');
+        isAlive = false;
         removeListener();
         try {
           controller.close();
@@ -53,20 +60,20 @@ export async function GET(request: NextRequest) {
         }
       };
 
-      // Handle client disconnect
-      request.signal.addEventListener('abort', cleanup);
+      // Handle client disconnect using request signal
+      request.signal.addEventListener('abort', () => {
+        console.log('SSE client disconnected');
+        cleanup();
+      });
 
       // Keep connection alive with periodic heartbeat
       const heartbeat = setInterval(() => {
-        try {
-          controller.enqueue(
-            encoder.encode(`data: ${JSON.stringify({ type: 'heartbeat', timestamp: Date.now() })}\n\n`)
-          );
-        } catch (error) {
+        if (!isAlive) {
           clearInterval(heartbeat);
-          cleanup();
+          return;
         }
-      }, 30000); // Send heartbeat every 30 seconds
+        sendMessage({ type: 'heartbeat', timestamp: Date.now() });
+      }, 15000); // Send heartbeat every 15 seconds
 
       // Store cleanup function for when stream ends
       return () => {
@@ -74,6 +81,11 @@ export async function GET(request: NextRequest) {
         cleanup();
       };
     },
+    
+    cancel() {
+      console.log('SSE stream cancelled');
+      isAlive = false;
+    }
   });
 
   return new Response(stream, { headers });
