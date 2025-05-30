@@ -5,10 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**full_name** | **str** | Individual&#39;s full name | 
-**date_of_birth** | **date** | Date of birth in ISO 8601 format (YYYY-MM-DD) | 
+**full_name** | **str** | Individual&#39;s full name | [optional] 
+**date_of_birth** | **date** | Date of birth in ISO 8601 format (YYYY-MM-DD) | [optional] 
 **nationality** | **str** | Country code (ISO 3166-1 alpha-2) | [optional] 
-**address** | [**Address**](Address.md) |  | 
+**address** | [**Address**](Address.md) |  | [optional] 
 **bank_account_info** | [**UserBankAccountInfo**](UserBankAccountInfo.md) |  | 
 
 ## Example

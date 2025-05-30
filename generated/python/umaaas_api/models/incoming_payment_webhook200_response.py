@@ -18,25 +18,17 @@ import pprint
 import re  # noqa: F401
 import json
 
-from datetime import date
-from pydantic import ConfigDict, Field, StrictStr
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Any, ClassVar, Dict, List, Optional
-from umaaas_api.models.address import Address
-from umaaas_api.models.user import User
-from umaaas_api.models.user_bank_account_info import UserBankAccountInfo
 from typing import Optional, Set
 from typing_extensions import Self
 
-class IndividualUser(User):
+class IncomingPaymentWebhook200Response(BaseModel):
     """
-    IndividualUser
+    IncomingPaymentWebhook200Response
     """ # noqa: E501
-    full_name: Optional[StrictStr] = Field(default=None, description="Individual's full name", alias="fullName")
-    date_of_birth: Optional[date] = Field(default=None, description="Date of birth in ISO 8601 format (YYYY-MM-DD)", alias="dateOfBirth")
-    nationality: Optional[StrictStr] = Field(default=None, description="Country code (ISO 3166-1 alpha-2)")
-    address: Optional[Address] = None
-    bank_account_info: UserBankAccountInfo = Field(alias="bankAccountInfo")
-    __properties: ClassVar[List[str]] = ["id", "umaAddress", "platformUserId", "userType", "createdAt", "updatedAt", "isDeleted", "fullName", "dateOfBirth", "nationality", "address", "bankAccountInfo"]
+    receiver_user_info: Optional[Dict[str, Any]] = Field(default=None, description="Information about the recipient, provided by the platform if requested in the webhook via `requestedReceiverUserInfoFields` and the payment is approved.", alias="receiverUserInfo")
+    __properties: ClassVar[List[str]] = ["receiverUserInfo"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -56,7 +48,7 @@ class IndividualUser(User):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of IndividualUser from a JSON string"""
+        """Create an instance of IncomingPaymentWebhook200Response from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -75,17 +67,11 @@ class IndividualUser(User):
             by_alias=True,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of address
-        if self.address:
-            _dict['address'] = self.address.to_dict()
-        # override the default output from pydantic by calling `to_dict()` of bank_account_info
-        if self.bank_account_info:
-            _dict['bankAccountInfo'] = self.bank_account_info.to_dict()
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of IndividualUser from a dict"""
+        """Create an instance of IncomingPaymentWebhook200Response from a dict"""
         if obj is None:
             return None
 
@@ -93,18 +79,7 @@ class IndividualUser(User):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "id": obj.get("id"),
-            "umaAddress": obj.get("umaAddress"),
-            "platformUserId": obj.get("platformUserId"),
-            "userType": obj.get("userType"),
-            "createdAt": obj.get("createdAt"),
-            "updatedAt": obj.get("updatedAt"),
-            "isDeleted": obj.get("isDeleted"),
-            "fullName": obj.get("fullName"),
-            "dateOfBirth": obj.get("dateOfBirth"),
-            "nationality": obj.get("nationality"),
-            "address": Address.from_dict(obj["address"]) if obj.get("address") is not None else None,
-            "bankAccountInfo": UserBankAccountInfo.from_dict(obj["bankAccountInfo"]) if obj.get("bankAccountInfo") is not None else None
+            "receiverUserInfo": obj.get("receiverUserInfo")
         })
         return _obj
 

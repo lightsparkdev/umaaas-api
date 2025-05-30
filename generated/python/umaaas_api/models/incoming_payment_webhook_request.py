@@ -20,7 +20,8 @@ import json
 
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List
+from typing import Any, ClassVar, Dict, List, Optional
+from umaaas_api.models.counterparty_field_definition import CounterpartyFieldDefinition
 from umaaas_api.models.incoming_transaction import IncomingTransaction
 from umaaas_api.models.webhook_type import WebhookType
 from typing import Optional, Set
@@ -34,7 +35,8 @@ class IncomingPaymentWebhookRequest(BaseModel):
     timestamp: datetime = Field(description="ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)")
     webhook_id: StrictStr = Field(description="Unique identifier for this webhook delivery (can be used for idempotency)", alias="webhookId")
     type: WebhookType = Field(description="Type of webhook event")
-    __properties: ClassVar[List[str]] = ["transaction", "timestamp", "webhookId", "type"]
+    requested_receiver_user_info_fields: Optional[List[CounterpartyFieldDefinition]] = Field(default=None, description="Information required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which UMAaaS does not already have from initial user registration.", alias="requestedReceiverUserInfoFields")
+    __properties: ClassVar[List[str]] = ["transaction", "timestamp", "webhookId", "type", "requestedReceiverUserInfoFields"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -76,6 +78,13 @@ class IncomingPaymentWebhookRequest(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of transaction
         if self.transaction:
             _dict['transaction'] = self.transaction.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of each item in requested_receiver_user_info_fields (list)
+        _items = []
+        if self.requested_receiver_user_info_fields:
+            for _item_requested_receiver_user_info_fields in self.requested_receiver_user_info_fields:
+                if _item_requested_receiver_user_info_fields:
+                    _items.append(_item_requested_receiver_user_info_fields.to_dict())
+            _dict['requestedReceiverUserInfoFields'] = _items
         return _dict
 
     @classmethod
@@ -91,7 +100,8 @@ class IncomingPaymentWebhookRequest(BaseModel):
             "transaction": IncomingTransaction.from_dict(obj["transaction"]) if obj.get("transaction") is not None else None,
             "timestamp": obj.get("timestamp"),
             "webhookId": obj.get("webhookId"),
-            "type": obj.get("type")
+            "type": obj.get("type"),
+            "requestedReceiverUserInfoFields": [CounterpartyFieldDefinition.from_dict(_item) for _item in obj["requestedReceiverUserInfoFields"]] if obj.get("requestedReceiverUserInfoFields") is not None else None
         })
         return _obj
 

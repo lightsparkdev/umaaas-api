@@ -20,19 +20,32 @@ Response example:
 
 ```json
 {
+  "id": "PlatformConfig:019542f5-b3e7-1d02-0000-000000000003",
   "umaDomain": "example.com",
   "webhookEndpoint": "https://api.example.com/webhooks/uma",
-  "webhookSecret": "wh_s3cr3t_XXXXX", // Only included when initially created
-  "requiredCounterpartyFields": [
+  "supportedCurrencies": [
     {
-      "name": "FULL_NAME",
-      "mandatory": true
-    },
-    {
-      "name": "DATE_OF_BIRTH",
-      "mandatory": true
+      "currencyCode": "USD",
+      "minAmount": 100,
+      "maxAmount": 1000000,
+      "requiredCounterpartyFields": [
+        {
+          "name": "FULL_NAME",
+          "mandatory": true
+        },
+        {
+          "name": "DATE_OF_BIRTH",
+          "mandatory": true
+        }
+      ],
+      "umaProviderRequiredUserFields": [
+        "NATIONALITY",
+        "FULL_NAME"
+      ]
     }
-  ]
+  ],
+  "createdAt": "2023-06-15T12:30:45Z",
+  "updatedAt": "2023-07-01T10:00:00Z"
 }
 ```
 
@@ -101,6 +114,10 @@ Response:
           "name": "ADDRESS",
           "mandatory": false
         }
+      ],
+      "umaProviderRequiredUserFields": [
+        "NATIONALITY",
+        "FULL_NAME"
       ]
     }
   ],
@@ -135,23 +152,47 @@ The `webhookEndpoint` parameter specifies the URL where UMAaaS will send webhook
 - Handle webhook verification (see [Webhook Verification Guide](/docs/webhooks))
 - Process webhook payloads within a reasonable time (recommended: under 5 seconds)
 
+### Supported Currencies
+
+The `supportedCurrencies` array allows you to define settings for each currency your platform will support. Each object in this array can contain:
+
+- `currencyCode`: (String, required) The ISO 4217 currency code (e.g., "USD").
+- `minAmount`: (Integer, required) Minimum transaction amount in the smallest unit of the currency.
+- `maxAmount`: (Integer, required) Maximum transaction amount in the smallest unit of the currency.
+- `requiredCounterpartyFields`: (Array, required) Defines PII your platform requires about *external counterparties* for transactions in this currency.
+- `umaProviderRequiredUserFields`: (Array, read-only) Lists user info field names (from `UserInfoFieldName`) that the UMA provider mandates for *your own users* to transact in this currency. This impacts user creation/updates.
+
 ### Required Counterparty Fields
 
-The `requiredCounterpartyFields` parameter allows you to specify what information you need to collect from counterparties (senders or receivers) involved in transactions with your platform.
+Within each currency defined in `supportedCurrencies`, the `requiredCounterpartyFields` parameter allows you to specify what information your platform needs to collect from *external counterparties* (senders or receivers) involved in transactions with your users for that specific currency.
 
-Available counterparty fields:
+Available counterparty fields (to be specified with a `name` and `mandatory` flag):
 
-| Field Name | Description |
-|------------|-------------|
+| Field Name (type `UserInfoFieldName`) | Description |
+|---------------------------------------|-------------|
 | `FULL_NAME` | Full legal name of the individual or business |
 | `DATE_OF_BIRTH` | Date of birth in YYYY-MM-DD format (for individuals) |
+| `NATIONALITY` | Nationality of the individual |
 | `ADDRESS` | Physical address including country, city, etc. |
 | `PHONE_NUMBER` | Contact phone number including country code |
 | `EMAIL` | Email address |
 | `BUSINESS_NAME` | Legal business name (for business entities) |
 | `TAX_ID` | Tax identification number |
 
-Each field can be marked as `mandatory` (required) or optional. These fields will be provided to you for pending payments so that you can screen the counterparty information before approving the payment.
+Each field in `requiredCounterpartyFields` is an object containing:
+
+- `name`: The `UserInfoFieldName` representing the PII you require.
+- `mandatory`: A boolean (true/false) indicating if this field is strictly required by your platform for transactions in this currency.
+
+This information will be provided to your platform via webhooks for pending payments, allowing you to screen the counterparty based on your compliance rules before approving the payment.
+
+### UMA Provider Required User Fields
+
+Also within each currency defined in `supportedCurrencies`, you will find the `umaProviderRequiredUserFields` array. This is a **read-only** list of `UserInfoFieldName` strings.
+
+This list specifies which user information fields are mandated by the underlying UMA provider for *your own registered users* if they intend to send or receive payments in that particular currency. For example, to allow a user to transact in "USD", the UMA provider might require that the user has a `NATIONALITY` on record.
+
+These fields must be supplied when creating or updating a user via the `POST /users` or `PATCH /users/{userId}` endpoints if that user is expected to use the specified currency. Refer to the [Configuring Users](/docs/configuring-users) guide for more details on how this impacts user setup.
 
 ## Verify Configuration
 

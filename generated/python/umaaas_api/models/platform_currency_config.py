@@ -19,9 +19,10 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List
+from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
 from umaaas_api.models.counterparty_field_definition import CounterpartyFieldDefinition
+from umaaas_api.models.user_info_field_name import UserInfoFieldName
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -32,8 +33,9 @@ class PlatformCurrencyConfig(BaseModel):
     currency_code: StrictStr = Field(description="Three-letter currency code (ISO 4217)", alias="currencyCode")
     min_amount: Annotated[int, Field(strict=True, ge=0)] = Field(description="Minimum amount that can be sent in the smallest unit of this currency", alias="minAmount")
     max_amount: Annotated[int, Field(strict=True, ge=0)] = Field(description="Maximum amount that can be sent in the smallest unit of this currency", alias="maxAmount")
-    required_counterparty_fields: List[CounterpartyFieldDefinition] = Field(description="List of counterparty fields and their requirements", alias="requiredCounterpartyFields")
-    __properties: ClassVar[List[str]] = ["currencyCode", "minAmount", "maxAmount", "requiredCounterpartyFields"]
+    required_counterparty_fields: List[CounterpartyFieldDefinition] = Field(description="List of fields which the platform requires from the counterparty institutions about counterparty users. Platforms can set mandatory to false if the platform does not require the field, but would like to have it available. Some fields may be required by the underlying UMA provider.", alias="requiredCounterpartyFields")
+    uma_provider_required_user_fields: Optional[List[UserInfoFieldName]] = Field(default=None, description="List of user info field names that are required by the underlying UMA provider when creating a user for this currency. These fields must be supplied when creating or updating a user if this currency is intended to be used by that user. If no fields are required, this field is omitted.", alias="umaProviderRequiredUserFields")
+    __properties: ClassVar[List[str]] = ["currencyCode", "minAmount", "maxAmount", "requiredCounterpartyFields", "umaProviderRequiredUserFields"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -94,7 +96,8 @@ class PlatformCurrencyConfig(BaseModel):
             "currencyCode": obj.get("currencyCode"),
             "minAmount": obj.get("minAmount"),
             "maxAmount": obj.get("maxAmount"),
-            "requiredCounterpartyFields": [CounterpartyFieldDefinition.from_dict(_item) for _item in obj["requiredCounterpartyFields"]] if obj.get("requiredCounterpartyFields") is not None else None
+            "requiredCounterpartyFields": [CounterpartyFieldDefinition.from_dict(_item) for _item in obj["requiredCounterpartyFields"]] if obj.get("requiredCounterpartyFields") is not None else None,
+            "umaProviderRequiredUserFields": obj.get("umaProviderRequiredUserFields")
         })
         return _obj
 

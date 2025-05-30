@@ -1,6 +1,6 @@
 # umaaas_api.WebhooksApi
 
-All URIs are relative to *https://api.lightspark.com/umaaas/v1*
+All URIs are relative to *https://api.uma.money/umaaas/rc*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -24,10 +24,10 @@ from umaaas_api.models.test_webhook_response import TestWebhookResponse
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.lightspark.com/umaaas/v1
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.lightspark.com/umaaas/v1"
+    host = "https://api.uma.money/umaaas/rc"
 )
 
 # The client must configure the authentication and authorization parameters

@@ -28,7 +28,7 @@ sequenceDiagram
     UMAaaS->>Client: Webhook: INCOMING_PAYMENT (PENDING)
     
     alt Payment approved
-        Client-->>UMAaaS: HTTP 200 OK (approve payment)
+        Client-->>UMAaaS: HTTP 200 OK (approve payment, provide PII if requested)
         UMAaaS->>Bank: Execute payment to user's bank account
         UMAaaS->>Client: Webhook: INCOMING_PAYMENT (COMPLETED)
         Client-->>UMAaaS: HTTP 200 OK (acknowledge completion)
@@ -122,7 +122,11 @@ When someone initiates a payment to one of your users' UMA addresses, you'll rec
     },
     "reconciliationInstructions": {
       "reference": "REF-123456789"
-    }
+    },
+    "requestedReceiverUserInfoFields": [
+      { "name": "NATIONALITY", "mandatory": true },
+      { "name": "FULL_NAME", "mandatory": true }
+    ]
   },
   "timestamp": "2023-08-15T14:32:00Z",
   "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
@@ -130,7 +134,23 @@ When someone initiates a payment to one of your users' UMA addresses, you'll rec
 }
 ```
 
-To approve the payment, respond with a 200 OK status.
+The `counterpartyInformation` object contains PII about the *sender*, provided by their VASP. The `requestedReceiverUserInfoFields` array, if present, lists information fields that the sender's VASP (or governing regulations) require about your user (the *recipient*). UMAaaS does not have this information and is requesting it from your platform to proceed with the payment. Each item in this array is an object specifying the `name` of the field (from `UserInfoFieldName`) and whether it's `mandatory`.
+
+To approve the payment, your platform must respond with a `200 OK` status.
+
+- If the `requestedReceiverUserInfoFields` array was present in the webhook request and contained mandatory fields, your `200 OK` response **must** include a JSON body containing a `receiverUserInfo` object. This object should contain the key-value pairs for the information fields that were requested.
+- If `requestedReceiverUserInfoFields` was not present, was empty, or contained only non-mandatory fields for which you have no information, your `200 OK` response can have an empty body.
+
+Example `200 OK` response body when information was requested and provided:
+
+```json
+{
+  "receiverUserInfo": {
+    "NATIONALITY": "US",
+    "FULL_NAME": "John Receiver"
+  }
+}
+```
 
 To reject the payment, respond with a 400 Bad Request status and a JSON body with the following fields:
 
@@ -204,7 +224,7 @@ sequenceDiagram
     UMAaaS->>Client: Webhook: INCOMING_PAYMENT (PENDING)
     
     alt Payment approved
-        Client-->>UMAaaS: HTTP 200 OK with payee and bank account info to pay out
+        Client-->>UMAaaS: HTTP 200 OK (approve payment, provide recipient PII if requested)
         UMAaaS-->>Sender: Payreq response with payee info and a Lightning Invoice
         Note over Sender: Sender pays Lightning Invoice
         UMAaaS->>Bank: Execute payment to user's bank account
@@ -215,3 +235,4 @@ sequenceDiagram
         UMAaaS->>Sender: Failed payreq response.
     end
 ```
+

@@ -93,6 +93,8 @@ Response:
 }
 ```
 
+This response tells you the currencies the recipient can receive and, crucially, any information the recipient's VASP requires about *your user (the sender)* in the `requiredPayerDataFields` array before a payment can be processed.
+
 ## Step 2: Create a payment quote
 
 Generate a quote for the payment with locked exchange rates and fees.
@@ -105,15 +107,20 @@ Request body:
 
 ```json
 {
-  "receiverUmaAddress": "$recipient@example.com",
-  "platformUserId": "9f84e0c2a72c4fa",
+  "lookupId": "Lookup:019542f5-b3e7-1d02-0000-000000000009",
   "sendingCurrencyCode": "USD",
   "receivingCurrencyCode": "EUR",
   "lockedCurrencySide": "SENDING",
   "lockedCurrencyAmount": 10000,
-  "description": "Invoice #1234 payment"
+  "description": "Invoice #1234 payment",
+  "senderUserInfo": {
+    "FULL_NAME": "John Sender",
+    "DATE_OF_BIRTH": "1985-06-15"
+  }
 }
 ```
+
+If the `requiredPayerDataFields` array from the previous step (looking up the receiver) was not empty, you **must** include the `senderUserInfo` object in your quote request. This object should contain key-value pairs for each field that was listed as mandatory in `requiredPayerDataFields`. This is PII about your user (the sender) that the recipient's VASP requires.
 
 Response:
 
@@ -267,7 +274,7 @@ sequenceDiagram
     Counterparty-->>UMAaaS: LNURLP Response
     UMAaaS-->>Client: Supported currencies and payer information requirements
     Note over Client: User selects currency and amount
-    Client->>UMAaaS: POST /quotes with amount and payer information
+    Client->>UMAaaS: POST /quotes with amount and (if required) sender PII in counterpartyInformation
     UMAaaS->>Counterparty: Payreq request with payer information and amount
     Counterparty-->>UMAaaS: Payreq response with lightning invoice
     UMAaaS-->>Client: Quote with payment instructions and payee information

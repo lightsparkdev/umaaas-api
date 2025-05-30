@@ -19,7 +19,7 @@ import re  # noqa: F401
 import json
 
 from pydantic import ConfigDict, Field
-from typing import Any, ClassVar, Dict, List
+from typing import Any, ClassVar, Dict, List, Optional
 from umaaas_api.models.address import Address
 from umaaas_api.models.business_user_all_of_business_info import BusinessUserAllOfBusinessInfo
 from umaaas_api.models.user import User
@@ -31,9 +31,9 @@ class BusinessUser(User):
     """
     BusinessUser
     """ # noqa: E501
-    address: Address
+    address: Optional[Address] = None
     bank_account_info: UserBankAccountInfo = Field(alias="bankAccountInfo")
-    business_info: BusinessUserAllOfBusinessInfo = Field(alias="businessInfo")
+    business_info: Optional[BusinessUserAllOfBusinessInfo] = Field(default=None, alias="businessInfo")
     __properties: ClassVar[List[str]] = ["id", "umaAddress", "platformUserId", "userType", "createdAt", "updatedAt", "isDeleted", "address", "bankAccountInfo", "businessInfo"]
 
     model_config = ConfigDict(

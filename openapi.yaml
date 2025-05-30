@@ -28,7 +28,7 @@ tags:
     description: Endpoints for creating, claiming and managing UMA invitations
 
 servers:
-  - url: https://api.lightspark.com/umaaas/v1
+  - url: https://api.uma.money/umaaas/rc
     description: Production server
 
 components:
@@ -412,9 +412,6 @@ components:
         - $ref: '#/components/schemas/User'
         - type: object
           required:
-            - fullName
-            - dateOfBirth
-            - address
             - bankAccountInfo
           properties:
             fullName:
@@ -440,8 +437,6 @@ components:
         - $ref: '#/components/schemas/User'
         - type: object
           required:
-            - businessInfo
-            - address
             - bankAccountInfo
           properties:
             address:
@@ -509,12 +504,27 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CounterpartyFieldDefinition'
-          description: List of counterparty fields and their requirements
+          description: >-
+            List of fields which the platform requires from the counterparty institutions about counterparty users.
+            Platforms can set mandatory to false if the platform does not require the field, but would like to have it available. Some
+            fields may be required by the underlying UMA provider.
           example:
             - name: "FULL_NAME"
               mandatory: true
             - name: "DATE_OF_BIRTH"
               mandatory: true
+        umaProviderRequiredUserFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserInfoFieldName'
+          description: >-
+            List of user info field names that are required by the underlying UMA provider when creating a user
+            for this currency. These fields must be supplied when creating or updating a user if this currency
+            is intended to be used by that user. If no fields are required, this field is omitted.
+          readOnly: true
+          example:
+            - "NATIONALITY"
+            - "DATE_OF_BIRTH"
       required:
         - currencyCode
         - minAmount
@@ -2081,6 +2091,17 @@ paths:
                   type: string
                   description: Optional description/memo for the payment
                   example: "Invoice #1234 payment"
+                senderUserInfo:
+                  type: object
+                  additionalProperties: true
+                  description: |
+                    Key-value pairs of information about the sender which was requested by the counterparty (recipient) institution.
+                    Any fields specified in `requiredPayerDataFields` from the response of the `/receiver/{receiverUmaAddress}` (lookupUma) endpoint
+                    MUST be provided here if they were requested. If the counterparty (recipient) institution did not request any information,
+                    this field can be omitted.
+                  example:
+                    FULL_NAME: "Jane Receiver"
+                    NATIONALITY: "FR"
             examples:
               lockSendAmount:
                 summary: Lock sending amount
@@ -2767,6 +2788,11 @@ webhooks:
                   $ref: '#/components/schemas/WebhookType'
                   description: Type of webhook event
                   example: "INCOMING_PAYMENT"
+                requestedReceiverUserInfoFields:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CounterpartyFieldDefinition'
+                  description: Information required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which UMAaaS does not already have from initial user registration.
             examples:
               pendingPayment:
                 summary: Pending payment example requiring approval
@@ -2792,6 +2818,11 @@ webhooks:
                       FULL_NAME: "John Sender"
                       DATE_OF_BIRTH: "1985-06-15"
                       NATIONALITY: "US"
+                  requestedReceiverUserInfoFields:
+                    - name: "NATIONALITY"
+                      mandatory: true
+                    - name: "ADDRESS"
+                      mandatory: false
                   timestamp: "2023-08-15T14:32:00Z"
                   webhookId: "Webhook:019542f5-b3e7-1d02-0000-000000000007"
                   type: "INCOMING_PAYMENT"
@@ -2826,6 +2857,16 @@ webhooks:
           description: |
             Webhook received successfully. 
             For PENDING transactions, this indicates approval to proceed with the payment.
+            If `requestedReceiverUserInfoFields` were present in the webhook request, the corresponding fields for the recipient must be included in this response in the `receiverUserInfo` object.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  receiverUserInfo:
+                    type: object
+                    additionalProperties: true
+                    description: Information about the recipient, provided by the platform if requested in the webhook via `requestedReceiverUserInfoFields` and the payment is approved.
         '400':
           description: Bad request
           content:
