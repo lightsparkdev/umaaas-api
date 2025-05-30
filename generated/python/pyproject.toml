@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "umaaas_api"
-version = "0.0.24"
+version = "0.0.25"
 description = "UMA as a Service (UMAaaS) API"
 authors = ["Lightspark Support <support@lightspark.com>"]
 license = "Proprietary"
@@ -10,9 +10,9 @@ keywords = ["OpenAPI", "OpenAPI-Generator", "UMA as a Service (UMAaaS) API"]
 include = ["umaaas_api/py.typed"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 
-urllib3 = ">= 1.25.3, < 3.0.0"
+urllib3 = ">= 2.1.0, < 3.0.0"
 python-dateutil = ">= 2.8.2"
 pydantic = ">= 2"
 typing-extensions = ">= 4.7.1"
