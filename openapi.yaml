@@ -2738,12 +2738,12 @@ webhooks:
         ### Authentication
         The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas.
         To verify the signature:
-        1. Get the webhook secret provided to you during integration
-        2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key
-        3. Encode the hash in hexadecimal format
-        4. Compare this value to the signature in the `X-UMAaas-Signature` header
+        1. Get the UMAaas public key provided to you during integration
+        2. Decode the base64 signature from the header
+        3. Create a SHA-256 hash of the request body
+        4. Verify the signature using the public key and the hash
         
-        If the values match, the webhook is authentic. If not, it should be rejected.
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
         
         ### Payment Approval Flow
         When a transaction has `status: "PENDING"`, this webhook serves as an approval mechanism:
@@ -2933,12 +2933,12 @@ webhooks:
         ### Authentication
         The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas.
         To verify the signature:
-        1. Get the webhook secret provided to you during integration
-        2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key
-        3. Encode the hash in hexadecimal format
-        4. Compare this value to the signature in the `X-UMAaas-Signature` header
+        1. Get the UMAaas public key provided to you during integration
+        2. Decode the base64 signature from the header
+        3. Create a SHA-256 hash of the request body
+        4. Verify the signature using the public key and the hash
         
-        If the values match, the webhook is authentic. If not, it should be rejected.
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
         
         This webhook is informational only and is sent when an outgoing payment completes successfully or fails.
       operationId: outgoingPaymentWebhook
@@ -3060,14 +3060,14 @@ webhooks:
         This is sent when you configure or update your platform settings with a webhook URL.
         
         ### Authentication
-        The webhook includes a signature in the `X-UMAaaS-Signature` header that allows you to verify that the webhook was sent by UMAaaS.
+        The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas.
         To verify the signature:
-        1. Get the webhook secret provided to you during integration
-        2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key
-        3. Encode the hash in hexadecimal format
-        4. Compare this value to the signature in the `X-UMAaaS-Signature` header
+        1. Get the UMAaas public key provided to you during integration
+        2. Decode the base64 signature from the header
+        3. Create a SHA-256 hash of the request body
+        4. Verify the signature using the public key and the hash
         
-        If the values match, the webhook is authentic. If not, it should be rejected.
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
         
         This webhook is purely for testing your endpoint integration and signature verification.
       operationId: testWebhook
@@ -3138,12 +3138,12 @@ webhooks:
         ### Authentication
         The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas.
         To verify the signature:
-        1. Get the webhook secret provided to you during integration
-        2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key
-        3. Encode the hash in hexadecimal format
-        4. Compare this value to the signature in the `X-UMAaas-Signature` header
+        1. Get the UMAaas public key provided to you during integration
+        2. Decode the base64 signature from the header
+        3. Create a SHA-256 hash of the request body
+        4. Verify the signature using the public key and the hash
         
-        If the values match, the webhook is authentic. If not, it should be rejected.
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
         
         This webhook is sent when a bulk upload job completes or fails, providing detailed information about the results.
       operationId: bulkUploadWebhook
@@ -3260,12 +3260,12 @@ webhooks:
         ### Authentication
         The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas.
         To verify the signature:
-        1. Get the webhook secret provided to you during integration
-        2. Create an HMAC-SHA256 hash of the entire request body (as a raw string) using the webhook secret as the key
-        3. Encode the hash in hexadecimal format
-        4. Compare this value to the signature in the `X-UMAaas-Signature` header
+        1. Get the UMAaas public key provided to you during integration
+        2. Decode the base64 signature from the header
+        3. Create a SHA-256 hash of the request body
+        4. Verify the signature using the public key and the hash
         
-        If the values match, the webhook is authentic. If not, it should be rejected.
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
       operationId: invitationClaimedWebhook
       tags:
         - Webhooks
