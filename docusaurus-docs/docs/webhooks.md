@@ -48,9 +48,6 @@ app.post('/webhooks/uma', (req, res) => {
   }
   
   try {
-    // Create a SHA-256 hash of the request body
-    const hash = crypto.createHash('sha256').update(req.rawBody).digest();
-    
     // Decode the base64 signature
     const signatureBuffer = Buffer.from(signature, 'base64');
     
