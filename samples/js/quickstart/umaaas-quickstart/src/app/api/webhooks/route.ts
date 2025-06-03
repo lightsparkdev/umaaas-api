@@ -1,56 +1,80 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createPublicKey, createVerify } from 'crypto';
 import { webhookEventQueue } from '@/lib/webhook-events';
+import type {
+  IncomingTransaction,
+  OutgoingTransaction,
+} from 'uaas-test/resources/transactions';
+import type { UmaInvitation } from 'uaas-test/resources/invitations';
 
+// WebhookType enum from OpenAPI schema
+enum WebhookType {
+  INCOMING_PAYMENT = 'INCOMING_PAYMENT',
+  OUTGOING_PAYMENT = 'OUTGOING_PAYMENT',
+  TEST = 'TEST',
+  BULK_UPLOAD = 'BULK_UPLOAD',
+  INVITATION_CLAIMED = 'INVITATION_CLAIMED'
+}
+
+// Base webhook interface
 interface BaseWebhookEvent {
-  id: string;
-  type: string;
-  created: number;
-  data: unknown;
+  timestamp: string;
+  webhookId: string;
+  type: WebhookType;
 }
 
-interface TransactionWebhookEvent extends BaseWebhookEvent {
-  type: 'transaction.created' | 'transaction.updated' | 'transaction.completed' | 'transaction.failed';
-  data: {
-    id: string;
-    status: string;
-    type: 'INCOMING' | 'OUTGOING';
-    userId: string;
-    platformUserId: string;
-    senderUmaAddress: string;
-    receiverUmaAddress: string;
-    createdAt: string;
-    settledAt?: string;
-    description?: string;
+// Incoming payment webhook
+interface IncomingPaymentWebhookEvent extends BaseWebhookEvent {
+  type: WebhookType.INCOMING_PAYMENT;
+  transaction: IncomingTransaction;
+  requestedReceiverUserInfoFields?: string[];
+}
+
+// Outgoing payment webhook
+interface OutgoingPaymentWebhookEvent extends BaseWebhookEvent {
+  type: WebhookType.OUTGOING_PAYMENT;
+  transaction: OutgoingTransaction;
+}
+
+// Test webhook
+interface TestWebhookEvent extends BaseWebhookEvent {
+  type: WebhookType.TEST;
+}
+
+// Bulk upload webhook
+interface BulkUploadWebhookEvent extends BaseWebhookEvent {
+  type: WebhookType.BULK_UPLOAD;
+  jobId: string;
+  status: 'SUCCESS' | 'PARTIAL_SUCCESS' | 'FAILED';
+  progress: {
+    total: number;
+    processed: number;
+    successful: number;
+    failed: number;
   };
+  errors?: Array<{
+    correlationId: string;
+    error: {
+      code: string;
+      message: string;
+      details?: unknown;
+    };
+  }>;
 }
 
-interface QuoteWebhookEvent extends BaseWebhookEvent {
-  type: 'quote.created' | 'quote.expired' | 'quote.completed';
-  data: {
-    quoteId: string;
-    status: string;
-    expiresAt: string;
-    totalSendingAmount: number;
-    totalReceivingAmount: number;
-    exchangeRate: number;
-    transactionId?: string;
-  };
+// Invitation claimed webhook
+interface InvitationClaimedWebhookEvent extends BaseWebhookEvent {
+  type: WebhookType.INVITATION_CLAIMED;
+  invitation: UmaInvitation;
 }
 
-interface PaymentWebhookEvent extends BaseWebhookEvent {
-  type: 'payment.initiated' | 'payment.received' | 'payment.settled';
-  data: {
-    paymentId: string;
-    status: string;
-    amount: number;
-    currency: string;
-    userId: string;
-    umaAddress: string;
-  };
-}
-
-type WebhookEvent = TransactionWebhookEvent | QuoteWebhookEvent | PaymentWebhookEvent | BaseWebhookEvent;
+// Union type for all webhook events
+type WebhookEvent = 
+  | IncomingPaymentWebhookEvent 
+  | OutgoingPaymentWebhookEvent 
+  | TestWebhookEvent 
+  | BulkUploadWebhookEvent 
+  | InvitationClaimedWebhookEvent;
 
 interface SignatureHeader {
   v: number;
@@ -69,18 +93,16 @@ function verifyWebhookSignature(body: string, signatureHeader: string, publicKey
       return false;
     }
     
-    const derBuf = Buffer.from(publicKey, 'hex');           // <Buffer 30 59 … 94>
+    const derBuf = Buffer.from(publicKey, 'hex');
 
     const pubKeyObj = createPublicKey({
       key: derBuf,
-      format: 'der',            // because we have raw ASN.1 bytes
-      type: 'spki',             // SubjectPublicKeyInfo wrapper
+      format: 'der',
+      type: 'spki',
     });
 
     // Decode the base64 signature
     const signature = Buffer.from(sigHeader.s, 'base64');
-
-    // const hash = createHash('sha256').update(body).digest();
 
     // Create verifier and verify signature
     const verifier = createVerify('SHA256');
@@ -93,20 +115,25 @@ function verifyWebhookSignature(body: string, signatureHeader: string, publicKey
   }
 }
 
-function parseWebhookEvent(rawPayload: any): WebhookEvent {
-  const { type } = rawPayload;
+function parseWebhookEvent(rawPayload: unknown): WebhookEvent {
+  const payload = rawPayload as { type: string };
+  const { type } = payload;
   
-  // Parse based on webhook type
-  if (type?.startsWith('transaction.')) {
-    return rawPayload as TransactionWebhookEvent;
-  } else if (type?.startsWith('quote.')) {
-    return rawPayload as QuoteWebhookEvent;
-  } else if (type?.startsWith('payment.')) {
-    return rawPayload as PaymentWebhookEvent;
+  // Parse based on webhook type from OpenAPI schema
+  switch (type) {
+    case WebhookType.INCOMING_PAYMENT:
+      return rawPayload as IncomingPaymentWebhookEvent;
+    case WebhookType.OUTGOING_PAYMENT:
+      return rawPayload as OutgoingPaymentWebhookEvent;
+    case WebhookType.TEST:
+      return rawPayload as TestWebhookEvent;
+    case WebhookType.BULK_UPLOAD:
+      return rawPayload as BulkUploadWebhookEvent;
+    case WebhookType.INVITATION_CLAIMED:
+      return rawPayload as InvitationClaimedWebhookEvent;
+    default:
+      throw new Error(`Unknown webhook type: ${type}`);
   }
-  
-  // Fallback to base webhook event
-  return rawPayload as BaseWebhookEvent;
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse<{ received: boolean } | { error: string }>> {
@@ -137,55 +164,101 @@ export async function POST(request: NextRequest): Promise<NextResponse<{ receive
     const rawPayload = JSON.parse(rawBody);
     const webhookEvent = parseWebhookEvent(rawPayload);
     
-    console.log('Received webhook:', JSON.stringify(webhookEvent));
+    console.log('Received webhook:', JSON.stringify(webhookEvent, null, 2));
 
-    // Add to event queue for SSE broadcasting
+    // Add to event queue for SSE broadcasting (transform to expected format)
     webhookEventQueue.addEvent({
-      ...webhookEvent,
+      id: webhookEvent.webhookId,
+      type: webhookEvent.type,
+      created: new Date(webhookEvent.timestamp).getTime(),
+      data: webhookEvent,
       receivedAt: Date.now(),
     });
     
-    // Handle different webhook types
+    // Handle different webhook types according to OpenAPI schema
     switch (webhookEvent.type) {
-      case 'transaction.created':
-      case 'transaction.updated':
-      case 'transaction.completed':
-      case 'transaction.failed':
-        const transactionEvent = webhookEvent as TransactionWebhookEvent;
-        console.log('Transaction webhook:', {
-          transactionId: transactionEvent.data.id,
-          status: transactionEvent.data.status,
-          type: transactionEvent.data.type,
-          userId: transactionEvent.data.userId,
+      case WebhookType.INCOMING_PAYMENT:
+        const incomingEvent = webhookEvent as IncomingPaymentWebhookEvent;
+        console.log('Incoming payment webhook:', {
+          transactionId: incomingEvent.transaction.id,
+          status: incomingEvent.transaction.status,
+          userId: incomingEvent.transaction.userId,
+          platformUserId: incomingEvent.transaction.platformUserId,
+          senderUmaAddress: incomingEvent.transaction.senderUmaAddress,
+          receiverUmaAddress: incomingEvent.transaction.receiverUmaAddress,
+          receivedAmount: incomingEvent.transaction.receivedAmount,
+          requestedReceiverUserInfoFields: incomingEvent.requestedReceiverUserInfoFields,
+        });
+        
+        // For PENDING transactions, this serves as an approval mechanism
+        if (incomingEvent.transaction.status === 'PENDING') {
+          // Here you would implement your approval logic
+          // For now, we'll auto-approve all payments
+          console.log('Auto-approving pending payment');
+          
+          // You could return 403 to reject:
+          // return NextResponse.json({ error: 'Payment rejected' }, { status: 403 });
+          
+          // Or 422 to request more info:
+          // return NextResponse.json({ 
+          //   error: 'Additional info required',
+          //   details: { requiredFields: ['TAX_ID'] }
+          // }, { status: 422 });
+        }
+        break;
+        
+      case WebhookType.OUTGOING_PAYMENT:
+        const outgoingEvent = webhookEvent as OutgoingPaymentWebhookEvent;
+        console.log('Outgoing payment webhook:', {
+          transactionId: outgoingEvent.transaction.id,
+          status: outgoingEvent.transaction.status,
+          userId: outgoingEvent.transaction.userId,
+          platformUserId: outgoingEvent.transaction.platformUserId,
+          senderUmaAddress: outgoingEvent.transaction.senderUmaAddress,
+          receiverUmaAddress: outgoingEvent.transaction.receiverUmaAddress,
+          sentAmount: outgoingEvent.transaction.sentAmount,
+          receivedAmount: outgoingEvent.transaction.receivedAmount,
+          quoteId: outgoingEvent.transaction.quoteId,
         });
         break;
         
-      case 'quote.created':
-      case 'quote.expired':
-      case 'quote.completed':
-        const quoteEvent = webhookEvent as QuoteWebhookEvent;
-        console.log('Quote webhook:', {
-          quoteId: quoteEvent.data.quoteId,
-          status: quoteEvent.data.status,
-          transactionId: quoteEvent.data.transactionId,
+      case WebhookType.TEST:
+        const testEvent = webhookEvent as TestWebhookEvent;
+        console.log('Test webhook received:', {
+          webhookId: testEvent.webhookId,
+          timestamp: testEvent.timestamp,
         });
         break;
         
-      case 'payment.initiated':
-      case 'payment.received':
-      case 'payment.settled':
-        const paymentEvent = webhookEvent as PaymentWebhookEvent;
-        console.log('Payment webhook:', {
-          paymentId: paymentEvent.data.paymentId,
-          status: paymentEvent.data.status,
-          amount: paymentEvent.data.amount,
-          currency: paymentEvent.data.currency,
+      case WebhookType.BULK_UPLOAD:
+        const bulkEvent = webhookEvent as BulkUploadWebhookEvent;
+        console.log('Bulk upload webhook:', {
+          jobId: bulkEvent.jobId,
+          status: bulkEvent.status,
+          progress: bulkEvent.progress,
+          errorCount: bulkEvent.errors?.length || 0,
         });
+        break;
+        
+      case WebhookType.INVITATION_CLAIMED:
+        const invitationEvent = webhookEvent as InvitationClaimedWebhookEvent;
+        console.log('Invitation claimed webhook:', {
+          invitationCode: invitationEvent.invitation.code,
+          inviterUma: invitationEvent.invitation.inviterUma,
+          inviteeUma: invitationEvent.invitation.inviteeUma,
+          claimedAt: invitationEvent.invitation.claimedAt,
+          amountToSend: invitationEvent.invitation.amountToSend,
+        });
+        
+        // If there's an amount to send, you would typically initiate a payment here
+        if (invitationEvent.invitation.amountToSend) {
+          console.log('Invitation includes amount to send - should initiate payment');
+          // Implement payment initiation logic here
+        }
         break;
         
       default:
-        console.log('Unknown webhook type:', webhookEvent.type);
-        console.log('Webhook data:', webhookEvent.data);
+        console.log('Unknown webhook type:', (webhookEvent as { type: string }).type);
     }
     
     // Return success response
