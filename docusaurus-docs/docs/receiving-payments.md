@@ -136,7 +136,11 @@ When someone initiates a payment to one of your users' UMA addresses, you'll rec
 
 The `counterpartyInformation` object contains PII about the *sender*, provided by their VASP. The `requestedReceiverUserInfoFields` array, if present, lists information fields that the sender's VASP (or governing regulations) require about your user (the *recipient*). UMAaaS does not have this information and is requesting it from your platform to proceed with the payment. Each item in this array is an object specifying the `name` of the field (from `UserInfoFieldName`) and whether it's `mandatory`.
 
-To approve the payment, your platform must respond with a `200 OK` status.
+You have two options for approving or rejecting the payment:
+
+### Option 1: Synchronous Processing (Recommended)
+
+To approve the payment synchronously, respond with a `200 OK` status:
 
 - If the `requestedReceiverUserInfoFields` array was present in the webhook request and contained mandatory fields, your `200 OK` response **must** include a JSON body containing a `receiverUserInfo` object. This object should contain the key-value pairs for the information fields that were requested.
 - If `requestedReceiverUserInfoFields` was not present, was empty, or contained only non-mandatory fields for which you have no information, your `200 OK` response can have an empty body.
@@ -164,6 +168,47 @@ To reject the payment, respond with a 400 Bad Request status and a JSON body wit
   }
 }
 ```
+
+### Option 2: Asynchronous Processing
+
+If your platform's architecture requires asynchronous processing before approving or rejecting the payment, you can:
+
+1. Return a `202 Accepted` response to acknowledge receipt of the webhook
+2. Process the payment asynchronously
+3. Call either the `/transactions/{transactionId}/approve` or `/transactions/{transactionId}/reject` endpoint *within 5 seconds*
+
+Example of approving asynchronously:
+
+```http
+POST /transactions/Transaction:019542f5-b3e7-1d02-0000-000000000005/approve
+```
+
+Request body (if information was requested):
+
+```json
+{
+  "receiverUserInfo": {
+    "NATIONALITY": "US",
+    "FULL_NAME": "John Receiver"
+  }
+}
+```
+
+Example of rejecting asynchronously:
+
+```http
+POST /transactions/Transaction:019542f5-b3e7-1d02-0000-000000000005/reject
+```
+
+Request body (optional):
+
+```json
+{
+  "reason": "RESTRICTED_JURISDICTION"
+}
+```
+
+> **Important**: If you choose the asynchronous path, you must call the approve/reject endpoint within 5 seconds, or the payment will be automatically rejected. The synchronous path (Option 1) is preferred where possible.
 
 ## Step 5: Receive completion notification
 

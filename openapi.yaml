@@ -513,6 +513,8 @@ components:
               mandatory: true
             - name: "DATE_OF_BIRTH"
               mandatory: true
+            - name: "NATIONALITY"
+              mandatory: true
         umaProviderRequiredUserFields:
           type: array
           items:
@@ -1956,6 +1958,128 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /transactions/{transactionId}/approve:
+    post:
+      summary: Approve a pending incoming payment
+      description: |
+        Approve a pending incoming payment that was previously acknowledged with a 202 response.
+        This endpoint allows platforms to asynchronously approve payments after async processing.
+      operationId: approvePendingPayment
+      tags:
+        - Transactions
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: transactionId
+          in: path
+          description: Unique identifier of the transaction to approve
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                receiverUserInfo:
+                  type: object
+                  additionalProperties: true
+                  description: Information about the recipient, provided by the platform if requested in the original webhook via `requestedReceiverUserInfoFields`.
+      responses:
+        '200':
+          description: Payment approved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IncomingTransaction'
+        '400':
+          description: Bad request - Invalid parameters or payment cannot be approved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Transaction not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict - Payment is not in a pending state or has already been processed or timed out.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /transactions/{transactionId}/reject:
+    post:
+      summary: Reject a pending incoming payment
+      description: |
+        Reject a pending incoming payment that was previously acknowledged with a 202 response.
+        This endpoint allows platforms to asynchronously reject payments after additional processing.
+      operationId: rejectPendingPayment
+      tags:
+        - Transactions
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: transactionId
+          in: path
+          description: Unique identifier of the transaction to reject
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  description: Optional reason for rejecting the payment. This is just for debugging purposes or can be used for a platform's own purposes.
+                  example: "RESTRICTED_JURISDICTION"
+      responses:
+        '200':
+          description: Payment rejected successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IncomingTransaction'
+        '400':
+          description: Bad request - Invalid parameters or payment cannot be rejected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Transaction not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict - Payment is not in a pending state or has already been processed or timed out.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /receiver/{receiverUmaAddress}:
     get:
       summary: Look up a UMA address for payment
@@ -2751,9 +2875,10 @@ webhooks:
         When a transaction has `status: "PENDING"`, this webhook serves as an approval mechanism:
         
         1. The client should check the `counterpartyInformation` against their requirements
-        2. To APPROVE the payment, return a 200 OK response
+        2. To APPROVE the payment synchronously, return a 200 OK response
         3. To REJECT the payment, return a 403 Forbidden response with an Error object
         4. To request more information, return a 422 Unprocessable Entity with specific missing fields
+        5. To process the payment asynchronously, return a 202 Accepted response and then call the `/transactions/{transactionId}/approve` or `/transactions/{transactionId}/reject` endpoint within 5 seconds. Note that synchronous approval/rejection is preferred where possible.
         
         The UMAaas system will proceed or cancel the payment based on your response.
         
@@ -2869,6 +2994,11 @@ webhooks:
                     type: object
                     additionalProperties: true
                     description: Information about the recipient, provided by the platform if requested in the webhook via `requestedReceiverUserInfoFields` and the payment is approved.
+        '202':
+          description: |
+            Webhook received and will be processed asynchronously. The synchronous 200 response should be preferred where possible. This asycnhronous path should only be used in
+            cases where the platform's architecture requires async (but still very quick) processing before approving or rejecting the payment.
+            The platform must call the `/transactions/{transactionId}/approve` or `/transactions/{transactionId}/reject` endpoint to approve or reject the payment within 5 seconds or the payment will be automatically rejected.
         '400':
           description: Bad request
           content:
@@ -2892,14 +3022,10 @@ webhooks:
                   - $ref: '#/components/schemas/Error'
                   - type: object
                     properties:
-                      code:
-                        example: "payment_rejected"
-                      message:
-                        example: "Payment rejected due to compliance policy"
-                      details:
-                        example:
-                          reason: "failed_counterparty_check"
-                          rejectionReason: "User is in a restricted jurisdiction"
+                      reason:
+                        type: string
+                        description: Optional reason for rejecting the payment. This is just for debugging purposes or can be used for a platform's own purposes.
+                        example: "RESTRICTED_JURISDICTION"
         '409':
           description: Conflict - Webhook has already been processed (duplicate webhookId)
           content:
@@ -2917,13 +3043,12 @@ webhooks:
                   - $ref: '#/components/schemas/Error'
                   - type: object
                     properties:
-                      code:
-                        example: "additional_info_required"
-                      message:
-                        example: "Additional counterparty information required"
-                      details:
-                        example:
-                          requiredFields: ["TAX_ID", "REGISTRATION_NUMBER"]
+                      requiredFields:
+                        type: array
+                        items:
+                          type: string
+                        description: List of fields that are required by the platform, but are not present in the counterparty information.
+                        example: ["TAX_ID", "REGISTRATION_NUMBER"]
 
   outgoing-payment:
     post:
