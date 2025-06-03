@@ -16,7 +16,7 @@ All webhooks sent by the UMAaaS API include a signature in the `X-UMAaaS-Signatu
    - Extract the signature from the `X-UMAaaS-Signature` header
    - Decode the base64 signature
    - Create a SHA-256 hash of the entire request body
-   - Verify the signature using the UMAaaS public key and the hash
+   - Verify the signature using the UMAaaS webhook public key and the hash
    - Only process the webhook if the signature verification succeeds
 
 ## Verification Examples
@@ -29,35 +29,47 @@ const express = require('express');
 const app = express();
 
 // Your UMAaaS public key provided during integration
-const UMAaaS_PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
+const UMAaaS_WEBHOOK_PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
 MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE...
 -----END PUBLIC KEY-----`;
 
-app.use(express.json({
-  verify: (req, res, buf) => {
-    // Store the raw body for signature verification
-    req.rawBody = buf;
-  }
-}));
-
 app.post('/webhooks/uma', (req, res) => {
-  const signature = req.header('X-UMAaaS-Signature');
+  const signatureHeader = req.header('X-UMAaaS-Signature');
   
-  if (!signature) {
+  if (!signatureHeader) {
     return res.status(401).json({ error: 'Signature missing' });
   }
   
   try {
-    // Decode the base64 signature
-    const signatureBuffer = Buffer.from(signature, 'base64');
+    let signature: Buffer;
+    try {
+      // Parse the signature as JSON. It's in the format {"v": "1", "s": "base64_signature"}
+      const signatureObj = JSON.parse(signatureHeader);
+      if (signatureObj.v && signatureObj.s) {
+        // The signature is in the 's' field
+        signature = Buffer.from(signatureObj.s, "base64");
+      } else {
+        throw new Error("Invalid JSON signature format");
+      }
+    } catch {
+      // If JSON parsing fails, treat as direct base64
+      signature = Buffer.from(signatureHeader, "base64");
+    }
     
-    // Verify the signature using the public key
-    const verify = crypto.createVerify('SHA256');
-    verify.update(req.rawBody);
-    const isValid = verify.verify(
-      UMAaaS_PUBLIC_KEY,
-      signatureBuffer,
-      'base64'
+    // Create verifier with the public key and correct algorithm
+    const verifier = crypto.createVerify("SHA256");
+    const payload = await request.text();
+    verifier.update(payload);
+    verifier.end();
+
+    // Verify the signature using the webhook public key
+    const isValid = verifier.verify(
+      {
+        key: UMAaaS_WEBHOOK_PUBLIC_KEY,
+        format: "pem",
+        type: "spki",
+      },
+      signature,
     );
     
     if (!isValid) {
