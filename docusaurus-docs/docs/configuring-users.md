@@ -189,7 +189,8 @@ Example request body for updating a user's bank account information:
 
 ## Bank Account Information
 
-The API supports various bank account formats based on country. You must provide the correct format based on the user's location:
+The API supports various bank account formats based on country and funding type. There are two types of funding
+mechanisms supported by UMAaaS: an omnibus FBO (for benefit of) account owned by the platform, or direct user-owned accounts. You must provide the correct format based on the user's region and bank account type.
 
 ### Optional Platform Account ID
 
@@ -213,6 +214,22 @@ Common use cases for `platformAccountId`:
 - Linking accounts to internal accounting systems
 - Maintaining consistency between UMAaaS and your platform's account records
 - Facilitating account reconciliation and reporting
+
+### FBO Accounts
+
+FBO accounts are used when the platform has a single omnibus account that is used to fund all users. Account details
+must be provided manually at the platform level. For each user, during you should simply provide:
+
+```json
+"bankAccountInfo": {
+  "accountType": "FBO",
+  "currencyCode": "USD" // or any other currency code supported by UMAaaS
+}
+```
+
+:::tip
+Please contact us to set up FBO account for a specific currency.
+:::
 
 ### Mexico: CLABE
 
