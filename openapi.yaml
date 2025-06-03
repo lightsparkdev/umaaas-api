@@ -718,6 +718,7 @@ components:
         - type: object
           required:
             - receivedAmount
+            - type
           properties:
             type:
               $ref: '#/components/schemas/TransactionType'
@@ -736,6 +737,7 @@ components:
         - type: object
           required:
             - sentAmount
+            - type
           properties:
             type:
               $ref: '#/components/schemas/TransactionType'
