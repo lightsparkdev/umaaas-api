@@ -4,9 +4,99 @@ All URIs are relative to *https://api.uma.money/umaaas/rc*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**approve_pending_payment**](TransactionsApi.md#approve_pending_payment) | **POST** /transactions/{transactionId}/approve | Approve a pending incoming payment
 [**get_transaction_by_id**](TransactionsApi.md#get_transaction_by_id) | **GET** /transactions/{transactionId} | Get transaction by ID
 [**list_transactions**](TransactionsApi.md#list_transactions) | **GET** /transactions | List transactions
+[**reject_pending_payment**](TransactionsApi.md#reject_pending_payment) | **POST** /transactions/{transactionId}/reject | Reject a pending incoming payment
 
+
+# **approve_pending_payment**
+> IncomingTransaction approve_pending_payment(transaction_id, approve_pending_payment_request=approve_pending_payment_request)
+
+Approve a pending incoming payment
+
+Approve a pending incoming payment that was previously acknowledged with a 202 response.
+This endpoint allows platforms to asynchronously approve payments after async processing.
+
+
+### Example
+
+* Basic Authentication (BasicAuth):
+
+```python
+import umaaas_api
+from umaaas_api.models.approve_pending_payment_request import ApprovePendingPaymentRequest
+from umaaas_api.models.incoming_transaction import IncomingTransaction
+from umaaas_api.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
+# See configuration.py for a list of all supported configuration parameters.
+configuration = umaaas_api.Configuration(
+    host = "https://api.uma.money/umaaas/rc"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure HTTP basic authorization: BasicAuth
+configuration = umaaas_api.Configuration(
+    username = os.environ["USERNAME"],
+    password = os.environ["PASSWORD"]
+)
+
+# Enter a context with an instance of the API client
+with umaaas_api.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = umaaas_api.TransactionsApi(api_client)
+    transaction_id = 'transaction_id_example' # str | Unique identifier of the transaction to approve
+    approve_pending_payment_request = umaaas_api.ApprovePendingPaymentRequest() # ApprovePendingPaymentRequest |  (optional)
+
+    try:
+        # Approve a pending incoming payment
+        api_response = api_instance.approve_pending_payment(transaction_id, approve_pending_payment_request=approve_pending_payment_request)
+        print("The response of TransactionsApi->approve_pending_payment:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling TransactionsApi->approve_pending_payment: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **transaction_id** | **str**| Unique identifier of the transaction to approve | 
+ **approve_pending_payment_request** | [**ApprovePendingPaymentRequest**](ApprovePendingPaymentRequest.md)|  | [optional] 
+
+### Return type
+
+[**IncomingTransaction**](IncomingTransaction.md)
+
+### Authorization
+
+[BasicAuth](../README.md#BasicAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Payment approved successfully |  -  |
+**400** | Bad request - Invalid parameters or payment cannot be approved |  -  |
+**401** | Unauthorized |  -  |
+**404** | Transaction not found |  -  |
+**409** | Conflict - Payment is not in a pending state or has already been processed or timed out. |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **get_transaction_by_id**
 > GetTransactionById200Response get_transaction_by_id(transaction_id)
@@ -196,6 +286,94 @@ Name | Type | Description  | Notes
 **200** | Successful operation |  -  |
 **400** | Bad request - Invalid parameters |  -  |
 **401** | Unauthorized |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **reject_pending_payment**
+> IncomingTransaction reject_pending_payment(transaction_id, reject_pending_payment_request=reject_pending_payment_request)
+
+Reject a pending incoming payment
+
+Reject a pending incoming payment that was previously acknowledged with a 202 response.
+This endpoint allows platforms to asynchronously reject payments after additional processing.
+
+
+### Example
+
+* Basic Authentication (BasicAuth):
+
+```python
+import umaaas_api
+from umaaas_api.models.incoming_transaction import IncomingTransaction
+from umaaas_api.models.reject_pending_payment_request import RejectPendingPaymentRequest
+from umaaas_api.rest import ApiException
+from pprint import pprint
+
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
+# See configuration.py for a list of all supported configuration parameters.
+configuration = umaaas_api.Configuration(
+    host = "https://api.uma.money/umaaas/rc"
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure HTTP basic authorization: BasicAuth
+configuration = umaaas_api.Configuration(
+    username = os.environ["USERNAME"],
+    password = os.environ["PASSWORD"]
+)
+
+# Enter a context with an instance of the API client
+with umaaas_api.ApiClient(configuration) as api_client:
+    # Create an instance of the API class
+    api_instance = umaaas_api.TransactionsApi(api_client)
+    transaction_id = 'transaction_id_example' # str | Unique identifier of the transaction to reject
+    reject_pending_payment_request = umaaas_api.RejectPendingPaymentRequest() # RejectPendingPaymentRequest |  (optional)
+
+    try:
+        # Reject a pending incoming payment
+        api_response = api_instance.reject_pending_payment(transaction_id, reject_pending_payment_request=reject_pending_payment_request)
+        print("The response of TransactionsApi->reject_pending_payment:\n")
+        pprint(api_response)
+    except Exception as e:
+        print("Exception when calling TransactionsApi->reject_pending_payment: %s\n" % e)
+```
+
+
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **transaction_id** | **str**| Unique identifier of the transaction to reject | 
+ **reject_pending_payment_request** | [**RejectPendingPaymentRequest**](RejectPendingPaymentRequest.md)|  | [optional] 
+
+### Return type
+
+[**IncomingTransaction**](IncomingTransaction.md)
+
+### Authorization
+
+[BasicAuth](../README.md#BasicAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+### HTTP response details
+
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | Payment rejected successfully |  -  |
+**400** | Bad request - Invalid parameters or payment cannot be rejected |  -  |
+**401** | Unauthorized |  -  |
+**404** | Transaction not found |  -  |
+**409** | Conflict - Payment is not in a pending state or has already been processed or timed out. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

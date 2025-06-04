@@ -5,9 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**code** | **object** |  | [optional] 
-**message** | **object** |  | [optional] 
-**details** | **object** |  | [optional] 
+**code** | **str** | Error code | [optional] 
+**message** | **str** | Error message | [optional] 
+**details** | **object** | Additional error details | [optional] 
+**reason** | **str** | Optional reason for rejecting the payment. This is just for debugging purposes or can be used for a platform&#39;s own purposes. | [optional] 
 
 ## Example
 

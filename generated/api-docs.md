@@ -99,6 +99,10 @@ Retrieve the current platform configuration
         {
           "name": "DATE_OF_BIRTH",
           "mandatory": true
+        },
+        {
+          "name": "NATIONALITY",
+          "mandatory": true
         }
       ],
       "umaProviderRequiredUserFields": [
@@ -146,6 +150,10 @@ const inputBody = '{
         },
         {
           "name": "DATE_OF_BIRTH",
+          "mandatory": true
+        },
+        {
+          "name": "NATIONALITY",
           "mandatory": true
         }
       ]
@@ -208,6 +216,10 @@ Update the platform configuration settings
         },
         {
           "name": "DATE_OF_BIRTH",
+          "mandatory": true
+        },
+        {
+          "name": "NATIONALITY",
           "mandatory": true
         }
       ]
@@ -278,6 +290,10 @@ Update the platform configuration settings
         },
         {
           "name": "DATE_OF_BIRTH",
+          "mandatory": true
+        },
+        {
+          "name": "NATIONALITY",
           "mandatory": true
         }
       ],
@@ -1616,7 +1632,7 @@ Status Code **200**
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |»»» *anonymous*|object|false|none|none|
-|»»»» type|[TransactionType](#schematransactiontype)|false|none|Type of transaction (incoming payment or outgoing payment)|
+|»»»» type|[TransactionType](#schematransactiontype)|true|none|Type of transaction (incoming payment or outgoing payment)|
 |»»»» receivedAmount|[CurrencyAmount](#schemacurrencyamount)|true|none|none|
 |»»»»» amount|integer(int64)|true|none|Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)|
 |»»»»» currency|[Currency](#schemacurrency)|true|none|none|
@@ -1644,7 +1660,7 @@ Status Code **200**
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |»»» *anonymous*|object|false|none|none|
-|»»»» type|[TransactionType](#schematransactiontype)|false|none|Type of transaction (incoming payment or outgoing payment)|
+|»»»» type|[TransactionType](#schematransactiontype)|true|none|Type of transaction (incoming payment or outgoing payment)|
 |»»»» sentAmount|[CurrencyAmount](#schemacurrencyamount)|true|none|none|
 |»»»» receivedAmount|[CurrencyAmount](#schemacurrencyamount)|false|none|none|
 |»»»» exchangeRate|number|false|none|Number of sending currency units per receiving currency unit.|
@@ -1680,6 +1696,238 @@ Status Code **200**
 |type|OUTGOING|
 |type|INCOMING|
 |type|OUTGOING|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BasicAuth
+</aside>
+
+## approvePendingPayment
+
+<a id="opIdapprovePendingPayment"></a>
+
+> Code samples
+
+```javascript
+const inputBody = '{
+  "receiverUserInfo": {}
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+};
+
+fetch('https://api.uma.money/umaaas/rc/transactions/{transactionId}/approve',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('https://api.uma.money/umaaas/rc/transactions/{transactionId}/approve', headers = headers)
+
+print(r.json())
+
+```
+
+`POST /transactions/{transactionId}/approve`
+
+*Approve a pending incoming payment*
+
+Approve a pending incoming payment that was previously acknowledged with a 202 response.
+This endpoint allows platforms to asynchronously approve payments after async processing.
+
+> Body parameter
+
+```json
+{
+  "receiverUserInfo": {}
+}
+```
+
+<h3 id="approvependingpayment-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|transactionId|path|string|true|Unique identifier of the transaction to approve|
+|body|body|object|false|none|
+|» receiverUserInfo|body|object|false|Information about the recipient, provided by the platform if requested in the original webhook via `requestedReceiverUserInfoFields`.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
+  "status": "CREATED",
+  "type": "INCOMING",
+  "senderUmaAddress": "$sender@external.domain",
+  "receiverUmaAddress": "$recipient@uma.domain",
+  "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
+  "platformUserId": "18d3e5f7b4a9c2",
+  "settledAt": "2023-08-15T14:30:00Z",
+  "createdAt": "2023-08-15T14:25:18Z",
+  "description": "Payment for invoice #1234",
+  "counterpartyInformation": {
+    "FULL_NAME": "John Sender",
+    "DATE_OF_BIRTH": "1985-06-15",
+    "NATIONALITY": "DE"
+  },
+  "receivedAmount": {
+    "amount": 12550,
+    "currency": {
+      "code": "USD",
+      "name": "United States Dollar",
+      "symbol": "$",
+      "decimals": 2
+    }
+  },
+  "reconciliationInstructions": {
+    "reference": "UMA-Q12345-REF"
+  }
+}
+```
+
+<h3 id="approvependingpayment-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Payment approved successfully|[IncomingTransaction](#schemaincomingtransaction)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request - Invalid parameters or payment cannot be approved|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Transaction not found|[Error](#schemaerror)|
+|409|[Conflict](https://tools.ietf.org/html/rfc7231#section-6.5.8)|Conflict - Payment is not in a pending state or has already been processed or timed out.|[Error](#schemaerror)|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+BasicAuth
+</aside>
+
+## rejectPendingPayment
+
+<a id="opIdrejectPendingPayment"></a>
+
+> Code samples
+
+```javascript
+const inputBody = '{
+  "reason": "RESTRICTED_JURISDICTION"
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json'
+};
+
+fetch('https://api.uma.money/umaaas/rc/transactions/{transactionId}/reject',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json'
+}
+
+r = requests.post('https://api.uma.money/umaaas/rc/transactions/{transactionId}/reject', headers = headers)
+
+print(r.json())
+
+```
+
+`POST /transactions/{transactionId}/reject`
+
+*Reject a pending incoming payment*
+
+Reject a pending incoming payment that was previously acknowledged with a 202 response.
+This endpoint allows platforms to asynchronously reject payments after additional processing.
+
+> Body parameter
+
+```json
+{
+  "reason": "RESTRICTED_JURISDICTION"
+}
+```
+
+<h3 id="rejectpendingpayment-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|transactionId|path|string|true|Unique identifier of the transaction to reject|
+|body|body|object|false|none|
+|» reason|body|string|false|Optional reason for rejecting the payment. This is just for debugging purposes or can be used for a platform's own purposes.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
+  "status": "CREATED",
+  "type": "INCOMING",
+  "senderUmaAddress": "$sender@external.domain",
+  "receiverUmaAddress": "$recipient@uma.domain",
+  "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
+  "platformUserId": "18d3e5f7b4a9c2",
+  "settledAt": "2023-08-15T14:30:00Z",
+  "createdAt": "2023-08-15T14:25:18Z",
+  "description": "Payment for invoice #1234",
+  "counterpartyInformation": {
+    "FULL_NAME": "John Sender",
+    "DATE_OF_BIRTH": "1985-06-15",
+    "NATIONALITY": "DE"
+  },
+  "receivedAmount": {
+    "amount": 12550,
+    "currency": {
+      "code": "USD",
+      "name": "United States Dollar",
+      "symbol": "$",
+      "decimals": 2
+    }
+  },
+  "reconciliationInstructions": {
+    "reference": "UMA-Q12345-REF"
+  }
+}
+```
+
+<h3 id="rejectpendingpayment-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Payment rejected successfully|[IncomingTransaction](#schemaincomingtransaction)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request - Invalid parameters or payment cannot be rejected|[Error](#schemaerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Transaction not found|[Error](#schemaerror)|
+|409|[Conflict](https://tools.ietf.org/html/rfc7231#section-6.5.8)|Conflict - Payment is not in a pending state or has already been processed or timed out.|[Error](#schemaerror)|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -4127,6 +4375,10 @@ Name of a type of field containing info about a platform's user or counterparty 
     {
       "name": "DATE_OF_BIRTH",
       "mandatory": true
+    },
+    {
+      "name": "NATIONALITY",
+      "mandatory": true
     }
   ],
   "umaProviderRequiredUserFields": [
@@ -4171,6 +4423,10 @@ Name of a type of field containing info about a platform's user or counterparty 
         },
         {
           "name": "DATE_OF_BIRTH",
+          "mandatory": true
+        },
+        {
+          "name": "NATIONALITY",
           "mandatory": true
         }
       ],
@@ -4484,7 +4740,7 @@ and
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |*anonymous*|object|false|none|none|
-|» type|[TransactionType](#schematransactiontype)|false|none|Always "INCOMING" for incoming transactions|
+|» type|[TransactionType](#schematransactiontype)|true|none|Always "INCOMING" for incoming transactions|
 |» receivedAmount|[CurrencyAmount](#schemacurrencyamount)|true|none|Amount received in the recipient's currency|
 |» reconciliationInstructions|[ReconciliationInstructions](#schemareconciliationinstructions)|false|none|Included for all transactions except those with "CREATED" status|
 
@@ -4555,7 +4811,7 @@ and
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |*anonymous*|object|false|none|none|
-|» type|[TransactionType](#schematransactiontype)|false|none|Always "OUTGOING" for outgoing transactions|
+|» type|[TransactionType](#schematransactiontype)|true|none|Always "OUTGOING" for outgoing transactions|
 |» sentAmount|[CurrencyAmount](#schemacurrencyamount)|true|none|Amount sent in the sender's currency|
 |» receivedAmount|[CurrencyAmount](#schemacurrencyamount)|false|none|Amount to be received by recipient in the recipient's currency|
 |» exchangeRate|number|false|none|Number of sending currency units per receiving currency unit.|

@@ -17,6 +17,7 @@
 # import models into model package
 from umaaas_api.models.address import Address
 from umaaas_api.models.api_token import ApiToken
+from umaaas_api.models.approve_pending_payment_request import ApprovePendingPaymentRequest
 from umaaas_api.models.bank_account_type import BankAccountType
 from umaaas_api.models.bulk_upload_webhook_request import BulkUploadWebhookRequest
 from umaaas_api.models.bulk_user_import_job import BulkUserImportJob
@@ -40,6 +41,7 @@ from umaaas_api.models.get_transaction_by_id200_response import GetTransactionBy
 from umaaas_api.models.iban_account_info import IbanAccountInfo
 from umaaas_api.models.incoming_payment_webhook200_response import IncomingPaymentWebhook200Response
 from umaaas_api.models.incoming_payment_webhook403_response import IncomingPaymentWebhook403Response
+from umaaas_api.models.incoming_payment_webhook422_response import IncomingPaymentWebhook422Response
 from umaaas_api.models.incoming_payment_webhook_request import IncomingPaymentWebhookRequest
 from umaaas_api.models.incoming_transaction import IncomingTransaction
 from umaaas_api.models.individual_update import IndividualUpdate
@@ -67,6 +69,7 @@ from umaaas_api.models.quote import Quote
 from umaaas_api.models.quote_lock_side import QuoteLockSide
 from umaaas_api.models.reconciliation_instructions import ReconciliationInstructions
 from umaaas_api.models.refund import Refund
+from umaaas_api.models.reject_pending_payment_request import RejectPendingPaymentRequest
 from umaaas_api.models.sandbox_receive_request import SandboxReceiveRequest
 from umaaas_api.models.sandbox_send_request import SandboxSendRequest
 from umaaas_api.models.test_webhook_request import TestWebhookRequest

@@ -11,6 +11,7 @@ README.md
 docs/APITokensApi.md
 docs/Address.md
 docs/ApiToken.md
+docs/ApprovePendingPaymentRequest.md
 docs/BankAccountType.md
 docs/BulkUploadWebhookRequest.md
 docs/BulkUserImportJob.md
@@ -34,6 +35,7 @@ docs/GetTransactionById200Response.md
 docs/IbanAccountInfo.md
 docs/IncomingPaymentWebhook200Response.md
 docs/IncomingPaymentWebhook403Response.md
+docs/IncomingPaymentWebhook422Response.md
 docs/IncomingPaymentWebhookRequest.md
 docs/IncomingTransaction.md
 docs/IndividualUpdate.md
@@ -63,6 +65,7 @@ docs/Quote.md
 docs/QuoteLockSide.md
 docs/ReconciliationInstructions.md
 docs/Refund.md
+docs/RejectPendingPaymentRequest.md
 docs/SandboxApi.md
 docs/SandboxReceiveRequest.md
 docs/SandboxSendRequest.md
@@ -115,6 +118,7 @@ umaaas_api/exceptions.py
 umaaas_api/models/__init__.py
 umaaas_api/models/address.py
 umaaas_api/models/api_token.py
+umaaas_api/models/approve_pending_payment_request.py
 umaaas_api/models/bank_account_type.py
 umaaas_api/models/bulk_upload_webhook_request.py
 umaaas_api/models/bulk_user_import_job.py
@@ -138,6 +142,7 @@ umaaas_api/models/get_transaction_by_id200_response.py
 umaaas_api/models/iban_account_info.py
 umaaas_api/models/incoming_payment_webhook200_response.py
 umaaas_api/models/incoming_payment_webhook403_response.py
+umaaas_api/models/incoming_payment_webhook422_response.py
 umaaas_api/models/incoming_payment_webhook_request.py
 umaaas_api/models/incoming_transaction.py
 umaaas_api/models/individual_update.py
@@ -165,6 +170,7 @@ umaaas_api/models/quote.py
 umaaas_api/models/quote_lock_side.py
 umaaas_api/models/reconciliation_instructions.py
 umaaas_api/models/refund.py
+umaaas_api/models/reject_pending_payment_request.py
 umaaas_api/models/sandbox_receive_request.py
 umaaas_api/models/sandbox_send_request.py
 umaaas_api/models/test_webhook_request.py
