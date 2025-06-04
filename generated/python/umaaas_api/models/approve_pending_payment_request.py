@@ -18,20 +18,17 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
-class IncomingPaymentWebhook403Response(BaseModel):
+class ApprovePendingPaymentRequest(BaseModel):
     """
-    IncomingPaymentWebhook403Response
+    ApprovePendingPaymentRequest
     """ # noqa: E501
-    code: Optional[StrictStr] = Field(default=None, description="Error code")
-    message: Optional[StrictStr] = Field(default=None, description="Error message")
-    details: Optional[Dict[str, Any]] = Field(default=None, description="Additional error details")
-    reason: Optional[StrictStr] = Field(default=None, description="Optional reason for rejecting the payment. This is just for debugging purposes or can be used for a platform's own purposes.")
-    __properties: ClassVar[List[str]] = ["code", "message", "details", "reason"]
+    receiver_user_info: Optional[Dict[str, Any]] = Field(default=None, description="Information about the recipient, provided by the platform if requested in the original webhook via `requestedReceiverUserInfoFields`.", alias="receiverUserInfo")
+    __properties: ClassVar[List[str]] = ["receiverUserInfo"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -51,7 +48,7 @@ class IncomingPaymentWebhook403Response(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of IncomingPaymentWebhook403Response from a JSON string"""
+        """Create an instance of ApprovePendingPaymentRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -74,7 +71,7 @@ class IncomingPaymentWebhook403Response(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of IncomingPaymentWebhook403Response from a dict"""
+        """Create an instance of ApprovePendingPaymentRequest from a dict"""
         if obj is None:
             return None
 
@@ -82,10 +79,7 @@ class IncomingPaymentWebhook403Response(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "code": obj.get("code"),
-            "message": obj.get("message"),
-            "details": obj.get("details"),
-            "reason": obj.get("reason")
+            "receiverUserInfo": obj.get("receiverUserInfo")
         })
         return _obj
 
