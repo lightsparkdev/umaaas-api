@@ -24,12 +24,12 @@ export interface BaseWebhookEvent {
 }
 
 export interface WebhookUserData {
-  fullName?: string;
-  dateOfBirth?: string;
-  nationality?: string;
-  email?: string;
-  phoneNumber?: string;
-  address?: Address;
+  FULL_NAME?: string;
+  DATE_OF_BIRTH?: string;
+  NATIONALITY?: string;
+  EMAIL?: string;
+  PHONE_NUMBER?: string;
+  ADDRESS?: Address;
 }
 
 // Incoming payment webhook

@@ -1,9 +1,11 @@
+import { WebhookEvent } from "./webhook-utils";
+
 // In-memory webhook event queue
 interface WebhookEventData {
   id: string;
   type: string;
   created: number;
-  data: unknown;
+  data: WebhookEvent;
   receivedAt: number;
 }
 

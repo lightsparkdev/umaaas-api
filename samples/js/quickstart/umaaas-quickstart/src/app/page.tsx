@@ -90,6 +90,9 @@ export default function Home() {
   const [isSendingPayment, setIsSendingPayment] = useState(false);
   const [sendPaymentResponse, setSendPaymentResponse] = useState<{ status: number | string; data: unknown } | null>(null);
 
+  const [isReceivingSandboxPayment, setIsReceivingSandboxPayment] = useState(false);
+  const [receiveSandboxPaymentResponse, setReceiveSandboxPaymentResponse] = useState<{ status: number | string; data: unknown } | null>(null);
+
   const [webhookEvents, setWebhookEvents] = useState<WebhookEventData[]>([]);
   const [isConnectedToWebhooks, setIsConnectedToWebhooks] = useState(false);
 
@@ -356,6 +359,49 @@ export default function Home() {
       setSendPaymentResponse({ status: 'error', data: { error: 'Network error' } });
     } finally {
       setIsSendingPayment(false);
+    }
+  };
+
+  const handleReceiveSandboxPayment = async () => {
+    if (!currUser?.id) {
+      setReceiveSandboxPaymentResponse({ status: 'error', data: { error: 'Current user not available.' } });
+      return;
+    }
+
+    const receivingCurrencyCode = process.env.NEXT_PUBLIC_CURRENCY;
+    if (!receivingCurrencyCode) {
+      setReceiveSandboxPaymentResponse({ status: 'error', data: { error: 'NEXT_PUBLIC_CURRENCY environment variable is not set.' } });
+      return;
+    }
+
+    setIsReceivingSandboxPayment(true);
+    setReceiveSandboxPaymentResponse(null);
+
+    try {
+      const receivingAmountSmallestUnit = convertToSmallestUnit('10', receivingCurrencyCode);
+
+      const requestBody = {
+        userId: currUser.id,
+        receivingCurrencyAmount: receivingAmountSmallestUnit,
+        receivingCurrencyCode: receivingCurrencyCode,
+        senderUmaAddress: '$success.usd@sandbox.umaaas.money.dev.dev.sparkinfra.net',
+      };
+
+      const res = await fetch('/api/sandbox/receive', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      const data = await res.json();
+      setReceiveSandboxPaymentResponse({ status: res.status, data });
+    } catch (error) {
+      console.error('Error receiving sandbox payment:', error);
+      setReceiveSandboxPaymentResponse({ status: 'error', data: { error: 'Network error or other issue receiving payment.' } });
+    } finally {
+      setIsReceivingSandboxPayment(false);
     }
   };
 
@@ -698,7 +744,7 @@ export default function Home() {
 
         {quoteResponse && quoteResponse.status === 200 && (
           <div className="bg-white rounded-lg shadow-lg p-6 mt-8">
-            <h2 className="text-xl font-semibold mb-6">Simulate Sandbox Payment</h2>
+            <h2 className="text-xl font-semibold mb-6">Simulate Sending Sandbox Payment</h2>
             
             <div className="space-y-4">
               <p className="text-gray-600">
@@ -722,6 +768,43 @@ export default function Home() {
                   </h3>
                   <pre className="bg-gray-100 p-3 rounded text-sm overflow-auto">
                     {JSON.stringify(sendPaymentResponse.data, null, 2)}
+                  </pre>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {currUser && (
+          <div className="bg-white rounded-lg shadow-lg p-6 mt-8">
+            <h2 className="text-xl font-semibold mb-6">Simulate Receiving Sandbox Payment</h2>
+            <div className="space-y-4">
+              <p className="text-gray-600">
+                Simulate receiving a payment of $10.00 {process.env.NEXT_PUBLIC_CURRENCY || '[CURRENCY NOT SET]'} from {'$php@test.uma.me'} for the current user.
+              </p>
+              <div className="flex justify-center">
+                <button
+                  onClick={handleReceiveSandboxPayment}
+                  disabled={isReceivingSandboxPayment || !currUser?.id || !process.env.NEXT_PUBLIC_CURRENCY}
+                  className="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isReceivingSandboxPayment 
+                    ? 'Receiving Payment...' 
+                    : `Receive Sandbox Payment`}
+                </button>
+              </div>
+              {!process.env.NEXT_PUBLIC_CURRENCY && (
+                <p className="text-center text-red-500 text-sm">
+                  Error: NEXT_PUBLIC_CURRENCY environment variable is not set. This feature is disabled.
+                </p>
+              )}
+              {receiveSandboxPaymentResponse && (
+                <div className="p-4 rounded-md border">
+                  <h3 className="text-lg font-medium mb-2">
+                    Receive Payment Response {receiveSandboxPaymentResponse.status === 200 || receiveSandboxPaymentResponse.status === 201 ? '(Success)' : '(Error)'}:
+                  </h3>
+                  <pre className="bg-gray-100 p-3 rounded text-sm overflow-auto">
+                    {JSON.stringify(receiveSandboxPaymentResponse.data, null, 2)}
                   </pre>
                 </div>
               )}

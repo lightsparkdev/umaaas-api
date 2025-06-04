@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
         try {
           controller.close();
         } catch (error) {
-          // Controller might already be closed
+          console.log(`Error: ${error}`)
         }
       };
 

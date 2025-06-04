@@ -6,15 +6,15 @@ import {
   verifyWebhookSignature,
   parseWebhookEvent,
   IncomingPaymentWebhookResponse,
-} from '@/lib/webhook-helpers';
+} from '@/lib/webhook-utils';
 
 const SAMPLE_USER: WebhookUserData = {
-  fullName: "Webhook User",
-  dateOfBirth: "1980-01-01",
-  nationality: "US",
-  email: "webhook.user@example.com",
-  phoneNumber: "+15105551212",
-  address: {
+  FULL_NAME: "Webhook User",
+  DATE_OF_BIRTH: "1980-01-01",
+  NATIONALITY: "US",
+  EMAIL: "webhook.user@example.com",
+  PHONE_NUMBER: "+15105551212",
+  ADDRESS: {
     line1: "123 Sample St",
     city: "Sampleville",
     state: "CA",
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<{ receive
     
     console.log('Received webhook:', JSON.stringify(webhookEvent, null, 2));
 
-    // Add to event queue for SSE broadcasting (transform to expected format)
+    // Add to event queue to display in frontend
     webhookEventQueue.addEvent({
       id: webhookEvent.webhookId,
       type: webhookEvent.type,
@@ -72,22 +72,22 @@ export async function POST(request: NextRequest): Promise<NextResponse<{ receive
             for (const requestedField of webhookEvent.requestedReceiverUserInfoFields) {
               switch (requestedField.name) {
                 case 'FULL_NAME':
-                  responseUserData.fullName = SAMPLE_USER.fullName;
+                  responseUserData.FULL_NAME = SAMPLE_USER.FULL_NAME;
                   break;
                 case 'DATE_OF_BIRTH':
-                  responseUserData.dateOfBirth = SAMPLE_USER.dateOfBirth;
+                  responseUserData.DATE_OF_BIRTH = SAMPLE_USER.DATE_OF_BIRTH;
                   break;
                 case 'NATIONALITY':
-                  responseUserData.nationality = SAMPLE_USER.nationality;
+                  responseUserData.NATIONALITY = SAMPLE_USER.NATIONALITY;
                   break;
                 case 'EMAIL':
-                  responseUserData.email = SAMPLE_USER.email;
+                  responseUserData.EMAIL = SAMPLE_USER.EMAIL;
                   break;
                 case 'PHONE_NUMBER':
-                  responseUserData.phoneNumber = SAMPLE_USER.phoneNumber;
+                  responseUserData.PHONE_NUMBER = SAMPLE_USER.PHONE_NUMBER;
                   break;
                 case 'ADDRESS':
-                  responseUserData.address = SAMPLE_USER.address;
+                  responseUserData.ADDRESS = SAMPLE_USER.ADDRESS;
                   break;
               }
             }
@@ -96,6 +96,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<{ receive
           const response: IncomingPaymentWebhookResponse = {
             receiverUserInfo: responseUserData,
           };
+          console.log(`Webhook Response: ${JSON.stringify(response, null, 2)}`);
           return NextResponse.json(response, { status: 200 });
           
           // You could return 403 to reject:
