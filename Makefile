@@ -14,9 +14,6 @@ build-python:
 build-markdown:
 	npm run build:markdown
 
-serve-redoc:
-	npm run serve:redoc
-
 build-docs:
 	cd docusaurus-docs && npm run build
 
