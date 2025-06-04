@@ -280,4 +280,3 @@ sequenceDiagram
         UMAaaS->>Sender: Failed payreq response.
     end
 ```
-
