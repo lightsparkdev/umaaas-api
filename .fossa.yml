@@ -1,0 +1,6 @@
+version: 3
+
+project:
+  id: lightspark/umaaas-api 
+  name: umaaas-api
+  url: https://github.com/lightsparkdev/umaaas-api
