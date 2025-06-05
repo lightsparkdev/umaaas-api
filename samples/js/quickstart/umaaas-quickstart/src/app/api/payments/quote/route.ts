@@ -4,9 +4,11 @@ import type { QuoteCreateParams, Quote } from 'uaas-test/resources/quotes';
 
 export async function POST(request: NextRequest): Promise<NextResponse<Quote | { error: string }>> {
   try {
-    const quoteParams: QuoteCreateParams = await request.json();
+    const requestBody = await request.json() as QuoteCreateParams;
+    console.log(`Quote request: ${JSON.stringify(requestBody, null, 2)}`);
 
-    const quote = await uaasClient.quotes.create(quoteParams);
+
+    const quote = await uaasClient.quotes.create(requestBody);
     
     return NextResponse.json(quote);
   } catch (error) {

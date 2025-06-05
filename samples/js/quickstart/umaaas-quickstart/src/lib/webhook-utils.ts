@@ -4,7 +4,7 @@ import type {
   OutgoingTransaction,
 } from 'uaas-test/resources/transactions';
 import type { UmaInvitation } from 'uaas-test/resources/invitations';
-import type { CounterpartyFieldDefinition } from 'uaas-test/resources/config';
+import type { CounterpartyFieldDefinition } from 'uaas-test/resources/receiver';
 import { Address } from 'uaas-test/resources';
 
 // WebhookType enum from OpenAPI schema

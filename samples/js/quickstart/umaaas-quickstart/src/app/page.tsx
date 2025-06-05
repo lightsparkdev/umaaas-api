@@ -31,30 +31,63 @@ interface FormData {
 }
 
 export default function Home() {
-  const [formData, setFormData] = useState<FormData>(() => ({
-    platformUserId: faker.string.uuid(),
-    umaAddress: `$${faker.internet.username().toLowerCase()}@${process.env.NEXT_PUBLIC_UAAS_UMA_DOMAIN || (typeof window !== 'undefined' ? window.location.hostname : 'localhost:3000')}`,
+  const [formData, setFormData] = useState<FormData>({
+    platformUserId: '',
+    umaAddress: '',
     userType: 'INDIVIDUAL',
-    fullName: faker.person.fullName(),
-    dateOfBirth: faker.date.birthdate({ min: 18, max: 80, mode: 'age' }).toISOString().split('T')[0],
+    fullName: '',
+    dateOfBirth: '',
     nationality: 'US',
     address: {
-      line1: faker.location.streetAddress(),
-      line2: faker.location.secondaryAddress(),
-      city: faker.location.city(),
-      state: faker.location.state({ abbreviated: true }),
-      postalCode: faker.location.zipCode(),
+      line1: '',
+      line2: '',
+      city: '',
+      state: '',
+      postalCode: '',
       country: 'US',
     },
     bankAccountInfo: {
       accountType: 'US_ACCOUNT',
-      accountNumber: faker.finance.accountNumber(11),
-      routingNumber: faker.finance.routingNumber(),
-      accountCategory: faker.helpers.arrayElement(['CHECKING', 'SAVINGS']),
-      bankName: faker.company.name() + ' Bank',
-      platformAccountId: faker.string.uuid(),
+      accountNumber: '',
+      routingNumber: '',
+      accountCategory: 'CHECKING',
+      bankName: '',
+      platformAccountId: '',
     },
-  }));
+  });
+
+  // Generate initial faker data on client side only
+  useEffect(() => {
+    const generateInitialData = () => {
+      const domain = process.env.NEXT_PUBLIC_UAAS_UMA_DOMAIN || window.location.hostname;
+      return {
+        platformUserId: faker.string.uuid(),
+        umaAddress: `$${faker.internet.username().toLowerCase()}@${domain}`,
+        userType: 'INDIVIDUAL' as const,
+        fullName: faker.person.fullName(),
+        dateOfBirth: faker.date.birthdate({ min: 18, max: 80, mode: 'age' }).toISOString().split('T')[0],
+        nationality: 'US',
+        address: {
+          line1: faker.location.streetAddress(),
+          line2: faker.location.secondaryAddress(),
+          city: faker.location.city(),
+          state: faker.location.state({ abbreviated: true }),
+          postalCode: faker.location.zipCode(),
+          country: 'US',
+        },
+        bankAccountInfo: {
+          accountType: 'US_ACCOUNT' as const,
+          accountNumber: faker.finance.accountNumber(11),
+          routingNumber: faker.finance.routingNumber(),
+          accountCategory: faker.helpers.arrayElement(['CHECKING', 'SAVINGS']) as 'CHECKING' | 'SAVINGS',
+          bankName: faker.company.name() + ' Bank',
+          platformAccountId: faker.string.uuid(),
+        },
+      };
+    };
+
+    setFormData(generateInitialData());
+  }, []);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [response, setResponse] = useState<{ status: number | string; data: unknown } | null>(null);
@@ -63,6 +96,7 @@ export default function Home() {
     id?: string;
     umaAddress?: string;
     fullName?: string;
+    email?: string; // Changed to lowercase for state
     platformUserId?: string;
     createdAt?: string;
   }>>([]);
@@ -71,6 +105,7 @@ export default function Home() {
     id?: string;
     umaAddress?: string;
     fullName?: string;
+    email?: string; // Changed to lowercase for state
     platformUserId?: string;
     createdAt?: string;
   } | null>(null);
@@ -150,9 +185,10 @@ export default function Home() {
   };
 
   const generateNewData = () => {
+    const domain = process.env.NEXT_PUBLIC_UAAS_UMA_DOMAIN || (typeof window !== 'undefined' ? window.location.hostname : 'localhost:3000');
     setFormData({
       platformUserId: faker.string.uuid(),
-      umaAddress: `$${faker.internet.username().toLowerCase()}@${process.env.NEXT_PUBLIC_UAAS_UMA_DOMAIN || (typeof window !== 'undefined' ? window.location.hostname : 'localhost:3000')}`,
+      umaAddress: `$${faker.internet.username().toLowerCase()}@${domain}`,
       userType: 'INDIVIDUAL',
       fullName: faker.person.fullName(),
       dateOfBirth: faker.date.birthdate({ min: 18, max: 80, mode: 'age' }).toISOString().split('T')[0],
@@ -195,9 +231,11 @@ export default function Home() {
       setResponse({ status: res.status, data });
       
       // If user creation was successful, add to users list
-      if (res.status === 201 && data) {
-        setCurrUser(data);
-        setUsers(prevUsers => [data, ...prevUsers]);
+      if (res.status === 201 && data && data.umaAddress) {
+        const derivedEmail = data.umaAddress.startsWith('$') ? data.umaAddress.substring(1) : data.umaAddress;
+        const userWithEmail = { ...data, email: derivedEmail }; // Use lowercase 'email' here
+        setCurrUser(userWithEmail);
+        setUsers(prevUsers => [userWithEmail, ...prevUsers]);
       }
     } catch {
       setResponse({ status: 'error', data: { error: 'Network error' } });
@@ -292,7 +330,10 @@ export default function Home() {
     setQuoteResponse(null);
 
     try {
-      const lookupData = lookupResponse.data as { lookupId: string };
+      const lookupData = lookupResponse.data as { 
+        lookupId: string; 
+        requiredPayerDataFields?: Array<{ name: string; mandatory: boolean }>;
+      };
       const lockedCurrencySide = lastEditedField === 'receiving' ? 'RECEIVING' : 'SENDING';
       
       // Convert amount to smallest unit based on the locked currency's decimal places
@@ -306,8 +347,24 @@ export default function Home() {
         lookupId: lookupData.lookupId,
         sendingCurrencyCode: 'USD',
         receivingCurrencyCode: receivingCurrency,
-        description: 'quickstart transaction'
+        description: 'quickstart transaction',
+        senderUserInfo: {}, // Changed payerData to senderUserInfo
       };
+
+      if (currUser && lookupData.requiredPayerDataFields) {
+        const newSenderUserInfo: Record<string, string | undefined> = {};
+        lookupData.requiredPayerDataFields.forEach(field => {
+          if (field.name === 'EMAIL' && currUser.email) { // Use lowercase currUser.email
+            newSenderUserInfo.EMAIL = currUser.email; // Assign to uppercase EMAIL for request
+          } else if (field.name === 'FULL_NAME' && currUser.fullName) {
+            newSenderUserInfo.FULL_NAME = currUser.fullName;
+          }
+          // Add other fields here if necessary
+        });
+        if (Object.keys(newSenderUserInfo).length > 0) {
+          requestBody.senderUserInfo = newSenderUserInfo; // Changed payerData to senderUserInfo
+        }
+      }
 
       const res = await fetch('/api/payments/quote', {
         method: 'POST',
@@ -451,6 +508,11 @@ export default function Home() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
+                {formData.umaAddress && (
+                  <p className="mt-1 text-xs text-gray-500">
+                    Email: {formData.umaAddress.startsWith('$') ? formData.umaAddress.substring(1) : formData.umaAddress}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -780,7 +842,7 @@ export default function Home() {
             <h2 className="text-xl font-semibold mb-6">Simulate Receiving Sandbox Payment</h2>
             <div className="space-y-4">
               <p className="text-gray-600">
-                Simulate receiving a payment of $10.00 {process.env.NEXT_PUBLIC_CURRENCY || '[CURRENCY NOT SET]'} from {'$php@test.uma.me'} for the current user.
+                Simulate receiving a payment of $10.00 {process.env.NEXT_PUBLIC_CURRENCY || '[CURRENCY NOT SET]'} from {'$success.usd@'} for the current user.
               </p>
               <div className="flex justify-center">
                 <button
