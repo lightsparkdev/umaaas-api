@@ -1002,7 +1002,7 @@ export default function Home() {
             </div>
           ) : (
             <div className="text-center py-8 text-gray-500">
-              {isLoadingTransactions ? 'Loading transactions...' : 'No transactions found. Click "Fetch Transactions" to load transactions.'}
+              {isLoadingTransactions ? 'Loading transactions...' : 'Click "Fetch Transactions" to load transactions.'}
             </div>
           )}
         </div>
