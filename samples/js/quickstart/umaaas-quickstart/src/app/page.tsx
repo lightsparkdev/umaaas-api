@@ -131,6 +131,21 @@ export default function Home() {
   const [webhookEvents, setWebhookEvents] = useState<WebhookEventData[]>([]);
   const [isConnectedToWebhooks, setIsConnectedToWebhooks] = useState(false);
 
+  const [transactions, setTransactions] = useState<Array<{
+    id: string;
+    type: 'INCOMING' | 'OUTGOING';
+    status: string;
+    senderUmaAddress: string;
+    receiverUmaAddress: string;
+    createdAt?: string;
+    settledAt?: string;
+    sentAmount?: { amount: number; currency: { code: string } };
+    receivedAmount?: { amount: number; currency: { code: string } };
+    exchangeRate?: number;
+    fees?: number;
+  }>>([]);
+  const [isLoadingTransactions, setIsLoadingTransactions] = useState(false);
+
   // Set up Server-Sent Events connection for webhooks
   useEffect(() => {
     const eventSource = new EventSource('/api/webhooks/events');
@@ -263,6 +278,25 @@ export default function Home() {
     }
   };
 
+  const fetchTransactions = async () => {
+    setIsLoadingTransactions(true);
+    try {
+      const res = await fetch('/api/transactions');
+      const data = await res.json();
+      if (res.ok) {
+        setTransactions(data.data || []);
+      } else {
+        console.error('Error fetching transactions:', data);
+        setTransactions([]);
+      }
+    } catch (error) {
+      console.error('Network error fetching transactions:', error);
+      setTransactions([]);
+    } finally {
+      setIsLoadingTransactions(false);
+    }
+  };
+
   const handleLookup = async () => {
     if (!lookupAddress) return;
     
@@ -309,11 +343,11 @@ export default function Home() {
     try {
       if (field === 'usd') {
         // User updated sending amount: receiving = exchangeRate * sending
-        const convertedAmount = (supportedCurrency.estimatedExchangeRate/100) * parseFloat(amount);
+        const convertedAmount = (supportedCurrency.estimatedExchangeRate) * parseFloat(amount);
         setReceivingAmount(convertedAmount.toFixed(6));
       } else {
         // User updated receiving amount: sending = receiving / exchangeRate
-        const convertedAmount = parseFloat(amount) / (supportedCurrency.estimatedExchangeRate/100);
+        const convertedAmount = parseFloat(amount) / (supportedCurrency.estimatedExchangeRate);
         setUsdAmount(convertedAmount.toFixed(6));
       }
     } catch (error) {
@@ -873,6 +907,105 @@ export default function Home() {
             </div>
           </div>
         )}
+
+        <div className="bg-white rounded-lg shadow-lg p-6 mt-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold">All Transactions</h2>
+            <button
+              onClick={fetchTransactions}
+              disabled={isLoadingTransactions}
+              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {isLoadingTransactions ? 'Loading...' : 'Fetch Transactions'}
+            </button>
+          </div>
+
+          {transactions.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="min-w-full table-auto border-collapse">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="border border-gray-300 px-2 py-2 text-left font-medium text-gray-700 text-xs">ID</th>
+                    <th className="border border-gray-300 px-2 py-2 text-left font-medium text-gray-700 text-xs">Type</th>
+                    <th className="border border-gray-300 px-2 py-2 text-left font-medium text-gray-700 text-xs">Status</th>
+                    <th className="border border-gray-300 px-2 py-2 text-left font-medium text-gray-700 text-xs">Sender UMA</th>
+                    <th className="border border-gray-300 px-2 py-2 text-left font-medium text-gray-700 text-xs">Receiver UMA</th>
+                    <th className="border border-gray-300 px-2 py-2 text-left font-medium text-gray-700 text-xs">Sent Amount</th>
+                    <th className="border border-gray-300 px-2 py-2 text-left font-medium text-gray-700 text-xs">Received Amount</th>
+                    <th className="border border-gray-300 px-2 py-2 text-left font-medium text-gray-700 text-xs">Exchange Rate</th>
+                    <th className="border border-gray-300 px-2 py-2 text-left font-medium text-gray-700 text-xs">Fees</th>
+                    <th className="border border-gray-300 px-2 py-2 text-left font-medium text-gray-700 text-xs">Created At</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {transactions.map((transaction, index) => (
+                    <tr key={transaction.id || index} className="hover:bg-gray-50">
+                      <td className="border border-gray-300 px-2 py-2 text-xs">
+                        {truncateText(transaction.id || 'N/A', 15)}
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2 text-xs">
+                        <span className={`px-2 py-1 rounded text-xs font-medium ${
+                          transaction.type === 'INCOMING' 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-blue-100 text-blue-800'
+                        }`}>
+                          {transaction.type}
+                        </span>
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2 text-xs">
+                        <span className={`px-2 py-1 rounded text-xs font-medium ${
+                          transaction.status === 'COMPLETED' 
+                            ? 'bg-green-100 text-green-800'
+                            : transaction.status === 'PENDING' || transaction.status === 'PROCESSING'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : transaction.status === 'FAILED' || transaction.status === 'REJECTED'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {transaction.status}
+                        </span>
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2 text-xs">
+                        {truncateText(transaction.senderUmaAddress || 'N/A', 20)}
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2 text-xs">
+                        {truncateText(transaction.receiverUmaAddress || 'N/A', 20)}
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2 text-xs">
+                        {transaction.sentAmount 
+                          ? `${(transaction.sentAmount.amount / 100).toFixed(2)} ${transaction.sentAmount.currency.code}`
+                          : 'N/A'
+                        }
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2 text-xs">
+                        {transaction.receivedAmount 
+                          ? `${(transaction.receivedAmount.amount / 100).toFixed(2)} ${transaction.receivedAmount.currency.code}`
+                          : 'N/A'
+                        }
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2 text-xs">
+                        {transaction.exchangeRate ? transaction.exchangeRate.toFixed(4) : 'N/A'}
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2 text-xs">
+                        {transaction.fees && transaction.sentAmount
+                          ? `${(transaction.fees / 100).toFixed(2)} ${transaction.sentAmount.currency.code}`
+                          : 'N/A'
+                        }
+                      </td>
+                      <td className="border border-gray-300 px-2 py-2 text-xs">
+                        {transaction.createdAt ? new Date(transaction.createdAt).toLocaleString() : 'N/A'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              {isLoadingTransactions ? 'Loading transactions...' : 'No transactions found. Click "Fetch Transactions" to load transactions.'}
+            </div>
+          )}
+        </div>
 
         <div className="bg-white rounded-lg shadow-lg p-6 mt-8">
           <div className="flex justify-between items-center mb-6">
