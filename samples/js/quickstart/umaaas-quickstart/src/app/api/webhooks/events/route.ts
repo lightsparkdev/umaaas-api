@@ -1,6 +1,11 @@
 import { NextRequest } from 'next/server';
 import { webhookEventQueue, WebhookEventData } from '@/lib/webhook-events';
 
+type SSEMessage = 
+  | { type: 'connected'; timestamp: number }
+  | { type: 'heartbeat'; timestamp: number }
+  | WebhookEventData;
+
 export async function GET(request: NextRequest) {
   console.log('SSE connection established');
   
@@ -21,7 +26,7 @@ export async function GET(request: NextRequest) {
       console.log('SSE stream started');
       
       // Send initial connection message
-      const sendMessage = (data: any) => {
+      const sendMessage = (data: SSEMessage) => {
         if (!isAlive) return;
         try {
           const message = `data: ${JSON.stringify(data)}\n\n`;
