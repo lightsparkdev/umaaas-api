@@ -102,12 +102,26 @@ export function verifyWebhookSignature(body: string, signatureHeaderValue: strin
       console.error(`Invalid signature version: ${sigHeader.v}, expected: ${VERSION}`);
       return false;
     }
-    const derBuf = Buffer.from(publicKey, 'hex');
-    const pubKeyObj = createPublicKey({
-      key: derBuf,
-      format: 'der',
-      type: 'spki',
-    });
+
+    // Determine if the public key is in PEM or DER format
+    let pubKeyObj;
+    if (publicKey.includes('-----BEGIN') && publicKey.includes('-----END')) {
+      // PEM format - contains BEGIN/END markers
+      pubKeyObj = createPublicKey({
+        key: publicKey,
+        format: 'pem',
+        type: 'spki',
+      });
+    } else {
+      // DER format - assume hex-encoded binary data
+      const derBuf = Buffer.from(publicKey, 'hex');
+      pubKeyObj = createPublicKey({
+        key: derBuf,
+        format: 'der',
+        type: 'spki',
+      });
+    }
+
     const signature = Buffer.from(sigHeader.s, 'base64');
     const verifier = createVerify('SHA256');
     verifier.update(body);
