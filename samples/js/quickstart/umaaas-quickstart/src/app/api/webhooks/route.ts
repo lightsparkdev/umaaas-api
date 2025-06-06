@@ -6,7 +6,7 @@ import {
   verifyWebhookSignature,
   parseWebhookEvent,
   IncomingPaymentWebhookResponse,
-} from '@/lib/webhook-utils';
+} from 'uaas-test/lib/webhook-utils';
 
 const SAMPLE_USER: WebhookUserData = {
   FULL_NAME: "Webhook User",
@@ -112,7 +112,6 @@ export async function POST(request: NextRequest): Promise<NextResponse<{ receive
         
       case WebhookType.OUTGOING_PAYMENT:
         // Record outgoing payment
-        console.log('Outgoing payment webhook:', JSON.stringify(webhookEvent, null, 2));
         break;
         
       case WebhookType.TEST:
