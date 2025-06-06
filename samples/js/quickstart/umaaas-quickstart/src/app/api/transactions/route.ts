@@ -23,6 +23,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<Transactio
     if (searchParams.get('sortOrder')) queryParams.sortOrder = searchParams.get('sortOrder')! as 'asc' | 'desc';
 
     const transactions = await uaasClient.transactions.list(queryParams);
+    console.log('UaaS Client Response [transactions.list]:', JSON.stringify(transactions, null, 2));
     
     return NextResponse.json(transactions);
   } catch (error) {

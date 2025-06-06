@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
     if (senderUmaAddress) lookupParams.senderUmaAddress = senderUmaAddress;
 
     const lookupResult = await uaasClient.receiver.lookup(receiverUmaAddress, lookupParams);
+    console.log('UaaS Client Response [receiver.lookup]:', JSON.stringify(lookupResult, null, 2));
     
     return NextResponse.json(lookupResult);
   } catch (error) {

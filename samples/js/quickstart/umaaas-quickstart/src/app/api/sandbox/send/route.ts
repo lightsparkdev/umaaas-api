@@ -8,6 +8,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<OutgoingT
     const sendFundsParams: SandboxSendFundsParams = await request.json();
     console.log(JSON.stringify(sendFundsParams));
     const response = await uaasClient.sandbox.sendFunds(sendFundsParams);
+    console.log('UaaS Client Response [sandbox.sendFunds]:', JSON.stringify(response, null, 2));
     return NextResponse.json(response);
   } catch (error) {
     console.error('Error sending sandbox funds:', error);

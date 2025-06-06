@@ -30,6 +30,7 @@ export async function POST(request: Request) {
       receivingCurrencyCode,
       senderUmaAddress,
     });
+    console.log('UaaS Client Response [sandbox.receivePayment]:', JSON.stringify(paymentResponse, null, 2));
 
     return NextResponse.json(paymentResponse, { status: 200 });
   } catch (error: unknown) {

@@ -8,6 +8,7 @@ export async function GET(
 ): Promise<NextResponse<TransactionRetrieveResponse | { error: string }>> {
   try {
     const transaction = await uaasClient.transactions.retrieve(params.id);
+    console.log('UaaS Client Response [transactions.retrieve]:', JSON.stringify(transaction, null, 2));
     
     return NextResponse.json(transaction);
   } catch (error) {

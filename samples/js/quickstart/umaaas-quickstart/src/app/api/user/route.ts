@@ -17,6 +17,7 @@ export async function GET(request: NextRequest) {
       platformUserId,
       umaAddress,
     });
+    console.log('UaaS Client Response [users.list]:', JSON.stringify(users, null, 2));
     
     return NextResponse.json(users);
   } catch (error) {
@@ -41,6 +42,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     console.log(body);
     const user = await uaasClient.users.create(body);
+    console.log('UaaS Client Response [users.create]:', JSON.stringify(user, null, 2));
     
     return NextResponse.json(user, { status: 201 });
   } catch (error) {

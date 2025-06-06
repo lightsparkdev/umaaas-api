@@ -9,6 +9,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<Quote | {
 
 
     const quote = await uaasClient.quotes.create(requestBody);
+    console.log('UaaS Client Response [quotes.create]:', JSON.stringify(quote, null, 2));
     
     return NextResponse.json(quote);
   } catch (error) {
