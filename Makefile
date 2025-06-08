@@ -1,4 +1,4 @@
-.PHONY: install build serve-redoc serve-docs build-docs serve-markdown build-markdown lint lint-openapi lint-markdown build-python-models
+.PHONY: install build serve-redoc serve-docs build-docs serve-markdown build-markdown lint lint-openapi lint-markdown build-python-models build-kotlin
 
 install:
 	npm install
@@ -10,6 +10,9 @@ build:
 
 build-python:
 	openapi-generator generate -g python -i openapi.yaml -o generated/python -c codegen-config/python/config.yml
+
+build-kotlin:
+	openapi-generator generate -g kotlin -i openapi.yaml -o generated/kotlin -c codegen-config/kotlin/config.yml
 
 build-markdown:
 	npm run build:markdown

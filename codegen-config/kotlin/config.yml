@@ -1,0 +1,15 @@
+additionalProperties:
+  artifactId: "umaaas-api"
+  artifactVersion: "0.0.1"
+  idea: "true"
+  groupId: "com.lightspark.umaaas"
+  packageName: "com.lightspark.umaaas"
+  useCoroutines: "true"
+  serializationLibrary: "jackson"
+  library: "jvm-retrofit2"
+
+globalProperties:
+  webhooks: "false"
+  supportingFiles: ""
+  models: ""
+  apis: ""
