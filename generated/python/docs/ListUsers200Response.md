@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**data** | [**List[ListUsers200ResponseDataInner]**](ListUsers200ResponseDataInner.md) | List of users matching the filter criteria | 
+**data** | [**List[User]**](User.md) | List of users matching the filter criteria | 
 **has_more** | **bool** | Indicates if more results are available beyond this page | 
 **next_cursor** | **str** | Cursor to retrieve the next page of results (only present if hasMore is true) | [optional] 
 **total_count** | **int** | Total number of users matching the criteria (excluding pagination) | [optional] 

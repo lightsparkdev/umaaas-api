@@ -1,6 +1,6 @@
 # umaaas_api.UsersApi
 
-All URIs are relative to *https://api.uma.money/umaaas/rc*
+All URIs are relative to *https://api.uma.money/umaaas/2025-05-15*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -14,7 +14,7 @@ Method | HTTP request | Description
 
 
 # **create_user**
-> ListUsers200ResponseDataInner create_user(list_users200_response_data_inner)
+> User create_user(user)
 
 Add a new user
 
@@ -26,14 +26,14 @@ Register a new user in the system with UMA address and bank account information
 
 ```python
 import umaaas_api
-from umaaas_api.models.list_users200_response_data_inner import ListUsers200ResponseDataInner
+from umaaas_api.models.user import User
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/2025-05-15
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.uma.money/umaaas/rc"
+    host = "https://api.uma.money/umaaas/2025-05-15"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -51,11 +51,11 @@ configuration = umaaas_api.Configuration(
 with umaaas_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = umaaas_api.UsersApi(api_client)
-    list_users200_response_data_inner = {"umaAddress":"$jane.doe@uma.domain.com","platformUserId":"7b3c5a89d2f1e0","userType":"INDIVIDUAL","fullName":"Jane Doe","dateOfBirth":"1992-03-25","address":{"line1":"123 Pine Street","line2":"Unit 501","city":"Seattle","state":"WA","postalCode":"98101","country":"US"},"bankAccountInfo":{"accountType":"US_ACCOUNT","accountNumber":"12345678901","routingNumber":"123456789","accountCategory":"CHECKING","bankName":"Chase Bank","platformAccountId":"chase_primary_1234"}} # ListUsers200ResponseDataInner | 
+    user = {"umaAddress":"$jane.doe@uma.domain.com","platformUserId":"7b3c5a89d2f1e0","userType":"INDIVIDUAL","fullName":"Jane Doe","dateOfBirth":"1992-03-25","address":{"line1":"123 Pine Street","line2":"Unit 501","city":"Seattle","state":"WA","postalCode":"98101","country":"US"},"bankAccountInfo":{"accountType":"US_ACCOUNT","accountNumber":"12345678901","routingNumber":"123456789","accountCategory":"CHECKING","bankName":"Chase Bank","platformAccountId":"chase_primary_1234"}} # User | 
 
     try:
         # Add a new user
-        api_response = api_instance.create_user(list_users200_response_data_inner)
+        api_response = api_instance.create_user(user)
         print("The response of UsersApi->create_user:\n")
         pprint(api_response)
     except Exception as e:
@@ -69,11 +69,11 @@ with umaaas_api.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **list_users200_response_data_inner** | [**ListUsers200ResponseDataInner**](ListUsers200ResponseDataInner.md)|  | 
+ **user** | [**User**](User.md)|  | 
 
 ### Return type
 
-[**ListUsers200ResponseDataInner**](ListUsers200ResponseDataInner.md)
+[**User**](User.md)
 
 ### Authorization
 
@@ -96,7 +96,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **delete_user_by_id**
-> ListUsers200ResponseDataInner delete_user_by_id(user_id)
+> User delete_user_by_id(user_id)
 
 Delete user by ID
 
@@ -108,14 +108,14 @@ Delete a user by their system-generated ID
 
 ```python
 import umaaas_api
-from umaaas_api.models.list_users200_response_data_inner import ListUsers200ResponseDataInner
+from umaaas_api.models.user import User
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/2025-05-15
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.uma.money/umaaas/rc"
+    host = "https://api.uma.money/umaaas/2025-05-15"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -155,7 +155,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**ListUsers200ResponseDataInner**](ListUsers200ResponseDataInner.md)
+[**User**](User.md)
 
 ### Authorization
 
@@ -202,10 +202,10 @@ from umaaas_api.models.bulk_user_import_job import BulkUserImportJob
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/2025-05-15
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.uma.money/umaaas/rc"
+    host = "https://api.uma.money/umaaas/2025-05-15"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -267,7 +267,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **get_user_by_id**
-> ListUsers200ResponseDataInner get_user_by_id(user_id)
+> User get_user_by_id(user_id)
 
 Get user by ID
 
@@ -279,14 +279,14 @@ Retrieve a user by their system-generated ID
 
 ```python
 import umaaas_api
-from umaaas_api.models.list_users200_response_data_inner import ListUsers200ResponseDataInner
+from umaaas_api.models.user import User
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/2025-05-15
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.uma.money/umaaas/rc"
+    host = "https://api.uma.money/umaaas/2025-05-15"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -326,7 +326,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**ListUsers200ResponseDataInner**](ListUsers200ResponseDataInner.md)
+[**User**](User.md)
 
 ### Authorization
 
@@ -363,13 +363,14 @@ the specified filters. If no filters are provided, returns all users (paginated)
 ```python
 import umaaas_api
 from umaaas_api.models.list_users200_response import ListUsers200Response
+from umaaas_api.models.user_type import UserType
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/2025-05-15
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.uma.money/umaaas/rc"
+    host = "https://api.uma.money/umaaas/2025-05-15"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -389,7 +390,7 @@ with umaaas_api.ApiClient(configuration) as api_client:
     api_instance = umaaas_api.UsersApi(api_client)
     platform_user_id = 'platform_user_id_example' # str | Filter by platform-specific user identifier (optional)
     uma_address = 'uma_address_example' # str | Filter by UMA address (optional)
-    user_type = 'user_type_example' # str | Filter by user type (optional)
+    user_type = umaaas_api.UserType() # UserType | Filter by user type (optional)
     created_after = '2013-10-20T19:20:30+01:00' # datetime | Filter users created after this timestamp (inclusive) (optional)
     created_before = '2013-10-20T19:20:30+01:00' # datetime | Filter users created before this timestamp (inclusive) (optional)
     updated_after = '2013-10-20T19:20:30+01:00' # datetime | Filter users updated after this timestamp (inclusive) (optional)
@@ -416,7 +417,7 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **platform_user_id** | **str**| Filter by platform-specific user identifier | [optional] 
  **uma_address** | **str**| Filter by UMA address | [optional] 
- **user_type** | **str**| Filter by user type | [optional] 
+ **user_type** | [**UserType**](.md)| Filter by user type | [optional] 
  **created_after** | **datetime**| Filter users created after this timestamp (inclusive) | [optional] 
  **created_before** | **datetime**| Filter users created before this timestamp (inclusive) | [optional] 
  **updated_after** | **datetime**| Filter users updated after this timestamp (inclusive) | [optional] 
@@ -449,7 +450,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **update_user_by_id**
-> ListUsers200ResponseDataInner update_user_by_id(user_id, update_user_by_id_request)
+> User update_user_by_id(user_id, update_user_by_id_request)
 
 Update user by ID
 
@@ -461,15 +462,15 @@ Update a user's metadata by their system-generated ID
 
 ```python
 import umaaas_api
-from umaaas_api.models.list_users200_response_data_inner import ListUsers200ResponseDataInner
 from umaaas_api.models.update_user_by_id_request import UpdateUserByIdRequest
+from umaaas_api.models.user import User
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/2025-05-15
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.uma.money/umaaas/rc"
+    host = "https://api.uma.money/umaaas/2025-05-15"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -511,7 +512,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**ListUsers200ResponseDataInner**](ListUsers200ResponseDataInner.md)
+[**User**](User.md)
 
 ### Authorization
 
@@ -624,10 +625,10 @@ from umaaas_api.models.upload_users_csv202_response import UploadUsersCsv202Resp
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/2025-05-15
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.uma.money/umaaas/rc"
+    host = "https://api.uma.money/umaaas/2025-05-15"
 )
 
 # The client must configure the authentication and authorization parameters

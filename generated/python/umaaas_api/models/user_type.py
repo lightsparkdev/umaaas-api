@@ -19,20 +19,20 @@ from enum import Enum
 from typing_extensions import Self
 
 
-class QuoteLockSide(str, Enum):
+class UserType(str, Enum):
     """
-    The side of the quote which should be locked and specified in the `lockedCurrencyAmount`. For example, if I want to send exactly $5 MXN from my wallet, I would set this to \"sending\", and the `lockedCurrencyAmount` to 500 (in cents). If I want the receiver to receive exactly $10 USD, I would set this to \"receiving\" and the `lockedCurrencyAmount` to 10000 (in cents).
+    Whether the user is an individual or a business entity
     """
 
     """
     allowed enum values
     """
-    SENDING = 'SENDING'
-    RECEIVING = 'RECEIVING'
+    INDIVIDUAL = 'INDIVIDUAL'
+    BUSINESS = 'BUSINESS'
 
     @classmethod
     def from_json(cls, json_str: str) -> Self:
-        """Create an instance of QuoteLockSide from a JSON string"""
+        """Create an instance of UserType from a JSON string"""
         return cls(json.loads(json_str))
 
 
