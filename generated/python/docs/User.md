@@ -8,7 +8,7 @@ Name | Type | Description | Notes
 **id** | **str** | System-generated unique identifier | [optional] [readonly] 
 **uma_address** | **str** | full UMA address | 
 **platform_user_id** | **str** | Platform-specific user identifier | 
-**user_type** | **str** | Whether the user is an individual or a business entity | 
+**user_type** | [**UserType**](UserType.md) |  | 
 **created_at** | **datetime** | Creation timestamp | [optional] [readonly] 
 **updated_at** | **datetime** | Last update timestamp | [optional] [readonly] 
 **is_deleted** | **bool** | Whether the user is marked as deleted | [optional] [readonly] 

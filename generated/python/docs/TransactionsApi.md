@@ -1,6 +1,6 @@
 # umaaas_api.TransactionsApi
 
-All URIs are relative to *https://api.uma.money/umaaas/rc*
+All URIs are relative to *https://api.uma.money/umaaas/2025-05-15*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -30,10 +30,10 @@ from umaaas_api.models.incoming_transaction import IncomingTransaction
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/2025-05-15
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.uma.money/umaaas/rc"
+    host = "https://api.uma.money/umaaas/2025-05-15"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -99,7 +99,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **get_transaction_by_id**
-> GetTransactionById200Response get_transaction_by_id(transaction_id)
+> Transaction get_transaction_by_id(transaction_id)
 
 Get transaction by ID
 
@@ -111,14 +111,14 @@ Retrieve detailed information about a specific transaction
 
 ```python
 import umaaas_api
-from umaaas_api.models.get_transaction_by_id200_response import GetTransactionById200Response
+from umaaas_api.models.transaction import Transaction
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/2025-05-15
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.uma.money/umaaas/rc"
+    host = "https://api.uma.money/umaaas/2025-05-15"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -158,7 +158,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**GetTransactionById200Response**](GetTransactionById200Response.md)
+[**Transaction**](Transaction.md)
 
 ### Authorization
 
@@ -201,10 +201,10 @@ from umaaas_api.models.transaction_type import TransactionType
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/2025-05-15
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.uma.money/umaaas/rc"
+    host = "https://api.uma.money/umaaas/2025-05-15"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -309,10 +309,10 @@ from umaaas_api.models.reject_pending_payment_request import RejectPendingPaymen
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/2025-05-15
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.uma.money/umaaas/rc"
+    host = "https://api.uma.money/umaaas/2025-05-15"
 )
 
 # The client must configure the authentication and authorization parameters

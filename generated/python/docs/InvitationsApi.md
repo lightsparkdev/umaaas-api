@@ -1,6 +1,6 @@
 # umaaas_api.InvitationsApi
 
-All URIs are relative to *https://api.uma.money/umaaas/rc*
+All URIs are relative to *https://api.uma.money/umaaas/2025-05-15*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -36,10 +36,10 @@ from umaaas_api.models.uma_invitation import UmaInvitation
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/2025-05-15
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.uma.money/umaaas/rc"
+    host = "https://api.uma.money/umaaas/2025-05-15"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -128,10 +128,10 @@ from umaaas_api.models.uma_invitation import UmaInvitation
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/2025-05-15
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.uma.money/umaaas/rc"
+    host = "https://api.uma.money/umaaas/2025-05-15"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -214,10 +214,10 @@ from umaaas_api.models.uma_invitation import UmaInvitation
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/2025-05-15
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.uma.money/umaaas/rc"
+    host = "https://api.uma.money/umaaas/2025-05-15"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -296,10 +296,10 @@ from umaaas_api.models.uma_invitation import UmaInvitation
 from umaaas_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to https://api.uma.money/umaaas/rc
+# Defining the host is optional and defaults to https://api.uma.money/umaaas/2025-05-15
 # See configuration.py for a list of all supported configuration parameters.
 configuration = umaaas_api.Configuration(
-    host = "https://api.uma.money/umaaas/rc"
+    host = "https://api.uma.money/umaaas/2025-05-15"
 )
 
 # The client must configure the authentication and authorization parameters

@@ -4,7 +4,7 @@ info:
   description: |
     API for managing global payments to and from UMA addresses. 
     This service facilitates cross-currency financial transactions using simple human-readable UMA addresses.
-  version: 1.0.0
+  version: "2025-05-15"
   contact:
     name: Lightspark Support
     email: support@lightspark.com
@@ -28,7 +28,7 @@ tags:
     description: Endpoints for creating, claiming and managing UMA invitations
 
 servers:
-  - url: https://api.uma.money/umaaas/rc
+  - url: https://api.uma.money/umaaas/2025-05-15
     description: Production server
 
 components:
@@ -380,10 +380,7 @@ components:
           description: Platform-specific user identifier
           example: "9f84e0c2a72c4fa"
         userType:
-          type: string
-          enum: [INDIVIDUAL, BUSINESS]
-          description: Whether the user is an individual or a business entity
-          example: "INDIVIDUAL"
+          $ref: '#/components/schemas/UserType'
         createdAt:
           type: string
           format: date-time
@@ -577,6 +574,12 @@ components:
       enum: [INCOMING, OUTGOING]
       description: Type of transaction (incoming payment or outgoing payment)
 
+    UserType:
+      type: string
+      enum: [INDIVIDUAL, BUSINESS]
+      description: Whether the user is an individual or a business entity
+      example: "INDIVIDUAL"
+
     WebhookType:
       type: string
       enum: [INCOMING_PAYMENT, OUTGOING_PAYMENT, TEST, BULK_UPLOAD, INVITATION_CLAIMED]
@@ -713,6 +716,11 @@ components:
             FULL_NAME: "John Sender"
             DATE_OF_BIRTH: "1985-06-15"
             NATIONALITY: "DE"
+      discriminator:
+        propertyName: type
+        mapping:
+          INCOMING: '#/components/schemas/IncomingTransaction'
+          OUTGOING: '#/components/schemas/OutgoingTransaction'
 
     IncomingTransaction:
       allOf:
@@ -720,12 +728,7 @@ components:
         - type: object
           required:
             - receivedAmount
-            - type
           properties:
-            type:
-              $ref: '#/components/schemas/TransactionType'
-              example: "INCOMING"
-              description: Always "INCOMING" for incoming transactions
             receivedAmount:
               $ref: '#/components/schemas/CurrencyAmount'
               description: Amount received in the recipient's currency
@@ -739,12 +742,7 @@ components:
         - type: object
           required:
             - sentAmount
-            - type
           properties:
-            type:
-              $ref: '#/components/schemas/TransactionType'
-              example: "OUTGOING"
-              description: Always "OUTGOING" for outgoing transactions
             sentAmount:
               $ref: '#/components/schemas/CurrencyAmount'
               description: Amount sent in the sender's currency
@@ -1067,9 +1065,7 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
-                - $ref: '#/components/schemas/IndividualUser'
-                - $ref: '#/components/schemas/BusinessUser'
+              $ref: '#/components/schemas/User'
             examples:
               individualUser:
                 summary: Create individual user example
@@ -1122,9 +1118,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/IndividualUser'
-                  - $ref: '#/components/schemas/BusinessUser'
+                $ref: '#/components/schemas/User'
         '400':
           description: Bad request
           content:
@@ -1171,8 +1165,7 @@ paths:
           description: Filter by user type
           required: false
           schema:
-            type: string
-            enum: [INDIVIDUAL, BUSINESS]
+            $ref: '#/components/schemas/UserType'
         - name: createdAfter
           in: query
           description: Filter users created after this timestamp (inclusive)
@@ -1237,9 +1230,7 @@ paths:
                     type: array
                     description: List of users matching the filter criteria
                     items:
-                      oneOf:
-                        - $ref: '#/components/schemas/IndividualUser'
-                        - $ref: '#/components/schemas/BusinessUser'
+                      $ref: '#/components/schemas/User'
                   hasMore:
                     type: boolean
                     description: Indicates if more results are available beyond this page
@@ -1284,9 +1275,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/IndividualUser'
-                  - $ref: '#/components/schemas/BusinessUser'
+                $ref: '#/components/schemas/User'
         '401':
           description: Unauthorized
           content:
@@ -1402,9 +1391,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/IndividualUser'
-                  - $ref: '#/components/schemas/BusinessUser'
+                $ref: '#/components/schemas/User'
         '400':
           description: Bad request
           content:
@@ -1437,9 +1424,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/IndividualUser'
-                  - $ref: '#/components/schemas/BusinessUser'
+                $ref: '#/components/schemas/User'
         '401':
           description: Unauthorized
           content:
@@ -1804,9 +1789,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/IncomingTransaction'
-                  - $ref: '#/components/schemas/OutgoingTransaction'
+                $ref: '#/components/schemas/Transaction'
         '401':
           description: Unauthorized
           content:
@@ -1933,9 +1916,7 @@ paths:
                     type: array
                     description: List of transactions matching the criteria
                     items:
-                      oneOf:
-                        - $ref: '#/components/schemas/IncomingTransaction'
-                        - $ref: '#/components/schemas/OutgoingTransaction'
+                      $ref: '#/components/schemas/Transaction'
                   hasMore:
                     type: boolean
                     description: Indicates if more results are available beyond this page
