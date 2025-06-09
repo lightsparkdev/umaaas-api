@@ -18,7 +18,7 @@ targets:
     publish:
       npm: false
   kotlin:
-    reverse_domain: com.lightspark.umaaas
+    reverse_domain: com.lightspark.uma
     production_repo: null
     publish:
       maven: false
