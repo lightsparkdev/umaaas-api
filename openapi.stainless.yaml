@@ -3,9 +3,9 @@
 organization:
   # Name of your organization or company, used to determine the name of the client
   # and headings.
-  name: uaas-test
+  name: umaaas
   # Link to your API documentation.
-  docs: ''
+  docs: 'https://lightsparkdev.github.io/umaaas-api/'
   # Contact email for bug reports, questions, and support requests.
   contact: support@lightspark.com
 
@@ -13,25 +13,15 @@ organization:
 # whether to emit the Node SDK and what it's package name should be.
 targets:
   typescript:
-    package_name: uaas-test
+    package_name: umaaas
     production_repo: null
     publish:
       npm: false
-  python:
-    package_name: uaas_test
-    production_repo: null
-    publish:
-      pypi: false
   kotlin:
-    reverse_domain: com.uaas_test.api
+    reverse_domain: com.lightspark.umaaas
     production_repo: null
     publish:
       maven: false
-  go:
-    package_name: uaas-test
-    production_repo: null
-    options:
-      enable_v2: true
 
 # `environments` are a map of the name of the environment (e.g. "sandbox",
 # "production") to the corresponding url to use.
