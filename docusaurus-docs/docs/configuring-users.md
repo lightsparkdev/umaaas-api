@@ -268,6 +268,16 @@ Please contact us to set up FBO account for a specific currency.
 
 PIX key types can be one of: `CPF`, `CNPJ`, `PHONE`, `EMAIL`, or `RANDOM`.
 
+### India: UPI (Unified Payments Interface)
+
+```json
+{
+  "accountType": "UPI",
+  "vpa": "someuser@okbank",
+  "platformAccountId": "upi_primary_1234"
+}
+```
+
 ### International: IBAN
 
 ```json
@@ -389,7 +399,7 @@ Required columns for individual users:
 - state: State/Province/Region
 - postalCode: Postal/ZIP code
 - country: Country code (ISO 3166-1 alpha-2)
-- accountType: Bank account type (CLABE, US_ACCOUNT, PIX, IBAN)
+- accountType: Bank account type (CLABE, US_ACCOUNT, PIX, IBAN, UPI)
 - accountNumber: Bank account number
 - bankName: Name of the bank
 
@@ -401,7 +411,7 @@ Required columns for business users:
 - state: State/Province/Region
 - postalCode: Postal/ZIP code
 - country: Country code (ISO 3166-1 alpha-2)
-- accountType: Bank account type (CLABE, US_ACCOUNT, PIX, IBAN)
+- accountType: Bank account type (CLABE, US_ACCOUNT, PIX, IBAN, UPI)
 - accountNumber: Bank account number
 - bankName: Name of the bank
 
@@ -435,6 +445,10 @@ For PIX:
 
 - pixKey: PIX key value
 - pixKeyType: Type of PIX key (CPF, CNPJ, EMAIL, PHONE, RANDOM)
+
+For UPI:
+
+- vpa: Virtual Payment Address for UPI payments
 
 For IBAN:
 

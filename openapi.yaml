@@ -177,6 +177,20 @@ components:
           description: Name of the account holder
           example: "John Doe"
 
+    UpiAccountInfo:
+      type: object
+      required:
+        - vpa
+      properties:
+        vpa:
+          type: string
+          description: Virtual Payment Address for UPI payments
+          example: "someuser@okbank"
+        accountHolderName:
+          type: string
+          description: Name of the account holder
+          example: "John Doe"
+
     IbanAccountInfo:
       type: object
       required:
@@ -206,7 +220,7 @@ components:
 
     BankAccountType:
       type: string
-      enum: [CLABE, US_ACCOUNT, PIX, IBAN, FBO]
+      enum: [CLABE, US_ACCOUNT, PIX, IBAN, FBO, UPI]
       description: Type of bank account information
 
     UserBankAccountInfo:
@@ -236,6 +250,7 @@ components:
           PIX: '#/components/schemas/UserPixAccountInfo'
           IBAN: '#/components/schemas/UserIbanAccountInfo'
           FBO: '#/components/schemas/UserFboAccountInfo'
+          UPI: '#/components/schemas/UserUpiAccountInfo'
 
     UserClabeAccountInfo:
       allOf:
@@ -272,6 +287,12 @@ components:
               type: string
               description: Three-letter currency code (ISO 4217)
               example: "USD"
+
+    UserUpiAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/UserBankAccountInfo'
+        - $ref: '#/components/schemas/UpiAccountInfo'
+        - type: object
 
     PaymentInstructions:
       type: object
@@ -315,6 +336,7 @@ components:
           PIX: '#/components/schemas/PaymentPixAccountInfo'
           IBAN: '#/components/schemas/PaymentIbanAccountInfo'
           FBO: '#/components/schemas/PaymentFboAccountInfo'
+          UPI: '#/components/schemas/PaymentUpiAccountInfo'
 
     PaymentClabeAccountInfo:
       allOf:
@@ -358,6 +380,12 @@ components:
               enum: [POST, GET]
               description: The HTTP method to use for confirming the payment
               example: "POST"
+
+    PaymentUpiAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: '#/components/schemas/UpiAccountInfo'
+        - type: object
 
     User:
       type: object
