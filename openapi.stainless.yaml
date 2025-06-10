@@ -1,0 +1,231 @@
+# yaml-language-server: $schema=https://app.stainless.com/config.schema.json
+
+organization:
+  # Name of your organization or company, used to determine the name of the client
+  # and headings.
+  name: umaaas
+  # Link to your API documentation.
+  docs: 'https://lightsparkdev.github.io/umaaas-api/'
+  # Contact email for bug reports, questions, and support requests.
+  contact: support@lightspark.com
+
+# `targets` define the output targets and their customization options, such as
+# whether to emit the Node SDK and what it's package name should be.
+targets:
+  typescript:
+    package_name: umaaas
+    production_repo: null
+    publish:
+      npm: false
+  kotlin:
+    reverse_domain: com.lightspark.uma
+    production_repo: null
+    publish:
+      maven: false
+
+# `environments` are a map of the name of the environment (e.g. "sandbox",
+# "production") to the corresponding url to use.
+environments:
+  production: https://api.uma.money/umaaas/rc
+
+# `resources` define the structure and organization for your API, such as how
+# methods and models are grouped together and accessed. See the [configuration
+# guide] for more information.
+#
+# [configuration guide]: https://app.stainless.com/docs/guides/configure#resources
+resources:
+  users:
+    # Configure the methods defined in this resource. Each key in the object is the
+    # name of the method and the value is either an endpoint (for example, `get /foo`)
+    # or an object with more detail.
+    #
+    # [reference]: https://app.stainless.com/docs/reference/config#method
+    # Configure the models--named types--defined in the resource. Each key in the
+    # object is the name of the model and the value is either the name of a schema in
+    # `#/components/schemas` or an object with more detail.
+    #
+    # [reference]: https://app.stainless.com/docs/reference/config#model
+    models:
+      address: '#/components/schemas/Address'
+      bank_account_type: '#/components/schemas/BankAccountType'
+      user_bank_account_info: '#/components/schemas/UserBankAccountInfo'
+      user: '#/components/schemas/User'
+      individual_user: '#/components/schemas/IndividualUser'
+      business_user: '#/components/schemas/BusinessUser'
+    methods:
+      create: post /users
+      list: get /users
+      retrieve: get /users/{userId}
+      update: patch /users/{userId}
+      delete: delete /users/{userId}
+    # Subresources define resources that are nested within another for more powerful
+    # logical groupings, e.g. `cards.payments`.
+    subresources:
+      bulk:
+        methods:
+          upload: post /users/bulk/csv
+          get_job_status: get /users/bulk/jobs/{jobId}
+
+  tokens:
+    models:
+      permission: '#/components/schemas/Permission'
+      api_token: '#/components/schemas/ApiToken'
+    methods:
+      create: post /tokens
+      list: get /tokens
+      retrieve: get /tokens/{tokenId}
+      delete: delete /tokens/{tokenId}
+
+  config:
+    models:
+      platform_currency_config: '#/components/schemas/PlatformCurrencyConfig'
+      platform_config: '#/components/schemas/PlatformConfig'
+    methods:
+      retrieve: get /config
+      update: patch /config
+
+  webhooks:
+    methods:
+      send_test: post /webhooks/test
+
+  transactions:
+    models:
+      transaction_status: '#/components/schemas/TransactionStatus'
+      transaction_type: '#/components/schemas/TransactionType'
+      transaction: '#/components/schemas/Transaction'
+      incoming_transaction: '#/components/schemas/IncomingTransaction'
+      outgoing_transaction: '#/components/schemas/OutgoingTransaction'
+    methods:
+      retrieve: get /transactions/{transactionId}
+      list: get /transactions
+      approve: post /transactions/{transactionId}/approve
+      reject: post /transactions/{transactionId}/reject
+
+  receiver:
+    models:
+      user_info_field_name: '#/components/schemas/UserInfoFieldName'
+      counterparty_field_definition: '#/components/schemas/CounterpartyFieldDefinition'
+    methods:
+      lookup: get /receiver/{receiverUmaAddress}
+
+  quotes:
+    models:
+      currency: '#/components/schemas/Currency'
+      quote: '#/components/schemas/Quote'
+    methods:
+      create: post /quotes
+      retrieve: get /quotes/{quoteId}
+
+  invitations:
+    models:
+      currency_amount: '#/components/schemas/CurrencyAmount'
+      uma_invitation: '#/components/schemas/UmaInvitation'
+    methods:
+      create: post /invitations
+      retrieve: get /invitations/{invitationCode}
+      claim: post /invitations/{invitationCode}/claim
+      cancel: post /invitations/{invitationCode}/cancel
+
+  sandbox:
+    methods:
+      send_funds: post /sandbox/send
+      receive_payment: post /sandbox/receive
+
+settings:
+  # All generated integration tests that hit the prism mock http server are marked
+  # as skipped. Removing this setting or setting it to false enables tests, but
+  # doing so may result in test failures due to bugs in the test server.
+  #
+  # [prism mock http server]: https://stoplight.io/open-source/prism
+  disable_mock_tests: true
+  license: Apache-2.0
+
+# `client_settings` define settings for the API client, such as extra constructor
+# arguments (used for authentication), retry behavior, idempotency, etc.
+client_settings:
+  opts:
+    username:
+      type: string
+      nullable: false
+      auth:
+        security_scheme: BasicAuth
+        role: username
+      description: API token authentication using format `<api token id>:<api client secret>`
+      read_env: CLIENT_ID
+    password:
+      type: string
+      nullable: false
+      auth:
+        security_scheme: BasicAuth
+        role: password
+      description: API token authentication using format `<api token id>:<api client secret>`
+      read_env: CLIENT_SECRET
+    webhook_signature:
+      type: string
+      nullable: false
+      auth:
+        security_scheme: WebhookSignature
+      description: |
+        Secp256r1 (P-256) asymmetric signature of the webhook payload, which can be used to verify that the webhook was sent by UMAaas.
+
+        To verify the signature:
+        1. Get the UMAaas public key provided to you during integration
+        2. Decode the base64 signature from the header
+        3. Create a SHA-256 hash of the request body
+        4. Verify the signature using the public key and the hash
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+      read_env: WEBHOOK_PUBLIC_KEY
+
+pagination:
+  - name: standard_pagination
+    type: cursor
+    request:
+      cursor:
+        type: string
+        x-stainless-pagination-property:
+          purpose: next_cursor_param
+      limit:
+        type: integer
+    response:
+      data:
+        type: array
+        items:
+          type: object
+      nextCursor:
+        type: string
+        x-stainless-pagination-property:
+          purpose: next_cursor_field
+      totalCount:
+        type: integer
+      hasMore:
+        type: boolean
+
+# `readme` is used to configure the code snippets that will be rendered in the
+# README.md of various SDKs. In particular, you can change the `headline`
+# snippet's endpoint and the arguments to call it with.
+readme:
+  example_requests:
+    default:
+      type: request
+      endpoint: post /users
+      params: {}
+    headline:
+      type: request
+      endpoint: post /users
+      params: {}
+    pagination:
+      type: request
+      endpoint: get /users
+      params: {}
+diagnostics:
+  ignored:
+    ClientOpt/UnnecessarilyRequired:
+      - "#/client_settings/opts/webhook_signature"
+    ReadmeExample/MissingParam: true
+    Method/BodyRootParamUnnamed:
+      - "#/paths/%2Fusers/post/requestBody/content/application%2Fjson/schema"
+      - "#/paths/%2Fusers%2F%7BuserId%7D/patch/requestBody/content/application%2Fjson/schema"
+    Schema/ObjectHasNoProperties:
+      - pagination.0.response.data.items
+      - "#/components/schemas/Error/properties/details"
