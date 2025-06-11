@@ -22,6 +22,7 @@ from pydantic import ConfigDict, Field
 from typing import Any, ClassVar, Dict, List, Optional
 from umaaas_api.models.currency_amount import CurrencyAmount
 from umaaas_api.models.incoming_rate_details import IncomingRateDetails
+from umaaas_api.models.incoming_transaction_failure_reason import IncomingTransactionFailureReason
 from umaaas_api.models.reconciliation_instructions import ReconciliationInstructions
 from umaaas_api.models.transaction import Transaction
 from umaaas_api.models.transaction_status import TransactionStatus
@@ -36,7 +37,8 @@ class IncomingTransaction(Transaction):
     received_amount: CurrencyAmount = Field(description="Amount received in the recipient's currency", alias="receivedAmount")
     reconciliation_instructions: Optional[ReconciliationInstructions] = Field(default=None, description="Included for all transactions except those with \"CREATED\" status", alias="reconciliationInstructions")
     rate_details: Optional[IncomingRateDetails] = Field(default=None, description="Details about the rate and fees for the transaction.", alias="rateDetails")
-    __properties: ClassVar[List[str]] = ["id", "status", "type", "senderUmaAddress", "receiverUmaAddress", "userId", "platformUserId", "settledAt", "createdAt", "description", "counterpartyInformation", "receivedAmount", "reconciliationInstructions", "rateDetails"]
+    failure_reason: Optional[IncomingTransactionFailureReason] = Field(default=None, description="If the transaction failed, this field provides the reason for failure.", alias="failureReason")
+    __properties: ClassVar[List[str]] = ["id", "status", "type", "senderUmaAddress", "receiverUmaAddress", "userId", "platformUserId", "settledAt", "createdAt", "description", "counterpartyInformation", "receivedAmount", "reconciliationInstructions", "rateDetails", "failureReason"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -109,7 +111,8 @@ class IncomingTransaction(Transaction):
             "counterpartyInformation": obj.get("counterpartyInformation"),
             "receivedAmount": CurrencyAmount.from_dict(obj["receivedAmount"]) if obj.get("receivedAmount") is not None else None,
             "reconciliationInstructions": ReconciliationInstructions.from_dict(obj["reconciliationInstructions"]) if obj.get("reconciliationInstructions") is not None else None,
-            "rateDetails": IncomingRateDetails.from_dict(obj["rateDetails"]) if obj.get("rateDetails") is not None else None
+            "rateDetails": IncomingRateDetails.from_dict(obj["rateDetails"]) if obj.get("rateDetails") is not None else None,
+            "failureReason": obj.get("failureReason")
         })
         return _obj
 
