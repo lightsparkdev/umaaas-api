@@ -178,15 +178,13 @@ client_settings:
       read_env: WEBHOOK_PUBLIC_KEY
 
 pagination:
-  - name: standard_pagination
+  - name: default_pagination
     type: cursor
     request:
       cursor:
         type: string
         x-stainless-pagination-property:
           purpose: next_cursor_param
-      limit:
-        type: integer
     response:
       data:
         type: array
@@ -196,10 +194,12 @@ pagination:
         type: string
         x-stainless-pagination-property:
           purpose: next_cursor_field
-      totalCount:
-        type: integer
       hasMore:
         type: boolean
+        x-stainless-pagination-property:
+          purpose: has_next_page
+      totalCount:
+        type: integer
 
 # `readme` is used to configure the code snippets that will be rendered in the
 # README.md of various SDKs. In particular, you can change the `headline`
@@ -229,3 +229,10 @@ diagnostics:
     Schema/ObjectHasNoProperties:
       - pagination.0.response.data.items
       - "#/components/schemas/Error/properties/details"
+    Java/SchemaUnionDiscriminatorMissing:
+      - (resource) users > (method) update > (params) default > (param) body > (schema)
+    Java/NestedAndParentClassNamesConflict:
+      - (resource) users.bulk > (model) BulkGetJobStatusResponse > (schema) > (property) errors > (items) > (property) error
+
+codeflow:
+  detect_breaking_changes: true
