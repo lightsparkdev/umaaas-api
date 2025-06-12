@@ -227,6 +227,10 @@ diagnostics:
     Schema/ObjectHasNoProperties:
       - pagination.0.response.data.items
       - "#/components/schemas/Error/properties/details"
+    Java/SchemaUnionDiscriminatorMissing:
+      - (resource) users > (method) update > (params) default > (param) body > (schema)
+    Java/NestedAndParentClassNamesConflict:
+      - (resource) users.bulk > (model) BulkGetJobStatusResponse > (schema) > (property) errors > (items) > (property) error
 
 codeflow:
   detect_breaking_changes: true
