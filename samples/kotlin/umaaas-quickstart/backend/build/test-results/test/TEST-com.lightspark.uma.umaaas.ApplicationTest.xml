@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.lightspark.uma.umaaas.ApplicationTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-06-11T00:16:08" hostname="Peng-W9P4" time="0.347">
+  <properties/>
+  <testcase name="testRoot" classname="com.lightspark.uma.umaaas.ApplicationTest" time="0.347"/>
+  <system-out><![CDATA[2025-06-10 17:16:08.438 [DefaultDispatcher-worker-2 @call-context#3] INFO  io.ktor.test - No ktor.deployment.watch patterns specified, automatic reload is not active.
+2025-06-10 17:16:08.472 [DefaultDispatcher-worker-2 @call-context#3] INFO  io.ktor.test - Application started in 0.039 seconds.
+2025-06-10 17:16:08.473 [DefaultDispatcher-worker-3 @coroutine#4] INFO  io.ktor.test - Responding at http://localhost:80
+2025-06-10 17:16:08.473 [DefaultDispatcher-worker-3 @coroutine#4] INFO  io.ktor.test - Responding at https://localhost:443
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
