@@ -13,12 +13,3 @@ fun Application.module() {
     configureHTTP()
     configureRouting()
 }
-
-// Example of how to initialize the UMAaaS client
-fun createUmaaasClient(): UmaaasClient {
-    return UmaaasOkHttpClient.builder()
-        .baseUrl("https://api.uma.me") // or your API base URL
-        .username("your-api-token-id")
-        .password("your-client-secret")
-        .build()
-}
