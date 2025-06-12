@@ -198,6 +198,8 @@ pagination:
         type: boolean
         x-stainless-pagination-property:
           purpose: has_next_page
+      totalCount:
+        type: integer
 
 # `readme` is used to configure the code snippets that will be rendered in the
 # README.md of various SDKs. In particular, you can change the `headline`
