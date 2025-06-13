@@ -26,7 +26,7 @@ targets:
 # `environments` are a map of the name of the environment (e.g. "sandbox",
 # "production") to the corresponding url to use.
 environments:
-  production: https://api.uma.money/umaaas/rc
+  production: https://api.uma.money/umaaas/2025-05-15
 
 # `resources` define the structure and organization for your API, such as how
 # methods and models are grouped together and accessed. See the [configuration
@@ -52,6 +52,7 @@ resources:
       user: '#/components/schemas/User'
       individual_user: '#/components/schemas/IndividualUser'
       business_user: '#/components/schemas/BusinessUser'
+      user_type: "#/components/schemas/UserType"
     methods:
       create: post /users
       list: get /users
@@ -160,22 +161,6 @@ client_settings:
         role: password
       description: API token authentication using format `<api token id>:<api client secret>`
       read_env: CLIENT_SECRET
-    webhook_signature:
-      type: string
-      nullable: false
-      auth:
-        security_scheme: WebhookSignature
-      description: |
-        Secp256r1 (P-256) asymmetric signature of the webhook payload, which can be used to verify that the webhook was sent by UMAaas.
-
-        To verify the signature:
-        1. Get the UMAaas public key provided to you during integration
-        2. Decode the base64 signature from the header
-        3. Create a SHA-256 hash of the request body
-        4. Verify the signature using the public key and the hash
-
-        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
-      read_env: WEBHOOK_PUBLIC_KEY
 
 pagination:
   - name: default_pagination
