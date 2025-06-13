@@ -44,6 +44,7 @@ from umaaas_api.models.incoming_payment_webhook422_response import IncomingPayme
 from umaaas_api.models.incoming_payment_webhook_request import IncomingPaymentWebhookRequest
 from umaaas_api.models.incoming_rate_details import IncomingRateDetails
 from umaaas_api.models.incoming_transaction import IncomingTransaction
+from umaaas_api.models.incoming_transaction_failure_reason import IncomingTransactionFailureReason
 from umaaas_api.models.individual_update import IndividualUpdate
 from umaaas_api.models.individual_user import IndividualUser
 from umaaas_api.models.invitation_claimed_webhook_request import InvitationClaimedWebhookRequest
@@ -54,6 +55,7 @@ from umaaas_api.models.lookup_uma200_response import LookupUma200Response
 from umaaas_api.models.outgoing_payment_webhook_request import OutgoingPaymentWebhookRequest
 from umaaas_api.models.outgoing_rate_details import OutgoingRateDetails
 from umaaas_api.models.outgoing_transaction import OutgoingTransaction
+from umaaas_api.models.outgoing_transaction_failure_reason import OutgoingTransactionFailureReason
 from umaaas_api.models.payment_bank_account_info import PaymentBankAccountInfo
 from umaaas_api.models.payment_clabe_account_info import PaymentClabeAccountInfo
 from umaaas_api.models.payment_fbo_account_info import PaymentFboAccountInfo
