@@ -22,6 +22,7 @@ from pydantic import ConfigDict, Field, StrictFloat, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional, Union
 from typing_extensions import Annotated
 from umaaas_api.models.currency_amount import CurrencyAmount
+from umaaas_api.models.outgoing_rate_details import OutgoingRateDetails
 from umaaas_api.models.refund import Refund
 from umaaas_api.models.transaction import Transaction
 from umaaas_api.models.transaction_status import TransactionStatus
@@ -39,7 +40,8 @@ class OutgoingTransaction(Transaction):
     fees: Optional[Annotated[int, Field(strict=True, ge=0)]] = Field(default=None, description="The fees associated with the quote in the smallest unit of the sending currency (eg. cents).")
     quote_id: Optional[StrictStr] = Field(default=None, description="The ID of the quote that was used to trigger this payment", alias="quoteId")
     refund: Optional[Refund] = Field(default=None, description="The refund if transaction was refunded.")
-    __properties: ClassVar[List[str]] = ["id", "status", "type", "senderUmaAddress", "receiverUmaAddress", "userId", "platformUserId", "settledAt", "createdAt", "description", "counterpartyInformation", "sentAmount", "receivedAmount", "exchangeRate", "fees", "quoteId", "refund"]
+    rate_details: Optional[OutgoingRateDetails] = Field(default=None, description="Details about the rate and fees for the transaction.", alias="rateDetails")
+    __properties: ClassVar[List[str]] = ["id", "status", "type", "senderUmaAddress", "receiverUmaAddress", "userId", "platformUserId", "settledAt", "createdAt", "description", "counterpartyInformation", "sentAmount", "receivedAmount", "exchangeRate", "fees", "quoteId", "refund", "rateDetails"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -87,6 +89,9 @@ class OutgoingTransaction(Transaction):
         # override the default output from pydantic by calling `to_dict()` of refund
         if self.refund:
             _dict['refund'] = self.refund.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of rate_details
+        if self.rate_details:
+            _dict['rateDetails'] = self.rate_details.to_dict()
         return _dict
 
     @classmethod
@@ -115,7 +120,8 @@ class OutgoingTransaction(Transaction):
             "exchangeRate": obj.get("exchangeRate"),
             "fees": obj.get("fees"),
             "quoteId": obj.get("quoteId"),
-            "refund": Refund.from_dict(obj["refund"]) if obj.get("refund") is not None else None
+            "refund": Refund.from_dict(obj["refund"]) if obj.get("refund") is not None else None,
+            "rateDetails": OutgoingRateDetails.from_dict(obj["rateDetails"]) if obj.get("rateDetails") is not None else None
         })
         return _obj
 

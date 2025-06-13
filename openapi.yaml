@@ -686,6 +686,76 @@ components:
           format: date-time
           description: When the refund was or will be settled
           example: "2023-08-15T14:30:00Z"
+      
+    OutgoingRateDetails:
+      description: Details about the rate and fees for an outgoing transaction or quote.
+      type: object
+      properties:
+        counterpartyMultiplier:
+          type: number
+          format: double
+          description: The underlying multiplier from mSATs to the receiving currency as returned by the counterparty institution.
+          exclusiveMinimum: 0
+          example: 1.08
+        counterpartyFixedFee:
+          type: integer
+          format: int64
+          description: The fixed fee charged by the counterparty institution to execute the quote in the smallest unit of the receiving currency (eg. cents).
+          minimum: 0
+          example: 10
+        umaaasMultiplier:
+          type: number
+          format: double
+          description: The underlying multiplier from the sending currency to mSATS, including variable fees.
+          exclusiveMinimum: 0
+          example: 0.925
+        umaaasFixedFee:
+          type: integer
+          format: int64
+          description: The fixed fee charged by the UMAaaS product to execute the quote in the smallest unit of the sending currency (eg. cents).
+          minimum: 0
+          example: 10
+        umaaasVariableFeeRate:
+          type: number
+          format: double
+          description: The variable fee rate charged by the UMAaaS product to execute the quote as a percentage of the sending currency amount.
+          exclusiveMinimum: 0
+          example: 0.003
+        umaaasVariableFeeAmount:
+          type: number
+          format: int64
+          description: The variable fee amount charged by the UMAaaS product to execute the quote in the smallest unit of the sending currency (eg. cents). This is the sending amount times umaaasVariableFeeRate.
+          minimum: 0
+          example: 30
+
+    IncomingRateDetails:
+      description: Details about the rate and fees for an incoming transaction.
+      type: object
+      properties:
+        umaaasMultiplier:
+          type: number
+          format: double
+          description: The underlying multiplier from the mSATS to the receiving currency, including variable fees.
+          exclusiveMinimum: 0
+          example: 0.925
+        umaaasFixedFee:
+          type: integer
+          format: int64
+          description: The fixed fee charged by the UMAaaS product to execute the quote in the smallest unit of the receiving currency (eg. cents).
+          minimum: 0
+          example: 10
+        umaaasVariableFeeRate:
+          type: number
+          format: double
+          description: The variable fee rate charged by the UMAaaS product to execute the quote as a percentage of the receiving currency amount.
+          exclusiveMinimum: 0
+          example: 0.003
+        umaaasVariableFeeAmount:
+          type: number
+          format: int64
+          description: The variable fee amount charged by the UMAaaS product to execute the quote in the smallest unit of the receiving currency (eg. cents). This is the receiving amount times umaaasVariableFeeRate.
+          minimum: 0
+          example: 30
 
     Transaction:
       type: object
@@ -763,6 +833,9 @@ components:
             reconciliationInstructions:
               $ref: '#/components/schemas/ReconciliationInstructions'
               description: Included for all transactions except those with "CREATED" status
+            rateDetails:
+              $ref: '#/components/schemas/IncomingRateDetails'
+              description: Details about the rate and fees for the transaction.
 
     OutgoingTransaction:
       allOf:
@@ -795,6 +868,9 @@ components:
             refund:
               $ref: '#/components/schemas/Refund'
               description: The refund if transaction was refunded.
+            rateDetails:
+              $ref: '#/components/schemas/OutgoingRateDetails'
+              description: Details about the rate and fees for the transaction.
 
     CurrencyPreference:
       type: object
@@ -902,6 +978,9 @@ components:
           type: string
           description: The ID of the transaction created from this quote.
           example: "Transaction:019542f5-b3e7-1d02-0000-000000000005"
+        rateDetails:
+          $ref: '#/components/schemas/OutgoingRateDetails'
+          description: Details about the rate and fees for the transaction.
     
     UmaInvitation:
       type: object

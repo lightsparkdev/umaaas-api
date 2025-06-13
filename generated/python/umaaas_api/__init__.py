@@ -66,6 +66,7 @@ from umaaas_api.models.incoming_payment_webhook200_response import IncomingPayme
 from umaaas_api.models.incoming_payment_webhook403_response import IncomingPaymentWebhook403Response
 from umaaas_api.models.incoming_payment_webhook422_response import IncomingPaymentWebhook422Response
 from umaaas_api.models.incoming_payment_webhook_request import IncomingPaymentWebhookRequest
+from umaaas_api.models.incoming_rate_details import IncomingRateDetails
 from umaaas_api.models.incoming_transaction import IncomingTransaction
 from umaaas_api.models.individual_update import IndividualUpdate
 from umaaas_api.models.individual_user import IndividualUser
@@ -75,6 +76,7 @@ from umaaas_api.models.list_transactions200_response import ListTransactions200R
 from umaaas_api.models.list_users200_response import ListUsers200Response
 from umaaas_api.models.lookup_uma200_response import LookupUma200Response
 from umaaas_api.models.outgoing_payment_webhook_request import OutgoingPaymentWebhookRequest
+from umaaas_api.models.outgoing_rate_details import OutgoingRateDetails
 from umaaas_api.models.outgoing_transaction import OutgoingTransaction
 from umaaas_api.models.payment_bank_account_info import PaymentBankAccountInfo
 from umaaas_api.models.payment_clabe_account_info import PaymentClabeAccountInfo
@@ -82,6 +84,7 @@ from umaaas_api.models.payment_fbo_account_info import PaymentFboAccountInfo
 from umaaas_api.models.payment_iban_account_info import PaymentIbanAccountInfo
 from umaaas_api.models.payment_instructions import PaymentInstructions
 from umaaas_api.models.payment_pix_account_info import PaymentPixAccountInfo
+from umaaas_api.models.payment_upi_account_info import PaymentUpiAccountInfo
 from umaaas_api.models.payment_us_account_info import PaymentUsAccountInfo
 from umaaas_api.models.permission import Permission
 from umaaas_api.models.pix_account_info import PixAccountInfo
@@ -103,6 +106,7 @@ from umaaas_api.models.transaction_type import TransactionType
 from umaaas_api.models.uma_invitation import UmaInvitation
 from umaaas_api.models.update_platform_config_request import UpdatePlatformConfigRequest
 from umaaas_api.models.update_user_by_id_request import UpdateUserByIdRequest
+from umaaas_api.models.upi_account_info import UpiAccountInfo
 from umaaas_api.models.upload_users_csv202_response import UploadUsersCsv202Response
 from umaaas_api.models.us_account_info import UsAccountInfo
 from umaaas_api.models.user import User
@@ -113,5 +117,6 @@ from umaaas_api.models.user_iban_account_info import UserIbanAccountInfo
 from umaaas_api.models.user_info_field_name import UserInfoFieldName
 from umaaas_api.models.user_pix_account_info import UserPixAccountInfo
 from umaaas_api.models.user_type import UserType
+from umaaas_api.models.user_upi_account_info import UserUpiAccountInfo
 from umaaas_api.models.user_us_account_info import UserUsAccountInfo
 from umaaas_api.models.webhook_type import WebhookType
