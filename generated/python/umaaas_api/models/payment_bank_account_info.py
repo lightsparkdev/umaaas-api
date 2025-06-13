@@ -31,6 +31,7 @@ if TYPE_CHECKING:
     from umaaas_api.models.payment_fbo_account_info import PaymentFboAccountInfo
     from umaaas_api.models.payment_iban_account_info import PaymentIbanAccountInfo
     from umaaas_api.models.payment_pix_account_info import PaymentPixAccountInfo
+    from umaaas_api.models.payment_upi_account_info import PaymentUpiAccountInfo
     from umaaas_api.models.payment_us_account_info import PaymentUsAccountInfo
 
 class PaymentBankAccountInfo(BaseModel):
@@ -52,7 +53,7 @@ class PaymentBankAccountInfo(BaseModel):
 
     # discriminator mappings
     __discriminator_value_class_map: ClassVar[Dict[str, str]] = {
-        'CLABE': 'PaymentClabeAccountInfo','FBO': 'PaymentFboAccountInfo','IBAN': 'PaymentIbanAccountInfo','PIX': 'PaymentPixAccountInfo','US_ACCOUNT': 'PaymentUsAccountInfo'
+        'CLABE': 'PaymentClabeAccountInfo','FBO': 'PaymentFboAccountInfo','IBAN': 'PaymentIbanAccountInfo','PIX': 'PaymentPixAccountInfo','UPI': 'PaymentUpiAccountInfo','US_ACCOUNT': 'PaymentUsAccountInfo'
     }
 
     @classmethod
@@ -74,7 +75,7 @@ class PaymentBankAccountInfo(BaseModel):
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Union[PaymentClabeAccountInfo, PaymentFboAccountInfo, PaymentIbanAccountInfo, PaymentPixAccountInfo, PaymentUsAccountInfo]]:
+    def from_json(cls, json_str: str) -> Optional[Union[PaymentClabeAccountInfo, PaymentFboAccountInfo, PaymentIbanAccountInfo, PaymentPixAccountInfo, PaymentUpiAccountInfo, PaymentUsAccountInfo]]:
         """Create an instance of PaymentBankAccountInfo from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
@@ -97,7 +98,7 @@ class PaymentBankAccountInfo(BaseModel):
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Dict[str, Any]) -> Optional[Union[PaymentClabeAccountInfo, PaymentFboAccountInfo, PaymentIbanAccountInfo, PaymentPixAccountInfo, PaymentUsAccountInfo]]:
+    def from_dict(cls, obj: Dict[str, Any]) -> Optional[Union[PaymentClabeAccountInfo, PaymentFboAccountInfo, PaymentIbanAccountInfo, PaymentPixAccountInfo, PaymentUpiAccountInfo, PaymentUsAccountInfo]]:
         """Create an instance of PaymentBankAccountInfo from a dict"""
         # look up the object type based on discriminator mapping
         object_type = cls.get_discriminator_value(obj)
@@ -109,6 +110,8 @@ class PaymentBankAccountInfo(BaseModel):
             return import_module("umaaas_api.models.payment_iban_account_info").PaymentIbanAccountInfo.from_dict(obj)
         if object_type ==  'PaymentPixAccountInfo':
             return import_module("umaaas_api.models.payment_pix_account_info").PaymentPixAccountInfo.from_dict(obj)
+        if object_type ==  'PaymentUpiAccountInfo':
+            return import_module("umaaas_api.models.payment_upi_account_info").PaymentUpiAccountInfo.from_dict(obj)
         if object_type ==  'PaymentUsAccountInfo':
             return import_module("umaaas_api.models.payment_us_account_info").PaymentUsAccountInfo.from_dict(obj)
 

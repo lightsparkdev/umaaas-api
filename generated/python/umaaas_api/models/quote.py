@@ -23,6 +23,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, Stric
 from typing import Any, ClassVar, Dict, List, Optional, Union
 from typing_extensions import Annotated
 from umaaas_api.models.currency import Currency
+from umaaas_api.models.outgoing_rate_details import OutgoingRateDetails
 from umaaas_api.models.payment_instructions import PaymentInstructions
 from typing import Optional, Set
 from typing_extensions import Self
@@ -43,7 +44,8 @@ class Quote(BaseModel):
     payment_instructions: PaymentInstructions = Field(alias="paymentInstructions")
     status: Optional[StrictStr] = Field(default=None, description="Current status of the quote")
     transaction_id: StrictStr = Field(description="The ID of the transaction created from this quote.", alias="transactionId")
-    __properties: ClassVar[List[str]] = ["quoteId", "sendingCurrency", "receivingCurrency", "totalSendingAmount", "totalReceivingAmount", "exchangeRate", "expiresAt", "feesIncluded", "counterpartyInformation", "paymentInstructions", "status", "transactionId"]
+    rate_details: Optional[OutgoingRateDetails] = Field(default=None, description="Details about the rate and fees for the transaction.", alias="rateDetails")
+    __properties: ClassVar[List[str]] = ["quoteId", "sendingCurrency", "receivingCurrency", "totalSendingAmount", "totalReceivingAmount", "exchangeRate", "expiresAt", "feesIncluded", "counterpartyInformation", "paymentInstructions", "status", "transactionId", "rateDetails"]
 
     @field_validator('status')
     def status_validate_enum(cls, value):
@@ -101,6 +103,9 @@ class Quote(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of payment_instructions
         if self.payment_instructions:
             _dict['paymentInstructions'] = self.payment_instructions.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of rate_details
+        if self.rate_details:
+            _dict['rateDetails'] = self.rate_details.to_dict()
         return _dict
 
     @classmethod
@@ -124,7 +129,8 @@ class Quote(BaseModel):
             "counterpartyInformation": obj.get("counterpartyInformation"),
             "paymentInstructions": PaymentInstructions.from_dict(obj["paymentInstructions"]) if obj.get("paymentInstructions") is not None else None,
             "status": obj.get("status"),
-            "transactionId": obj.get("transactionId")
+            "transactionId": obj.get("transactionId"),
+            "rateDetails": OutgoingRateDetails.from_dict(obj["rateDetails"]) if obj.get("rateDetails") is not None else None
         })
         return _obj
 

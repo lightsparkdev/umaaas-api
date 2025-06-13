@@ -36,6 +36,7 @@ docs/IncomingPaymentWebhook200Response.md
 docs/IncomingPaymentWebhook403Response.md
 docs/IncomingPaymentWebhook422Response.md
 docs/IncomingPaymentWebhookRequest.md
+docs/IncomingRateDetails.md
 docs/IncomingTransaction.md
 docs/IndividualUpdate.md
 docs/IndividualUser.md
@@ -46,6 +47,7 @@ docs/ListTransactions200Response.md
 docs/ListUsers200Response.md
 docs/LookupUma200Response.md
 docs/OutgoingPaymentWebhookRequest.md
+docs/OutgoingRateDetails.md
 docs/OutgoingTransaction.md
 docs/PaymentBankAccountInfo.md
 docs/PaymentClabeAccountInfo.md
@@ -53,6 +55,7 @@ docs/PaymentFboAccountInfo.md
 docs/PaymentIbanAccountInfo.md
 docs/PaymentInstructions.md
 docs/PaymentPixAccountInfo.md
+docs/PaymentUpiAccountInfo.md
 docs/PaymentUsAccountInfo.md
 docs/Permission.md
 docs/PixAccountInfo.md
@@ -78,6 +81,7 @@ docs/TransactionsApi.md
 docs/UmaInvitation.md
 docs/UpdatePlatformConfigRequest.md
 docs/UpdateUserByIdRequest.md
+docs/UpiAccountInfo.md
 docs/UploadUsersCsv202Response.md
 docs/UsAccountInfo.md
 docs/User.md
@@ -88,6 +92,7 @@ docs/UserIbanAccountInfo.md
 docs/UserInfoFieldName.md
 docs/UserPixAccountInfo.md
 docs/UserType.md
+docs/UserUpiAccountInfo.md
 docs/UserUsAccountInfo.md
 docs/UsersApi.md
 docs/WebhookType.md
@@ -99,7 +104,11 @@ setup.cfg
 setup.py
 test-requirements.txt
 test/__init__.py
-test/test_user_type.py
+test/test_incoming_rate_details.py
+test/test_outgoing_rate_details.py
+test/test_payment_upi_account_info.py
+test/test_upi_account_info.py
+test/test_user_upi_account_info.py
 tox.ini
 umaaas_api/__init__.py
 umaaas_api/api/__init__.py
@@ -143,6 +152,7 @@ umaaas_api/models/incoming_payment_webhook200_response.py
 umaaas_api/models/incoming_payment_webhook403_response.py
 umaaas_api/models/incoming_payment_webhook422_response.py
 umaaas_api/models/incoming_payment_webhook_request.py
+umaaas_api/models/incoming_rate_details.py
 umaaas_api/models/incoming_transaction.py
 umaaas_api/models/individual_update.py
 umaaas_api/models/individual_user.py
@@ -152,6 +162,7 @@ umaaas_api/models/list_transactions200_response.py
 umaaas_api/models/list_users200_response.py
 umaaas_api/models/lookup_uma200_response.py
 umaaas_api/models/outgoing_payment_webhook_request.py
+umaaas_api/models/outgoing_rate_details.py
 umaaas_api/models/outgoing_transaction.py
 umaaas_api/models/payment_bank_account_info.py
 umaaas_api/models/payment_clabe_account_info.py
@@ -159,6 +170,7 @@ umaaas_api/models/payment_fbo_account_info.py
 umaaas_api/models/payment_iban_account_info.py
 umaaas_api/models/payment_instructions.py
 umaaas_api/models/payment_pix_account_info.py
+umaaas_api/models/payment_upi_account_info.py
 umaaas_api/models/payment_us_account_info.py
 umaaas_api/models/permission.py
 umaaas_api/models/pix_account_info.py
@@ -180,6 +192,7 @@ umaaas_api/models/transaction_type.py
 umaaas_api/models/uma_invitation.py
 umaaas_api/models/update_platform_config_request.py
 umaaas_api/models/update_user_by_id_request.py
+umaaas_api/models/upi_account_info.py
 umaaas_api/models/upload_users_csv202_response.py
 umaaas_api/models/us_account_info.py
 umaaas_api/models/user.py
@@ -190,6 +203,7 @@ umaaas_api/models/user_iban_account_info.py
 umaaas_api/models/user_info_field_name.py
 umaaas_api/models/user_pix_account_info.py
 umaaas_api/models/user_type.py
+umaaas_api/models/user_upi_account_info.py
 umaaas_api/models/user_us_account_info.py
 umaaas_api/models/webhook_type.py
 umaaas_api/py.typed

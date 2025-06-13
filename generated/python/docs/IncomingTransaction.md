@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **received_amount** | [**CurrencyAmount**](CurrencyAmount.md) | Amount received in the recipient&#39;s currency | 
 **reconciliation_instructions** | [**ReconciliationInstructions**](ReconciliationInstructions.md) | Included for all transactions except those with \&quot;CREATED\&quot; status | [optional] 
+**rate_details** | [**IncomingRateDetails**](IncomingRateDetails.md) | Details about the rate and fees for the transaction. | [optional] 
 
 ## Example
 

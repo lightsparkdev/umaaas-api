@@ -14,6 +14,8 @@ Type of bank account information
 
 * `FBO` (value: `'FBO'`)
 
+* `UPI` (value: `'UPI'`)
+
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
 

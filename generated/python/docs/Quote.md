@@ -17,6 +17,7 @@ Name | Type | Description | Notes
 **payment_instructions** | [**PaymentInstructions**](PaymentInstructions.md) |  | 
 **status** | **str** | Current status of the quote | [optional] 
 **transaction_id** | **str** | The ID of the transaction created from this quote. | 
+**rate_details** | [**OutgoingRateDetails**](OutgoingRateDetails.md) | Details about the rate and fees for the transaction. | [optional] 
 
 ## Example
 

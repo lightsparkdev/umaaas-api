@@ -32,6 +32,7 @@ class BankAccountType(str, Enum):
     PIX = 'PIX'
     IBAN = 'IBAN'
     FBO = 'FBO'
+    UPI = 'UPI'
 
     @classmethod
     def from_json(cls, json_str: str) -> Self:

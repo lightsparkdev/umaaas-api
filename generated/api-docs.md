@@ -1,6 +1,6 @@
 <!-- Generator: Widdershins v4.0.1 -->
 
-<h1 id="uma-as-a-service-umaaas-api">UMA as a Service (UMAaaS) API v1.0.0</h1>
+<h1 id="uma-as-a-service-umaaas-api">UMA as a Service (UMAaaS) API v2025-05-15</h1>
 
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
 
@@ -9,7 +9,7 @@ This service facilitates cross-currency financial transactions using simple huma
 
 Base URLs:
 
-* <a href="https://api.uma.money/umaaas/rc">https://api.uma.money/umaaas/rc</a>
+* <a href="https://api.uma.money/umaaas/2025-05-15">https://api.uma.money/umaaas/2025-05-15</a>
 
 Email: <a href="mailto:support@lightspark.com">Lightspark Support</a> 
 License: <a href="https://lightspark.com/terms">Proprietary</a>
@@ -45,7 +45,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/config',
+fetch('https://api.uma.money/umaaas/2025-05-15/config',
 {
   method: 'GET',
 
@@ -65,7 +65,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.uma.money/umaaas/rc/config', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/2025-05-15/config', headers = headers)
 
 print(r.json())
 
@@ -165,7 +165,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/config',
+fetch('https://api.uma.money/umaaas/2025-05-15/config',
 {
   method: 'PATCH',
   body: inputBody,
@@ -186,7 +186,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.patch('https://api.uma.money/umaaas/rc/config', headers = headers)
+r = requests.patch('https://api.uma.money/umaaas/2025-05-15/config', headers = headers)
 
 print(r.json())
 
@@ -360,7 +360,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/users',
+fetch('https://api.uma.money/umaaas/2025-05-15/users',
 {
   method: 'POST',
   body: inputBody,
@@ -381,7 +381,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.uma.money/umaaas/rc/users', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/2025-05-15/users', headers = headers)
 
 print(r.json())
 
@@ -425,7 +425,7 @@ Register a new user in the system with UMA address and bank account information
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
-|body|body|any|true|none|
+|body|body|[User](#schemauser)|true|none|
 
 > Example responses
 
@@ -439,22 +439,7 @@ Register a new user in the system with UMA address and bank account information
   "userType": "INDIVIDUAL",
   "createdAt": "2023-07-21T17:32:28Z",
   "updatedAt": "2023-07-21T17:32:28Z",
-  "isDeleted": false,
-  "fullName": "John Michael Doe",
-  "dateOfBirth": "1990-01-15",
-  "nationality": "US",
-  "address": {
-    "line1": "123 Main Street",
-    "line2": "Apt 4B",
-    "city": "San Francisco",
-    "state": "CA",
-    "postalCode": "94105",
-    "country": "US"
-  },
-  "bankAccountInfo": {
-    "accountType": "CLABE",
-    "platformAccountId": "acc_123456789"
-  }
+  "isDeleted": false
 }
 ```
 
@@ -462,24 +447,10 @@ Register a new user in the system with UMA address and bank account information
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|User created successfully|Inline|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|User created successfully|[User](#schemauser)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|[Error](#schemaerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
 |409|[Conflict](https://tools.ietf.org/html/rfc7231#section-6.5.8)|Conflict - User with the UMA address already exists|[Error](#schemaerror)|
-
-<h3 id="createuser-responseschema">Response Schema</h3>
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|userType|INDIVIDUAL|
-|userType|BUSINESS|
-|accountType|CLABE|
-|accountType|US_ACCOUNT|
-|accountType|PIX|
-|accountType|IBAN|
-|accountType|FBO|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -498,7 +469,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/users',
+fetch('https://api.uma.money/umaaas/2025-05-15/users',
 {
   method: 'GET',
 
@@ -518,7 +489,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.uma.money/umaaas/rc/users', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/2025-05-15/users', headers = headers)
 
 print(r.json())
 
@@ -537,7 +508,7 @@ the specified filters. If no filters are provided, returns all users (paginated)
 |---|---|---|---|---|
 |platformUserId|query|string|false|Filter by platform-specific user identifier|
 |umaAddress|query|string|false|Filter by UMA address|
-|userType|query|string|false|Filter by user type|
+|userType|query|[UserType](#schemausertype)|false|Filter by user type|
 |createdAfter|query|string(date-time)|false|Filter users created after this timestamp (inclusive)|
 |createdBefore|query|string(date-time)|false|Filter users created before this timestamp (inclusive)|
 |updatedAfter|query|string(date-time)|false|Filter users updated after this timestamp (inclusive)|
@@ -567,22 +538,7 @@ the specified filters. If no filters are provided, returns all users (paginated)
       "userType": "INDIVIDUAL",
       "createdAt": "2023-07-21T17:32:28Z",
       "updatedAt": "2023-07-21T17:32:28Z",
-      "isDeleted": false,
-      "fullName": "John Michael Doe",
-      "dateOfBirth": "1990-01-15",
-      "nationality": "US",
-      "address": {
-        "line1": "123 Main Street",
-        "line2": "Apt 4B",
-        "city": "San Francisco",
-        "state": "CA",
-        "postalCode": "94105",
-        "country": "US"
-      },
-      "bankAccountInfo": {
-        "accountType": "CLABE",
-        "platformAccountId": "acc_123456789"
-      }
+      "isDeleted": false
     }
   ],
   "hasMore": true,
@@ -605,74 +561,14 @@ Status Code **200**
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|» data|[oneOf]|true|none|List of users matching the filter criteria|
-
-*oneOf*
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|»» *anonymous*|any|false|none|none|
-
-*allOf - discriminator: userType*
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|»»» *anonymous*|[User](#schemauser)|false|none|none|
-|»»»» id|string|false|read-only|System-generated unique identifier|
-|»»»» umaAddress|string|true|none|full UMA address|
-|»»»» platformUserId|string|true|none|Platform-specific user identifier|
-|»»»» userType|string|true|none|Whether the user is an individual or a business entity|
-|»»»» createdAt|string(date-time)|false|read-only|Creation timestamp|
-|»»»» updatedAt|string(date-time)|false|read-only|Last update timestamp|
-|»»»» isDeleted|boolean|false|read-only|Whether the user is marked as deleted|
-
-*and*
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|»»» *anonymous*|object|false|none|none|
-|»»»» fullName|string|false|none|Individual's full name|
-|»»»» dateOfBirth|string(date)|false|none|Date of birth in ISO 8601 format (YYYY-MM-DD)|
-|»»»» nationality|string|false|none|Country code (ISO 3166-1 alpha-2)|
-|»»»» address|[Address](#schemaaddress)|false|none|none|
-|»»»»» line1|string|true|none|Street address line 1|
-|»»»»» line2|string|false|none|Street address line 2|
-|»»»»» city|string|false|none|City|
-|»»»»» state|string|false|none|State/Province/Region|
-|»»»»» postalCode|string|true|none|Postal/ZIP code|
-|»»»»» country|string|true|none|Country code (ISO 3166-1 alpha-2)|
-|»»»» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|true|none|none|
-|»»»»» accountType|[BankAccountType](#schemabankaccounttype)|true|none|Type of bank account information|
-|»»»»» platformAccountId|string|false|none|Platform-specific identifier for this bank account. This optional field allows platforms<br>to link bank accounts to their internal account systems. The value can be any string<br>that helps identify the account in your system (e.g. database IDs, custom references, etc.).<br><br>This field is particularly useful when:<br>- Tracking multiple bank accounts for the same user<br>- Linking accounts to internal accounting systems<br>- Maintaining consistency between UMAaaS and your platform's account records|
-
-*xor*
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|»» *anonymous*|any|false|none|none|
-
-*allOf - discriminator: userType*
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|»»» *anonymous*|[User](#schemauser)|false|none|none|
-
-*and*
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|»»» *anonymous*|object|false|none|none|
-|»»»» address|[Address](#schemaaddress)|false|none|none|
-|»»»» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|true|none|none|
-|»»»» businessInfo|object|false|none|Additional information required for business entities|
-|»»»»» legalName|string|true|none|Legal name of the business|
-|»»»»» registrationNumber|string|false|none|Business registration number|
-|»»»»» taxId|string|false|none|Tax identification number|
-
-*continued*
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
+|» data|[[User](#schemauser)]|true|none|List of users matching the filter criteria|
+|»» id|string|false|read-only|System-generated unique identifier|
+|»» umaAddress|string|true|none|full UMA address|
+|»» platformUserId|string|true|none|Platform-specific user identifier|
+|»» userType|[UserType](#schemausertype)|true|none|Whether the user is an individual or a business entity|
+|»» createdAt|string(date-time)|false|read-only|Creation timestamp|
+|»» updatedAt|string(date-time)|false|read-only|Last update timestamp|
+|»» isDeleted|boolean|false|read-only|Whether the user is marked as deleted|
 |» hasMore|boolean|true|none|Indicates if more results are available beyond this page|
 |» nextCursor|string|false|none|Cursor to retrieve the next page of results (only present if hasMore is true)|
 |» totalCount|integer|false|none|Total number of users matching the criteria (excluding pagination)|
@@ -683,11 +579,6 @@ Status Code **200**
 |---|---|
 |userType|INDIVIDUAL|
 |userType|BUSINESS|
-|accountType|CLABE|
-|accountType|US_ACCOUNT|
-|accountType|PIX|
-|accountType|IBAN|
-|accountType|FBO|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -706,7 +597,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/users/{userId}',
+fetch('https://api.uma.money/umaaas/2025-05-15/users/{userId}',
 {
   method: 'GET',
 
@@ -726,7 +617,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.uma.money/umaaas/rc/users/{userId}', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/2025-05-15/users/{userId}', headers = headers)
 
 print(r.json())
 
@@ -756,22 +647,7 @@ Retrieve a user by their system-generated ID
   "userType": "INDIVIDUAL",
   "createdAt": "2023-07-21T17:32:28Z",
   "updatedAt": "2023-07-21T17:32:28Z",
-  "isDeleted": false,
-  "fullName": "John Michael Doe",
-  "dateOfBirth": "1990-01-15",
-  "nationality": "US",
-  "address": {
-    "line1": "123 Main Street",
-    "line2": "Apt 4B",
-    "city": "San Francisco",
-    "state": "CA",
-    "postalCode": "94105",
-    "country": "US"
-  },
-  "bankAccountInfo": {
-    "accountType": "CLABE",
-    "platformAccountId": "acc_123456789"
-  }
+  "isDeleted": false
 }
 ```
 
@@ -779,23 +655,9 @@ Retrieve a user by their system-generated ID
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Successful operation|Inline|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Successful operation|[User](#schemauser)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|User not found|[Error](#schemaerror)|
-
-<h3 id="getuserbyid-responseschema">Response Schema</h3>
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|userType|INDIVIDUAL|
-|userType|BUSINESS|
-|accountType|CLABE|
-|accountType|US_ACCOUNT|
-|accountType|PIX|
-|accountType|IBAN|
-|accountType|FBO|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -834,7 +696,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/users/{userId}',
+fetch('https://api.uma.money/umaaas/2025-05-15/users/{userId}',
 {
   method: 'PATCH',
   body: inputBody,
@@ -855,7 +717,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.patch('https://api.uma.money/umaaas/rc/users/{userId}', headers = headers)
+r = requests.patch('https://api.uma.money/umaaas/2025-05-15/users/{userId}', headers = headers)
 
 print(r.json())
 
@@ -911,22 +773,7 @@ Update a user's metadata by their system-generated ID
   "userType": "INDIVIDUAL",
   "createdAt": "2023-07-21T17:32:28Z",
   "updatedAt": "2023-07-21T17:32:28Z",
-  "isDeleted": false,
-  "fullName": "John Michael Doe",
-  "dateOfBirth": "1990-01-15",
-  "nationality": "US",
-  "address": {
-    "line1": "123 Main Street",
-    "line2": "Apt 4B",
-    "city": "San Francisco",
-    "state": "CA",
-    "postalCode": "94105",
-    "country": "US"
-  },
-  "bankAccountInfo": {
-    "accountType": "CLABE",
-    "platformAccountId": "acc_123456789"
-  }
+  "isDeleted": false
 }
 ```
 
@@ -934,24 +781,10 @@ Update a user's metadata by their system-generated ID
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|User updated successfully|Inline|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|User updated successfully|[User](#schemauser)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|[Error](#schemaerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|User not found|[Error](#schemaerror)|
-
-<h3 id="updateuserbyid-responseschema">Response Schema</h3>
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|userType|INDIVIDUAL|
-|userType|BUSINESS|
-|accountType|CLABE|
-|accountType|US_ACCOUNT|
-|accountType|PIX|
-|accountType|IBAN|
-|accountType|FBO|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -970,7 +803,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/users/{userId}',
+fetch('https://api.uma.money/umaaas/2025-05-15/users/{userId}',
 {
   method: 'DELETE',
 
@@ -990,7 +823,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.delete('https://api.uma.money/umaaas/rc/users/{userId}', headers = headers)
+r = requests.delete('https://api.uma.money/umaaas/2025-05-15/users/{userId}', headers = headers)
 
 print(r.json())
 
@@ -1020,22 +853,7 @@ Delete a user by their system-generated ID
   "userType": "INDIVIDUAL",
   "createdAt": "2023-07-21T17:32:28Z",
   "updatedAt": "2023-07-21T17:32:28Z",
-  "isDeleted": false,
-  "fullName": "John Michael Doe",
-  "dateOfBirth": "1990-01-15",
-  "nationality": "US",
-  "address": {
-    "line1": "123 Main Street",
-    "line2": "Apt 4B",
-    "city": "San Francisco",
-    "state": "CA",
-    "postalCode": "94105",
-    "country": "US"
-  },
-  "bankAccountInfo": {
-    "accountType": "CLABE",
-    "platformAccountId": "acc_123456789"
-  }
+  "isDeleted": false
 }
 ```
 
@@ -1043,24 +861,10 @@ Delete a user by their system-generated ID
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|User deleted successfully|Inline|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|User deleted successfully|[User](#schemauser)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|User not found|[Error](#schemaerror)|
 |410|[Gone](https://tools.ietf.org/html/rfc7231#section-6.5.9)|User deleted already|[Error](#schemaerror)|
-
-<h3 id="deleteuserbyid-responseschema">Response Schema</h3>
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|userType|INDIVIDUAL|
-|userType|BUSINESS|
-|accountType|CLABE|
-|accountType|US_ACCOUNT|
-|accountType|PIX|
-|accountType|IBAN|
-|accountType|FBO|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -1083,7 +887,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/users/bulk/csv',
+fetch('https://api.uma.money/umaaas/2025-05-15/users/bulk/csv',
 {
   method: 'POST',
   body: inputBody,
@@ -1104,7 +908,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.uma.money/umaaas/rc/users/bulk/csv', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/2025-05-15/users/bulk/csv', headers = headers)
 
 print(r.json())
 
@@ -1256,7 +1060,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/users/bulk/jobs/{jobId}',
+fetch('https://api.uma.money/umaaas/2025-05-15/users/bulk/jobs/{jobId}',
 {
   method: 'GET',
 
@@ -1276,7 +1080,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.uma.money/umaaas/rc/users/bulk/jobs/{jobId}', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/2025-05-15/users/bulk/jobs/{jobId}', headers = headers)
 
 print(r.json())
 
@@ -1358,7 +1162,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/transactions/{transactionId}',
+fetch('https://api.uma.money/umaaas/2025-05-15/transactions/{transactionId}',
 {
   method: 'GET',
 
@@ -1378,7 +1182,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.uma.money/umaaas/rc/transactions/{transactionId}', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/2025-05-15/transactions/{transactionId}', headers = headers)
 
 print(r.json())
 
@@ -1416,18 +1220,6 @@ Retrieve detailed information about a specific transaction
     "FULL_NAME": "John Sender",
     "DATE_OF_BIRTH": "1985-06-15",
     "NATIONALITY": "DE"
-  },
-  "receivedAmount": {
-    "amount": 12550,
-    "currency": {
-      "code": "USD",
-      "name": "United States Dollar",
-      "symbol": "$",
-      "decimals": 2
-    }
-  },
-  "reconciliationInstructions": {
-    "reference": "UMA-Q12345-REF"
   }
 }
 ```
@@ -1436,29 +1228,9 @@ Retrieve detailed information about a specific transaction
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Successful operation|Inline|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Successful operation|[Transaction](#schematransaction)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Transaction not found|[Error](#schemaerror)|
-
-<h3 id="gettransactionbyid-responseschema">Response Schema</h3>
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|status|CREATED|
-|status|PENDING|
-|status|PROCESSING|
-|status|COMPLETED|
-|status|REJECTED|
-|status|FAILED|
-|status|REFUNDED|
-|type|INCOMING|
-|type|OUTGOING|
-|type|INCOMING|
-|type|OUTGOING|
-|type|INCOMING|
-|type|OUTGOING|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -1477,7 +1249,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/transactions',
+fetch('https://api.uma.money/umaaas/2025-05-15/transactions',
 {
   method: 'GET',
 
@@ -1497,7 +1269,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.uma.money/umaaas/rc/transactions', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/2025-05-15/transactions', headers = headers)
 
 print(r.json())
 
@@ -1567,18 +1339,6 @@ date range, status, and transaction type.
         "FULL_NAME": "John Sender",
         "DATE_OF_BIRTH": "1985-06-15",
         "NATIONALITY": "DE"
-      },
-      "receivedAmount": {
-        "amount": 12550,
-        "currency": {
-          "code": "USD",
-          "name": "United States Dollar",
-          "symbol": "$",
-          "decimals": 2
-        }
-      },
-      "reconciliationInstructions": {
-        "reference": "UMA-Q12345-REF"
       }
     }
   ],
@@ -1602,79 +1362,18 @@ Status Code **200**
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|» data|[oneOf]|true|none|List of transactions matching the criteria|
-
-*oneOf*
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|»» *anonymous*|any|false|none|none|
-
-*allOf*
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|»»» *anonymous*|[Transaction](#schematransaction)|false|none|none|
-|»»»» id|string|true|none|Unique identifier for the transaction|
-|»»»» status|[TransactionStatus](#schematransactionstatus)|true|none|Status of a payment transaction|
-|»»»» type|[TransactionType](#schematransactiontype)|true|none|Type of transaction (incoming payment or outgoing payment)|
-|»»»» senderUmaAddress|string|true|none|UMA address of the payment sender|
-|»»»» receiverUmaAddress|string|true|none|UMA address of the payment recipient|
-|»»»» userId|string|true|none|System ID of the user (sender for outgoing, recipient for incoming)|
-|»»»» platformUserId|string|true|none|Platform-specific ID of the user (sender for outgoing, recipient for incoming)|
-|»»»» settledAt|string(date-time)|false|none|When the payment was or will be settled|
-|»»»» createdAt|string(date-time)|false|none|When the transaction was created|
-|»»»» description|string|false|none|Optional memo or description for the payment|
-|»»»» counterpartyInformation|object|false|none|Additional information about the counterparty, if available|
-
-*and*
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|»»» *anonymous*|object|false|none|none|
-|»»»» type|[TransactionType](#schematransactiontype)|true|none|Type of transaction (incoming payment or outgoing payment)|
-|»»»» receivedAmount|[CurrencyAmount](#schemacurrencyamount)|true|none|none|
-|»»»»» amount|integer(int64)|true|none|Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)|
-|»»»»» currency|[Currency](#schemacurrency)|true|none|none|
-|»»»»»» code|string|false|none|Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "SAT" for satoshis, "USDC" for USDCoin, etc.)|
-|»»»»»» name|string|false|none|Full name of the currency|
-|»»»»»» symbol|string|false|none|Symbol of the currency|
-|»»»»»» decimals|integer|false|none|Number of decimal places for the currency|
-|»»»» reconciliationInstructions|[ReconciliationInstructions](#schemareconciliationinstructions)|false|none|none|
-|»»»»» reference|string|true|none|Unique reference code that must be included with the payment to match it with the correct incoming transaction|
-
-*xor*
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|»» *anonymous*|any|false|none|none|
-
-*allOf*
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|»»» *anonymous*|[Transaction](#schematransaction)|false|none|none|
-
-*and*
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|»»» *anonymous*|object|false|none|none|
-|»»»» type|[TransactionType](#schematransactiontype)|true|none|Type of transaction (incoming payment or outgoing payment)|
-|»»»» sentAmount|[CurrencyAmount](#schemacurrencyamount)|true|none|none|
-|»»»» receivedAmount|[CurrencyAmount](#schemacurrencyamount)|false|none|none|
-|»»»» exchangeRate|number|false|none|Number of sending currency units per receiving currency unit.|
-|»»»» fees|integer(int64)|false|none|The fees associated with the quote in the smallest unit of the sending currency (eg. cents).|
-|»»»» quoteId|string|false|none|The ID of the quote that was used to trigger this payment|
-|»»»» refund|[Refund](#schemarefund)|false|none|none|
-|»»»»» reference|string|true|none|The unique reference code of the refund|
-|»»»»» initiatedAt|string(date-time)|true|none|When the refund was initiated|
-|»»»»» settledAt|string(date-time)|false|none|When the refund was or will be settled|
-
-*continued*
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
+|» data|[[Transaction](#schematransaction)]|true|none|List of transactions matching the criteria|
+|»» id|string|true|none|Unique identifier for the transaction|
+|»» status|[TransactionStatus](#schematransactionstatus)|true|none|Status of a payment transaction|
+|»» type|[TransactionType](#schematransactiontype)|true|none|Type of transaction (incoming payment or outgoing payment)|
+|»» senderUmaAddress|string|true|none|UMA address of the payment sender|
+|»» receiverUmaAddress|string|true|none|UMA address of the payment recipient|
+|»» userId|string|true|none|System ID of the user (sender for outgoing, recipient for incoming)|
+|»» platformUserId|string|true|none|Platform-specific ID of the user (sender for outgoing, recipient for incoming)|
+|»» settledAt|string(date-time)|false|none|When the payment was or will be settled|
+|»» createdAt|string(date-time)|false|none|When the transaction was created|
+|»» description|string|false|none|Optional memo or description for the payment|
+|»» counterpartyInformation|object|false|none|Additional information about the counterparty, if available|
 |» hasMore|boolean|true|none|Indicates if more results are available beyond this page|
 |» nextCursor|string|false|none|Cursor to retrieve the next page of results (only present if hasMore is true)|
 |» totalCount|integer|false|none|Total number of transactions matching the criteria (excluding pagination)|
@@ -1690,10 +1389,6 @@ Status Code **200**
 |status|REJECTED|
 |status|FAILED|
 |status|REFUNDED|
-|type|INCOMING|
-|type|OUTGOING|
-|type|INCOMING|
-|type|OUTGOING|
 |type|INCOMING|
 |type|OUTGOING|
 
@@ -1717,7 +1412,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/transactions/{transactionId}/approve',
+fetch('https://api.uma.money/umaaas/2025-05-15/transactions/{transactionId}/approve',
 {
   method: 'POST',
   body: inputBody,
@@ -1738,7 +1433,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.uma.money/umaaas/rc/transactions/{transactionId}/approve', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/2025-05-15/transactions/{transactionId}/approve', headers = headers)
 
 print(r.json())
 
@@ -1799,6 +1494,12 @@ This endpoint allows platforms to asynchronously approve payments after async pr
   },
   "reconciliationInstructions": {
     "reference": "UMA-Q12345-REF"
+  },
+  "rateDetails": {
+    "umaaasMultiplier": 0.925,
+    "umaaasFixedFee": 10,
+    "umaaasVariableFeeRate": 0.003,
+    "umaaasVariableFeeAmount": 30
   }
 }
 ```
@@ -1833,7 +1534,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/transactions/{transactionId}/reject',
+fetch('https://api.uma.money/umaaas/2025-05-15/transactions/{transactionId}/reject',
 {
   method: 'POST',
   body: inputBody,
@@ -1854,7 +1555,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.uma.money/umaaas/rc/transactions/{transactionId}/reject', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/2025-05-15/transactions/{transactionId}/reject', headers = headers)
 
 print(r.json())
 
@@ -1915,6 +1616,12 @@ This endpoint allows platforms to asynchronously reject payments after additiona
   },
   "reconciliationInstructions": {
     "reference": "UMA-Q12345-REF"
+  },
+  "rateDetails": {
+    "umaaasMultiplier": 0.925,
+    "umaaasFixedFee": 10,
+    "umaaasVariableFeeRate": 0.003,
+    "umaaasVariableFeeAmount": 30
   }
 }
 ```
@@ -1950,7 +1657,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/receiver/{receiverUmaAddress}',
+fetch('https://api.uma.money/umaaas/2025-05-15/receiver/{receiverUmaAddress}',
 {
   method: 'GET',
 
@@ -1970,7 +1677,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.uma.money/umaaas/rc/receiver/{receiverUmaAddress}', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/2025-05-15/receiver/{receiverUmaAddress}', headers = headers)
 
 print(r.json())
 
@@ -2091,7 +1798,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/quotes',
+fetch('https://api.uma.money/umaaas/2025-05-15/quotes',
 {
   method: 'POST',
   body: inputBody,
@@ -2112,7 +1819,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.uma.money/umaaas/rc/quotes', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/2025-05-15/quotes', headers = headers)
 
 print(r.json())
 
@@ -2210,7 +1917,15 @@ this field can be omitted.
     }
   },
   "status": "PENDING",
-  "transactionId": "Transaction:019542f5-b3e7-1d02-0000-000000000005"
+  "transactionId": "Transaction:019542f5-b3e7-1d02-0000-000000000005",
+  "rateDetails": {
+    "counterpartyMultiplier": 1.08,
+    "counterpartyFixedFee": 10,
+    "umaaasMultiplier": 0.925,
+    "umaaasFixedFee": 10,
+    "umaaasVariableFeeRate": 0.003,
+    "umaaasVariableFeeAmount": 30
+  }
 }
 ```
 
@@ -2244,7 +1959,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/quotes/{quoteId}',
+fetch('https://api.uma.money/umaaas/2025-05-15/quotes/{quoteId}',
 {
   method: 'GET',
 
@@ -2264,7 +1979,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.uma.money/umaaas/rc/quotes/{quoteId}', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/2025-05-15/quotes/{quoteId}', headers = headers)
 
 print(r.json())
 
@@ -2321,7 +2036,15 @@ from quote creation to settlement.
     }
   },
   "status": "PENDING",
-  "transactionId": "Transaction:019542f5-b3e7-1d02-0000-000000000005"
+  "transactionId": "Transaction:019542f5-b3e7-1d02-0000-000000000005",
+  "rateDetails": {
+    "counterpartyMultiplier": 1.08,
+    "counterpartyFixedFee": 10,
+    "umaaasMultiplier": 0.925,
+    "umaaasFixedFee": 10,
+    "umaaasVariableFeeRate": 0.003,
+    "umaaasVariableFeeAmount": 30
+  }
 }
 ```
 
@@ -2354,7 +2077,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/webhooks/test',
+fetch('https://api.uma.money/umaaas/2025-05-15/webhooks/test',
 {
   method: 'POST',
 
@@ -2374,7 +2097,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.uma.money/umaaas/rc/webhooks/test', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/2025-05-15/webhooks/test', headers = headers)
 
 print(r.json())
 
@@ -2432,7 +2155,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/invitations',
+fetch('https://api.uma.money/umaaas/2025-05-15/invitations',
 {
   method: 'POST',
   body: inputBody,
@@ -2453,7 +2176,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.uma.money/umaaas/rc/invitations', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/2025-05-15/invitations', headers = headers)
 
 print(r.json())
 
@@ -2543,7 +2266,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/invitations/{invitationCode}',
+fetch('https://api.uma.money/umaaas/2025-05-15/invitations/{invitationCode}',
 {
   method: 'GET',
 
@@ -2563,7 +2286,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.uma.money/umaaas/rc/invitations/{invitationCode}', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/2025-05-15/invitations/{invitationCode}', headers = headers)
 
 print(r.json())
 
@@ -2635,7 +2358,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/invitations/{invitationCode}/claim',
+fetch('https://api.uma.money/umaaas/2025-05-15/invitations/{invitationCode}/claim',
 {
   method: 'POST',
   body: inputBody,
@@ -2656,7 +2379,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.uma.money/umaaas/rc/invitations/{invitationCode}/claim', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/2025-05-15/invitations/{invitationCode}/claim', headers = headers)
 
 print(r.json())
 
@@ -2743,7 +2466,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/invitations/{invitationCode}/cancel',
+fetch('https://api.uma.money/umaaas/2025-05-15/invitations/{invitationCode}/cancel',
 {
   method: 'POST',
 
@@ -2763,7 +2486,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.uma.money/umaaas/rc/invitations/{invitationCode}/cancel', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/2025-05-15/invitations/{invitationCode}/cancel', headers = headers)
 
 print(r.json())
 
@@ -2850,7 +2573,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/tokens',
+fetch('https://api.uma.money/umaaas/2025-05-15/tokens',
 {
   method: 'POST',
   body: inputBody,
@@ -2871,7 +2594,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.uma.money/umaaas/rc/tokens', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/2025-05-15/tokens', headers = headers)
 
 print(r.json())
 
@@ -2953,7 +2676,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/tokens',
+fetch('https://api.uma.money/umaaas/2025-05-15/tokens',
 {
   method: 'GET',
 
@@ -2973,7 +2696,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.uma.money/umaaas/rc/tokens', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/2025-05-15/tokens', headers = headers)
 
 print(r.json())
 
@@ -3066,7 +2789,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/tokens/{tokenId}',
+fetch('https://api.uma.money/umaaas/2025-05-15/tokens/{tokenId}',
 {
   method: 'GET',
 
@@ -3086,7 +2809,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.get('https://api.uma.money/umaaas/rc/tokens/{tokenId}', headers = headers)
+r = requests.get('https://api.uma.money/umaaas/2025-05-15/tokens/{tokenId}', headers = headers)
 
 print(r.json())
 
@@ -3147,7 +2870,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/tokens/{tokenId}',
+fetch('https://api.uma.money/umaaas/2025-05-15/tokens/{tokenId}',
 {
   method: 'DELETE',
 
@@ -3167,7 +2890,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.delete('https://api.uma.money/umaaas/rc/tokens/{tokenId}', headers = headers)
+r = requests.delete('https://api.uma.money/umaaas/2025-05-15/tokens/{tokenId}', headers = headers)
 
 print(r.json())
 
@@ -3230,7 +2953,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/sandbox/send',
+fetch('https://api.uma.money/umaaas/2025-05-15/sandbox/send',
 {
   method: 'POST',
   body: inputBody,
@@ -3251,7 +2974,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.uma.money/umaaas/rc/sandbox/send', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/2025-05-15/sandbox/send', headers = headers)
 
 print(r.json())
 
@@ -3329,6 +3052,14 @@ This endpoint is only for the sandbox environment and will fail for production p
     "reference": "UMA-Q12345-REFUND",
     "initiatedAt": "2023-08-15T14:30:00Z",
     "settledAt": "2023-08-15T14:30:00Z"
+  },
+  "rateDetails": {
+    "counterpartyMultiplier": 1.08,
+    "counterpartyFixedFee": 10,
+    "umaaasMultiplier": 0.925,
+    "umaaasFixedFee": 10,
+    "umaaasVariableFeeRate": 0.003,
+    "umaaasVariableFeeAmount": 30
   }
 }
 ```
@@ -3367,7 +3098,7 @@ const headers = {
   'Accept':'application/json'
 };
 
-fetch('https://api.uma.money/umaaas/rc/sandbox/receive',
+fetch('https://api.uma.money/umaaas/2025-05-15/sandbox/receive',
 {
   method: 'POST',
   body: inputBody,
@@ -3388,7 +3119,7 @@ headers = {
   'Accept': 'application/json'
 }
 
-r = requests.post('https://api.uma.money/umaaas/rc/sandbox/receive', headers = headers)
+r = requests.post('https://api.uma.money/umaaas/2025-05-15/sandbox/receive', headers = headers)
 
 print(r.json())
 
@@ -3456,6 +3187,12 @@ This endpoint is only for the sandbox environment and will fail for production p
   },
   "reconciliationInstructions": {
     "reference": "UMA-Q12345-REF"
+  },
+  "rateDetails": {
+    "umaaasMultiplier": 0.925,
+    "umaaasFixedFee": 10,
+    "umaaasVariableFeeRate": 0.003,
+    "umaaasVariableFeeAmount": 30
   }
 }
 ```
@@ -3626,6 +3363,28 @@ BasicAuth
 |pixKeyType|PHONE|
 |pixKeyType|RANDOM|
 
+<h2 id="tocS_UpiAccountInfo">UpiAccountInfo</h2>
+<!-- backwards compatibility -->
+<a id="schemaupiaccountinfo"></a>
+<a id="schema_UpiAccountInfo"></a>
+<a id="tocSupiaccountinfo"></a>
+<a id="tocsupiaccountinfo"></a>
+
+```json
+{
+  "vpa": "someuser@okbank",
+  "accountHolderName": "John Doe"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|vpa|string|true|none|Virtual Payment Address for UPI payments|
+|accountHolderName|string|false|none|Name of the account holder|
+
 <h2 id="tocS_IbanAccountInfo">IbanAccountInfo</h2>
 <!-- backwards compatibility -->
 <a id="schemaibanaccountinfo"></a>
@@ -3681,6 +3440,7 @@ Type of bank account information
 |*anonymous*|PIX|
 |*anonymous*|IBAN|
 |*anonymous*|FBO|
+|*anonymous*|UPI|
 
 <h2 id="tocS_UserBankAccountInfo">UserBankAccountInfo</h2>
 <!-- backwards compatibility -->
@@ -3890,6 +3650,43 @@ and
 |---|---|---|---|---|
 |*anonymous*|object|false|none|none|
 |» currencyCode|string|true|none|Three-letter currency code (ISO 4217)|
+
+<h2 id="tocS_UserUpiAccountInfo">UserUpiAccountInfo</h2>
+<!-- backwards compatibility -->
+<a id="schemauserupiaccountinfo"></a>
+<a id="schema_UserUpiAccountInfo"></a>
+<a id="tocSuserupiaccountinfo"></a>
+<a id="tocsuserupiaccountinfo"></a>
+
+```json
+{
+  "accountType": "CLABE",
+  "platformAccountId": "acc_123456789",
+  "vpa": "someuser@okbank",
+  "accountHolderName": "John Doe"
+}
+
+```
+
+### Properties
+
+allOf - discriminator: UserBankAccountInfo.accountType
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[UserBankAccountInfo](#schemauserbankaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[UpiAccountInfo](#schemaupiaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
 
 <h2 id="tocS_PaymentInstructions">PaymentInstructions</h2>
 <!-- backwards compatibility -->
@@ -4148,6 +3945,42 @@ and
 |paymentMethod|POST|
 |paymentMethod|GET|
 
+<h2 id="tocS_PaymentUpiAccountInfo">PaymentUpiAccountInfo</h2>
+<!-- backwards compatibility -->
+<a id="schemapaymentupiaccountinfo"></a>
+<a id="schema_PaymentUpiAccountInfo"></a>
+<a id="tocSpaymentupiaccountinfo"></a>
+<a id="tocspaymentupiaccountinfo"></a>
+
+```json
+{
+  "accountType": "CLABE",
+  "vpa": "someuser@okbank",
+  "accountHolderName": "John Doe"
+}
+
+```
+
+### Properties
+
+allOf - discriminator: PaymentBankAccountInfo.accountType
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[PaymentBankAccountInfo](#schemapaymentbankaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[UpiAccountInfo](#schemaupiaccountinfo)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+
 <h2 id="tocS_User">User</h2>
 <!-- backwards compatibility -->
 <a id="schemauser"></a>
@@ -4175,17 +4008,10 @@ and
 |id|string|false|read-only|System-generated unique identifier|
 |umaAddress|string|true|none|full UMA address|
 |platformUserId|string|true|none|Platform-specific user identifier|
-|userType|string|true|none|Whether the user is an individual or a business entity|
+|userType|[UserType](#schemausertype)|true|none|Whether the user is an individual or a business entity|
 |createdAt|string(date-time)|false|read-only|Creation timestamp|
 |updatedAt|string(date-time)|false|read-only|Last update timestamp|
 |isDeleted|boolean|false|read-only|Whether the user is marked as deleted|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|userType|INDIVIDUAL|
-|userType|BUSINESS|
 
 <h2 id="tocS_IndividualUser">IndividualUser</h2>
 <!-- backwards compatibility -->
@@ -4512,6 +4338,33 @@ Type of transaction (incoming payment or outgoing payment)
 |*anonymous*|INCOMING|
 |*anonymous*|OUTGOING|
 
+<h2 id="tocS_UserType">UserType</h2>
+<!-- backwards compatibility -->
+<a id="schemausertype"></a>
+<a id="schema_UserType"></a>
+<a id="tocSusertype"></a>
+<a id="tocsusertype"></a>
+
+```json
+"INDIVIDUAL"
+
+```
+
+Whether the user is an individual or a business entity
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|string|false|none|Whether the user is an individual or a business entity|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|*anonymous*|INDIVIDUAL|
+|*anonymous*|BUSINESS|
+
 <h2 id="tocS_WebhookType">WebhookType</h2>
 <!-- backwards compatibility -->
 <a id="schemawebhooktype"></a>
@@ -4643,6 +4496,66 @@ Type of webhook event, used by the receiver to identify which webhook is being r
 |initiatedAt|string(date-time)|true|none|When the refund was initiated|
 |settledAt|string(date-time)|false|none|When the refund was or will be settled|
 
+<h2 id="tocS_OutgoingRateDetails">OutgoingRateDetails</h2>
+<!-- backwards compatibility -->
+<a id="schemaoutgoingratedetails"></a>
+<a id="schema_OutgoingRateDetails"></a>
+<a id="tocSoutgoingratedetails"></a>
+<a id="tocsoutgoingratedetails"></a>
+
+```json
+{
+  "counterpartyMultiplier": 1.08,
+  "counterpartyFixedFee": 10,
+  "umaaasMultiplier": 0.925,
+  "umaaasFixedFee": 10,
+  "umaaasVariableFeeRate": 0.003,
+  "umaaasVariableFeeAmount": 30
+}
+
+```
+
+Details about the rate and fees for an outgoing transaction or quote.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|counterpartyMultiplier|number(double)|false|none|The underlying multiplier from mSATs to the receiving currency as returned by the counterparty institution.|
+|counterpartyFixedFee|integer(int64)|false|none|The fixed fee charged by the counterparty institution to execute the quote in the smallest unit of the receiving currency (eg. cents).|
+|umaaasMultiplier|number(double)|false|none|The underlying multiplier from the sending currency to mSATS, including variable fees.|
+|umaaasFixedFee|integer(int64)|false|none|The fixed fee charged by the UMAaaS product to execute the quote in the smallest unit of the sending currency (eg. cents).|
+|umaaasVariableFeeRate|number(double)|false|none|The variable fee rate charged by the UMAaaS product to execute the quote as a percentage of the sending currency amount.|
+|umaaasVariableFeeAmount|number(int64)|false|none|The variable fee amount charged by the UMAaaS product to execute the quote in the smallest unit of the sending currency (eg. cents). This is the sending amount times umaaasVariableFeeRate.|
+
+<h2 id="tocS_IncomingRateDetails">IncomingRateDetails</h2>
+<!-- backwards compatibility -->
+<a id="schemaincomingratedetails"></a>
+<a id="schema_IncomingRateDetails"></a>
+<a id="tocSincomingratedetails"></a>
+<a id="tocsincomingratedetails"></a>
+
+```json
+{
+  "umaaasMultiplier": 0.925,
+  "umaaasFixedFee": 10,
+  "umaaasVariableFeeRate": 0.003,
+  "umaaasVariableFeeAmount": 30
+}
+
+```
+
+Details about the rate and fees for an incoming transaction.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|umaaasMultiplier|number(double)|false|none|The underlying multiplier from the mSATS to the receiving currency, including variable fees.|
+|umaaasFixedFee|integer(int64)|false|none|The fixed fee charged by the UMAaaS product to execute the quote in the smallest unit of the receiving currency (eg. cents).|
+|umaaasVariableFeeRate|number(double)|false|none|The variable fee rate charged by the UMAaaS product to execute the quote as a percentage of the receiving currency amount.|
+|umaaasVariableFeeAmount|number(int64)|false|none|The variable fee amount charged by the UMAaaS product to execute the quote in the smallest unit of the receiving currency (eg. cents). This is the receiving amount times umaaasVariableFeeRate.|
+
 <h2 id="tocS_Transaction">Transaction</h2>
 <!-- backwards compatibility -->
 <a id="schematransaction"></a>
@@ -4722,6 +4635,12 @@ Type of webhook event, used by the receiver to identify which webhook is being r
   },
   "reconciliationInstructions": {
     "reference": "UMA-Q12345-REF"
+  },
+  "rateDetails": {
+    "umaaasMultiplier": 0.925,
+    "umaaasFixedFee": 10,
+    "umaaasVariableFeeRate": 0.003,
+    "umaaasVariableFeeAmount": 30
   }
 }
 
@@ -4729,7 +4648,7 @@ Type of webhook event, used by the receiver to identify which webhook is being r
 
 ### Properties
 
-allOf
+allOf - discriminator: Transaction.type
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
@@ -4740,9 +4659,9 @@ and
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |*anonymous*|object|false|none|none|
-|» type|[TransactionType](#schematransactiontype)|true|none|Always "INCOMING" for incoming transactions|
 |» receivedAmount|[CurrencyAmount](#schemacurrencyamount)|true|none|Amount received in the recipient's currency|
 |» reconciliationInstructions|[ReconciliationInstructions](#schemareconciliationinstructions)|false|none|Included for all transactions except those with "CREATED" status|
+|» rateDetails|[IncomingRateDetails](#schemaincomingratedetails)|false|none|Details about the rate and fees for the transaction.|
 
 <h2 id="tocS_OutgoingTransaction">OutgoingTransaction</h2>
 <!-- backwards compatibility -->
@@ -4793,6 +4712,14 @@ and
     "reference": "UMA-Q12345-REFUND",
     "initiatedAt": "2023-08-15T14:30:00Z",
     "settledAt": "2023-08-15T14:30:00Z"
+  },
+  "rateDetails": {
+    "counterpartyMultiplier": 1.08,
+    "counterpartyFixedFee": 10,
+    "umaaasMultiplier": 0.925,
+    "umaaasFixedFee": 10,
+    "umaaasVariableFeeRate": 0.003,
+    "umaaasVariableFeeAmount": 30
   }
 }
 
@@ -4800,7 +4727,7 @@ and
 
 ### Properties
 
-allOf
+allOf - discriminator: Transaction.type
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
@@ -4811,13 +4738,13 @@ and
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |*anonymous*|object|false|none|none|
-|» type|[TransactionType](#schematransactiontype)|true|none|Always "OUTGOING" for outgoing transactions|
 |» sentAmount|[CurrencyAmount](#schemacurrencyamount)|true|none|Amount sent in the sender's currency|
 |» receivedAmount|[CurrencyAmount](#schemacurrencyamount)|false|none|Amount to be received by recipient in the recipient's currency|
 |» exchangeRate|number|false|none|Number of sending currency units per receiving currency unit.|
 |» fees|integer(int64)|false|none|The fees associated with the quote in the smallest unit of the sending currency (eg. cents).|
 |» quoteId|string|false|none|The ID of the quote that was used to trigger this payment|
 |» refund|[Refund](#schemarefund)|false|none|The refund if transaction was refunded.|
+|» rateDetails|[OutgoingRateDetails](#schemaoutgoingratedetails)|false|none|Details about the rate and fees for the transaction.|
 
 <h2 id="tocS_CurrencyPreference">CurrencyPreference</h2>
 <!-- backwards compatibility -->
@@ -4917,7 +4844,15 @@ The side of the quote which should be locked and specified in the `lockedCurrenc
     }
   },
   "status": "PENDING",
-  "transactionId": "Transaction:019542f5-b3e7-1d02-0000-000000000005"
+  "transactionId": "Transaction:019542f5-b3e7-1d02-0000-000000000005",
+  "rateDetails": {
+    "counterpartyMultiplier": 1.08,
+    "counterpartyFixedFee": 10,
+    "umaaasMultiplier": 0.925,
+    "umaaasFixedFee": 10,
+    "umaaasVariableFeeRate": 0.003,
+    "umaaasVariableFeeAmount": 30
+  }
 }
 
 ```
@@ -4938,6 +4873,7 @@ The side of the quote which should be locked and specified in the `lockedCurrenc
 |paymentInstructions|[PaymentInstructions](#schemapaymentinstructions)|true|none|none|
 |status|string|false|none|Current status of the quote|
 |transactionId|string|true|none|The ID of the transaction created from this quote.|
+|rateDetails|[OutgoingRateDetails](#schemaoutgoingratedetails)|false|none|Details about the rate and fees for the transaction.|
 
 #### Enumerated Values
 
