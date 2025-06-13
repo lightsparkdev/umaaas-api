@@ -4,6 +4,31 @@ plugins {
     alias(libs.plugins.ktor)
 }
 
+// Frontend build task
+tasks.register<Exec>("buildFrontend") {
+    dependsOn("npmInstall")
+    workingDir = file("../frontend")
+    commandLine("npm", "run", "build")
+    group = "build"
+    description = "Build the frontend React application"
+}
+
+tasks.register<Exec>("npmInstall") {
+    workingDir = file("../frontend")
+    commandLine("npm", "install")
+    group = "build"
+    description = "Install frontend dependencies"
+    
+    inputs.file("../frontend/package.json")
+    inputs.file("../frontend/package-lock.json")
+    outputs.dir("../frontend/node_modules")
+}
+
+// Make sure frontend is built before running the application
+tasks.named("processResources") {
+    dependsOn("buildFrontend")
+}
+
 kotlin {
     jvmToolchain {
         languageVersion.set(JavaLanguageVersion.of(23))
@@ -15,7 +40,21 @@ version = "0.0.1"
 
 application {
     mainClass = "io.ktor.server.netty.EngineMain"
-        applicationDefaultJvmArgs = listOf("-Dio.ktor.development=true")
+    applicationDefaultJvmArgs = listOf(
+        "-Dio.ktor.development=true",
+        "-Dio.ktor.autoreload=true"
+    )
+}
+
+// Enable continuous build for development
+tasks.named<JavaExec>("run") {
+    standardInput = System.`in`
+    // Set working directory to help with file watching
+    workingDir = rootDir
+    
+    // Enable file watching for auto-reload
+    systemProperty("io.ktor.development", "true")
+    systemProperty("io.ktor.autoreload", "true")
 }
 
 repositories {
@@ -35,8 +74,12 @@ dependencies {
     implementation(libs.ktor.server.config.yaml)
     
     // UMAaaS Kotlin client dependencies
-    implementation("com.lightspark.uma:umaaas-kotlin-core:0.0.1-alpha.0")
-    implementation("com.lightspark.uma:umaaas-kotlin-client-okhttp:0.0.1-alpha.0")
+    implementation("com.lightspark.uma:umaaas-kotlin-core:0.0.1-alpha.1")
+    implementation("com.lightspark.uma:umaaas-kotlin-client-okhttp:0.0.1-alpha.1")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1")
+
+    // Environment variables support
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
     
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
