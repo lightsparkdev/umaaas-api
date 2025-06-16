@@ -1,12 +1,12 @@
 package com.lightspark.uma.umaaas
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.lightspark.uma.models.users.UserListParams
 import com.lightspark.uma.models.users.UserCreateParams
 import com.lightspark.uma.models.users.User
 import com.lightspark.uma.umaaas.lib.UmaaasClient
 import com.lightspark.uma.umaaas.lib.JsonUtils
+import com.lightspark.uma.umaaas.routes.lookupUmaRoute
+
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
@@ -16,9 +16,22 @@ import io.ktor.server.routing.*
 import io.ktor.server.sse.*
 import io.ktor.sse.*
 
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.request.*
+import io.ktor.client.statement.bodyAsText
+
 fun Application.configureRouting() {
     install(SSE)
+    
+    // HTTP client for proxying requests
+    val httpClient = HttpClient(CIO)
+    
     routing {
+        // URL rewrites - equivalent to Next.js rewrites
+        configureUmaRewrites(httpClient)
+        
+        lookupUmaRoute()
         route("/api/user") {
             get {
                 try {
@@ -81,13 +94,116 @@ fun Application.configureRouting() {
             }
         }
         
-        // Serve static frontend files
-        staticResources("/", "static") {
-            // Serve index.html for all non-API routes (SPA routing)
-            default("index.html")
-        }
         sse("/hello") {
             send(ServerSentEvent("world"))
         }
+
+        // Serve static frontend files - MUST come last to avoid catching API routes
+        staticResources("/", "static") {
+//            // Serve index.html for all non-API routes (SPA routing)
+//            default("index.html")
+        }
+    }
+}
+
+fun Route.configureUmaRewrites(httpClient: HttpClient) {
+    val forwardDomain = System.getenv("UMAAAS_FORWARD_DOMAIN")
+    println("🔧 UMAAAS_FORWARD_DOMAIN: $forwardDomain")
+
+    if (forwardDomain != null) {
+        // Rewrite /.well-known/lnurlp/:path* to external domain
+        get("/.well-known/lnurlp/{path...}") {
+            val path = call.parameters.getAll("path")?.joinToString("/") ?: ""
+            val targetUrl = "$forwardDomain/.well-known/lnurlp/$path"
+            println("🔄 Rewriting: ${call.request.uri} → $targetUrl")
+
+            try {
+                val response = httpClient.get(targetUrl) {
+                    // Forward query parameters
+                    call.request.queryParameters.forEach { key, values ->
+                        values.forEach { value ->
+                            parameter(key, value)
+                        }
+                    }
+                    // Forward headers (excluding host)
+                    call.request.headers.forEach { key, values ->
+                        if (key.lowercase() !in listOf("host", "authorization")) {
+                            values.forEach { value ->
+                                header(key, value)
+                            }
+                        }
+                    }
+                }
+
+                // Forward response
+                call.respond(response.status, response.bodyAsText())
+            } catch (e: Exception) {
+                println("❌ Proxy error: ${e.message}")
+                call.respond(HttpStatusCode.BadGateway, mapOf("error" to "Proxy error"))
+            }
+        }
+
+        // Rewrite /.well-known/lnurlpubkey to external domain
+        get("/.well-known/lnurlpubkey") {
+            val targetUrl = "$forwardDomain/.well-known/lnurlpubkey"
+            println("🔄 Rewriting: ${call.request.uri} → $targetUrl")
+
+            try {
+                val response = httpClient.get(targetUrl) {
+                    call.request.queryParameters.forEach { key, values ->
+                        values.forEach { value ->
+                            parameter(key, value)
+                        }
+                    }
+                    call.request.headers.forEach { key, values ->
+                        if (key.lowercase() !in listOf("host", "authorization")) {
+                            values.forEach { value ->
+                                header(key, value)
+                            }
+                        }
+                    }
+                }
+
+                call.respond(response.status, response.bodyAsText())
+            } catch (e: Exception) {
+                println("❌ Proxy error: ${e.message}")
+                call.respond(HttpStatusCode.BadGateway, mapOf("error" to "Proxy error"))
+            }
+        }
+
+        // Rewrite /.well-known/uma-configuration to external domain
+        get("/.well-known/uma-configuration") {
+            val targetUrl = "$forwardDomain/.well-known/uma-configuration"
+            println("🔄 Rewriting: ${call.request.uri} → $targetUrl")
+
+            try {
+                val response = httpClient.get(targetUrl) {
+                    call.request.queryParameters.forEach { key, values ->
+                        values.forEach { value ->
+                            parameter(key, value)
+                        }
+                    }
+                    call.request.headers.forEach { key, values ->
+                        if (key.lowercase() !in listOf("host", "authorization")) {
+                            values.forEach { value ->
+                                header(key, value)
+                            }
+                        }
+                    }
+                }
+
+                call.respond(response.status, response.bodyAsText())
+            } catch (e: Exception) {
+                println("❌ Proxy error: ${e.message}")
+                call.respond(HttpStatusCode.BadGateway, mapOf("error" to "Proxy error"))
+            }
+        }
+
+        println("🔄 Ktor URL Rewrites configured:")
+        println("  1. /.well-known/lnurlp/{path...} → $forwardDomain/.well-known/lnurlp/{path...}")
+        println("  2. /.well-known/lnurlpubkey → $forwardDomain/.well-known/lnurlpubkey")
+        println("  3. /.well-known/uma-configuration → $forwardDomain/.well-known/uma-configuration")
+    } else {
+        println("⚠️  UMAAAS_FORWARD_DOMAIN not set - URL rewrites disabled")
     }
 }
