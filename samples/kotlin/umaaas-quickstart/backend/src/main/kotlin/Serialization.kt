@@ -14,6 +14,9 @@ import io.ktor.sse.*
 fun Application.configureSerialization() {
     install(ContentNegotiation) {
         gson {
+        }
+    }
+        gson {
             }
     }
     routing {
