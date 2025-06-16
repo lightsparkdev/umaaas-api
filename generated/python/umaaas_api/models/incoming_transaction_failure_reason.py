@@ -33,6 +33,8 @@ class IncomingTransactionFailureReason(str, Enum):
     PAYMENT_APPROVAL_TIMED_OUT = 'PAYMENT_APPROVAL_TIMED_OUT'
     OFFRAMP_FAILED = 'OFFRAMP_FAILED'
     MISSING_MANDATORY_PAYEE_DATA = 'MISSING_MANDATORY_PAYEE_DATA'
+    QUOTE_EXPIRED = 'QUOTE_EXPIRED'
+    QUOTE_EXECUTION_FAILED = 'QUOTE_EXECUTION_FAILED'
 
     @classmethod
     def from_json(cls, json_str: str) -> Self:
