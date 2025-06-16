@@ -44,7 +44,7 @@ fun Application.configureRouting() {
                             .build()
                     )
                     
-                    println("UaaS Client Response [users.list]: $users")
+                    println("umaaas Client Response [users.list]: $users")
                     call.respond(HttpStatusCode.OK, users)
                 } catch (e: Exception) {
                     println("Error listing users: ${e.message}")
