@@ -16,6 +16,10 @@ Reason for failure of an incoming transaction. This is used to provide more cont
 
 * `MISSING_MANDATORY_PAYEE_DATA` (value: `'MISSING_MANDATORY_PAYEE_DATA'`)
 
+* `QUOTE_EXPIRED` (value: `'QUOTE_EXPIRED'`)
+
+* `QUOTE_EXECUTION_FAILED` (value: `'QUOTE_EXECUTION_FAILED'`)
+
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
 
