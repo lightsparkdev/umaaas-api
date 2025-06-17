@@ -38,25 +38,22 @@ export const getCurrencyDecimals = (currencyCode: string): number => {
 /**
  * Convert a decimal amount to the smallest unit (integer) based on currency decimal places
  */
-export const convertToSmallestUnit = (amount: string, currencyCode: string): number => {
-  const decimals = getCurrencyDecimals(currencyCode);
-  const multiplier = Math.pow(10, decimals);
+export const convertToSmallestUnit = (amount: string, currencyDecimals: number): number => {
+  const multiplier = Math.pow(10, currencyDecimals);
   return Math.round(parseFloat(amount) * multiplier);
 };
 
 /**
  * Convert from smallest unit back to decimal amount
  */
-export const convertFromSmallestUnit = (amount: number, currencyCode: string): number => {
-  const decimals = getCurrencyDecimals(currencyCode);
-  const divisor = Math.pow(10, decimals);
+export const convertFromSmallestUnit = (amount: number, currencyDecimals: number): number => {
+  const divisor = Math.pow(10, currencyDecimals);
   return amount / divisor;
 };
 
 /**
  * Format currency amount with proper decimal places
  */
-export const formatCurrencyAmount = (amount: number, currencyCode: string): string => {
-  const decimals = getCurrencyDecimals(currencyCode);
-  return amount.toFixed(decimals);
+export const formatCurrencyAmount = (amount: number, currencyDecimals: number): string => {
+  return amount.toFixed(currencyDecimals);
 };
