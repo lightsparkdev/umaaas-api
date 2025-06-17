@@ -13,4 +13,20 @@ yarn-error.log*
 .vscode
 *.swp
 *.swo
-.DS_Store 
+.DS_Store
+
+
+# Gradle
+.gradle/
+build/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+.gradletasknamecache
+/bin
+
+# Local Environment files
+.env
+
+# Quickstart generated folders
+/samples/kotlin/umaaas-quickstart/backend/src/main/resources/static
