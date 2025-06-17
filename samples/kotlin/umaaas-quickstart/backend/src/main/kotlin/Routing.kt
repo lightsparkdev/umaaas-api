@@ -5,9 +5,10 @@ import com.lightspark.uma.models.users.UserCreateParams
 import com.lightspark.uma.models.users.User
 import com.lightspark.uma.umaaas.lib.UmaaasClient
 import com.lightspark.uma.umaaas.lib.JsonUtils
-import com.lightspark.uma.umaaas.lib.getEnvVar
 import com.lightspark.uma.umaaas.routes.configureUmaRewrites
-import com.lightspark.uma.umaaas.routes.lookupUmaRoute
+import com.lightspark.uma.umaaas.routes.paymentsRoutes
+import com.lightspark.uma.umaaas.routes.sandboxRoutes
+import com.lightspark.uma.umaaas.routes.webhookRoutes
 
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -31,8 +32,10 @@ fun Application.configureRouting() {
     routing {
         // URL rewrites - equivalent to Next.js rewrites
         configureUmaRewrites(httpClient)
-        
-        lookupUmaRoute()
+
+        paymentsRoutes()
+        sandboxRoutes()
+        webhookRoutes()
         route("/api/user") {
             get {
                 try {
@@ -70,7 +73,7 @@ fun Application.configureRouting() {
                     val rawBody = call.receiveText()
                     
                     // Pretty print the JSON
-                    println("Raw request body:\n${JsonUtils.prettyPrint(rawBody)}")
+                    println("Create User request:\n${JsonUtils.prettyPrint(rawBody)}")
 
                     // Parse JSON manually using Jackson
                     val objectMapper = com.fasterxml.jackson.databind.ObjectMapper()

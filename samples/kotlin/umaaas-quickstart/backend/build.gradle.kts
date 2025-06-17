@@ -82,10 +82,14 @@ dependencies {
     implementation("com.lightspark.uma:umaaas-kotlin-core:0.0.1-alpha.1")
     implementation("com.lightspark.uma:umaaas-kotlin-client-okhttp:0.0.1-alpha.1")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1")
 
     // Environment variables support
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
-    
+
+    // Webhook keys support
+    implementation("org.bouncycastle:bcprov-jdk18on:1.78")
+
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
 }
