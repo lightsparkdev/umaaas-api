@@ -1,6 +1,7 @@
 package com.lightspark.uma.umaaas.routes
 
 import com.lightspark.uma.models.receiver.ReceiverLookupParams
+import com.lightspark.uma.umaaas.lib.JsonUtils
 import com.lightspark.uma.umaaas.lib.UmaaasClient
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
@@ -34,8 +35,9 @@ fun Route.lookupUmaRoute() {
                     .build()
             )
 
-            println("UaaS Client Response [receiver.lookup]: $lookupResponse")
-            call.respond(HttpStatusCode.OK, lookupResponse)
+            println("Umaaas Response [receiver.lookup]: ${
+                JsonUtils.prettyPrint(lookupResponse)}")
+            call.respond(HttpStatusCode.OK, JsonUtils.prettyPrint(lookupResponse))
         } catch (e: Exception) {
             println("Error looking up UMA address: ${e.message}")
             call.respond(

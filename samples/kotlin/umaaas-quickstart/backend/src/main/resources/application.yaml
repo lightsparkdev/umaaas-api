@@ -6,5 +6,4 @@ ktor:
         port: 8080
         watch:
             - classes
-            - resources
     development: true
