@@ -1,10 +1,13 @@
 package com.lightspark.uma.umaaas.routes
 
+import JsonField
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lightspark.uma.models.transactions.TransactionStatus
 import com.lightspark.uma.models.users.Address
 import com.lightspark.uma.umaaas.lib.*
+import models.webhooks.*
+import java.time.Instant
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -39,20 +42,30 @@ fun Route.webhookRoutes() {
                 val objectMapper = jacksonObjectMapper()
                 val rawPayload: Map<String, Any> = objectMapper.readValue(rawBody)
                 val webhookEvent = WebhookUtils.parseWebhookEvent(rawPayload)
+                println("Received webhook: ${JsonUtils.prettyPrint(rawBody)}")
                 
-                println("Received webhook: ${JsonUtils.prettyPrint(webhookEvent)}")
-
-                when (webhookEvent.type) {
-                    WebhookType.INCOMING_PAYMENT -> {
+                // Add to event queue for SSE broadcasting
+                val webhookEventData = WebhookEventData(
+                    id = webhookEvent.webhookId(),
+                    type = webhookEvent.type().value,
+                    created = Instant.parse(webhookEvent.timestamp()).toEpochMilli(),
+                    data = webhookEvent,
+                    receivedAt = System.currentTimeMillis()
+                )
+                WebhookEventQueue.addEvent(webhookEventData)
+                
+                // Handle different webhook types according to OpenAPI schema
+                when (webhookEvent.type()) {
+                    BaseWebhookEvent.WebhookType.INCOMING_PAYMENT -> {
                         val incomingEvent = webhookEvent as IncomingPaymentWebhookEvent
                         
-                        // Incoming payments this serves as the approval mechanism
-                        if (incomingEvent.transaction.status() == TransactionStatus.PENDING) {
-                            val responseUserData = buildResponseUserData(incomingEvent.requestedReceiverUserInfoFields)
+                        // For PENDING transactions, this serves as an approval mechanism
+                        if (incomingEvent.transaction().status() == TransactionStatus.PENDING) {
+                            val responseUserData = JsonField.of(buildResponseUserData(incomingEvent.requestedReceiverUserInfoFields()))
                             
-                            val response = IncomingPaymentWebhookResponse(
-                                receiverUserInfo = responseUserData
-                            )
+                            val response = IncomingPaymentWebhookResponse.builder()
+                                .receiverUserInfo(responseUserData)
+                                .build()
                             
                             val jsonResponse = JsonUtils.prettyPrint(response)
                             println("Webhook Response: $jsonResponse")
@@ -70,29 +83,29 @@ fun Route.webhookRoutes() {
                         }
                     }
                     
-                    WebhookType.OUTGOING_PAYMENT -> {
+                    BaseWebhookEvent.WebhookType.OUTGOING_PAYMENT -> {
                         // Record outgoing payment
                         println("Handling outgoing payment webhook")
                     }
                     
-                    WebhookType.TEST -> {
+                    BaseWebhookEvent.WebhookType.TEST -> {
                         // Handle webhook test
                         println("Handling webhook test")
                     }
                     
-                    WebhookType.BULK_UPLOAD -> {
+                    BaseWebhookEvent.WebhookType.BULK_UPLOAD -> {
                         // Handle bulk upload
                         println("Handling bulk upload webhook")
                     }
                     
-                    WebhookType.INVITATION_CLAIMED -> {
+                    BaseWebhookEvent.WebhookType.INVITATION_CLAIMED -> {
                         val invitationEvent = webhookEvent as InvitationClaimedWebhookEvent
                         
                         // Handle invitation, add recipient to sender's contact list
                         println("Invitation claimed")
                         
                         // If there's an amount to send, you would typically initiate a payment here
-                        if (invitationEvent.invitation.amountToSend() != null) {
+                        if (invitationEvent.invitation().amountToSend() != null) {
                             println("Invitation includes amount to send - should initiate payment")
                             // Implement payment initiation logic here
                         }
@@ -119,53 +132,41 @@ fun Route.webhookRoutes() {
  * Sample user data for webhook responses
  * In a real app you would respond with your user's real data.
  */
-private val SAMPLE_USER_DATA = WebhookUserData(
-    fullName = "Webhook User",
-    dateOfBirth = "1980-01-01",
-    nationality = "US",
-    email = "webhook.user@example.com",
-    phoneNumber = "+15105551212",
-    address = Address.builder()
+private val SAMPLE_USER_DATA = WebhookUserData.builder()
+    .fullName("Webhook User")
+    .dateOfBirth("1980-01-01")
+    .nationality("US")
+    .email("webhook.user@example.com")
+    .phoneNumber("+15105551212")
+    .address(Address.builder()
         .line1("123 Sample St")
         .city("Sampleville")
         .state("CA")
         .postalCode("90210")
         .country("US")
-        .build()
-)
+        .build())
+    .build()
 
 /**
  * Build response user data based on requested fields
  */
 private fun buildResponseUserData(requestedFields: List<RequestedField>?): WebhookUserData {
     if (requestedFields == null) {
-        return WebhookUserData()
+        return WebhookUserData.builder().build()
     }
     
-    var fullName: String? = null
-    var dateOfBirth: String? = null
-    var nationality: String? = null
-    var email: String? = null
-    var phoneNumber: String? = null
-    var address: Address? = null
+    val builder = WebhookUserData.builder()
     
     for (requestedField in requestedFields) {
-        when (requestedField.name) {
-            "FULL_NAME" -> fullName = SAMPLE_USER_DATA.fullName
-            "DATE_OF_BIRTH" -> dateOfBirth = SAMPLE_USER_DATA.dateOfBirth
-            "NATIONALITY" -> nationality = SAMPLE_USER_DATA.nationality
-            "EMAIL" -> email = SAMPLE_USER_DATA.email
-            "PHONE_NUMBER" -> phoneNumber = SAMPLE_USER_DATA.phoneNumber
-            "ADDRESS" -> address = SAMPLE_USER_DATA.address
+        when (requestedField.name()) {
+            "FULL_NAME" -> SAMPLE_USER_DATA.fullName()?.let { builder.fullName(it) }
+            "DATE_OF_BIRTH" -> SAMPLE_USER_DATA.dateOfBirth()?.let { builder.dateOfBirth(it) }
+            "NATIONALITY" -> SAMPLE_USER_DATA.nationality()?.let { builder.nationality(it) }
+            "EMAIL" -> SAMPLE_USER_DATA.email()?.let { builder.email(it) }
+            "PHONE_NUMBER" -> SAMPLE_USER_DATA.phoneNumber()?.let { builder.phoneNumber(it) }
+            "ADDRESS" -> SAMPLE_USER_DATA.address()?.let { builder.address(it) }
         }
     }
     
-    return WebhookUserData(
-        fullName = fullName,
-        dateOfBirth = dateOfBirth,
-        nationality = nationality,
-        email = email,
-        phoneNumber = phoneNumber,
-        address = address
-    )
+    return builder.build()
 }
