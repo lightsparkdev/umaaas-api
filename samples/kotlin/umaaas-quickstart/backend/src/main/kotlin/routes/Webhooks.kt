@@ -2,7 +2,10 @@ package com.lightspark.uma.umaaas.routes
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.lightspark.uma.models.transactions.IncomingTransaction
+import com.lightspark.uma.models.transactions.TransactionStatus
 import com.lightspark.uma.models.users.Address
+import com.lightspark.uma.models.users.User
 import com.lightspark.uma.umaaas.lib.*
 import io.ktor.http.*
 import io.ktor.server.request.*
@@ -19,8 +22,9 @@ fun Route.webhookRoutes() {
                 // Verify webhook signature if public key is configured
                 val signatureHeader = call.request.headers["X-UMAaas-Signature"]
                 val webhookPublicKey = getEnvVar("WEBHOOK_PUBLIC_KEY").replace("\\n", "\n")
-                
+
                 if (signatureHeader != null) {
+                    println("Webhook signature: ${JsonUtils.prettyPrint(signatureHeader)}")
                     val isValid = WebhookUtils.verifyWebhookSignature(
                         rawBody,
                         signatureHeader,
@@ -49,15 +53,16 @@ fun Route.webhookRoutes() {
                         val incomingEvent = webhookEvent as IncomingPaymentWebhookEvent
                         
                         // For PENDING transactions, this serves as an approval mechanism
-                        if (incomingEvent.transaction.status()?.asString() == "PENDING") {
+                        if (incomingEvent.transaction.status() == TransactionStatus.PENDING) {
                             val responseUserData = buildResponseUserData(incomingEvent.requestedReceiverUserInfoFields)
                             
                             val response = IncomingPaymentWebhookResponse(
                                 receiverUserInfo = responseUserData
                             )
                             
-                            println("Webhook Response: ${JsonUtils.prettyPrint(response)}")
-                            call.respond(HttpStatusCode.OK, response)
+                            val jsonResponse = JsonUtils.prettyPrint(response)
+                            println("Webhook Response: $jsonResponse")
+                            call.respond(HttpStatusCode.OK, jsonResponse)
                             return@post
                             
                             // You could return 403 to reject:
@@ -118,8 +123,9 @@ fun Route.webhookRoutes() {
 
 /**
  * Sample user data for webhook responses
+ * In a real app you would respond with your user's real data.
  */
-private val SAMPLE_USER = WebhookUserData(
+private val SAMPLE_USER_DATA = WebhookUserData(
     fullName = "Webhook User",
     dateOfBirth = "1980-01-01",
     nationality = "US",
@@ -151,12 +157,12 @@ private fun buildResponseUserData(requestedFields: List<RequestedField>?): Webho
     
     for (requestedField in requestedFields) {
         when (requestedField.name) {
-            "FULL_NAME" -> fullName = SAMPLE_USER.fullName
-            "DATE_OF_BIRTH" -> dateOfBirth = SAMPLE_USER.dateOfBirth
-            "NATIONALITY" -> nationality = SAMPLE_USER.nationality
-            "EMAIL" -> email = SAMPLE_USER.email
-            "PHONE_NUMBER" -> phoneNumber = SAMPLE_USER.phoneNumber
-            "ADDRESS" -> address = SAMPLE_USER.address
+            "FULL_NAME" -> fullName = SAMPLE_USER_DATA.fullName
+            "DATE_OF_BIRTH" -> dateOfBirth = SAMPLE_USER_DATA.dateOfBirth
+            "NATIONALITY" -> nationality = SAMPLE_USER_DATA.nationality
+            "EMAIL" -> email = SAMPLE_USER_DATA.email
+            "PHONE_NUMBER" -> phoneNumber = SAMPLE_USER_DATA.phoneNumber
+            "ADDRESS" -> address = SAMPLE_USER_DATA.address
         }
     }
     
