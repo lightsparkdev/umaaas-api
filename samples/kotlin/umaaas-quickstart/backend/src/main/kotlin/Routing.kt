@@ -1,15 +1,15 @@
 package com.lightspark.uma.umaaas
 
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.lightspark.uma.models.users.UserListParams
 import com.lightspark.uma.models.users.UserCreateParams
 import com.lightspark.uma.models.users.User
 import com.lightspark.uma.umaaas.lib.UmaaasClient
+import com.lightspark.uma.umaaas.lib.JsonUtils
 import io.ktor.http.*
-import io.ktor.serialization.gson.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -19,10 +19,6 @@ import io.ktor.sse.*
 fun Application.configureRouting() {
     install(SSE)
     routing {
-        get("/") {
-            call.respondText("Hello World!")
-        }
-        
         route("/api/user") {
             get {
                 try {
@@ -44,7 +40,7 @@ fun Application.configureRouting() {
                             .build()
                     )
                     
-                    println("umaaas Client Response [users.list]: $users")
+                    println("Umaaas Client Response [users.list]: $users")
                     call.respond(HttpStatusCode.OK, users)
                 } catch (e: Exception) {
                     println("Error listing users: ${e.message}")
@@ -57,17 +53,24 @@ fun Application.configureRouting() {
             
             post {
                 try {
-                    val userJson = call.receive<User>()
-                    println("Request body: $userJson")
+                    val rawBody = call.receiveText()
+                    
+                    // Pretty print the JSON
+                    println("Raw request body:\n${JsonUtils.prettyPrint(rawBody)}")
+
+                    // Parse JSON manually using Jackson
+                    val objectMapper = com.fasterxml.jackson.databind.ObjectMapper()
+                    val userJson = objectMapper.readValue(rawBody, User::class.java)
                     
                     val userCreateParams = UserCreateParams.builder()
                         .user(userJson)
                         .build()
                     
                     val user = UmaaasClient.client.users().create(userCreateParams)
-                    println("UaaS Client Response [users.create]: $user")
+                    val jsonUser = JsonUtils.prettyPrint(user)
+                    println("Umaaas Client Response [users.create]: \n$jsonUser")
                     
-                    call.respond(HttpStatusCode.Created, user)
+                    call.respond(HttpStatusCode.Created, jsonUser)
                 } catch (e: Exception) {
                     println("Error creating user: ${e.message}")
                     call.respond(
@@ -78,8 +81,11 @@ fun Application.configureRouting() {
             }
         }
         
-        // Static plugin. Try to access `/static/index.html`
-        staticResources("/static", "static")
+        // Serve static frontend files
+        staticResources("/", "static") {
+            // Serve index.html for all non-API routes (SPA routing)
+            default("index.html")
+        }
         sse("/hello") {
             send(ServerSentEvent("world"))
         }
