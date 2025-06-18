@@ -40,7 +40,7 @@ fun Application.configureRouting() {
                             .build()
                     )
                     
-                    println("umaaas Client Response [users.list]: $users")
+                    println("Umaaas Client Response [users.list]: $users")
                     call.respond(HttpStatusCode.OK, users)
                 } catch (e: Exception) {
                     println("Error listing users: ${e.message}")
@@ -68,7 +68,7 @@ fun Application.configureRouting() {
                     
                     val user = UmaaasClient.client.users().create(userCreateParams)
                     val jsonUser = JsonUtils.prettyPrint(user)
-                    println("UaaS Client Response [users.create]: \n$jsonUser")
+                    println("Umaaas Client Response [users.create]: \n$jsonUser")
                     
                     call.respond(HttpStatusCode.Created, jsonUser)
                 } catch (e: Exception) {

@@ -8,7 +8,6 @@ import SandboxPayments from './components/forms/SandboxPayments';
 import TransactionsTable from './components/tables/TransactionsTable';
 import UsersTable from './components/tables/UsersTable';
 import WebhooksDisplay from './components/tables/WebhooksDisplay';
-import './App.css';
 
 function App() {
   const [users, setUsers] = useState<User[]>([]);
