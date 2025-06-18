@@ -1,6 +1,7 @@
 
 plugins {
     kotlin("jvm") version "2.1.21"
+    kotlin("plugin.serialization") version "2.1.20"
     alias(libs.plugins.ktor)
 }
 
@@ -65,7 +66,6 @@ repositories {
 dependencies {
     implementation(libs.ktor.server.content.negotiation)
     implementation(libs.ktor.server.core)
-    implementation(libs.ktor.serialization.gson)
     implementation(libs.ktor.server.host.common)
     implementation(libs.ktor.server.cors)
     implementation(libs.ktor.server.sse)
@@ -76,11 +76,15 @@ dependencies {
     // HTTP client for URL rewrites/proxying
     implementation("io.ktor:ktor-client-core:3.1.3")
     implementation("io.ktor:ktor-client-cio:3.1.3")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:3.1.3")
+    implementation("io.ktor:ktor-serialization-jackson:3.1.3")
     implementation("ch.qos.logback:logback-classic:1.5.18")
 
     // UMAaaS Kotlin client dependencies
     implementation("com.lightspark.uma:umaaas-kotlin-core:0.0.1-alpha.1")
     implementation("com.lightspark.uma:umaaas-kotlin-client-okhttp:0.0.1-alpha.1")
+
+    // Jackson Json
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1")
 

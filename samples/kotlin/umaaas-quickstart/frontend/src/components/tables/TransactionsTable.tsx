@@ -15,7 +15,7 @@ export default function TransactionsTable() {
       const res = await fetch('/api/transactions');
       const data = await res.json();
       if (res.ok) {
-        setTransactions(data.data || []);
+        setTransactions(data || []);
       } else {
         console.error('Error fetching transactions:', data);
         setTransactions([]);
