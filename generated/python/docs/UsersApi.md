@@ -535,7 +535,7 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **upload_users_csv**
-> UploadUsersCsv202Response upload_users_csv(file, webhook_url=webhook_url)
+> UploadUsersCsv202Response upload_users_csv(file)
 
 Upload users via CSV file
 
@@ -647,11 +647,10 @@ with umaaas_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = umaaas_api.UsersApi(api_client)
     file = None # bytearray | CSV file containing user information
-    webhook_url = 'webhook_url_example' # str | Optional webhook URL for job status updates. If not provided, the platform's default webhook URL will be used. (optional)
 
     try:
         # Upload users via CSV file
-        api_response = api_instance.upload_users_csv(file, webhook_url=webhook_url)
+        api_response = api_instance.upload_users_csv(file)
         print("The response of UsersApi->upload_users_csv:\n")
         pprint(api_response)
     except Exception as e:
@@ -666,7 +665,6 @@ with umaaas_api.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **file** | **bytearray**| CSV file containing user information | 
- **webhook_url** | **str**| Optional webhook URL for job status updates. If not provided, the platform&#39;s default webhook URL will be used. | [optional] 
 
 ### Return type
 

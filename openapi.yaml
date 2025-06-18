@@ -2529,10 +2529,6 @@ paths:
                   type: string
                   format: binary
                   description: CSV file containing user information
-                webhookUrl:
-                  type: string
-                  description: Optional webhook URL for job status updates. If not provided, the platform's default webhook URL will be used.
-                  format: uri
       responses:
         '202':
           description: CSV upload accepted for processing

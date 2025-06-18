@@ -1893,7 +1893,6 @@ class UsersApi:
     def upload_users_csv(
         self,
         file: Annotated[Union[StrictBytes, StrictStr, Tuple[StrictStr, StrictBytes]], Field(description="CSV file containing user information")],
-        webhook_url: Annotated[Optional[StrictStr], Field(description="Optional webhook URL for job status updates. If not provided, the platform's default webhook URL will be used.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1913,8 +1912,6 @@ class UsersApi:
 
         :param file: CSV file containing user information (required)
         :type file: bytearray
-        :param webhook_url: Optional webhook URL for job status updates. If not provided, the platform's default webhook URL will be used.
-        :type webhook_url: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1939,7 +1936,6 @@ class UsersApi:
 
         _param = self._upload_users_csv_serialize(
             file=file,
-            webhook_url=webhook_url,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1965,7 +1961,6 @@ class UsersApi:
     def upload_users_csv_with_http_info(
         self,
         file: Annotated[Union[StrictBytes, StrictStr, Tuple[StrictStr, StrictBytes]], Field(description="CSV file containing user information")],
-        webhook_url: Annotated[Optional[StrictStr], Field(description="Optional webhook URL for job status updates. If not provided, the platform's default webhook URL will be used.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1985,8 +1980,6 @@ class UsersApi:
 
         :param file: CSV file containing user information (required)
         :type file: bytearray
-        :param webhook_url: Optional webhook URL for job status updates. If not provided, the platform's default webhook URL will be used.
-        :type webhook_url: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2011,7 +2004,6 @@ class UsersApi:
 
         _param = self._upload_users_csv_serialize(
             file=file,
-            webhook_url=webhook_url,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2037,7 +2029,6 @@ class UsersApi:
     def upload_users_csv_without_preload_content(
         self,
         file: Annotated[Union[StrictBytes, StrictStr, Tuple[StrictStr, StrictBytes]], Field(description="CSV file containing user information")],
-        webhook_url: Annotated[Optional[StrictStr], Field(description="Optional webhook URL for job status updates. If not provided, the platform's default webhook URL will be used.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -2057,8 +2048,6 @@ class UsersApi:
 
         :param file: CSV file containing user information (required)
         :type file: bytearray
-        :param webhook_url: Optional webhook URL for job status updates. If not provided, the platform's default webhook URL will be used.
-        :type webhook_url: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -2083,7 +2072,6 @@ class UsersApi:
 
         _param = self._upload_users_csv_serialize(
             file=file,
-            webhook_url=webhook_url,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -2104,7 +2092,6 @@ class UsersApi:
     def _upload_users_csv_serialize(
         self,
         file,
-        webhook_url,
         _request_auth,
         _content_type,
         _headers,
@@ -2131,8 +2118,6 @@ class UsersApi:
         # process the form parameters
         if file is not None:
             _files['file'] = file
-        if webhook_url is not None:
-            _form_params.append(('webhookUrl', webhook_url))
         # process the body parameter
 
 
