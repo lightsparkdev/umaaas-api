@@ -1,4 +1,0 @@
-{
-  "start-with-domain": "./scripts/start-with-domain.sh",
-  "start-docker": "docker-compose up --build"
-}
