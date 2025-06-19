@@ -33,15 +33,15 @@ export default function WebhooksDisplay() {
               <div className="flex justify-between items-start mb-2">
                 <div>
                   <span className="font-medium text-blue-600">{event.type}</span>
-                  <span className="ml-2 text-sm text-gray-500">ID: {truncateText(event.id, 20)}</span>
+                  <span className="ml-2 text-sm text-gray-500">ID: {truncateText(event.webhookId, 20)}</span>
                 </div>
                 <div className="text-sm text-gray-500">
-                  {new Date(event.receivedAt).toLocaleString()}
+                  {new Date(event.timestamp).toLocaleString()}
                 </div>
               </div>
               <div className="bg-gray-50 rounded p-3">
                 <pre className="text-sm overflow-auto max-h-40">
-                  {JSON.stringify(event.data, null, 2)}
+                  {JSON.stringify(event, null, 2)}
                 </pre>
               </div>
             </div>

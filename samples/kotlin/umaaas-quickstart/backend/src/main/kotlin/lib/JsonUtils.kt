@@ -1,10 +1,5 @@
 package com.lightspark.uma.umaaas.lib
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.MapperFeature
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.lightspark.uma.core.jsonMapper
 
 object JsonUtils {
