@@ -18,19 +18,29 @@ data class SignatureHeader(
 object WebhookUtils {
     private const val VERSION = 1
     private val objectMapper = jacksonObjectMapper()
+    private var publicKey: PublicKey? = null
 
     /**
-     * Verifies the webhook signature using the public key
+     * Sets the public key for webhook signature verification
      */
-    fun verifyWebhookSignature(body: String, signatureHeaderValue: String, publicKey: String): Boolean {
+    fun setPublicKey(publicKeyString: String) {
+        publicKey = createPublicKey(publicKeyString)
+    }
+
+    /**
+     * Verifies the webhook signature using the previously set public key
+     */
+    fun verifyWebhookSignature(body: String, signatureHeaderValue: String): Boolean {
         return try {
+            val pubKeyObj = publicKey ?: throw IllegalStateException("Public key not set. Call setPublicKey() first.")
+
             val sigHeader = objectMapper.readValue(signatureHeaderValue, SignatureHeader::class.java)
-            
+
             if (sigHeader.v != VERSION) {
                 println("Invalid signature version: ${sigHeader.v}, expected: $VERSION")
                 return false
             }
-            val pubKeyObj = createPublicKey(publicKey)
+
             val signature = Base64.getDecoder().decode(sigHeader.s)
             
             val verifier = Signature.getInstance("EC")

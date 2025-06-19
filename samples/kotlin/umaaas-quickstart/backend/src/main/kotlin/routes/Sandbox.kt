@@ -19,12 +19,15 @@ fun Route.sandboxRoutes() {
                 val rawBody = call.receiveText()
                 println("Sandbox send request: ${JsonUtils.prettyPrint(rawBody)}")
 
-                // Parse JSON manually using Jackson
+                // Parse JSON manually using Jackson to build params explicitly
                 val objectMapper = ObjectMapper()
-                val sendFundsBody = objectMapper.readValue(rawBody, SandboxSendFundsParams.Body::class.java)
-
+                val json = objectMapper.readTree(rawBody)
+                
+                // Build SandboxSendFundsParams using explicit field setting from JSON
                 val sendFundsParams = SandboxSendFundsParams.builder()
-                    .body(sendFundsBody)
+                    .currencyAmount(json.get("currencyAmount")?.asLong() ?: 0L)
+                    .currencyCode(json.get("currencyCode")?.asText() ?: "")
+                    .reference(json.get("reference")?.asText() ?: "")
                     .build()
 
                 val response = UmaaasClient.client.sandbox().sendFunds(sendFundsParams)
@@ -49,31 +52,14 @@ fun Route.sandboxRoutes() {
 
                 // Parse JSON manually using Jackson
                 val objectMapper = ObjectMapper()
-                val requestBody = objectMapper.readTree(rawBody)
+                val json = objectMapper.readTree(rawBody)
 
-                // Extract required fields
-                val userId = requestBody.get("userId")?.asText()
-                val receivingCurrencyAmount = requestBody.get("receivingCurrencyAmount")?.asLong()
-                val receivingCurrencyCode = requestBody.get("receivingCurrencyCode")?.asText()
-                val senderUmaAddress = requestBody.get("senderUmaAddress")?.asText()
-
-                // Validate required fields
-                if (userId.isNullOrBlank() || 
-                    receivingCurrencyAmount == null || 
-                    receivingCurrencyCode.isNullOrBlank() || 
-                    senderUmaAddress.isNullOrBlank()) {
-                    call.respond(
-                        HttpStatusCode.BadRequest,
-                        mapOf("error" to "Missing or invalid required fields: userId (string), receivingCurrencyAmount (number), receivingCurrencyCode (string), senderUmaAddress (string)")
-                    )
-                    return@post
-                }
-
+                // Build SandboxReceivePaymentParams using explicit field setting from JSON
                 val receivePaymentParams = SandboxReceivePaymentParams.builder()
-                    .userId(userId)
-                    .receivingCurrencyAmount(receivingCurrencyAmount)
-                    .receivingCurrencyCode(receivingCurrencyCode)
-                    .senderUmaAddress(senderUmaAddress)
+                    .userId(json.get("userId")?.asText() ?: "")
+                    .receivingCurrencyAmount(json.get("receivingCurrencyAmount")?.asLong() ?: 0L)
+                    .receivingCurrencyCode(json.get("receivingCurrencyCode")?.asText() ?: "")
+                    .senderUmaAddress(json.get("senderUmaAddress")?.asText() ?: "")
                     .build()
 
                 val response = UmaaasClient.client.sandbox().receivePayment(receivePaymentParams)

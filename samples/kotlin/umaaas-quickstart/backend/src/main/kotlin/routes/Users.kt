@@ -1,5 +1,6 @@
 package com.lightspark.uma.umaaas.routes
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.lightspark.uma.models.users.User
 import com.lightspark.uma.models.users.UserCreateParams
 import com.lightspark.uma.models.users.UserListParams
@@ -45,12 +46,9 @@ fun Route.userRoutes() {
         post {
             try {
                 val rawBody = call.receiveText()
+                println("Create User request: ${JsonUtils.prettyPrint(rawBody)}")
 
-                // Pretty print the JSON
-                println("Create User request:\n${JsonUtils.prettyPrint(rawBody)}")
-
-                // Parse JSON manually using Jackson
-                val objectMapper = com.fasterxml.jackson.databind.ObjectMapper()
+                val objectMapper = ObjectMapper()
                 val userJson = objectMapper.readValue(rawBody, User::class.java)
 
                 val userCreateParams = UserCreateParams.builder()

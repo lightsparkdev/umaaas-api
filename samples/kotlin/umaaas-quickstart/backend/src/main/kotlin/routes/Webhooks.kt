@@ -12,21 +12,23 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+
+
 fun Route.webhookRoutes() {
+    val webhookPublicKey = getEnvVar("WEBHOOK_PUBLIC_KEY").replace("\\n", "\n")
+    WebhookUtils.setPublicKey(webhookPublicKey)
     route("/api/webhooks") {
         post {
             try {
                 val rawBody = call.receiveText()
 
                 val signatureHeader = call.request.headers["X-UMAaas-Signature"]
-                val webhookPublicKey = getEnvVar("WEBHOOK_PUBLIC_KEY").replace("\\n", "\n")
 
                 if (signatureHeader != null) {
                     println("Webhook signature: ${JsonUtils.prettyPrint(signatureHeader)}")
                     val isValid = WebhookUtils.verifyWebhookSignature(
                         rawBody,
                         signatureHeader,
-                        webhookPublicKey
                     )
                     if (!isValid) {
                         println("Invalid webhook signature")

@@ -12,10 +12,7 @@ object WebhookStream {
     
     fun addEvent(event: BaseWebhookEvent) {
         println("WebhookStream.addEvent called with event type: ${event.type()}")
-        println("Number of subscribers: ${_eventFlow.subscriptionCount.value}")
-        
         // Broadcast to SSE clients
-        val result = _eventFlow.tryEmit(event)
-        println("tryEmit result: $result")
+        _eventFlow.tryEmit(event)
     }
 }

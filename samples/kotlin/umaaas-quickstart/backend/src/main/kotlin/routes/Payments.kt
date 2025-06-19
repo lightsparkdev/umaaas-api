@@ -59,10 +59,27 @@ fun Route.paymentsRoutes() {
                 println("Quote request: ${JsonUtils.prettyPrint(rawBody)}")
 
                 val objectMapper = ObjectMapper()
-                val quoteBody = objectMapper.readValue(rawBody, QuoteCreateParams.Body::class.java)
-
+                val json = objectMapper.readTree(rawBody)
+                
+                // Build QuoteCreateParams using explicit field setting from JSON
                 val quoteCreateParams = QuoteCreateParams.builder()
-                    .body(quoteBody)
+                    .lookupId(json.get("lookupId").asText())
+
+                    .lockedCurrencyAmount(json.get("lockedCurrencyAmount")?.asLong() ?: 0L)
+                    .lockedCurrencySide(
+                        json.get("lockedCurrencySide")?.asText()?.let { side ->
+                            when (side.uppercase()) {
+                                "SENDING" -> QuoteCreateParams.LockedCurrencySide.SENDING
+                                "RECEIVING" -> QuoteCreateParams.LockedCurrencySide.RECEIVING
+                                else -> QuoteCreateParams.LockedCurrencySide.SENDING
+                            }
+                        } ?: QuoteCreateParams.LockedCurrencySide.SENDING
+                    )
+                    .receivingCurrencyCode(json.get("receivingCurrencyCode")?.asText() ?: "")
+                    .sendingCurrencyCode(json.get("sendingCurrencyCode")?.asText() ?: "")
+                    .apply {
+                        json.get("description")?.asText()?.let { description(it) }
+                    }
                     .build()
 
                 val quote = UmaaasClient.client.quotes().create(quoteCreateParams)
