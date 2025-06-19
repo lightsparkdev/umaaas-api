@@ -6,7 +6,7 @@ payments.
 
 ## Prerequisites
 
-- Java 18 or higher
+- Java 21 or higher
 - Node.js 18+ and npm (for frontend compilation)
 - API credentials from Lightspark (contact your Lightspark representative)
 
