@@ -16,7 +16,6 @@ Here's a list of features included in this project:
 | --------------------------------------------------------------------|------------------------------------------------------------------------------------ |
 | [Content Negotiation](https://start.ktor.io/p/content-negotiation) | Provides automatic content conversion according to Content-Type and Accept headers |
 | [Routing](https://start.ktor.io/p/routing)                         | Provides a structured routing DSL                                                  |
-| [GSON](https://start.ktor.io/p/ktor-gson)                          | Handles JSON serialization using GSON library                                      |
 | [Static Content](https://start.ktor.io/p/static-content)           | Serves static files from defined locations                                         |
 | [CORS](https://start.ktor.io/p/cors)                               | Enables Cross-Origin Resource Sharing (CORS)                                       |
 | [Server-Sent Events (SSE)](https://start.ktor.io/p/sse)            | Support for server push events                                                     |

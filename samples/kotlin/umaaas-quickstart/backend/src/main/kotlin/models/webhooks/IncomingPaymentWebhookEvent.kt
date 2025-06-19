@@ -14,7 +14,7 @@ class IncomingPaymentWebhookEvent
 private constructor(
     private val timestamp: JsonField<String>,
     private val webhookId: JsonField<String>,
-    private val type: JsonField<BaseWebhookEvent.WebhookType>,
+    private val type: JsonField<WebhookType>,
     private val transaction: JsonField<IncomingTransaction>,
     private val requestedReceiverUserInfoFields: JsonField<List<RequestedField>>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -24,7 +24,7 @@ private constructor(
     private constructor(
         @JsonProperty("timestamp") @ExcludeMissing timestamp: JsonField<String> = JsonMissing.of(),
         @JsonProperty("webhookId") @ExcludeMissing webhookId: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("type") @ExcludeMissing type: JsonField<BaseWebhookEvent.WebhookType> = JsonField.of(BaseWebhookEvent.WebhookType.INCOMING_PAYMENT),
+        @JsonProperty("type") @ExcludeMissing type: JsonField<WebhookType> = JsonField.of(BaseWebhookEvent.WebhookType.INCOMING_PAYMENT),
         @JsonProperty("transaction") @ExcludeMissing transaction: JsonField<IncomingTransaction> = JsonMissing.of(),
         @JsonProperty("requestedReceiverUserInfoFields") @ExcludeMissing requestedReceiverUserInfoFields: JsonField<List<RequestedField>> = JsonMissing.of(),
     ) : this(

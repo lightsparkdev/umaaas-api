@@ -1,6 +1,5 @@
 package com.lightspark.uma.umaaas.lib
 
-import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.lightspark.uma.core.ExcludeMissing

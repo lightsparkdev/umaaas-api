@@ -1,12 +1,12 @@
 package models.webhooks
 
+import ExcludeMissing
 import JsonField
 import JsonValue
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lightspark.uma.core.ExcludeMissing
 import com.lightspark.uma.core.checkRequired
 import com.lightspark.uma.models.users.bulk.BulkGetJobStatusResponse
 import java.util.Collections

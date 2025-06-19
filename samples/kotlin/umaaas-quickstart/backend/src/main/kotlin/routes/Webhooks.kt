@@ -7,7 +7,6 @@ import com.lightspark.uma.models.transactions.TransactionStatus
 import com.lightspark.uma.models.users.Address
 import com.lightspark.uma.umaaas.lib.*
 import models.webhooks.*
-import java.time.Instant
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*

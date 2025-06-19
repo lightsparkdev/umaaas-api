@@ -1,12 +1,12 @@
 package models.webhooks
 
+import ExcludeMissing
 import JsonField
 import JsonValue
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lightspark.uma.core.ExcludeMissing
 import com.lightspark.uma.core.checkRequired
 import com.lightspark.uma.models.invitations.UmaInvitation
 import java.util.Collections
@@ -15,7 +15,7 @@ class InvitationClaimedWebhookEvent
 private constructor(
     private val timestamp: JsonField<String>,
     private val webhookId: JsonField<String>,
-    private val type: JsonField<BaseWebhookEvent.WebhookType>,
+    private val type: JsonField<WebhookType>,
     private val invitation: JsonField<UmaInvitation>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) : BaseWebhookEvent() {
@@ -24,7 +24,7 @@ private constructor(
     private constructor(
         @JsonProperty("timestamp") @ExcludeMissing timestamp: JsonField<String> = JsonMissing.of(),
         @JsonProperty("webhookId") @ExcludeMissing webhookId: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("type") @ExcludeMissing type: JsonField<BaseWebhookEvent.WebhookType> = JsonField.of(BaseWebhookEvent.WebhookType.INVITATION_CLAIMED),
+        @JsonProperty("type") @ExcludeMissing type: JsonField<WebhookType> = JsonField.of(BaseWebhookEvent.WebhookType.INVITATION_CLAIMED),
         @JsonProperty("invitation") @ExcludeMissing invitation: JsonField<UmaInvitation> = JsonMissing.of(),
     ) : this(
         timestamp,
@@ -46,7 +46,7 @@ private constructor(
 
     @JsonProperty("webhookId") @ExcludeMissing fun _webhookId(): JsonField<String> = webhookId
 
-    @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<BaseWebhookEvent.WebhookType> = type
+    @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<WebhookType> = type
 
     @JsonProperty("invitation") @ExcludeMissing fun _invitation(): JsonField<UmaInvitation> = invitation
 
@@ -70,7 +70,7 @@ private constructor(
 
         private var timestamp: JsonField<String>? = null
         private var webhookId: JsonField<String>? = null
-        private var type: JsonField<BaseWebhookEvent.WebhookType> = JsonField.of(BaseWebhookEvent.WebhookType.INVITATION_CLAIMED)
+        private var type: JsonField<WebhookType> = JsonField.of(WebhookType.INVITATION_CLAIMED)
         private var invitation: JsonField<UmaInvitation>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 

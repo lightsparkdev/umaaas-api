@@ -1,12 +1,12 @@
 package models.webhooks
 
+import ExcludeMissing
 import JsonField
 import JsonValue
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.lightspark.uma.core.ExcludeMissing
 import com.lightspark.uma.core.checkRequired
 import com.lightspark.uma.models.transactions.OutgoingTransaction
 import java.util.Collections
@@ -15,7 +15,7 @@ class OutgoingPaymentWebhookEvent
 private constructor(
     private val timestamp: JsonField<String>,
     private val webhookId: JsonField<String>,
-    private val type: JsonField<BaseWebhookEvent.WebhookType>,
+    private val type: JsonField<WebhookType>,
     private val transaction: JsonField<OutgoingTransaction>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) : BaseWebhookEvent() {
@@ -24,7 +24,7 @@ private constructor(
     private constructor(
         @JsonProperty("timestamp") @ExcludeMissing timestamp: JsonField<String> = JsonMissing.of(),
         @JsonProperty("webhookId") @ExcludeMissing webhookId: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("type") @ExcludeMissing type: JsonField<BaseWebhookEvent.WebhookType> = JsonField.of(BaseWebhookEvent.WebhookType.OUTGOING_PAYMENT),
+        @JsonProperty("type") @ExcludeMissing type: JsonField<WebhookType> = JsonField.of(BaseWebhookEvent.WebhookType.OUTGOING_PAYMENT),
         @JsonProperty("transaction") @ExcludeMissing transaction: JsonField<OutgoingTransaction> = JsonMissing.of(),
     ) : this(
         timestamp,
@@ -38,7 +38,7 @@ private constructor(
 
     override fun webhookId(): String = webhookId.getRequired("webhookId")
 
-    override fun type(): BaseWebhookEvent.WebhookType = type.getRequired("type")
+    override fun type(): WebhookType = type.getRequired("type")
 
     fun transaction(): OutgoingTransaction = transaction.getRequired("transaction")
 
@@ -46,7 +46,7 @@ private constructor(
 
     @JsonProperty("webhookId") @ExcludeMissing fun _webhookId(): JsonField<String> = webhookId
 
-    @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<BaseWebhookEvent.WebhookType> = type
+    @JsonProperty("type") @ExcludeMissing fun _type(): JsonField<WebhookType> = type
 
     @JsonProperty("transaction") @ExcludeMissing fun _transaction(): JsonField<OutgoingTransaction> = transaction
 
@@ -90,9 +90,9 @@ private constructor(
 
         fun webhookId(webhookId: JsonField<String>) = apply { this.webhookId = webhookId }
 
-        fun type(type: BaseWebhookEvent.WebhookType) = type(JsonField.of(type))
+        fun type(type: WebhookType) = type(JsonField.of(type))
 
-        fun type(type: JsonField<BaseWebhookEvent.WebhookType>) = apply { this.type = type }
+        fun type(type: JsonField<WebhookType>) = apply { this.type = type }
 
         fun transaction(transaction: OutgoingTransaction) = transaction(JsonField.of(transaction))
 

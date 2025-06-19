@@ -1,7 +1,5 @@
 package models.webhooks
 
-import com.fasterxml.jackson.annotation.JsonProperty
-
 abstract class BaseWebhookEvent {
     abstract fun timestamp(): String
     abstract fun webhookId(): String
