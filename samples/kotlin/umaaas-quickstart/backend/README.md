@@ -24,12 +24,12 @@ Edit the `.env` file and configure your credentials:
 
 ```bash
 # UMAaaS API Configuration
-UMAAAS_API_TOKEN_ID=your_api_token_id_here
+UMAAAS_CLIENT_ID=your_api_token_id_here
 UMAAAS_CLIENT_SECRET=your_client_secret_here
-UMAAAS_FORWARD_DOMAIN=https://example.uma.money
+UMAAAS_FORWARD_DOMAIN=https://{your_subdomain}.uma.money
 
-# Webhook Configuration
-WEBHOOK_PUBLIC_KEY=your_webhook_public_key_here
+# Webhook Verification Configuration
+UMAAAS_WEBHOOK_PUBLIC_KEY=your_webhook_public_key_here
 
 # Frontend Environment Variables (copied automatically during build)
 VITE_UMAAAS_UMA_DOMAIN=your.uma.domain.com
@@ -49,12 +49,11 @@ Run the server using Gradle:
 
 This single command will:
 - Install frontend dependencies (`npm install`)
-- Copy environment variables from backend to frontend
 - Build the React frontend (`npm run build`)
 - Compile the Kotlin backend
 - Start the server on http://localhost:8080
 
-If the server starts successfully, you'll see:
+When the server starts successfully, you'll see:
 
 ```
 2024-12-04 14:32:45.584 [main] INFO  Application - Application started in 0.303 seconds.

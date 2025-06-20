@@ -1,10 +1,10 @@
 package com.lightspark.uma.umaaas.routes
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.lightspark.uma.models.receiver.ReceiverLookupParams
-import com.lightspark.uma.models.quotes.QuoteCreateParams
 import com.lightspark.uma.umaaas.lib.JsonUtils
-import com.lightspark.uma.umaaas.lib.UmaaasClient
+import com.lightspark.uma.umaaas.lib.UmaaasClientBuilder
+import com.lightspark.umaaas.models.quotes.QuoteCreateParams
+import com.lightspark.umaaas.models.receiver.ReceiverLookupParams
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
@@ -30,7 +30,7 @@ fun Route.paymentsRoutes() {
                 }
                 println("UMA Lookup params: \n receiver: $receiverUmaAddress" +
                         "\n sender: $senderUmaAddress\n userId: $userId")
-                val lookupResponse = UmaaasClient.client.receiver().lookup(
+                val lookupResponse = UmaaasClientBuilder.client.receiver().lookup(
                     receiverUmaAddress,
                     ReceiverLookupParams.builder()
                         .apply {
@@ -57,32 +57,29 @@ fun Route.paymentsRoutes() {
             try {
                 val rawBody = call.receiveText()
                 println("Quote request: ${JsonUtils.prettyPrint(rawBody)}")
-
                 val objectMapper = ObjectMapper()
                 val json = objectMapper.readTree(rawBody)
-                
-                // Build QuoteCreateParams using explicit field setting from JSON
+
+                // The following is an example of how you would populate create quote params
+                // replacing the object sent from the FE with your representing of a transaction
                 val quoteCreateParams = QuoteCreateParams.builder()
                     .lookupId(json.get("lookupId").asText())
-
-                    .lockedCurrencyAmount(json.get("lockedCurrencyAmount")?.asLong() ?: 0L)
+                    .lockedCurrencyAmount(json.get("lockedCurrencyAmount").asLong())
                     .lockedCurrencySide(
-                        json.get("lockedCurrencySide")?.asText()?.let { side ->
+                        json.get("lockedCurrencySide").asText().let { side ->
                             when (side.uppercase()) {
                                 "SENDING" -> QuoteCreateParams.LockedCurrencySide.SENDING
                                 "RECEIVING" -> QuoteCreateParams.LockedCurrencySide.RECEIVING
                                 else -> QuoteCreateParams.LockedCurrencySide.SENDING
                             }
-                        } ?: QuoteCreateParams.LockedCurrencySide.SENDING
+                        }
                     )
-                    .receivingCurrencyCode(json.get("receivingCurrencyCode")?.asText() ?: "")
-                    .sendingCurrencyCode(json.get("sendingCurrencyCode")?.asText() ?: "")
-                    .apply {
-                        json.get("description")?.asText()?.let { description(it) }
-                    }
+                    .receivingCurrencyCode(json.get("receivingCurrencyCode").asText())
+                    .sendingCurrencyCode(json.get("sendingCurrencyCode").asText())
+                    .description(json.get("description").asText())
                     .build()
 
-                val quote = UmaaasClient.client.quotes().create(quoteCreateParams)
+                val quote = UmaaasClientBuilder.client.quotes().create(quoteCreateParams)
                 val responseJson = JsonUtils.prettyPrint(quote)
                 println("Umaaas Response [quotes.create]: $responseJson")
                 

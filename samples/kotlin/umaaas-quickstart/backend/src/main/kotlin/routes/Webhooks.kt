@@ -1,22 +1,32 @@
 package com.lightspark.uma.umaaas.routes
 
-import JsonField
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.lightspark.uma.models.transactions.TransactionStatus
-import com.lightspark.uma.models.users.Address
-import com.lightspark.uma.umaaas.lib.*
-import models.webhooks.*
+import com.lightspark.uma.umaaas.lib.JsonUtils
+import com.lightspark.uma.umaaas.lib.WebhookStream
+import com.lightspark.uma.umaaas.lib.WebhookUtils
+import com.lightspark.uma.umaaas.lib.getEnvVar
+import com.lightspark.umaaas.core.JsonValue
+import com.lightspark.umaaas.core.jsonMapper
+import com.lightspark.umaaas.models.receiver.CounterpartyFieldDefinition
+import com.lightspark.umaaas.models.transactions.TransactionStatus
+import com.lightspark.umaaas.models.users.Address
+import com.lightspark.umaaas.models.webhooks.BaseWebhook
+import com.lightspark.umaaas.models.webhooks.BulkUpload
+import com.lightspark.umaaas.models.webhooks.IncomingPaymentWebhook
+import com.lightspark.umaaas.models.webhooks.IncomingPaymentWebhookResponse
+import com.lightspark.umaaas.models.webhooks.IncomingPaymentWebhookResponse.ReceiverUserInfo
+import com.lightspark.umaaas.models.webhooks.InvitationClaimedWebhook
+import com.lightspark.umaaas.models.webhooks.OutgoingPaymentWebhook
+import com.lightspark.umaaas.models.webhooks.TestWebhook
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-
-
 fun Route.webhookRoutes() {
-    val webhookPublicKey = getEnvVar("WEBHOOK_PUBLIC_KEY").replace("\\n", "\n")
+    val webhookPublicKey = getEnvVar("UMAAAS_WEBHOOK_PUBLIC_KEY").replace("\\n", "\n")
     WebhookUtils.setPublicKey(webhookPublicKey)
+
     route("/api/webhooks") {
         post {
             try {
@@ -39,80 +49,73 @@ fun Route.webhookRoutes() {
                         return@post
                     }
                 }
-                
-                val objectMapper = jacksonObjectMapper()
+
+
+                val objectMapper = jsonMapper()
                 val rawPayload: Map<String, Any> = objectMapper.readValue(rawBody)
-                val webhookEvent = WebhookUtils.parseWebhookEvent(rawPayload)
-                println("Received webhook: ${JsonUtils.prettyPrint(rawBody)}")
-                // Add to event queue for SSE broadcasting
-                // Only used in the quickstart in production you won't need this
-                WebhookStream.addEvent(webhookEvent)
-                
-                // Handle different webhook types according to OpenAPI schema
-                when (webhookEvent.type()) {
-                    BaseWebhookEvent.WebhookType.INCOMING_PAYMENT -> {
-                        val incomingEvent = webhookEvent as IncomingPaymentWebhookEvent
-                        
-                        // For PENDING transactions, this serves as an approval mechanism
+
+                // Broadcast webhook to connected SSE clients for real-time UI updates
+                // This enables the quickstart frontend to display webhook events as they occur
+                // Note: This is for demo purposes only - you should not do this in production
+                WebhookStream.addEvent(rawBody)
+                println("Received webhook: $rawBody")
+
+                val type = BaseWebhook.Type.of(rawPayload["type"] as String)
+                when (type) {
+                    BaseWebhook.Type.INCOMING_PAYMENT -> {
+                        val incomingEvent = objectMapper.convertValue(rawPayload, IncomingPaymentWebhook::class.java)
+
+                        // For PENDING incoming payments, this webhook serves as the approval mechanism
+                        // The platform must respond with 200 (approve), 403 (reject), or 422 (request more info)
                         if (incomingEvent.transaction().status() == TransactionStatus.PENDING) {
-                            val responseUserData = JsonField.of(buildResponseUserData(incomingEvent.requestedReceiverUserInfoFields()))
-                            
+                            val responseUserData = buildResponseUserData(incomingEvent.requestedReceiverUserInfoFields())
                             val response = IncomingPaymentWebhookResponse.builder()
-                                .receiverUserInfo(responseUserData)
-                                .build()
-                            
+                                .receiverUserInfo(responseUserData).build()
+
                             val jsonResponse = JsonUtils.prettyPrint(response)
                             println("Webhook Response: $jsonResponse")
                             call.respond(HttpStatusCode.OK, jsonResponse)
                             return@post
-                            
-                            // You could return 403 to reject:
-                            // call.respond(HttpStatusCode.Forbidden, mapOf("error" to "Payment rejected"))
-                            
-                            // Or 422 to request more info:
-                            // call.respond(HttpStatusCode.UnprocessableEntity, mapOf(
-                            //     "error" to "Additional info required",
-                            //     "details" to mapOf("requiredFields" to listOf("TAX_ID"))
-                            // ))
                         }
                     }
-                    
-                    BaseWebhookEvent.WebhookType.OUTGOING_PAYMENT -> {
-                        // Record outgoing payment
+
+                    BaseWebhook.Type.OUTGOING_PAYMENT -> {
                         println("Handling outgoing payment webhook")
+                        val outgoingPayment = objectMapper.convertValue(rawPayload, OutgoingPaymentWebhook::class.java)
                     }
-                    
-                    BaseWebhookEvent.WebhookType.TEST -> {
-                        // Handle webhook test
+
+                    BaseWebhook.Type.TEST -> {
                         println("Handling webhook test")
+                        val testWebhook = objectMapper.convertValue(rawPayload, TestWebhook::class.java)
                     }
-                    
-                    BaseWebhookEvent.WebhookType.BULK_UPLOAD -> {
-                        // Handle bulk upload
+
+                    BaseWebhook.Type.BULK_UPLOAD -> {
                         println("Handling bulk upload webhook")
+                        val bulkUpload = objectMapper.convertValue(rawPayload, BulkUpload::class.java)
                     }
-                    
-                    BaseWebhookEvent.WebhookType.INVITATION_CLAIMED -> {
-                        val invitationEvent = webhookEvent as InvitationClaimedWebhookEvent
-                        
+
+                    BaseWebhook.Type.INVITATION_CLAIMED -> {
+                        val invitationEvent = objectMapper.convertValue(rawPayload, InvitationClaimedWebhook::class.java)
+
                         // Handle invitation, add recipient to sender's contact list
                         println("Invitation claimed")
-                        
+
                         // If there's an amount to send, you would typically initiate a payment here
                         if (invitationEvent.invitation().amountToSend() != null) {
                             println("Invitation includes amount to send - should initiate payment")
                             // Implement payment initiation logic here
                         }
                     }
+                    else -> {
+                        throw IllegalArgumentException("Unknown webhook type: $type")
+                    }
                 }
-                
-                // Return success response
-                call.respond(HttpStatusCode.OK, mapOf("received" to true))
-                
+                call.respond(HttpStatusCode.OK)
+
             } catch (e: Exception) {
                 println("Error processing webhook: ${e.message}")
                 e.printStackTrace()
-                
+
                 call.respond(
                     HttpStatusCode.BadRequest,
                     mapOf("error" to (e.message ?: "An unexpected error occurred"))
@@ -122,45 +125,40 @@ fun Route.webhookRoutes() {
     }
 }
 
-/**
- * Sample user data for webhook responses
- * In a real app you would respond with your user's real data.
- */
-private val SAMPLE_USER_DATA = WebhookUserData.builder()
-    .fullName("Webhook User")
-    .dateOfBirth("1980-01-01")
-    .nationality("US")
-    .email("webhook.user@example.com")
-    .phoneNumber("+15105551212")
-    .address(Address.builder()
-        .line1("123 Sample St")
-        .city("Sampleville")
-        .state("CA")
-        .postalCode("90210")
-        .country("US")
-        .build())
-    .build()
-
-/**
- * Build response user data based on requested fields
- */
-private fun buildResponseUserData(requestedFields: List<RequestedField>?): WebhookUserData {
+private fun buildResponseUserData(requestedFields: List<CounterpartyFieldDefinition>?): ReceiverUserInfo {
     if (requestedFields == null) {
-        return WebhookUserData.builder().build()
+        return ReceiverUserInfo.builder().build()
     }
-    
-    val builder = WebhookUserData.builder()
-    
+
+    val builder = ReceiverUserInfo.builder()
+
     for (requestedField in requestedFields) {
-        when (requestedField.name()) {
-            "FULL_NAME" -> SAMPLE_USER_DATA.fullName()?.let { builder.fullName(it) }
-            "DATE_OF_BIRTH" -> SAMPLE_USER_DATA.dateOfBirth()?.let { builder.dateOfBirth(it) }
-            "NATIONALITY" -> SAMPLE_USER_DATA.nationality()?.let { builder.nationality(it) }
-            "EMAIL" -> SAMPLE_USER_DATA.email()?.let { builder.email(it) }
-            "PHONE_NUMBER" -> SAMPLE_USER_DATA.phoneNumber()?.let { builder.phoneNumber(it) }
-            "ADDRESS" -> SAMPLE_USER_DATA.address()?.let { builder.address(it) }
+        when (requestedField.name().toString()) {
+            "FULL_NAME" -> {
+                builder.putAdditionalProperty("FULL_NAME", JsonValue.from("Sample Name"))
+            }
+            "DATE_OF_BIRTH" -> {
+                builder.putAdditionalProperty("DATE_OF_BIRTH", JsonValue.from("1980-01-01"))
+            }
+            "NATIONALITY" -> {
+                builder.putAdditionalProperty("NATINOALITY" , JsonValue.from("US"))
+            }
+            "EMAIL" -> {
+                builder.putAdditionalProperty("EMAIL",JsonValue.from("bob@example.com"))
+            }
+            "PHONE_NUMBER" -> {
+                builder.putAdditionalProperty("PHONE_NUMBER",JsonValue.from("+16502535555"))
+            }
+            "ADDRESS" -> {
+                builder.putAdditionalProperty("ADDRESS", JsonValue.from(Address.builder()
+                    .line1("123 Sample St")
+                    .city("Sampleville")
+                    .state("CA")
+                    .postalCode("90210")
+                    .country("US")
+                    .build()))
+            }
         }
     }
-    
     return builder.build()
 }

@@ -1,10 +1,10 @@
 package com.lightspark.uma.umaaas.routes
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.lightspark.uma.models.sandbox.SandboxSendFundsParams
-import com.lightspark.uma.models.sandbox.SandboxReceivePaymentParams
 import com.lightspark.uma.umaaas.lib.JsonUtils
-import com.lightspark.uma.umaaas.lib.UmaaasClient
+import com.lightspark.uma.umaaas.lib.UmaaasClientBuilder
+import com.lightspark.umaaas.models.sandbox.SandboxReceivePaymentParams
+import com.lightspark.umaaas.models.sandbox.SandboxSendFundsParams
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
@@ -18,19 +18,18 @@ fun Route.sandboxRoutes() {
             try {
                 val rawBody = call.receiveText()
                 println("Sandbox send request: ${JsonUtils.prettyPrint(rawBody)}")
-
-                // Parse JSON manually using Jackson to build params explicitly
                 val objectMapper = ObjectMapper()
                 val json = objectMapper.readTree(rawBody)
-                
-                // Build SandboxSendFundsParams using explicit field setting from JSON
+
+                // The following is an example of how you would populate create sandbox params
+                // replacing the object sent from the FE with your own values
                 val sendFundsParams = SandboxSendFundsParams.builder()
-                    .currencyAmount(json.get("currencyAmount")?.asLong() ?: 0L)
-                    .currencyCode(json.get("currencyCode")?.asText() ?: "")
-                    .reference(json.get("reference")?.asText() ?: "")
+                    .currencyAmount(json.get("currencyAmount").asLong())
+                    .currencyCode(json.get("currencyCode").asText())
+                    .reference(json.get("reference").asText())
                     .build()
 
-                val response = UmaaasClient.client.sandbox().sendFunds(sendFundsParams)
+                val response = UmaaasClientBuilder.client.sandbox().sendFunds(sendFundsParams)
                 val responseJson = JsonUtils.prettyPrint(response)
                 println("Umaaas Client Response [sandbox.sendFunds]: $responseJson")
                 
@@ -49,20 +48,17 @@ fun Route.sandboxRoutes() {
             try {
                 val rawBody = call.receiveText()
                 println("Sandbox receive request: ${JsonUtils.prettyPrint(rawBody)}")
-
-                // Parse JSON manually using Jackson
                 val objectMapper = ObjectMapper()
                 val json = objectMapper.readTree(rawBody)
 
-                // Build SandboxReceivePaymentParams using explicit field setting from JSON
                 val receivePaymentParams = SandboxReceivePaymentParams.builder()
-                    .userId(json.get("userId")?.asText() ?: "")
-                    .receivingCurrencyAmount(json.get("receivingCurrencyAmount")?.asLong() ?: 0L)
-                    .receivingCurrencyCode(json.get("receivingCurrencyCode")?.asText() ?: "")
-                    .senderUmaAddress(json.get("senderUmaAddress")?.asText() ?: "")
+                    .userId(json.get("userId").asText())
+                    .receivingCurrencyAmount(json.get("receivingCurrencyAmount").asLong())
+                    .receivingCurrencyCode(json.get("receivingCurrencyCode").asText())
+                    .senderUmaAddress(json.get("senderUmaAddress").asText())
                     .build()
 
-                val response = UmaaasClient.client.sandbox().receivePayment(receivePaymentParams)
+                val response = UmaaasClientBuilder.client.sandbox().receivePayment(receivePaymentParams)
                 val responseJson = JsonUtils.prettyPrint(response)
                 println("Umaaas Client Response [sandbox.receivePayment]: $responseJson")
                 

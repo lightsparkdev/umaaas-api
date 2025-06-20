@@ -1,8 +1,5 @@
 package com.lightspark.uma.umaaas
 
-
-import com.lightspark.uma.umaaas.lib.WebhookUtils
-import com.lightspark.uma.umaaas.lib.getEnvVar
 import com.lightspark.uma.umaaas.routes.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
