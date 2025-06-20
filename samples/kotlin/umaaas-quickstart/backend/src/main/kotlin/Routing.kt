@@ -1,12 +1,14 @@
 package com.lightspark.uma.umaaas
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.lightspark.uma.models.users.UserListParams
 import com.lightspark.uma.models.users.UserCreateParams
 import com.lightspark.uma.models.users.User
 import com.lightspark.uma.umaaas.lib.UmaaasClient
 import com.lightspark.uma.umaaas.lib.JsonUtils
+import com.lightspark.uma.umaaas.lib.getEnvVar
+import com.lightspark.uma.umaaas.routes.configureUmaRewrites
+import com.lightspark.uma.umaaas.routes.lookupUmaRoute
+
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
@@ -16,9 +18,21 @@ import io.ktor.server.routing.*
 import io.ktor.server.sse.*
 import io.ktor.sse.*
 
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+
+
 fun Application.configureRouting() {
     install(SSE)
+    
+    // HTTP client for proxying requests
+    val httpClient = HttpClient(CIO)
+
     routing {
+        // URL rewrites - equivalent to Next.js rewrites
+        configureUmaRewrites(httpClient)
+        
+        lookupUmaRoute()
         route("/api/user") {
             get {
                 try {
@@ -81,13 +95,14 @@ fun Application.configureRouting() {
             }
         }
         
-        // Serve static frontend files
-        staticResources("/", "static") {
-            // Serve index.html for all non-API routes (SPA routing)
-            default("index.html")
-        }
         sse("/hello") {
             send(ServerSentEvent("world"))
+        }
+
+        // Serve static frontend files - MUST come last to avoid catching API routes
+        staticResources("/", "static") {
+//            // Serve index.html for all non-API routes (SPA routing)
+//            default("index.html")
         }
     }
 }

@@ -73,6 +73,11 @@ dependencies {
     implementation(libs.logback.classic)
     implementation(libs.ktor.server.config.yaml)
     
+    // HTTP client for URL rewrites/proxying
+    implementation("io.ktor:ktor-client-core:3.1.3")
+    implementation("io.ktor:ktor-client-cio:3.1.3")
+    implementation("ch.qos.logback:logback-classic:1.5.18")
+
     // UMAaaS Kotlin client dependencies
     implementation("com.lightspark.uma:umaaas-kotlin-core:0.0.1-alpha.1")
     implementation("com.lightspark.uma:umaaas-kotlin-client-okhttp:0.0.1-alpha.1")
