@@ -74,7 +74,10 @@ export default function PaymentInitiation({ currUser, lookupResponse, onQuoteSuc
       // Convert amount to smallest unit based on the locked currency's decimal places
       const lockedCurrency = lastEditedField === 'receiving' ? receivingCurrency : 'USD';
       const amountString = lastEditedField === 'usd' ? usdAmount : receivingAmount;
-      const lockedCurrencyAmount = convertToSmallestUnit(amountString, lockedCurrency);
+      const decimals = lockedCurrency === 'USD' 
+        ? parseInt(import.meta.env.VITE_PUBLIC_CURRENCY_DECIMALS || '2', 10)
+        : lookupData.supportedCurrencies[0].currency.decimals;
+      const lockedCurrencyAmount = convertToSmallestUnit(amountString, decimals);
       
       const requestBody = {
         lockedCurrencyAmount,
