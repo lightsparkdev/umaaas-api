@@ -127,18 +127,10 @@ object WebhookUtils {
                 println("Invalid signature version: ${sigHeader.v}, expected: $VERSION")
                 return false
             }
-
             val pubKeyObj = createPublicKey(publicKey)
             val signature = Base64.getDecoder().decode(sigHeader.s)
             
-            // Determine signature algorithm based on key type
-            val algorithm = when (pubKeyObj.algorithm) {
-                "EC" -> "SHA256withECDSA"
-                "RSA" -> "SHA256withRSA"
-                else -> throw IllegalArgumentException("Unsupported key algorithm: ${pubKeyObj.algorithm}")
-            }
-            
-            val verifier = Signature.getInstance(algorithm)
+            val verifier = Signature.getInstance("EC")
             verifier.initVerify(pubKeyObj)
             verifier.update(body.toByteArray())
             verifier.verify(signature)
@@ -164,20 +156,11 @@ object WebhookUtils {
             // DER format - assume hex-encoded binary data
             hexStringToByteArray(publicKey)
         }
-        
         val keySpec = X509EncodedKeySpec(keyBytes)
-        
-        // Try to determine key type by attempting to parse with different algorithms
         return try {
-            // Try EC first (more common for webhooks)
             KeyFactory.getInstance("EC").generatePublic(keySpec)
         } catch (e: Exception) {
-            try {
-                // Fall back to RSA
-                KeyFactory.getInstance("RSA").generatePublic(keySpec)
-            } catch (e2: Exception) {
-                throw IllegalArgumentException("Unable to parse public key as EC or RSA", e2)
-            }
+            throw IllegalArgumentException("Unable to parse public key ", e)
         }
     }
 

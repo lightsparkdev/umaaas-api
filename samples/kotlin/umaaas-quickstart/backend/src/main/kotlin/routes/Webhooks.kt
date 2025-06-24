@@ -2,10 +2,8 @@ package com.lightspark.uma.umaaas.routes
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.lightspark.uma.models.transactions.IncomingTransaction
 import com.lightspark.uma.models.transactions.TransactionStatus
 import com.lightspark.uma.models.users.Address
-import com.lightspark.uma.models.users.User
 import com.lightspark.uma.umaaas.lib.*
 import io.ktor.http.*
 import io.ktor.server.request.*
@@ -16,10 +14,8 @@ fun Route.webhookRoutes() {
     route("/api/webhooks") {
         post {
             try {
-                // Get the raw body as text for signature verification
                 val rawBody = call.receiveText()
-                
-                // Verify webhook signature if public key is configured
+
                 val signatureHeader = call.request.headers["X-UMAaas-Signature"]
                 val webhookPublicKey = getEnvVar("WEBHOOK_PUBLIC_KEY").replace("\\n", "\n")
 
@@ -40,19 +36,17 @@ fun Route.webhookRoutes() {
                     }
                 }
                 
-                // Parse the webhook payload
                 val objectMapper = jacksonObjectMapper()
                 val rawPayload: Map<String, Any> = objectMapper.readValue(rawBody)
                 val webhookEvent = WebhookUtils.parseWebhookEvent(rawPayload)
                 
                 println("Received webhook: ${JsonUtils.prettyPrint(webhookEvent)}")
-                
-                // Handle different webhook types according to OpenAPI schema
+
                 when (webhookEvent.type) {
                     WebhookType.INCOMING_PAYMENT -> {
                         val incomingEvent = webhookEvent as IncomingPaymentWebhookEvent
                         
-                        // For PENDING transactions, this serves as an approval mechanism
+                        // Incoming payments this serves as the approval mechanism
                         if (incomingEvent.transaction.status() == TransactionStatus.PENDING) {
                             val responseUserData = buildResponseUserData(incomingEvent.requestedReceiverUserInfoFields)
                             
