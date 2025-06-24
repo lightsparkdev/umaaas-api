@@ -1,0 +1,12 @@
+type: object
+required:
+  - vpa
+properties:
+  vpa:
+    type: string
+    description: Virtual Payment Address for UPI payments
+    example: someuser@okbank
+  accountHolderName:
+    type: string
+    description: Name of the account holder
+    example: John Doe

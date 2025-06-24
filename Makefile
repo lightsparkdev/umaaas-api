@@ -9,6 +9,7 @@ build:
 	cd docusaurus-docs && npm run build
 
 build-python:
+	npm run build:openapi
 	openapi-generator generate -g python -i openapi.yaml -o generated/python -c codegen-config/python/config.yml
 
 build-markdown:
@@ -16,6 +17,9 @@ build-markdown:
 
 build-docs:
 	cd docusaurus-docs && npm run build
+
+build-openapi:
+	npm run build:openapi
 
 serve-docs:
 	cd docusaurus-docs && npm run start

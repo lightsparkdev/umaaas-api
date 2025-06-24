@@ -1,0 +1,22 @@
+type: object
+required:
+  - bulkUserImportJob
+  - timestamp
+  - webhookId
+  - type
+properties:
+  bulkUserImportJob:
+    $ref: ./BulkUserImportJob.yaml
+  timestamp:
+    type: string
+    format: date-time
+    description: ISO8601 timestamp when the webhook was sent
+    example: '2023-08-15T14:32:00Z'
+  webhookId:
+    type: string
+    description: Unique identifier for this webhook delivery
+    example: Webhook:019542f5-b3e7-1d02-0000-000000000008
+  type:
+    $ref: ../webhooks/WebhookType.yaml
+    description: Type of webhook event
+    example: BULK_UPLOAD

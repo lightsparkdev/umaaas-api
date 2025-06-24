@@ -1,0 +1,83 @@
+type: object
+required:
+  - quoteId
+  - sendingCurrency
+  - receivingCurrency
+  - totalSendingAmount
+  - totalReceivingAmount
+  - exchangeRate
+  - expiresAt
+  - feesIncluded
+  - paymentInstructions
+  - transactionId
+properties:
+  quoteId:
+    type: string
+    description: Unique identifier for this quote
+    example: Quote:019542f5-b3e7-1d02-0000-000000000006
+  sendingCurrency:
+    $ref: ../common/Currency.yaml
+  receivingCurrency:
+    $ref: ../common/Currency.yaml
+  totalSendingAmount:
+    type: integer
+    format: int64
+    description: >-
+      The total amount that will be sent in the smallest unit of the sending
+      currency (eg. cents).
+    exclusiveMinimum: 0
+    example: 123010
+  totalReceivingAmount:
+    type: integer
+    format: int64
+    description: >-
+      The total amount that will be received in the smallest unit of the
+      receiving currency (eg. cents).
+    exclusiveMinimum: 0
+    example: 1000
+  exchangeRate:
+    type: number
+    description: Number of sending currency units per receiving currency unit.
+    exclusiveMinimum: 0
+  expiresAt:
+    type: string
+    format: date-time
+    description: When this quote expires (typically 1-5 minutes after creation)
+    example: '2023-09-01T14:30:00Z'
+  feesIncluded:
+    type: integer
+    format: int64
+    description: >-
+      The fees associated with the quote in the smallest unit of the sending
+      currency (eg. cents).
+    minimum: 0
+    example: 10
+  counterpartyInformation:
+    type: object
+    description: >-
+      Information about the recipient, as required by the platform in their
+      configuration.
+    additionalProperties: true
+    example:
+      FULL_NAME: Jane Receiver
+      DATE_OF_BIRTH: '1990-01-01'
+      NATIONALITY: FR
+  paymentInstructions:
+    $ref: ../common/PaymentInstructions.yaml
+  status:
+    type: string
+    enum:
+      - PENDING
+      - PROCESSING
+      - COMPLETED
+      - FAILED
+      - EXPIRED
+    description: Current status of the quote
+    example: PENDING
+  transactionId:
+    type: string
+    description: The ID of the transaction created from this quote.
+    example: Transaction:019542f5-b3e7-1d02-0000-000000000005
+  rateDetails:
+    $ref: ../transactions/OutgoingRateDetails.yaml
+    description: Details about the rate and fees for the transaction.

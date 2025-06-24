@@ -1,0 +1,63 @@
+type: object
+required:
+  - id
+  - status
+  - type
+  - senderUmaAddress
+  - receiverUmaAddress
+  - userId
+  - platformUserId
+properties:
+  id:
+    type: string
+    description: Unique identifier for the transaction
+    example: Transaction:019542f5-b3e7-1d02-0000-000000000004
+  status:
+    $ref: ./TransactionStatus.yaml
+  type:
+    $ref: ./TransactionType.yaml
+  senderUmaAddress:
+    type: string
+    description: UMA address of the payment sender
+    example: $sender@external.domain
+  receiverUmaAddress:
+    type: string
+    description: UMA address of the payment recipient
+    example: $recipient@uma.domain
+  userId:
+    type: string
+    description: System ID of the user (sender for outgoing, recipient for incoming)
+    example: User:019542f5-b3e7-1d02-0000-000000000001
+  platformUserId:
+    type: string
+    description: >-
+      Platform-specific ID of the user (sender for outgoing, recipient for
+      incoming)
+    example: 18d3e5f7b4a9c2
+  settledAt:
+    type: string
+    format: date-time
+    description: When the payment was or will be settled
+    example: '2023-08-15T14:30:00Z'
+  createdAt:
+    type: string
+    format: date-time
+    description: When the transaction was created
+    example: '2023-08-15T14:25:18Z'
+  description:
+    type: string
+    description: Optional memo or description for the payment
+    example: 'Payment for invoice #1234'
+  counterpartyInformation:
+    type: object
+    description: Additional information about the counterparty, if available
+    additionalProperties: true
+    example:
+      FULL_NAME: John Sender
+      DATE_OF_BIRTH: '1985-06-15'
+      NATIONALITY: DE
+discriminator:
+  propertyName: type
+  mapping:
+    INCOMING: ./IncomingTransaction.yaml
+    OUTGOING: ./OutgoingTransaction.yaml

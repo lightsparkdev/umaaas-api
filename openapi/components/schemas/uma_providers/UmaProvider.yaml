@@ -1,0 +1,39 @@
+type: object
+properties:
+  name:
+    type: string
+    description: Name of the Uma Provider
+    example: "Lightspark Group"
+  supportedRegions:
+    type: array
+    items:
+      type: string
+    description: Region(s) this Uma Provider operates in
+    example: ["US"]
+  domain:
+    type: string
+    description: Domain this VASP uses for UMA addresses
+    example: "uma.me"
+  logoUrl:
+    type: string
+    description: Logo url for the VASP
+    format: uri
+    example: "https://uma.me/logo.png"
+  supportedCurrencies:
+    type: array
+    items:
+      $ref: '../common/Currency.yaml'
+    description: List of currencies supported by this Uma Provider
+    example:
+      - code: "USD"
+        name: "United States Dollar"
+        symbol: "$"
+        decimals: 2
+  lei:
+    type: string
+    description: Legal Entity Identifier for the Uma Provider
+    example: "5493001KJTIIGC8Y1R12"
+  allowListStatus:
+    type: boolean
+    description: Whether this Uma Provider is on your allow list
+    example: true

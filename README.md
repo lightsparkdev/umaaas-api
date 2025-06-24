@@ -837,6 +837,15 @@ cd docusaurus-docs && npm run start
 make serve-docs
 ```
 
+## OpenAPI
+We use Redocly to split and merge OpenAPI schema you can install it with:
+
+`npm i -g @redocly/cli@latest`
+
+### Merging openapi schema 
+You can merge openapi schema with 
+`redocly bundle openapi/openapi.yaml -o openapi.yaml`
+
 ### Linting the OpenAPI Schema
 
 We use Redocly to lint the OpenAPI schema and markdown-lint to lint the markdown documentation:
@@ -845,6 +854,7 @@ We use Redocly to lint the OpenAPI schema and markdown-lint to lint the markdown
 npm run lint
 # Or: make lint
 ```
+
 
 ### Generating Python Models
 

@@ -1,0 +1,16 @@
+type: string
+enum:
+  - FULL_NAME
+  - DATE_OF_BIRTH
+  - NATIONALITY
+  - PHONE_NUMBER
+  - EMAIL
+  - ADDRESS
+  - TAX_ID
+  - REGISTRATION_NUMBER
+  - ACCOUNT_NUMBER
+  - USER_TYPE
+description: >-
+  Name of a type of field containing info about a platform's user or
+  counterparty user.
+example: FULL_NAME

@@ -1,0 +1,189 @@
+parameters:
+  - name: userId
+    in: path
+    description: System-generated unique user identifier
+    required: true
+    schema:
+      type: string
+get:
+  summary: Get user by ID
+  description: Retrieve a user by their system-generated ID
+  operationId: getUserById
+  tags:
+    - Users
+  security:
+    - BasicAuth: []
+  responses:
+    '200':
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/users/User.yaml
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/Error.yaml
+    '404':
+      description: User not found
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/Error.yaml
+patch:
+  summary: Update user by ID
+  description: Update a user's metadata by their system-generated ID
+  operationId: updateUserById
+  tags:
+    - Users
+  security:
+    - BasicAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          oneOf:
+            - type: object
+              title: individualUpdate
+              properties:
+                umaAddress:
+                  type: string
+                  description: Full UMA address
+                fullName:
+                  type: string
+                  description: Individual's full name
+                dateOfBirth:
+                  type: string
+                  format: date
+                  description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+                nationality:
+                  type: string
+                  description: Country code (ISO 3166-1 alpha-2)
+                address:
+                  $ref: ../../components/schemas/common/Address.yaml
+                bankAccountInfo:
+                  $ref: ../../components/schemas/users/UserBankAccountInfo.yaml
+            - type: object
+              title: businessUpdate
+              properties:
+                umaAddress:
+                  type: string
+                  description: Full UMA address
+                businessInfo:
+                  type: object
+                  properties:
+                    legalName:
+                      type: string
+                      description: Legal name of the business
+                    registrationNumber:
+                      type: string
+                      description: Business registration number
+                    taxId:
+                      type: string
+                      description: Tax identification number
+                address:
+                  $ref: ../../components/schemas/common/Address.yaml
+                bankAccountInfo:
+                  $ref: ../../components/schemas/users/UserBankAccountInfo.yaml
+        examples:
+          individualUpdate:
+            summary: Update individual user example
+            value:
+              userType: INDIVIDUAL
+              fullName: John Smith
+              dateOfBirth: '1985-06-15'
+              address:
+                line1: 456 Market St
+                city: San Francisco
+                state: CA
+                postalCode: '94103'
+                country: US
+              bankAccountInfo:
+                accountType: US_ACCOUNT
+                accountNumber: '11122233344'
+                routingNumber: '111222333'
+                accountCategory: CHECKING
+                bankName: Wells Fargo
+                platformAccountId: wf_checking_9012
+          businessUpdate:
+            summary: Update business user example
+            value:
+              userType: BUSINESS
+              businessInfo:
+                legalName: New Tech Solutions LLC
+                registrationNumber: BRN-987654321
+                taxId: EIN-123456789
+              address:
+                line1: 100 Technology Parkway
+                city: Palo Alto
+                state: CA
+                postalCode: '94304'
+                country: US
+              bankAccountInfo:
+                accountType: US_ACCOUNT
+                accountNumber: '55566677788'
+                routingNumber: '555666777'
+                accountCategory: CHECKING
+                bankName: JP Morgan Chase
+                platformAccountId: chase_business_3456
+  responses:
+    '200':
+      description: User updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/users/User.yaml
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/Error.yaml
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/Error.yaml
+    '404':
+      description: User not found
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/Error.yaml
+delete:
+  summary: Delete user by ID
+  description: Delete a user by their system-generated ID
+  operationId: deleteUserById
+  tags:
+    - Users
+  security:
+    - BasicAuth: []
+  responses:
+    '200':
+      description: User deleted successfully
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/users/User.yaml
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/Error.yaml
+    '404':
+      description: User not found
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/Error.yaml
+    '410':
+      description: User deleted already
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/Error.yaml

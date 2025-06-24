@@ -1,0 +1,52 @@
+type: object
+properties:
+  currencyCode:
+    type: string
+    description: Three-letter currency code (ISO 4217)
+    example: USD
+  minAmount:
+    type: integer
+    format: int64
+    description: Minimum amount that can be sent in the smallest unit of this currency
+    minimum: 0
+    example: 100
+  maxAmount:
+    type: integer
+    format: int64
+    description: Maximum amount that can be sent in the smallest unit of this currency
+    minimum: 0
+    example: 1000000
+  requiredCounterpartyFields:
+    type: array
+    items:
+      $ref: ../common/CounterpartyFieldDefinition.yaml
+    description: >-
+      List of fields which the platform requires from the counterparty
+      institutions about counterparty users. Platforms can set mandatory to
+      false if the platform does not require the field, but would like to have
+      it available. Some fields may be required by the underlying UMA provider.
+    example:
+      - name: FULL_NAME
+        mandatory: true
+      - name: DATE_OF_BIRTH
+        mandatory: true
+      - name: NATIONALITY
+        mandatory: true
+  umaProviderRequiredUserFields:
+    type: array
+    items:
+      $ref: ../users/UserInfoFieldName.yaml
+    description: >-
+      List of user info field names that are required by the underlying UMA
+      provider when creating a user for this currency. These fields must be
+      supplied when creating or updating a user if this currency is intended to
+      be used by that user. If no fields are required, this field is omitted.
+    readOnly: true
+    example:
+      - NATIONALITY
+      - DATE_OF_BIRTH
+required:
+  - currencyCode
+  - minAmount
+  - maxAmount
+  - requiredCounterpartyFields

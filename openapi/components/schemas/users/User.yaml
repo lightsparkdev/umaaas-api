@@ -1,0 +1,43 @@
+type: object
+required:
+  - umaAddress
+  - platformUserId
+  - userType
+properties:
+  id:
+    type: string
+    description: System-generated unique identifier
+    readOnly: true
+    example: User:019542f5-b3e7-1d02-0000-000000000001
+  umaAddress:
+    type: string
+    description: full UMA address
+    example: $john.doe@uma.domain.com
+  platformUserId:
+    type: string
+    description: Platform-specific user identifier
+    example: 9f84e0c2a72c4fa
+  userType:
+    $ref: ./UserType.yaml
+  createdAt:
+    type: string
+    format: date-time
+    description: Creation timestamp
+    readOnly: true
+    example: '2023-07-21T17:32:28Z'
+  updatedAt:
+    type: string
+    format: date-time
+    description: Last update timestamp
+    readOnly: true
+    example: '2023-07-21T17:32:28Z'
+  isDeleted:
+    type: boolean
+    description: Whether the user is marked as deleted
+    example: false
+    readOnly: true
+discriminator:
+  propertyName: userType
+  mapping:
+    INDIVIDUAL: ./IndividualUser.yaml
+    BUSINESS: ./BusinessUser.yaml

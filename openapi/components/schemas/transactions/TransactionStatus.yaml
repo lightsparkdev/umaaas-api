@@ -1,0 +1,10 @@
+type: string
+enum:
+  - CREATED
+  - PENDING
+  - PROCESSING
+  - COMPLETED
+  - REJECTED
+  - FAILED
+  - REFUNDED
+description: Status of a payment transaction
