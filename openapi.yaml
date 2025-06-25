@@ -860,6 +860,7 @@ components:
         - type: object
           required:
             - sentAmount
+            - paymentInstructions
           properties:
             sentAmount:
               $ref: '#/components/schemas/CurrencyAmount'
@@ -891,6 +892,9 @@ components:
             failureReason:
               $ref: '#/components/schemas/OutgoingTransactionFailureReason'
               description: If the transaction failed, this field provides the reason for failure.
+            paymentInstructions:
+              $ref: '#/components/schemas/PaymentInstructions'
+              description: Contains the reference code, banking details, and instructions needed to complete the payment
 
     CurrencyPreference:
       type: object

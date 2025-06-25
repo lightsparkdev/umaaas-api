@@ -13,6 +13,7 @@ Name | Type | Description | Notes
 **refund** | [**Refund**](Refund.md) | The refund if transaction was refunded. | [optional] 
 **rate_details** | [**OutgoingRateDetails**](OutgoingRateDetails.md) | Details about the rate and fees for the transaction. | [optional] 
 **failure_reason** | [**OutgoingTransactionFailureReason**](OutgoingTransactionFailureReason.md) | If the transaction failed, this field provides the reason for failure. | [optional] 
+**payment_instructions** | [**PaymentInstructions**](PaymentInstructions.md) | Contains the reference code, banking details, and instructions needed to complete the payment | 
 
 ## Example
 
