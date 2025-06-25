@@ -8,7 +8,7 @@ Method | HTTP request | Description
 
 
 # **get_available_uma_providers**
-> GetAvailableUmaProviders200Response get_available_uma_providers(country_code=country_code, currency_code=currency_code, has_blocked_providers=has_blocked_providers)
+> GetAvailableUmaProviders200Response get_available_uma_providers(country_code=country_code, currency_code=currency_code, has_blocked_providers=has_blocked_providers, limit=limit, cursor=cursor, sort_order=sort_order)
 
 This endpoint provides a list of counterparties that are available.
 
@@ -52,10 +52,13 @@ with umaaas_api.ApiClient(configuration) as api_client:
     country_code = 'US' # str | The alpha-2 representation of a country, as defined by the ISO 3166-1 standard. (optional)
     currency_code = 'USD' # str | The ISO 4217 currency code to filter providers by supported currency. (optional)
     has_blocked_providers = True # bool | Whether to include providers which are not on your allowlist in the response. By default the response will include blocked providers. (optional)
+    limit = 20 # int | Maximum number of results to return (default 20, max 100) (optional) (default to 20)
+    cursor = 'cursor_example' # str | Cursor for pagination (returned from previous request) (optional)
+    sort_order = desc # str | Order to sort results in (optional) (default to desc)
 
     try:
         # This endpoint provides a list of counterparties that are available.
-        api_response = api_instance.get_available_uma_providers(country_code=country_code, currency_code=currency_code, has_blocked_providers=has_blocked_providers)
+        api_response = api_instance.get_available_uma_providers(country_code=country_code, currency_code=currency_code, has_blocked_providers=has_blocked_providers, limit=limit, cursor=cursor, sort_order=sort_order)
         print("The response of AvailableUMAProvidersApi->get_available_uma_providers:\n")
         pprint(api_response)
     except Exception as e:
@@ -72,6 +75,9 @@ Name | Type | Description  | Notes
  **country_code** | **str**| The alpha-2 representation of a country, as defined by the ISO 3166-1 standard. | [optional] 
  **currency_code** | **str**| The ISO 4217 currency code to filter providers by supported currency. | [optional] 
  **has_blocked_providers** | **bool**| Whether to include providers which are not on your allowlist in the response. By default the response will include blocked providers. | [optional] 
+ **limit** | **int**| Maximum number of results to return (default 20, max 100) | [optional] [default to 20]
+ **cursor** | **str**| Cursor for pagination (returned from previous request) | [optional] 
+ **sort_order** | **str**| Order to sort results in | [optional] [default to desc]
 
 ### Return type
 

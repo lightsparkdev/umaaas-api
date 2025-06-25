@@ -18,7 +18,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from umaaas_api.models.uma_provider import UmaProvider
 from typing import Optional, Set
@@ -29,7 +29,10 @@ class GetAvailableUmaProviders200Response(BaseModel):
     GetAvailableUmaProviders200Response
     """ # noqa: E501
     providers: Optional[List[UmaProvider]] = Field(default=None, description="List of available Uma Providers using Umaaas")
-    __properties: ClassVar[List[str]] = ["providers"]
+    has_more: Optional[StrictBool] = Field(default=None, description="Indicates if more results are available beyond this page", alias="hasMore")
+    next_cursor: Optional[StrictStr] = Field(default=None, description="Cursor to retrieve the next page of results (only present if hasMore is true)", alias="nextCursor")
+    total_count: Optional[StrictInt] = Field(default=None, description="Total number of transactions matching the criteria (excluding pagination)", alias="totalCount")
+    __properties: ClassVar[List[str]] = ["providers", "hasMore", "nextCursor", "totalCount"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -87,7 +90,10 @@ class GetAvailableUmaProviders200Response(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "providers": [UmaProvider.from_dict(_item) for _item in obj["providers"]] if obj.get("providers") is not None else None
+            "providers": [UmaProvider.from_dict(_item) for _item in obj["providers"]] if obj.get("providers") is not None else None,
+            "hasMore": obj.get("hasMore"),
+            "nextCursor": obj.get("nextCursor"),
+            "totalCount": obj.get("totalCount")
         })
         return _obj
 

@@ -17,7 +17,7 @@ from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
 from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
-from pydantic import Field, StrictBool, StrictStr
+from pydantic import Field, StrictBool, StrictStr, field_validator
 from typing import Optional
 from typing_extensions import Annotated
 from umaaas_api.models.get_available_uma_providers200_response import GetAvailableUmaProviders200Response
@@ -46,6 +46,9 @@ class AvailableUMAProvidersApi:
         country_code: Annotated[Optional[StrictStr], Field(description="The alpha-2 representation of a country, as defined by the ISO 3166-1 standard.")] = None,
         currency_code: Annotated[Optional[StrictStr], Field(description="The ISO 4217 currency code to filter providers by supported currency.")] = None,
         has_blocked_providers: Annotated[Optional[StrictBool], Field(description="Whether to include providers which are not on your allowlist in the response. By default the response will include blocked providers.")] = None,
+        limit: Annotated[Optional[Annotated[int, Field(le=100, strict=True, ge=1)]], Field(description="Maximum number of results to return (default 20, max 100)")] = None,
+        cursor: Annotated[Optional[StrictStr], Field(description="Cursor for pagination (returned from previous request)")] = None,
+        sort_order: Annotated[Optional[StrictStr], Field(description="Order to sort results in")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -69,6 +72,12 @@ class AvailableUMAProvidersApi:
         :type currency_code: str
         :param has_blocked_providers: Whether to include providers which are not on your allowlist in the response. By default the response will include blocked providers.
         :type has_blocked_providers: bool
+        :param limit: Maximum number of results to return (default 20, max 100)
+        :type limit: int
+        :param cursor: Cursor for pagination (returned from previous request)
+        :type cursor: str
+        :param sort_order: Order to sort results in
+        :type sort_order: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -95,6 +104,9 @@ class AvailableUMAProvidersApi:
             country_code=country_code,
             currency_code=currency_code,
             has_blocked_providers=has_blocked_providers,
+            limit=limit,
+            cursor=cursor,
+            sort_order=sort_order,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -122,6 +134,9 @@ class AvailableUMAProvidersApi:
         country_code: Annotated[Optional[StrictStr], Field(description="The alpha-2 representation of a country, as defined by the ISO 3166-1 standard.")] = None,
         currency_code: Annotated[Optional[StrictStr], Field(description="The ISO 4217 currency code to filter providers by supported currency.")] = None,
         has_blocked_providers: Annotated[Optional[StrictBool], Field(description="Whether to include providers which are not on your allowlist in the response. By default the response will include blocked providers.")] = None,
+        limit: Annotated[Optional[Annotated[int, Field(le=100, strict=True, ge=1)]], Field(description="Maximum number of results to return (default 20, max 100)")] = None,
+        cursor: Annotated[Optional[StrictStr], Field(description="Cursor for pagination (returned from previous request)")] = None,
+        sort_order: Annotated[Optional[StrictStr], Field(description="Order to sort results in")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -145,6 +160,12 @@ class AvailableUMAProvidersApi:
         :type currency_code: str
         :param has_blocked_providers: Whether to include providers which are not on your allowlist in the response. By default the response will include blocked providers.
         :type has_blocked_providers: bool
+        :param limit: Maximum number of results to return (default 20, max 100)
+        :type limit: int
+        :param cursor: Cursor for pagination (returned from previous request)
+        :type cursor: str
+        :param sort_order: Order to sort results in
+        :type sort_order: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -171,6 +192,9 @@ class AvailableUMAProvidersApi:
             country_code=country_code,
             currency_code=currency_code,
             has_blocked_providers=has_blocked_providers,
+            limit=limit,
+            cursor=cursor,
+            sort_order=sort_order,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -198,6 +222,9 @@ class AvailableUMAProvidersApi:
         country_code: Annotated[Optional[StrictStr], Field(description="The alpha-2 representation of a country, as defined by the ISO 3166-1 standard.")] = None,
         currency_code: Annotated[Optional[StrictStr], Field(description="The ISO 4217 currency code to filter providers by supported currency.")] = None,
         has_blocked_providers: Annotated[Optional[StrictBool], Field(description="Whether to include providers which are not on your allowlist in the response. By default the response will include blocked providers.")] = None,
+        limit: Annotated[Optional[Annotated[int, Field(le=100, strict=True, ge=1)]], Field(description="Maximum number of results to return (default 20, max 100)")] = None,
+        cursor: Annotated[Optional[StrictStr], Field(description="Cursor for pagination (returned from previous request)")] = None,
+        sort_order: Annotated[Optional[StrictStr], Field(description="Order to sort results in")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -221,6 +248,12 @@ class AvailableUMAProvidersApi:
         :type currency_code: str
         :param has_blocked_providers: Whether to include providers which are not on your allowlist in the response. By default the response will include blocked providers.
         :type has_blocked_providers: bool
+        :param limit: Maximum number of results to return (default 20, max 100)
+        :type limit: int
+        :param cursor: Cursor for pagination (returned from previous request)
+        :type cursor: str
+        :param sort_order: Order to sort results in
+        :type sort_order: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -247,6 +280,9 @@ class AvailableUMAProvidersApi:
             country_code=country_code,
             currency_code=currency_code,
             has_blocked_providers=has_blocked_providers,
+            limit=limit,
+            cursor=cursor,
+            sort_order=sort_order,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -269,6 +305,9 @@ class AvailableUMAProvidersApi:
         country_code,
         currency_code,
         has_blocked_providers,
+        limit,
+        cursor,
+        sort_order,
         _request_auth,
         _content_type,
         _headers,
@@ -302,6 +341,18 @@ class AvailableUMAProvidersApi:
         if has_blocked_providers is not None:
             
             _query_params.append(('hasBlockedProviders', has_blocked_providers))
+            
+        if limit is not None:
+            
+            _query_params.append(('limit', limit))
+            
+        if cursor is not None:
+            
+            _query_params.append(('cursor', cursor))
+            
+        if sort_order is not None:
+            
+            _query_params.append(('sortOrder', sort_order))
             
         # process the header parameters
         # process the form parameters
