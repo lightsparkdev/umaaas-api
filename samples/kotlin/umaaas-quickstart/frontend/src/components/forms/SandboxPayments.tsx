@@ -57,6 +57,8 @@ export default function SandboxPayments({ currUser, quoteResponse }: SandboxPaym
     }
 
     const receivingCurrencyCode = import.meta.env.VITE_PUBLIC_CURRENCY;
+    const receivingCurrencyDecimals = import.meta.env.VITE_PUBLIC_CURRENCY_DECIMALS;
+
     if (!receivingCurrencyCode) {
       setReceiveSandboxPaymentResponse({ status: 'error', data: { error: 'VITE_PUBLIC_CURRENCY environment variable is not set.' } });
       return;
@@ -66,7 +68,7 @@ export default function SandboxPayments({ currUser, quoteResponse }: SandboxPaym
     setReceiveSandboxPaymentResponse(null);
 
     try {
-      const receivingAmountSmallestUnit = convertToSmallestUnit('10', receivingCurrencyCode);
+      const receivingAmountSmallestUnit = convertToSmallestUnit('10', receivingCurrencyDecimals);
 
       const requestBody = {
         userId: currUser.id,
@@ -148,7 +150,7 @@ export default function SandboxPayments({ currUser, quoteResponse }: SandboxPaym
             )}
             <ResponseDisplay 
               response={receiveSandboxPaymentResponse} 
-              successStatus={201}
+              successStatus={200}
               title="Receive Payment Response"
             />
           </div>

@@ -23,7 +23,7 @@ gradle-app.setting
 !gradle-wrapper.jar
 !gradle-wrapper.properties
 .gradletasknamecache
-/bin
+bin/
 
 # Local Environment files
 .env
