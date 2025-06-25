@@ -3065,7 +3065,7 @@ paths:
             application/json:
               schema:
                 properties:
-                  providers:
+                  data:
                     description: List of available Uma Providers using Umaaas
                     type: array
                     items:

@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**providers** | [**List[UmaProvider]**](UmaProvider.md) | List of available Uma Providers using Umaaas | [optional] 
+**data** | [**List[UmaProvider]**](UmaProvider.md) | List of available Uma Providers using Umaaas | [optional] 
 **has_more** | **bool** | Indicates if more results are available beyond this page | [optional] 
 **next_cursor** | **str** | Cursor to retrieve the next page of results (only present if hasMore is true) | [optional] 
 **total_count** | **int** | Total number of transactions matching the criteria (excluding pagination) | [optional] 
