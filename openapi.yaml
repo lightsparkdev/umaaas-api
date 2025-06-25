@@ -1177,6 +1177,47 @@ components:
           description: Timestamp when the job completed (only present for COMPLETED or FAILED status)
           example: "2023-08-15T14:32:00Z"
 
+    UmaProvider:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the Uma Provider
+          example: "Lightspark Group"
+        supportedRegions:
+          type: array
+          items:
+            type: string
+          description: Region(s) this Uma Provider operates in
+          example: ["US"]
+        domain:
+          type: string
+          description: Domain this VASP uses for UMA addresses
+          example: "uma.me"
+        logoUrl:
+          type: string
+          description: Logo url for the VASP
+          format: uri
+          example: "https://uma.me/logo.png"
+        supportedCurrencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Currency'
+          description: List of currencies supported by this Uma Provider
+          example:
+            - code: "USD"
+              name: "United States Dollar"
+              symbol: "$"
+              decimals: 2
+        lei:
+          type: string
+          description: Legal Entity Identifier for the Uma Provider
+          example: "5493001KJTIIGC8Y1R12"
+        allowListStatus:
+          type: boolean
+          description: Whether this Uma Provider is on your allow list
+          example: true
+
 paths:
   /users:
     post:
@@ -2952,6 +2993,58 @@ paths:
                 $ref: '#/components/schemas/Error'
         '404':
           description: Sender or receiver not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /uma-providers:
+    get:
+      summary: This endpoint provides a list of counterparties that are available.
+      description: |
+        This endpoint provides a list of counterparties that are available.
+        
+        The response includes basic information about each provider, such as its UMA address, name, and supported currencies.
+        This can be used to determine which providers are available for sending or receiving payments.
+      operationId: getAvailableUmaProviders
+      tags:
+        - Available UMA Providers
+      parameters:
+        - in: query 
+          name: countryCode
+          description: The alpha-2 representation of a country, as defined by the ISO 3166-1 standard.
+          required: false
+          schema:
+            type: string
+            example: "US"
+        - in: query
+          name: currencyCode
+          description: The ISO 4217 currency code to filter providers by supported currency.
+          required: false
+          schema:
+            type: string
+            example: "USD"
+        - in: query
+          name: hasBlockedProviders
+          description: Whether to include providers which are not on your allowlist in the response. By default the response will include blocked providers.
+          required: false
+          schema:
+            type: boolean
+      security:
+        - BasicAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                properties:
+                  providers:
+                    description: List of available Uma Providers using Umaaas
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UmaProvider'
+        '401':
+          description: Unauthorized
           content:
             application/json:
               schema:

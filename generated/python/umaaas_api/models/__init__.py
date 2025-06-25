@@ -37,6 +37,7 @@ from umaaas_api.models.currency import Currency
 from umaaas_api.models.currency_amount import CurrencyAmount
 from umaaas_api.models.currency_preference import CurrencyPreference
 from umaaas_api.models.error import Error
+from umaaas_api.models.get_available_uma_providers200_response import GetAvailableUmaProviders200Response
 from umaaas_api.models.iban_account_info import IbanAccountInfo
 from umaaas_api.models.incoming_payment_webhook200_response import IncomingPaymentWebhook200Response
 from umaaas_api.models.incoming_payment_webhook403_response import IncomingPaymentWebhook403Response
@@ -82,6 +83,7 @@ from umaaas_api.models.transaction import Transaction
 from umaaas_api.models.transaction_status import TransactionStatus
 from umaaas_api.models.transaction_type import TransactionType
 from umaaas_api.models.uma_invitation import UmaInvitation
+from umaaas_api.models.uma_provider import UmaProvider
 from umaaas_api.models.update_platform_config_request import UpdatePlatformConfigRequest
 from umaaas_api.models.update_user_by_id_request import UpdateUserByIdRequest
 from umaaas_api.models.upi_account_info import UpiAccountInfo

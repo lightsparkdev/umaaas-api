@@ -2,6 +2,7 @@
 
 # import apis into api package
 from umaaas_api.api.api_tokens_api import APITokensApi
+from umaaas_api.api.available_uma_providers_api import AvailableUMAProvidersApi
 from umaaas_api.api.invitations_api import InvitationsApi
 from umaaas_api.api.platform_configuration_api import PlatformConfigurationApi
 from umaaas_api.api.sandbox_api import SandboxApi
