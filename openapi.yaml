@@ -3033,6 +3033,29 @@ paths:
           required: false
           schema:
             type: boolean
+        - name: limit
+          in: query
+          description: Maximum number of results to return (default 20, max 100)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: cursor
+          in: query
+          description: Cursor for pagination (returned from previous request)
+          required: false
+          schema:
+            type: string
+        - name: sortOrder
+          in: query
+          description: Order to sort results in
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
       security:
         - BasicAuth: []
       responses:
@@ -3042,11 +3065,21 @@ paths:
             application/json:
               schema:
                 properties:
-                  providers:
+                  data:
                     description: List of available Uma Providers using Umaaas
                     type: array
                     items:
                       $ref: '#/components/schemas/UmaProvider'
+                  hasMore:
+                    type: boolean
+                    description: Indicates if more results are available beyond this page
+                  nextCursor:
+                    type: string
+                    description: Cursor to retrieve the next page of results (only present if hasMore is true)
+                  totalCount:
+                    type: integer
+                    description: Total number of transactions matching the criteria (excluding pagination)
+
         '401':
           description: Unauthorized
           content:
