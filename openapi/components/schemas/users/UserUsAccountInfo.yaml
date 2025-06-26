@@ -1,0 +1,4 @@
+allOf:
+  - $ref: ./UserBankAccountInfo.yaml
+  - $ref: ../common/UsAccountInfo.yaml
+  - type: object

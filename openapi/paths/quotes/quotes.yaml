@@ -1,0 +1,149 @@
+post:
+  summary: Create a payment quote
+  description: >
+    Generate a quote for a payment from one UMA address to another.
+
+    The quote locks in exchange rates and fees for a set period of time and
+    provides
+
+    payment instructions that can be used to execute the payment.
+
+
+    Depending on the `lockedCurrencySide` parameter, either the sending amount
+    or 
+
+    receiving amount will be locked.
+
+
+    The returned quote includes payment instructions with the banking details
+
+    needed to execute the payment and fulfill the quote. These instructions
+
+    must be followed precisely, including any reference codes provided.
+  operationId: createQuote
+  tags:
+    - Sending Payments
+  security:
+    - BasicAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - lookupId
+            - sendingCurrencyCode
+            - receivingCurrencyCode
+            - lockedCurrencySide
+            - lockedCurrencyAmount
+          properties:
+            lookupId:
+              type: string
+              description: >-
+                Unique identifier for the prior receiver uma address lookup
+                request.
+              example: Lookup:019542f5-b3e7-1d02-0000-000000000009
+            sendingCurrencyCode:
+              type: string
+              description: Currency code for the sending amount
+              example: USD
+            receivingCurrencyCode:
+              type: string
+              description: Currency code for the receiving amount
+              example: EUR
+            lockedCurrencySide:
+              $ref: ../../components/schemas/quotes/QuoteLockSide.yaml
+            lockedCurrencyAmount:
+              type: integer
+              format: int64
+              description: >-
+                The amount to send/receive in the smallest unit of the locked
+                currency (eg. cents). See `lockedCurrencySide` for more
+                information.
+              exclusiveMinimum: 0
+              example: 1000
+            description:
+              type: string
+              description: Optional description/memo for the payment
+              example: 'Invoice #1234 payment'
+            senderUserInfo:
+              type: object
+              additionalProperties: true
+              description: >
+                Key-value pairs of information about the sender which was
+                requested by the counterparty (recipient) institution.
+
+                Any fields specified in `requiredPayerDataFields` from the
+                response of the `/receiver/{receiverUmaAddress}` (lookupUma)
+                endpoint
+
+                MUST be provided here if they were requested. If the
+                counterparty (recipient) institution did not request any
+                information,
+
+                this field can be omitted.
+              example:
+                FULL_NAME: Jane Receiver
+                NATIONALITY: FR
+        examples:
+          lockSendAmount:
+            summary: Lock sending amount
+            value:
+              lookupId: LookupRequest:019542f5-b3e7-1d02-0000-000000000009
+              sendingCurrencyCode: USD
+              receivingCurrencyCode: EUR
+              lockedCurrencySide: SENDING
+              lockedCurrencyAmount: 1000
+              description: 'Payment for invoice #1234'
+          lockReceiveAmount:
+            summary: Lock receiving amount
+            value:
+              lookupId: LookupRequest:019542f5-b3e7-1d02-0000-000000000009
+              sendingCurrencyCode: USD
+              receivingCurrencyCode: EUR
+              lockedCurrencySide: RECEIVING
+              lockedCurrencyAmount: 9200
+  responses:
+    '201':
+      description: >
+        Quote created successfully. The response includes payment instructions
+
+        that the client can use to execute the payment through their banking
+        provider.
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/quotes/Quote.yaml
+    '400':
+      description: Bad request - Missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/Error.yaml
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/Error.yaml
+    '422':
+      description: |
+        Unprocessable Entity - Additional counterparty information required,
+        or the payment cannot be completed for another reason.
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ../../components/schemas/common/Error.yaml
+              - type: object
+                properties:
+                  code:
+                    example: additional_info_required
+                  message:
+                    example: Additional counterparty information required
+                  details:
+                    example:
+                      requiredFields:
+                        - TAX_ID
+                        - REGISTRATION_NUMBER

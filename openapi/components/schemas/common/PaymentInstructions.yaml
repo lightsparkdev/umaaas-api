@@ -1,0 +1,19 @@
+type: object
+required:
+  - reference
+  - bankAccountInfo
+properties:
+  reference:
+    type: string
+    description: >-
+      Unique reference code that must be included with the payment to properly
+      credit it
+    example: UMA-Q12345-REF
+  instructionsNotes:
+    type: string
+    description: Additional human-readable instructions for making the payment
+    example: >-
+      Please ensure the reference code is included in the payment
+      memo/description field
+  bankAccountInfo:
+    $ref: ./PaymentBankAccountInfo.yaml

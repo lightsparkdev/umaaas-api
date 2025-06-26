@@ -41,11 +41,11 @@ class OutgoingTransaction(Transaction):
     exchange_rate: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="Number of sending currency units per receiving currency unit.", alias="exchangeRate")
     fees: Optional[Annotated[int, Field(strict=True, ge=0)]] = Field(default=None, description="The fees associated with the quote in the smallest unit of the sending currency (eg. cents).")
     quote_id: Optional[StrictStr] = Field(default=None, description="The ID of the quote that was used to trigger this payment", alias="quoteId")
+    payment_instructions: PaymentInstructions = Field(description="Contains the reference code, banking details, and instructions needed to complete the payment", alias="paymentInstructions")
     refund: Optional[Refund] = Field(default=None, description="The refund if transaction was refunded.")
     rate_details: Optional[OutgoingRateDetails] = Field(default=None, description="Details about the rate and fees for the transaction.", alias="rateDetails")
     failure_reason: Optional[OutgoingTransactionFailureReason] = Field(default=None, description="If the transaction failed, this field provides the reason for failure.", alias="failureReason")
-    payment_instructions: PaymentInstructions = Field(description="Contains the reference code, banking details, and instructions needed to complete the payment", alias="paymentInstructions")
-    __properties: ClassVar[List[str]] = ["id", "status", "type", "senderUmaAddress", "receiverUmaAddress", "userId", "platformUserId", "settledAt", "createdAt", "description", "counterpartyInformation", "sentAmount", "receivedAmount", "exchangeRate", "fees", "quoteId", "refund", "rateDetails", "failureReason", "paymentInstructions"]
+    __properties: ClassVar[List[str]] = ["id", "status", "type", "senderUmaAddress", "receiverUmaAddress", "userId", "platformUserId", "settledAt", "createdAt", "description", "counterpartyInformation", "sentAmount", "receivedAmount", "exchangeRate", "fees", "quoteId", "paymentInstructions", "refund", "rateDetails", "failureReason"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -90,15 +90,15 @@ class OutgoingTransaction(Transaction):
         # override the default output from pydantic by calling `to_dict()` of received_amount
         if self.received_amount:
             _dict['receivedAmount'] = self.received_amount.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of payment_instructions
+        if self.payment_instructions:
+            _dict['paymentInstructions'] = self.payment_instructions.to_dict()
         # override the default output from pydantic by calling `to_dict()` of refund
         if self.refund:
             _dict['refund'] = self.refund.to_dict()
         # override the default output from pydantic by calling `to_dict()` of rate_details
         if self.rate_details:
             _dict['rateDetails'] = self.rate_details.to_dict()
-        # override the default output from pydantic by calling `to_dict()` of payment_instructions
-        if self.payment_instructions:
-            _dict['paymentInstructions'] = self.payment_instructions.to_dict()
         return _dict
 
     @classmethod
@@ -127,10 +127,10 @@ class OutgoingTransaction(Transaction):
             "exchangeRate": obj.get("exchangeRate"),
             "fees": obj.get("fees"),
             "quoteId": obj.get("quoteId"),
+            "paymentInstructions": PaymentInstructions.from_dict(obj["paymentInstructions"]) if obj.get("paymentInstructions") is not None else None,
             "refund": Refund.from_dict(obj["refund"]) if obj.get("refund") is not None else None,
             "rateDetails": OutgoingRateDetails.from_dict(obj["rateDetails"]) if obj.get("rateDetails") is not None else None,
-            "failureReason": obj.get("failureReason"),
-            "paymentInstructions": PaymentInstructions.from_dict(obj["paymentInstructions"]) if obj.get("paymentInstructions") is not None else None
+            "failureReason": obj.get("failureReason")
         })
         return _obj
 

@@ -1,0 +1,125 @@
+openapi: 3.1.0
+info:
+  title: UMA as a Service (UMAaaS) API
+  description: >
+    API for managing global payments to and from UMA addresses. 
+
+    This service facilitates cross-currency financial transactions using simple
+    human-readable UMA addresses.
+  version: '2025-05-15'
+  contact:
+    name: Lightspark Support
+    email: support@lightspark.com
+  license:
+    name: Proprietary
+    url: https://lightspark.com/terms
+tags:
+  - name: Platform Configuration
+    description: >-
+      Platform configuration endpoints for managing global settings. You can
+      also configure these settings in the UMAaas dashboard.
+  - name: Users
+    description: User management endpoints for creating and updating user information
+  - name: Transactions
+    description: Endpoints for retrieving transaction information
+  - name: Sending Payments
+    description: Endpoints for creating and managing payment quotes and executing payments
+  - name: Webhooks
+    description: Webhook endpoints and configuration for receiving notifications
+  - name: Invitations
+    description: Endpoints for creating, claiming and managing UMA invitations
+  - name: Sandbox
+    description: Endpoints to trigger test cases in sandbox
+  - name: API Tokens
+    description: Endpoints to programatically manage API tokens
+servers:
+  - url: https://api.uma.money/umaaas/2025-05-15
+    description: Production server
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: >-
+        API token authentication using format `<api token id>:<api client
+        secret>`
+    WebhookSignature:
+      type: apiKey
+      in: header
+      name: X-UMAaas-Signature
+      description: >
+        Secp256r1 (P-256) asymmetric signature of the webhook payload, which can
+        be used to verify that the webhook was sent by UMAaas.
+
+
+        To verify the signature:
+
+        1. Get the UMAaas public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If
+        not, it should be rejected.
+paths:
+  /users:
+    $ref: paths/users/users.yaml
+  /users/{userId}:
+    $ref: paths/users/users_{userId}.yaml
+  /tokens:
+    $ref: paths/tokens/tokens.yaml
+  /tokens/{tokenId}:
+    $ref: paths/tokens/tokens_{tokenId}.yaml
+  /config:
+    $ref: paths/config/config.yaml
+  /webhooks/test:
+    $ref: paths/webhooks/webhooks_test.yaml
+  /transactions/{transactionId}:
+    $ref: paths/transactions/transactions_{transactionId}.yaml
+  /transactions:
+    $ref: paths/transactions/transactions.yaml
+  /transactions/{transactionId}/approve:
+    $ref: paths/transactions/transactions_{transactionId}_approve.yaml
+  /transactions/{transactionId}/reject:
+    $ref: paths/transactions/transactions_{transactionId}_reject.yaml
+  /receiver/{receiverUmaAddress}:
+    $ref: paths/receiver/receiver_{receiverUmaAddress}.yaml
+  /quotes:
+    $ref: paths/quotes/quotes.yaml
+  /quotes/{quoteId}:
+    $ref: paths/quotes/quotes_{quoteId}.yaml
+  /users/bulk/csv:
+    $ref: paths/users/users_bulk_csv.yaml
+  /users/bulk/jobs/{jobId}:
+    $ref: paths/users/users_bulk_jobs_{jobId}.yaml
+  /invitations:
+    $ref: paths/invitations/invitations.yaml
+  /invitations/{invitationCode}:
+    $ref: paths/invitations/invitations_{invitationCode}.yaml
+  /invitations/{invitationCode}/claim:
+    $ref: paths/invitations/invitations_{invitationCode}_claim.yaml
+  /invitations/{invitationCode}/cancel:
+    $ref: paths/invitations/invitations_{invitationCode}_cancel.yaml
+  /sandbox/send:
+    $ref: paths/sandbox/sandbox_send.yaml
+  /sandbox/receive:
+    $ref: paths/sandbox/sandbox_receive.yaml
+  /uma-providers:
+    $ref: paths/uma_providers/uma_providers.yaml
+webhooks:
+  incoming-payment:
+    $ref: webhooks/incoming-payment.yaml
+  outgoing-payment:
+    $ref: webhooks/outgoing-payment.yaml
+  test-webhook:
+    $ref: webhooks/test-webhook.yaml
+  bulk-upload:
+    $ref: webhooks/bulk-upload.yaml
+  invitation-claimed:
+    $ref: webhooks/invitation-claimed.yaml
+security:
+  - BasicAuth: []

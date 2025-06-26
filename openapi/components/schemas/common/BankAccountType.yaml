@@ -1,0 +1,9 @@
+type: string
+enum:
+  - CLABE
+  - US_ACCOUNT
+  - PIX
+  - IBAN
+  - FBO
+  - UPI
+description: Type of bank account information
