@@ -5,10 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**transaction** | [**OutgoingTransaction**](OutgoingTransaction.md) |  | 
 **timestamp** | **datetime** | ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks) | 
 **webhook_id** | **str** | Unique identifier for this webhook delivery (can be used for idempotency) | 
 **type** | [**WebhookType**](WebhookType.md) | Type of webhook event | 
+**transaction** | [**OutgoingTransaction**](OutgoingTransaction.md) |  | 
 
 ## Example
 

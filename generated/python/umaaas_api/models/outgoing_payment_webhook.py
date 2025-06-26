@@ -30,11 +30,11 @@ class OutgoingPaymentWebhook(BaseModel):
     """
     OutgoingPaymentWebhook
     """ # noqa: E501
-    transaction: OutgoingTransaction
     timestamp: datetime = Field(description="ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)")
     webhook_id: StrictStr = Field(description="Unique identifier for this webhook delivery (can be used for idempotency)", alias="webhookId")
     type: WebhookType = Field(description="Type of webhook event")
-    __properties: ClassVar[List[str]] = ["transaction", "timestamp", "webhookId", "type"]
+    transaction: OutgoingTransaction
+    __properties: ClassVar[List[str]] = ["timestamp", "webhookId", "type", "transaction"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -88,10 +88,10 @@ class OutgoingPaymentWebhook(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "transaction": OutgoingTransaction.from_dict(obj["transaction"]) if obj.get("transaction") is not None else None,
             "timestamp": obj.get("timestamp"),
             "webhookId": obj.get("webhookId"),
-            "type": obj.get("type")
+            "type": obj.get("type"),
+            "transaction": OutgoingTransaction.from_dict(obj["transaction"]) if obj.get("transaction") is not None else None
         })
         return _obj
 

@@ -30,11 +30,11 @@ class BulkUploadWebhookRequest(BaseModel):
     """
     BulkUploadWebhookRequest
     """ # noqa: E501
-    bulk_user_import_job: BulkUserImportJob = Field(alias="bulkUserImportJob")
-    timestamp: datetime = Field(description="ISO8601 timestamp when the webhook was sent")
-    webhook_id: StrictStr = Field(description="Unique identifier for this webhook delivery", alias="webhookId")
+    timestamp: datetime = Field(description="ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)")
+    webhook_id: StrictStr = Field(description="Unique identifier for this webhook delivery (can be used for idempotency)", alias="webhookId")
     type: WebhookType = Field(description="Type of webhook event")
-    __properties: ClassVar[List[str]] = ["bulkUserImportJob", "timestamp", "webhookId", "type"]
+    bulk_user_import_job: BulkUserImportJob = Field(alias="bulkUserImportJob")
+    __properties: ClassVar[List[str]] = ["timestamp", "webhookId", "type", "bulkUserImportJob"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -88,10 +88,10 @@ class BulkUploadWebhookRequest(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "bulkUserImportJob": BulkUserImportJob.from_dict(obj["bulkUserImportJob"]) if obj.get("bulkUserImportJob") is not None else None,
             "timestamp": obj.get("timestamp"),
             "webhookId": obj.get("webhookId"),
-            "type": obj.get("type")
+            "type": obj.get("type"),
+            "bulkUserImportJob": BulkUserImportJob.from_dict(obj["bulkUserImportJob"]) if obj.get("bulkUserImportJob") is not None else None
         })
         return _obj
 
