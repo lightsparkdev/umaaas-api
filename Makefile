@@ -1,4 +1,4 @@
-.PHONY: install build serve-redoc serve-docs build-docs serve-markdown build-markdown lint lint-openapi lint-markdown build-python-models
+.PHONY: install build serve-redoc serve-docs build-docs serve-markdown build-markdown lint lint-openapi lint-markdown
 
 install:
 	npm install
@@ -7,10 +7,6 @@ install:
 build:
 	npm run build
 	cd docusaurus-docs && npm run build
-
-build-python:
-	npm run build:openapi
-	openapi-generator generate -g python -i openapi.yaml -o generated/python -c codegen-config/python/config.yml
 
 build-markdown:
 	npm run build:markdown
