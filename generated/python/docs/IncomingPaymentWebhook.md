@@ -5,10 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**transaction** | [**IncomingTransaction**](IncomingTransaction.md) |  | 
 **timestamp** | **datetime** | ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks) | 
 **webhook_id** | **str** | Unique identifier for this webhook delivery (can be used for idempotency) | 
 **type** | [**WebhookType**](WebhookType.md) | Type of webhook event | 
+**transaction** | [**IncomingTransaction**](IncomingTransaction.md) |  | 
 **requested_receiver_user_info_fields** | [**List[CounterpartyFieldDefinition]**](CounterpartyFieldDefinition.md) | Information required by the sender&#39;s VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which UMAaaS does not already have from initial user registration. | [optional] 
 
 ## Example

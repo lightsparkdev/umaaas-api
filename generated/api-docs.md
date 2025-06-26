@@ -5317,6 +5317,30 @@ Type of webhook event, used by the receiver to identify which webhook is being r
 |*anonymous*|BULK_UPLOAD|
 |*anonymous*|INVITATION_CLAIMED|
 
+<h2 id="tocS_BaseWebhook">BaseWebhook</h2>
+<!-- backwards compatibility -->
+<a id="schemabasewebhook"></a>
+<a id="schema_BaseWebhook"></a>
+<a id="tocSbasewebhook"></a>
+<a id="tocsbasewebhook"></a>
+
+```json
+{
+  "timestamp": "2023-08-15T14:32:00Z",
+  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
+  "type": "INCOMING_PAYMENT"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|timestamp|string(date-time)|true|none|ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)|
+|webhookId|string|true|none|Unique identifier for this webhook delivery (can be used for idempotency)|
+|type|[WebhookType](#schemawebhooktype)|true|none|Type of webhook event|
+
 <h2 id="tocS_IncomingPaymentWebhook">IncomingPaymentWebhook</h2>
 <!-- backwards compatibility -->
 <a id="schemaincomingpaymentwebhook"></a>
@@ -5326,6 +5350,9 @@ Type of webhook event, used by the receiver to identify which webhook is being r
 
 ```json
 {
+  "timestamp": "2023-08-15T14:32:00Z",
+  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
+  "type": "INCOMING_PAYMENT",
   "transaction": {
     "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
     "status": "CREATED",
@@ -5362,9 +5389,6 @@ Type of webhook event, used by the receiver to identify which webhook is being r
     },
     "failureReason": "LNURLP_FAILED"
   },
-  "timestamp": "2023-08-15T14:32:00Z",
-  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
-  "type": "INCOMING_PAYMENT",
   "requestedReceiverUserInfoFields": [
     {
       "name": "FULL_NAME",
@@ -5377,13 +5401,20 @@ Type of webhook event, used by the receiver to identify which webhook is being r
 
 ### Properties
 
+allOf
+
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|transaction|[IncomingTransaction](#schemaincomingtransaction)|true|none|none|
-|timestamp|string(date-time)|true|none|ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)|
-|webhookId|string|true|none|Unique identifier for this webhook delivery (can be used for idempotency)|
-|type|[WebhookType](#schemawebhooktype)|true|none|Type of webhook event|
-|requestedReceiverUserInfoFields|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|false|none|Information required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which UMAaaS does not already have from initial user registration.|
+|*anonymous*|[BaseWebhook](#schemabasewebhook)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+|» transaction|[IncomingTransaction](#schemaincomingtransaction)|true|none|none|
+|» type|[WebhookType](#schemawebhooktype)|false|none|Type of webhook event|
+|» requestedReceiverUserInfoFields|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|false|none|Information required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which UMAaaS does not already have from initial user registration.|
 
 <h2 id="tocS_IncomingPaymentWebhookResponse">IncomingPaymentWebhookResponse</h2>
 <!-- backwards compatibility -->
@@ -5481,6 +5512,9 @@ and
 
 ```json
 {
+  "timestamp": "2023-08-15T14:32:00Z",
+  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
+  "type": "INCOMING_PAYMENT",
   "transaction": {
     "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
     "status": "CREATED",
@@ -5539,22 +5573,26 @@ and
       "umaaasVariableFeeAmount": 30
     },
     "failureReason": "QUOTE_EXPIRED"
-  },
-  "timestamp": "2023-08-15T14:32:00Z",
-  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
-  "type": "INCOMING_PAYMENT"
+  }
 }
 
 ```
 
 ### Properties
 
+allOf
+
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|transaction|[OutgoingTransaction](#schemaoutgoingtransaction)|true|none|none|
-|timestamp|string(date-time)|true|none|ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)|
-|webhookId|string|true|none|Unique identifier for this webhook delivery (can be used for idempotency)|
-|type|[WebhookType](#schemawebhooktype)|true|none|Type of webhook event|
+|*anonymous*|[BaseWebhook](#schemabasewebhook)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+|» transaction|[OutgoingTransaction](#schemaoutgoingtransaction)|true|none|none|
+|» type|[WebhookType](#schemawebhooktype)|false|none|Type of webhook event|
 
 <h2 id="tocS_TestWebhookRequest">TestWebhookRequest</h2>
 <!-- backwards compatibility -->
@@ -5566,7 +5604,7 @@ and
 ```json
 {
   "timestamp": "2023-08-15T14:32:00Z",
-  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000001",
+  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
   "type": "INCOMING_PAYMENT"
 }
 
@@ -5574,11 +5612,18 @@ and
 
 ### Properties
 
+allOf
+
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|timestamp|string(date-time)|true|none|ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)|
-|webhookId|string|true|none|Unique identifier for this webhook delivery (can be used for idempotency)|
-|type|[WebhookType](#schemawebhooktype)|true|none|Type of webhook event|
+|*anonymous*|[BaseWebhook](#schemabasewebhook)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+|» type|[WebhookType](#schemawebhooktype)|false|none|Type of webhook event|
 
 <h2 id="tocS_BulkUploadWebhookRequest">BulkUploadWebhookRequest</h2>
 <!-- backwards compatibility -->
@@ -5589,6 +5634,9 @@ and
 
 ```json
 {
+  "timestamp": "2023-08-15T14:32:00Z",
+  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
+  "type": "INCOMING_PAYMENT",
   "bulkUserImportJob": {
     "jobId": "Job:019542f5-b3e7-1d02-0000-000000000006",
     "status": "PROCESSING",
@@ -5609,22 +5657,26 @@ and
       }
     ],
     "completedAt": "2023-08-15T14:32:00Z"
-  },
-  "timestamp": "2023-08-15T14:32:00Z",
-  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000008",
-  "type": "INCOMING_PAYMENT"
+  }
 }
 
 ```
 
 ### Properties
 
+allOf
+
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|bulkUserImportJob|[BulkUserImportJob](#schemabulkuserimportjob)|true|none|none|
-|timestamp|string(date-time)|true|none|ISO8601 timestamp when the webhook was sent|
-|webhookId|string|true|none|Unique identifier for this webhook delivery|
-|type|[WebhookType](#schemawebhooktype)|true|none|Type of webhook event|
+|*anonymous*|[BaseWebhook](#schemabasewebhook)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+|» bulkUserImportJob|[BulkUserImportJob](#schemabulkuserimportjob)|true|none|none|
+|» type|[WebhookType](#schemawebhooktype)|false|none|Type of webhook event|
 
 <h2 id="tocS_InvitationClaimedWebhook">InvitationClaimedWebhook</h2>
 <!-- backwards compatibility -->
@@ -5635,6 +5687,9 @@ and
 
 ```json
 {
+  "timestamp": "2023-08-15T14:32:00Z",
+  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
+  "type": "INVITATION_CLAIMED",
   "invitation": {
     "code": "019542f5",
     "createdAt": "2023-09-01T14:30:00Z",
@@ -5653,22 +5708,26 @@ and
         "decimals": 2
       }
     }
-  },
-  "timestamp": "2023-08-15T14:32:00Z",
-  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000008",
-  "type": "INVITATION_CLAIMED"
+  }
 }
 
 ```
 
 ### Properties
 
+allOf
+
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|invitation|[UmaInvitation](#schemaumainvitation)|true|none|none|
-|timestamp|string(date-time)|true|none|ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)|
-|webhookId|string|true|none|Unique identifier for this webhook delivery (can be used for idempotency)|
-|type|string|true|none|Type of webhook event|
+|*anonymous*|[BaseWebhook](#schemabasewebhook)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+|» invitation|[UmaInvitation](#schemaumainvitation)|true|none|none|
+|» type|string|false|none|Type of webhook event|
 
 #### Enumerated Values
 

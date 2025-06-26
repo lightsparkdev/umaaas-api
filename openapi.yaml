@@ -3547,16 +3547,13 @@ components:
         - BULK_UPLOAD
         - INVITATION_CLAIMED
       description: Type of webhook event, used by the receiver to identify which webhook is being received
-    IncomingPaymentWebhook:
+    BaseWebhook:
       type: object
       required:
-        - transaction
         - timestamp
         - webhookId
         - type
       properties:
-        transaction:
-          $ref: '#/components/schemas/IncomingTransaction'
         timestamp:
           type: string
           format: date-time
@@ -3569,12 +3566,24 @@ components:
         type:
           $ref: '#/components/schemas/WebhookType'
           description: Type of webhook event
-          example: INCOMING_PAYMENT
-        requestedReceiverUserInfoFields:
-          type: array
-          items:
-            $ref: '#/components/schemas/CounterpartyFieldDefinition'
-          description: Information required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which UMAaaS does not already have from initial user registration.
+    IncomingPaymentWebhook:
+      allOf:
+        - $ref: '#/components/schemas/BaseWebhook'
+        - type: object
+          required:
+            - transaction
+          properties:
+            transaction:
+              $ref: '#/components/schemas/IncomingTransaction'
+            type:
+              $ref: '#/components/schemas/WebhookType'
+              description: Type of webhook event
+              example: INCOMING_PAYMENT
+            requestedReceiverUserInfoFields:
+              type: array
+              items:
+                $ref: '#/components/schemas/CounterpartyFieldDefinition'
+              description: Information required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which UMAaaS does not already have from initial user registration.
     IncomingPaymentWebhookResponse:
       type: object
       properties:
@@ -3605,93 +3614,52 @@ components:
                 - TAX_ID
                 - REGISTRATION_NUMBER
     OutgoingPaymentWebhook:
-      type: object
-      required:
-        - transaction
-        - timestamp
-        - webhookId
-        - type
-      properties:
-        transaction:
-          $ref: '#/components/schemas/OutgoingTransaction'
-        timestamp:
-          type: string
-          format: date-time
-          description: ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)
-          example: '2023-08-15T14:32:00Z'
-        webhookId:
-          type: string
-          description: Unique identifier for this webhook delivery (can be used for idempotency)
-          example: Webhook:019542f5-b3e7-1d02-0000-000000000007
-        type:
-          $ref: '#/components/schemas/WebhookType'
-          description: Type of webhook event
-          example: OUTGOING_PAYMENT
+      allOf:
+        - $ref: '#/components/schemas/BaseWebhook'
+        - type: object
+          required:
+            - transaction
+          properties:
+            transaction:
+              $ref: '#/components/schemas/OutgoingTransaction'
+            type:
+              $ref: '#/components/schemas/WebhookType'
+              description: Type of webhook event
+              example: OUTGOING_PAYMENT
     TestWebhookRequest:
-      type: object
-      required:
-        - timestamp
-        - webhookId
-        - type
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-          description: ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)
-          example: '2023-08-15T14:32:00Z'
-        webhookId:
-          type: string
-          description: Unique identifier for this webhook delivery (can be used for idempotency)
-          example: Webhook:019542f5-b3e7-1d02-0000-000000000001
-        type:
-          $ref: '#/components/schemas/WebhookType'
-          description: Type of webhook event
-          example: TEST
+      allOf:
+        - $ref: '#/components/schemas/BaseWebhook'
+        - type: object
+          properties:
+            type:
+              $ref: '#/components/schemas/WebhookType'
+              description: Type of webhook event
+              example: TEST
     BulkUploadWebhookRequest:
-      type: object
-      required:
-        - bulkUserImportJob
-        - timestamp
-        - webhookId
-        - type
-      properties:
-        bulkUserImportJob:
-          $ref: '#/components/schemas/BulkUserImportJob'
-        timestamp:
-          type: string
-          format: date-time
-          description: ISO8601 timestamp when the webhook was sent
-          example: '2023-08-15T14:32:00Z'
-        webhookId:
-          type: string
-          description: Unique identifier for this webhook delivery
-          example: Webhook:019542f5-b3e7-1d02-0000-000000000008
-        type:
-          $ref: '#/components/schemas/WebhookType'
-          description: Type of webhook event
-          example: BULK_UPLOAD
+      allOf:
+        - $ref: '#/components/schemas/BaseWebhook'
+        - type: object
+          required:
+            - bulkUserImportJob
+          properties:
+            bulkUserImportJob:
+              $ref: '#/components/schemas/BulkUserImportJob'
+            type:
+              $ref: '#/components/schemas/WebhookType'
+              description: Type of webhook event
+              example: BULK_UPLOAD
     InvitationClaimedWebhook:
-      type: object
-      required:
-        - invitation
-        - timestamp
-        - webhookId
-        - type
-      properties:
-        invitation:
-          $ref: '#/components/schemas/UmaInvitation'
-        timestamp:
-          type: string
-          format: date-time
-          description: ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)
-          example: '2023-08-15T14:32:00Z'
-        webhookId:
-          type: string
-          description: Unique identifier for this webhook delivery (can be used for idempotency)
-          example: Webhook:019542f5-b3e7-1d02-0000-000000000008
-        type:
-          type: string
-          enum:
-            - INVITATION_CLAIMED
-          description: Type of webhook event
-          example: INVITATION_CLAIMED
+      allOf:
+        - $ref: '#/components/schemas/BaseWebhook'
+        - type: object
+          required:
+            - invitation
+          properties:
+            invitation:
+              $ref: '#/components/schemas/UmaInvitation'
+            type:
+              type: string
+              enum:
+                - INVITATION_CLAIMED
+              description: Type of webhook event
+              example: INVITATION_CLAIMED

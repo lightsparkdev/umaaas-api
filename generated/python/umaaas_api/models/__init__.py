@@ -19,6 +19,7 @@ from umaaas_api.models.address import Address
 from umaaas_api.models.api_token import ApiToken
 from umaaas_api.models.approve_pending_payment_request import ApprovePendingPaymentRequest
 from umaaas_api.models.bank_account_type import BankAccountType
+from umaaas_api.models.base_webhook import BaseWebhook
 from umaaas_api.models.bulk_upload_webhook_request import BulkUploadWebhookRequest
 from umaaas_api.models.bulk_user_import_job import BulkUserImportJob
 from umaaas_api.models.bulk_user_import_job_errors_inner import BulkUserImportJobErrorsInner

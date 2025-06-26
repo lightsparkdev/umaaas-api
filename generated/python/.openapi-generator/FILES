@@ -14,6 +14,7 @@ docs/ApiToken.md
 docs/ApprovePendingPaymentRequest.md
 docs/AvailableUMAProvidersApi.md
 docs/BankAccountType.md
+docs/BaseWebhook.md
 docs/BulkUploadWebhookRequest.md
 docs/BulkUserImportJob.md
 docs/BulkUserImportJobErrorsInner.md
@@ -109,6 +110,7 @@ setup.cfg
 setup.py
 test-requirements.txt
 test/__init__.py
+test/test_base_webhook.py
 tox.ini
 umaaas_api/__init__.py
 umaaas_api/api/__init__.py
@@ -130,6 +132,7 @@ umaaas_api/models/address.py
 umaaas_api/models/api_token.py
 umaaas_api/models/approve_pending_payment_request.py
 umaaas_api/models/bank_account_type.py
+umaaas_api/models/base_webhook.py
 umaaas_api/models/bulk_upload_webhook_request.py
 umaaas_api/models/bulk_user_import_job.py
 umaaas_api/models/bulk_user_import_job_errors_inner.py
