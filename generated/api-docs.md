@@ -425,7 +425,7 @@ Register a new user in the system with UMA address and bank account information
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
-|body|body|[User](#schemauser)|true|none|
+|body|body|any|true|none|
 
 > Example responses
 
@@ -439,7 +439,22 @@ Register a new user in the system with UMA address and bank account information
   "userType": "INDIVIDUAL",
   "createdAt": "2023-07-21T17:32:28Z",
   "updatedAt": "2023-07-21T17:32:28Z",
-  "isDeleted": false
+  "isDeleted": false,
+  "fullName": "John Michael Doe",
+  "dateOfBirth": "1990-01-15",
+  "nationality": "US",
+  "address": {
+    "line1": "123 Main Street",
+    "line2": "Apt 4B",
+    "city": "San Francisco",
+    "state": "CA",
+    "postalCode": "94105",
+    "country": "US"
+  },
+  "bankAccountInfo": {
+    "accountType": "CLABE",
+    "platformAccountId": "acc_123456789"
+  }
 }
 ```
 
@@ -447,10 +462,25 @@ Register a new user in the system with UMA address and bank account information
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|User created successfully|[User](#schemauser)|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|User created successfully|Inline|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|[Error](#schemaerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
 |409|[Conflict](https://tools.ietf.org/html/rfc7231#section-6.5.8)|Conflict - User with the UMA address already exists|[Error](#schemaerror)|
+
+<h3 id="createuser-responseschema">Response Schema</h3>
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|userType|INDIVIDUAL|
+|userType|BUSINESS|
+|accountType|CLABE|
+|accountType|US_ACCOUNT|
+|accountType|PIX|
+|accountType|IBAN|
+|accountType|FBO|
+|accountType|UPI|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -538,7 +568,22 @@ the specified filters. If no filters are provided, returns all users (paginated)
       "userType": "INDIVIDUAL",
       "createdAt": "2023-07-21T17:32:28Z",
       "updatedAt": "2023-07-21T17:32:28Z",
-      "isDeleted": false
+      "isDeleted": false,
+      "fullName": "John Michael Doe",
+      "dateOfBirth": "1990-01-15",
+      "nationality": "US",
+      "address": {
+        "line1": "123 Main Street",
+        "line2": "Apt 4B",
+        "city": "San Francisco",
+        "state": "CA",
+        "postalCode": "94105",
+        "country": "US"
+      },
+      "bankAccountInfo": {
+        "accountType": "CLABE",
+        "platformAccountId": "acc_123456789"
+      }
     }
   ],
   "hasMore": true,
@@ -561,14 +606,74 @@ Status Code **200**
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|» data|[[User](#schemauser)]|true|none|List of users matching the filter criteria|
-|»» id|string|false|read-only|System-generated unique identifier|
-|»» umaAddress|string|true|none|full UMA address|
-|»» platformUserId|string|true|none|Platform-specific user identifier|
-|»» userType|[UserType](#schemausertype)|true|none|Whether the user is an individual or a business entity|
-|»» createdAt|string(date-time)|false|read-only|Creation timestamp|
-|»» updatedAt|string(date-time)|false|read-only|Last update timestamp|
-|»» isDeleted|boolean|false|read-only|Whether the user is marked as deleted|
+|» data|[oneOf]|true|none|List of users matching the filter criteria|
+
+*oneOf*
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|»» *anonymous*|any|false|none|none|
+
+*allOf*
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|»»» *anonymous*|[User](#schemauser)|false|none|none|
+|»»»» id|string|false|read-only|System-generated unique identifier|
+|»»»» umaAddress|string|true|none|full UMA address|
+|»»»» platformUserId|string|true|none|Platform-specific user identifier|
+|»»»» userType|[UserType](#schemausertype)|true|none|Whether the user is an individual or a business entity|
+|»»»» createdAt|string(date-time)|false|read-only|Creation timestamp|
+|»»»» updatedAt|string(date-time)|false|read-only|Last update timestamp|
+|»»»» isDeleted|boolean|false|read-only|Whether the user is marked as deleted|
+
+*and*
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|»»» *anonymous*|object|false|none|none|
+|»»»» fullName|string|false|none|Individual's full name|
+|»»»» dateOfBirth|string(date)|false|none|Date of birth in ISO 8601 format (YYYY-MM-DD)|
+|»»»» nationality|string|false|none|Country code (ISO 3166-1 alpha-2)|
+|»»»» address|[Address](#schemaaddress)|false|none|none|
+|»»»»» line1|string|true|none|Street address line 1|
+|»»»»» line2|string|false|none|Street address line 2|
+|»»»»» city|string|false|none|City|
+|»»»»» state|string|false|none|State/Province/Region|
+|»»»»» postalCode|string|true|none|Postal/ZIP code|
+|»»»»» country|string|true|none|Country code (ISO 3166-1 alpha-2)|
+|»»»» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|true|none|none|
+|»»»»» accountType|[BankAccountType](#schemabankaccounttype)|true|none|Type of bank account information|
+|»»»»» platformAccountId|string|false|none|Platform-specific identifier for this bank account. This optional field allows platforms<br>to link bank accounts to their internal account systems. The value can be any string<br>that helps identify the account in your system (e.g. database IDs, custom references, etc.).<br><br>This field is particularly useful when:<br>- Tracking multiple bank accounts for the same user<br>- Linking accounts to internal accounting systems<br>- Maintaining consistency between UMAaaS and your platform's account records|
+
+*xor*
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|»» *anonymous*|any|false|none|none|
+
+*allOf*
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|»»» *anonymous*|[User](#schemauser)|false|none|none|
+
+*and*
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|»»» *anonymous*|object|false|none|none|
+|»»»» address|[Address](#schemaaddress)|false|none|none|
+|»»»» bankAccountInfo|[UserBankAccountInfo](#schemauserbankaccountinfo)|true|none|none|
+|»»»» businessInfo|object|false|none|Additional information required for business entities|
+|»»»»» legalName|string|true|none|Legal name of the business|
+|»»»»» registrationNumber|string|false|none|Business registration number|
+|»»»»» taxId|string|false|none|Tax identification number|
+
+*continued*
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
 |» hasMore|boolean|true|none|Indicates if more results are available beyond this page|
 |» nextCursor|string|false|none|Cursor to retrieve the next page of results (only present if hasMore is true)|
 |» totalCount|integer|false|none|Total number of users matching the criteria (excluding pagination)|
@@ -579,6 +684,12 @@ Status Code **200**
 |---|---|
 |userType|INDIVIDUAL|
 |userType|BUSINESS|
+|accountType|CLABE|
+|accountType|US_ACCOUNT|
+|accountType|PIX|
+|accountType|IBAN|
+|accountType|FBO|
+|accountType|UPI|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -647,7 +758,22 @@ Retrieve a user by their system-generated ID
   "userType": "INDIVIDUAL",
   "createdAt": "2023-07-21T17:32:28Z",
   "updatedAt": "2023-07-21T17:32:28Z",
-  "isDeleted": false
+  "isDeleted": false,
+  "fullName": "John Michael Doe",
+  "dateOfBirth": "1990-01-15",
+  "nationality": "US",
+  "address": {
+    "line1": "123 Main Street",
+    "line2": "Apt 4B",
+    "city": "San Francisco",
+    "state": "CA",
+    "postalCode": "94105",
+    "country": "US"
+  },
+  "bankAccountInfo": {
+    "accountType": "CLABE",
+    "platformAccountId": "acc_123456789"
+  }
 }
 ```
 
@@ -655,9 +781,24 @@ Retrieve a user by their system-generated ID
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Successful operation|[User](#schemauser)|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Successful operation|Inline|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|User not found|[Error](#schemaerror)|
+
+<h3 id="getuserbyid-responseschema">Response Schema</h3>
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|userType|INDIVIDUAL|
+|userType|BUSINESS|
+|accountType|CLABE|
+|accountType|US_ACCOUNT|
+|accountType|PIX|
+|accountType|IBAN|
+|accountType|FBO|
+|accountType|UPI|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -773,7 +914,22 @@ Update a user's metadata by their system-generated ID
   "userType": "INDIVIDUAL",
   "createdAt": "2023-07-21T17:32:28Z",
   "updatedAt": "2023-07-21T17:32:28Z",
-  "isDeleted": false
+  "isDeleted": false,
+  "fullName": "John Michael Doe",
+  "dateOfBirth": "1990-01-15",
+  "nationality": "US",
+  "address": {
+    "line1": "123 Main Street",
+    "line2": "Apt 4B",
+    "city": "San Francisco",
+    "state": "CA",
+    "postalCode": "94105",
+    "country": "US"
+  },
+  "bankAccountInfo": {
+    "accountType": "CLABE",
+    "platformAccountId": "acc_123456789"
+  }
 }
 ```
 
@@ -781,10 +937,25 @@ Update a user's metadata by their system-generated ID
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|User updated successfully|[User](#schemauser)|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|User updated successfully|Inline|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Bad request|[Error](#schemaerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|User not found|[Error](#schemaerror)|
+
+<h3 id="updateuserbyid-responseschema">Response Schema</h3>
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|userType|INDIVIDUAL|
+|userType|BUSINESS|
+|accountType|CLABE|
+|accountType|US_ACCOUNT|
+|accountType|PIX|
+|accountType|IBAN|
+|accountType|FBO|
+|accountType|UPI|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -853,7 +1024,22 @@ Delete a user by their system-generated ID
   "userType": "INDIVIDUAL",
   "createdAt": "2023-07-21T17:32:28Z",
   "updatedAt": "2023-07-21T17:32:28Z",
-  "isDeleted": false
+  "isDeleted": false,
+  "fullName": "John Michael Doe",
+  "dateOfBirth": "1990-01-15",
+  "nationality": "US",
+  "address": {
+    "line1": "123 Main Street",
+    "line2": "Apt 4B",
+    "city": "San Francisco",
+    "state": "CA",
+    "postalCode": "94105",
+    "country": "US"
+  },
+  "bankAccountInfo": {
+    "accountType": "CLABE",
+    "platformAccountId": "acc_123456789"
+  }
 }
 ```
 
@@ -861,10 +1047,25 @@ Delete a user by their system-generated ID
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|User deleted successfully|[User](#schemauser)|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|User deleted successfully|Inline|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Unauthorized|[Error](#schemaerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|User not found|[Error](#schemaerror)|
 |410|[Gone](https://tools.ietf.org/html/rfc7231#section-6.5.9)|User deleted already|[Error](#schemaerror)|
+
+<h3 id="deleteuserbyid-responseschema">Response Schema</h3>
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|userType|INDIVIDUAL|
+|userType|BUSINESS|
+|accountType|CLABE|
+|accountType|US_ACCOUNT|
+|accountType|PIX|
+|accountType|IBAN|
+|accountType|FBO|
+|accountType|UPI|
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
@@ -3905,7 +4106,7 @@ Type of bank account information
 
 ### Properties
 
-allOf - discriminator: User.userType
+allOf
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
@@ -3961,7 +4162,7 @@ and
 
 ### Properties
 
-allOf - discriminator: User.userType
+allOf
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|

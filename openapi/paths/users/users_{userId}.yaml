@@ -19,7 +19,14 @@ get:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/users/User.yaml
+            oneOf:
+              - $ref: ../../components/schemas/users/IndividualUser.yaml
+              - $ref: ../../components/schemas/users/BusinessUser.yaml
+            discriminator:
+              propertyName: userType
+              mapping:
+                INDIVIDUAL: ../../components/schemas/users/IndividualUser.yaml
+                BUSINESS: ../../components/schemas/users/BusinessUser.yaml
     '401':
       description: Unauthorized
       content:
@@ -135,7 +142,14 @@ patch:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/users/User.yaml
+            oneOf:
+              - $ref: ../../components/schemas/users/IndividualUser.yaml
+              - $ref: ../../components/schemas/users/BusinessUser.yaml
+            discriminator:
+              propertyName: userType
+              mapping:
+                INDIVIDUAL: ../../components/schemas/users/IndividualUser.yaml
+                BUSINESS: ../../components/schemas/users/BusinessUser.yaml
     '400':
       description: Bad request
       content:
@@ -168,7 +182,14 @@ delete:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/users/User.yaml
+            oneOf:
+              - $ref: ../../components/schemas/users/IndividualUser.yaml
+              - $ref: ../../components/schemas/users/BusinessUser.yaml
+            discriminator:
+              propertyName: userType
+              mapping:
+                INDIVIDUAL: ../../components/schemas/users/IndividualUser.yaml
+                BUSINESS: ../../components/schemas/users/BusinessUser.yaml
     '401':
       description: Unauthorized
       content:
