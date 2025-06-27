@@ -18,7 +18,7 @@ export default function UsersTable({ users, onUsersUpdate }: UsersTableProps) {
       const res = await fetch('/api/user');
       const data = await res.json();
       if (res.ok) {
-        onUsersUpdate(data.data || []);
+        onUsersUpdate(data || []);
       } else {
         console.error('Error fetching users:', data);
         onUsersUpdate([]);
