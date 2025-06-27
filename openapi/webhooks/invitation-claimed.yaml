@@ -55,7 +55,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: '../components/schemas/webhooks/InvitationClaimedWebhook.yml'
+          $ref: '../components/schemas/webhooks/InvitationClaimedWebhook.yaml'
         examples:
           claimedInvitation:
             summary: Invitation claimed notification
