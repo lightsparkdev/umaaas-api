@@ -928,7 +928,7 @@ paths:
       parameters:
         - name: transactionId
           in: path
-          description: Unique identifier of the transaction to approve
+          description: Unique identifier of the transaction to be approved
           required: true
           schema:
             type: string
