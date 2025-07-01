@@ -58,7 +58,6 @@ fun Route.paymentsRoutes() {
                 val rawBody = call.receiveText()
                 println("Quote request: ${JsonUtils.prettyPrint(rawBody)}")
 
-                // Parse JSON manually using Jackson
                 val objectMapper = ObjectMapper()
                 val quoteBody = objectMapper.readValue(rawBody, QuoteCreateParams.Body::class.java)
 
