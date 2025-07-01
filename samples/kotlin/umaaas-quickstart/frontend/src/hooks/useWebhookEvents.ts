@@ -7,7 +7,7 @@ export function useWebhookEvents() {
 
   // Set up Server-Sent Events connection for webhooks
   useEffect(() => {
-    const eventSource = new EventSource('/api/webhooks/events');
+    const eventSource = new EventSource('/api/sse');
     
     eventSource.onopen = () => {
       console.log('Connected to webhook events');
@@ -18,7 +18,7 @@ export function useWebhookEvents() {
       try {
         const data = JSON.parse(event.data);
         
-        if (data.type === 'connected' || data.type === 'heartbeat') {
+        if (data.type === 'connected' || data.type === 'heartbeat' || !data.type) {
           return; // Ignore connection and heartbeat messages
         }
         

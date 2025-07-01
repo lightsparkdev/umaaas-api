@@ -43,16 +43,9 @@ fun Route.webhookRoutes() {
                 val rawPayload: Map<String, Any> = objectMapper.readValue(rawBody)
                 val webhookEvent = WebhookUtils.parseWebhookEvent(rawPayload)
                 println("Received webhook: ${JsonUtils.prettyPrint(rawBody)}")
-                
                 // Add to event queue for SSE broadcasting
-                val webhookEventData = WebhookEventData(
-                    id = webhookEvent.webhookId(),
-                    type = webhookEvent.type().value,
-                    created = Instant.parse(webhookEvent.timestamp()).toEpochMilli(),
-                    data = webhookEvent,
-                    receivedAt = System.currentTimeMillis()
-                )
-                WebhookEventQueue.addEvent(webhookEventData)
+                // Only used in the quickstart in production you won't need this
+                WebhookStream.addEvent(webhookEvent)
                 
                 // Handle different webhook types according to OpenAPI schema
                 when (webhookEvent.type()) {
