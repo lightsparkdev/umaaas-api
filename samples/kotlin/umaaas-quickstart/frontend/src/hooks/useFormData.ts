@@ -31,7 +31,7 @@ export function useFormData() {
   // Generate initial faker data on client side only
   useEffect(() => {
     const generateInitialData = (): FormData => {
-      const domain = import.meta.env.VITE_UAAS_UMA_DOMAIN || window.location.hostname;
+      const domain = import.meta.env.VITE_UMAAAS_UMA_DOMAIN || window.location.hostname;
       return {
         platformUserId: faker.string.uuid(),
         umaAddress: `$${faker.internet.username().toLowerCase()}@${domain}`,
@@ -80,7 +80,7 @@ export function useFormData() {
   };
 
   const generateNewData = () => {
-    const domain = import.meta.env.VITE_UAAS_UMA_DOMAIN || (typeof window !== 'undefined' ? window.location.hostname : 'localhost:3000');
+    const domain = import.meta.env.VITE_UMAAAS_UMA_DOMAIN || (typeof window !== 'undefined' ? window.location.hostname : 'localhost:3000');
     setFormData({
       platformUserId: faker.string.uuid(),
       umaAddress: `$${faker.internet.username().toLowerCase()}@${domain}`,

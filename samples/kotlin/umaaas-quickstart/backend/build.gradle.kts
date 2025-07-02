@@ -1,11 +1,10 @@
 
 plugins {
     kotlin("jvm") version "2.1.21"
-    kotlin("plugin.serialization") version "2.1.20"
+    kotlin("plugin.serialization") version "2.1.21"
     alias(libs.plugins.ktor)
 }
 
-// Frontend build task
 tasks.register<Exec>("buildFrontend") {
     dependsOn("npmInstall")
     workingDir = file("../frontend")
@@ -25,14 +24,13 @@ tasks.register<Exec>("npmInstall") {
     outputs.dir("../frontend/node_modules")
 }
 
-// Make sure frontend is built before running the application
 tasks.named("processResources") {
     dependsOn("buildFrontend")
 }
 
 kotlin {
     jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(23))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
@@ -76,23 +74,15 @@ dependencies {
     // HTTP client for URL rewrites/proxying
     implementation("io.ktor:ktor-client-core:3.1.3")
     implementation("io.ktor:ktor-client-cio:3.1.3")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:3.1.3")
-    implementation("io.ktor:ktor-serialization-jackson:3.1.3")
-    implementation("ch.qos.logback:logback-classic:1.5.18")
 
     // UMAaaS Kotlin client dependencies
-    implementation("com.lightspark.uma:umaaas-kotlin-core:0.0.1-alpha.1")
-    implementation("com.lightspark.uma:umaaas-kotlin-client-okhttp:0.0.1-alpha.1")
+    implementation("com.lightspark.umaaas:umaaas-kotlin:0.1.0-beta.2")
 
-    // Jackson Json
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1")
+    // JSON helper
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1")
 
-    // Environment variables support
+    // .env file support
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
-
-    // Webhook keys support
-    implementation("org.bouncycastle:bcprov-jdk18on:1.78")
 
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)

@@ -1,10 +1,10 @@
 package com.lightspark.uma.umaaas.routes
 
-import com.lightspark.uma.models.transactions.TransactionListParams
-import com.lightspark.uma.models.transactions.TransactionStatus
-import com.lightspark.uma.models.transactions.TransactionType
 import com.lightspark.uma.umaaas.lib.JsonUtils
-import com.lightspark.uma.umaaas.lib.UmaaasClient
+import com.lightspark.uma.umaaas.lib.UmaaasClientBuilder
+import com.lightspark.umaaas.models.transactions.TransactionListParams
+import com.lightspark.umaaas.models.transactions.TransactionStatus
+import com.lightspark.umaaas.models.transactions.TransactionType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -42,7 +42,7 @@ fun Route.transactionRoutes() {
                     }
                 }.build()
 
-                val transactions = UmaaasClient.client.transactions().list(transactionListParams)
+                val transactions = UmaaasClientBuilder.client.transactions().list(transactionListParams)
                 val responseJson = JsonUtils.prettyPrint(transactions.data())
                 println("Umaaas Client Response [transactions.list]: $responseJson")
                 

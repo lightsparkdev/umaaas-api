@@ -1,10 +1,12 @@
 package com.lightspark.uma.umaaas.routes
 
-import com.lightspark.uma.models.users.User
-import com.lightspark.uma.models.users.UserCreateParams
-import com.lightspark.uma.models.users.UserListParams
 import com.lightspark.uma.umaaas.lib.JsonUtils
-import com.lightspark.uma.umaaas.lib.UmaaasClient
+import com.lightspark.uma.umaaas.lib.UmaaasClientBuilder
+import com.lightspark.umaaas.core.jsonMapper
+import com.lightspark.umaaas.models.users.IndividualUser
+import com.lightspark.umaaas.models.users.UserCreateParams
+import com.lightspark.umaaas.models.users.UserListParams
+import com.lightspark.umaaas.models.users.UserType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
@@ -24,12 +26,12 @@ fun Route.userRoutes() {
                 val userListParams = UserListParams.builder().apply {
                     queryParams["cursor"]?.let { cursor(it) }
                     queryParams["limit"]?.toIntOrNull()?.let { limit(it.toLong()) }
-                    queryParams["userType"]?.let { userType(UserListParams.UserType.of(it)) }
+                    queryParams["userType"]?.let { userType(UserType.of(it)) }
                     queryParams["platformUserId"]?.let { platformUserId(it) }
                     queryParams["umaAddress"]?.let { umaAddress(it) }
                 }.build()
 
-                val users = UmaaasClient.client.users().list(userListParams)
+                val users = UmaaasClientBuilder.client.users().list(userListParams)
                 val usersJson = JsonUtils.prettyPrint(users.data())
                 println("Umaaas Client Response [users.list]: $usersJson")
                 call.respond(HttpStatusCode.OK, usersJson)
@@ -45,19 +47,42 @@ fun Route.userRoutes() {
         post {
             try {
                 val rawBody = call.receiveText()
+                println("Create User request: ${JsonUtils.prettyPrint(rawBody)}")
 
-                // Pretty print the JSON
-                println("Create User request:\n${JsonUtils.prettyPrint(rawBody)}")
+                val objectMapper = jsonMapper()
+                val jsonNode = objectMapper.readTree(rawBody)
 
-                // Parse JSON manually using Jackson
-                val objectMapper = com.fasterxml.jackson.databind.ObjectMapper()
-                val userJson = objectMapper.readValue(rawBody, User::class.java)
+                // The following is an example of how you would populate create user params
+                // replacing the object sent from the FE with your own values
+                val individualUserBuilder = IndividualUser.builder()
+                    .umaAddress(jsonNode.get("umaAddress").asText())
+                    .platformUserId(jsonNode.get("platformUserId").asText())
+                    .userType(UserType.INDIVIDUAL)
+                jsonNode.get("fullName")?.asText()?.let { individualUserBuilder.fullName(it) }
+                jsonNode.get("dateOfBirth")?.asText()?.let { 
+                    individualUserBuilder.dateOfBirth(java.time.LocalDate.parse(it))
+                }
+                jsonNode.get("nationality")?.asText()?.let { individualUserBuilder.nationality(it) }
+                jsonNode.get("bankAccountInfo")?.let { bankInfo ->
+                    val bankAccountInfo = objectMapper.convertValue(bankInfo, com.lightspark.umaaas.models.users.UserBankAccountInfo::class.java)
+                    individualUserBuilder.bankAccountInfo(bankAccountInfo)
+                }
+                jsonNode.get("address")?.let { addressNode ->
+                    val addressBuilder = com.lightspark.umaaas.models.users.Address.builder()
+                    addressNode.get("line1")?.asText()?.let { addressBuilder.line1(it) }
+                    addressNode.get("line2")?.asText()?.let { addressBuilder.line2(it) }
+                    addressNode.get("city")?.asText()?.let { addressBuilder.city(it) }
+                    addressNode.get("state")?.asText()?.let { addressBuilder.state(it) }
+                    addressNode.get("postalCode")?.asText()?.let { addressBuilder.postalCode(it) }
+                    addressNode.get("country")?.asText()?.let { addressBuilder.country(it) }
+                    individualUserBuilder.address(addressBuilder.build())
+                }
 
                 val userCreateParams = UserCreateParams.builder()
-                    .user(userJson)
+                    .body(individualUserBuilder.build())
                     .build()
 
-                val user = UmaaasClient.client.users().create(userCreateParams)
+                val user = UmaaasClientBuilder.client.users().create(userCreateParams)
                 val jsonUser = JsonUtils.prettyPrint(user)
                 println("Umaaas Client Response [users.create]: \n$jsonUser")
 
