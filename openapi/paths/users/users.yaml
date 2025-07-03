@@ -13,7 +13,14 @@ post:
     content:
       application/json:
         schema:
-          $ref: ../../components/schemas/users/User.yaml
+          oneOf:
+            - $ref: ../../components/schemas/users/IndividualUser.yaml
+            - $ref: ../../components/schemas/users/BusinessUser.yaml
+          discriminator:
+            propertyName: userType
+            mapping:
+              INDIVIDUAL: ../../components/schemas/users/IndividualUser.yaml
+              BUSINESS: ../../components/schemas/users/BusinessUser.yaml
         examples:
           individualUser:
             summary: Create individual user example
@@ -66,7 +73,14 @@ post:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/users/User.yaml
+            oneOf:
+              - $ref: ../../components/schemas/users/IndividualUser.yaml
+              - $ref: ../../components/schemas/users/BusinessUser.yaml
+            discriminator:
+              propertyName: userType
+              mapping:
+                INDIVIDUAL: ../../components/schemas/users/IndividualUser.yaml
+                BUSINESS: ../../components/schemas/users/BusinessUser.yaml
     '400':
       description: Bad request
       content:
@@ -181,7 +195,14 @@ get:
                 type: array
                 description: List of users matching the filter criteria
                 items:
-                  $ref: ../../components/schemas/users/User.yaml
+                  oneOf:
+                    - $ref: ../../components/schemas/users/IndividualUser.yaml
+                    - $ref: ../../components/schemas/users/BusinessUser.yaml
+                  discriminator:
+                    propertyName: userType
+                    mapping:
+                      INDIVIDUAL: ../../components/schemas/users/IndividualUser.yaml
+                      BUSINESS: ../../components/schemas/users/BusinessUser.yaml
               hasMore:
                 type: boolean
                 description: Indicates if more results are available beyond this page
