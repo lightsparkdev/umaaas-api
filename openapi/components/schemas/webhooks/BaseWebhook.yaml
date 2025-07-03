@@ -20,3 +20,11 @@ properties:
   type:
     $ref: ./WebhookType.yaml
     description: Type of webhook event
+discriminator:
+  propertyName: type
+  mapping: 
+    INCOMING_PAYMENT: ./IncomingPaymentWebhook.yaml
+    OUTGOING_PAYMENT: ./OutgoingPaymentWebhook.yaml
+    TEST: ./TestWebhookRequest.yaml
+    BULK_UPLOAD: ../users/BulkUploadWebhookRequest.yaml
+    INVITATION_CLAIMED: ./InvitationClaimedWebhook.yaml

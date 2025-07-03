@@ -2540,34 +2540,6 @@ components:
           type: string
           description: Country code (ISO 3166-1 alpha-2)
           example: US
-    UserBankAccountInfo:
-      type: object
-      required:
-        - accountType
-      properties:
-        accountType:
-          $ref: '#/components/schemas/BankAccountType'
-        platformAccountId:
-          type: string
-          description: |
-            Platform-specific identifier for this bank account. This optional field allows platforms
-            to link bank accounts to their internal account systems. The value can be any string
-            that helps identify the account in your system (e.g. database IDs, custom references, etc.).
-
-            This field is particularly useful when:
-            - Tracking multiple bank accounts for the same user
-            - Linking accounts to internal accounting systems
-            - Maintaining consistency between UMAaaS and your platform's account records
-          example: acc_123456789
-      discriminator:
-        propertyName: accountType
-        mapping:
-          CLABE: '#/components/schemas/UserClabeAccountInfo'
-          US_ACCOUNT: '#/components/schemas/UserUsAccountInfo'
-          PIX: '#/components/schemas/UserPixAccountInfo'
-          IBAN: '#/components/schemas/UserIbanAccountInfo'
-          FBO: '#/components/schemas/UserFboAccountInfo'
-          UPI: '#/components/schemas/UserUpiAccountInfo'
     ClabeAccountInfo:
       type: object
       required:
@@ -2591,9 +2563,8 @@ components:
           example: John Doe
     UserClabeAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/UserBankAccountInfo'
         - $ref: '#/components/schemas/ClabeAccountInfo'
-        - type: object
+        - $ref: '#/components/schemas/BankAccountBase'
     UsAccountInfo:
       type: object
       required:
@@ -2627,11 +2598,38 @@ components:
           type: string
           description: Name of the account holder
           example: John Doe
+    BankAccountBase:
+      type: object
+      required:
+        - accountType
+      properties:
+        platformAccountId:
+          type: string
+          description: |
+            Platform-specific identifier for this bank account. This optional field allows platforms
+            to link bank accounts to their internal account systems. The value can be any string
+            that helps identify the account in your system (e.g. database IDs, custom references, etc.).
+
+            This field is particularly useful when:
+            - Tracking multiple bank accounts for the same user
+            - Linking accounts to internal accounting systems
+            - Maintaining consistency between UMAaaS and your platform's account records
+          example: acc_123456789
+        accountType:
+          $ref: '#/components/schemas/BankAccountType'
+      discriminator:
+        propertyName: accountType
+        mapping:
+          CLABE: '#/components/schemas/UserClabeAccountInfo'
+          US_ACCOUNT: '#/components/schemas/UserUsAccountInfo'
+          PIX: '#/components/schemas/UserPixAccountInfo'
+          IBAN: '#/components/schemas/UserIbanAccountInfo'
+          FBO: '#/components/schemas/UserFboAccountInfo'
+          UPI: '#/components/schemas/UserUpiAccountInfo'
     UserUsAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/UserBankAccountInfo'
         - $ref: '#/components/schemas/UsAccountInfo'
-        - type: object
+        - $ref: '#/components/schemas/BankAccountBase'
     PixAccountInfo:
       type: object
       required:
@@ -2662,9 +2660,8 @@ components:
           example: John Doe
     UserPixAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/UserBankAccountInfo'
         - $ref: '#/components/schemas/PixAccountInfo'
-        - type: object
+        - $ref: '#/components/schemas/BankAccountBase'
     IbanAccountInfo:
       type: object
       required:
@@ -2693,12 +2690,11 @@ components:
           example: John Doe
     UserIbanAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/UserBankAccountInfo'
         - $ref: '#/components/schemas/IbanAccountInfo'
-        - type: object
+        - $ref: '#/components/schemas/BankAccountBase'
     UserFboAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/UserBankAccountInfo'
+        - $ref: '#/components/schemas/BankAccountBase'
         - type: object
           required:
             - currencyCode
@@ -2722,9 +2718,8 @@ components:
           example: John Doe
     UserUpiAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/UserBankAccountInfo'
         - $ref: '#/components/schemas/UpiAccountInfo'
-        - type: object
+        - $ref: '#/components/schemas/BankAccountBase'
     BankAccountType:
       type: string
       enum:
@@ -2735,6 +2730,23 @@ components:
         - FBO
         - UPI
       description: Type of bank account information
+    UserBankAccountInfo:
+      oneOf:
+        - $ref: '#/components/schemas/UserClabeAccountInfo'
+        - $ref: '#/components/schemas/UserUsAccountInfo'
+        - $ref: '#/components/schemas/UserPixAccountInfo'
+        - $ref: '#/components/schemas/UserIbanAccountInfo'
+        - $ref: '#/components/schemas/UserFboAccountInfo'
+        - $ref: '#/components/schemas/UserUpiAccountInfo'
+      discriminator:
+        propertyName: accountType
+        mapping:
+          CLABE: '#/components/schemas/UserClabeAccountInfo'
+          US_ACCOUNT: '#/components/schemas/UserUsAccountInfo'
+          PIX: '#/components/schemas/UserPixAccountInfo'
+          IBAN: '#/components/schemas/UserIbanAccountInfo'
+          FBO: '#/components/schemas/UserFboAccountInfo'
+          UPI: '#/components/schemas/UserUpiAccountInfo'
     BusinessUser:
       allOf:
         - $ref: '#/components/schemas/User'
@@ -3580,15 +3592,24 @@ components:
           type: boolean
           description: Whether this Uma Provider is on your allow list
           example: true
-    WebhookType:
-      type: string
-      enum:
-        - INCOMING_PAYMENT
-        - OUTGOING_PAYMENT
-        - TEST
-        - BULK_UPLOAD
-        - INVITATION_CLAIMED
-      description: Type of webhook event, used by the receiver to identify which webhook is being received
+    IncomingPaymentWebhook:
+      allOf:
+        - $ref: '#/components/schemas/BaseWebhook'
+        - type: object
+          required:
+            - transaction
+          properties:
+            transaction:
+              $ref: '#/components/schemas/IncomingTransaction'
+            type:
+              $ref: '#/components/schemas/WebhookType'
+              description: Type of webhook event
+              example: INCOMING_PAYMENT
+            requestedReceiverUserInfoFields:
+              type: array
+              items:
+                $ref: '#/components/schemas/CounterpartyFieldDefinition'
+              description: Information required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which UMAaaS does not already have from initial user registration.
     BaseWebhook:
       type: object
       required:
@@ -3608,53 +3629,23 @@ components:
         type:
           $ref: '#/components/schemas/WebhookType'
           description: Type of webhook event
-    IncomingPaymentWebhook:
-      allOf:
-        - $ref: '#/components/schemas/BaseWebhook'
-        - type: object
-          required:
-            - transaction
-          properties:
-            transaction:
-              $ref: '#/components/schemas/IncomingTransaction'
-            type:
-              $ref: '#/components/schemas/WebhookType'
-              description: Type of webhook event
-              example: INCOMING_PAYMENT
-            requestedReceiverUserInfoFields:
-              type: array
-              items:
-                $ref: '#/components/schemas/CounterpartyFieldDefinition'
-              description: Information required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which UMAaaS does not already have from initial user registration.
-    IncomingPaymentWebhookResponse:
-      type: object
-      properties:
-        receiverUserInfo:
-          type: object
-          additionalProperties: true
-          description: Information about the recipient, provided by the platform if requested in the webhook via `requestedReceiverUserInfoFields` and the payment is approved.
-    IncomingPaymentWebhookForbiddenResponse:
-      allOf:
-        - $ref: '#/components/schemas/Error'
-        - type: object
-          properties:
-            reason:
-              type: string
-              description: Optional reason for rejecting the payment. This is just for debugging purposes or can be used for a platform's own purposes.
-              example: RESTRICTED_JURISDICTION
-    IncomingPaymentWebhookUnprocessableResponse:
-      allOf:
-        - $ref: '#/components/schemas/Error'
-        - type: object
-          properties:
-            requiredFields:
-              type: array
-              items:
-                type: string
-              description: List of fields that are required by the platform, but are not present in the counterparty information.
-              example:
-                - TAX_ID
-                - REGISTRATION_NUMBER
+      discriminator:
+        propertyName: type
+        mapping:
+          INCOMING_PAYMENT: '#/components/schemas/IncomingPaymentWebhook'
+          OUTGOING_PAYMENT: '#/components/schemas/OutgoingPaymentWebhook'
+          TEST: '#/components/schemas/TestWebhookRequest'
+          BULK_UPLOAD: '#/components/schemas/BulkUploadWebhookRequest'
+          INVITATION_CLAIMED: '#/components/schemas/InvitationClaimedWebhook'
+    WebhookType:
+      type: string
+      enum:
+        - INCOMING_PAYMENT
+        - OUTGOING_PAYMENT
+        - TEST
+        - BULK_UPLOAD
+        - INVITATION_CLAIMED
+      description: Type of webhook event, used by the receiver to identify which webhook is being received
     OutgoingPaymentWebhook:
       allOf:
         - $ref: '#/components/schemas/BaseWebhook'
@@ -3705,3 +3696,32 @@ components:
                 - INVITATION_CLAIMED
               description: Type of webhook event
               example: INVITATION_CLAIMED
+    IncomingPaymentWebhookResponse:
+      type: object
+      properties:
+        receiverUserInfo:
+          type: object
+          additionalProperties: true
+          description: Information about the recipient, provided by the platform if requested in the webhook via `requestedReceiverUserInfoFields` and the payment is approved.
+    IncomingPaymentWebhookForbiddenResponse:
+      allOf:
+        - $ref: '#/components/schemas/Error'
+        - type: object
+          properties:
+            reason:
+              type: string
+              description: Optional reason for rejecting the payment. This is just for debugging purposes or can be used for a platform's own purposes.
+              example: RESTRICTED_JURISDICTION
+    IncomingPaymentWebhookUnprocessableResponse:
+      allOf:
+        - $ref: '#/components/schemas/Error'
+        - type: object
+          properties:
+            requiredFields:
+              type: array
+              items:
+                type: string
+              description: List of fields that are required by the platform, but are not present in the counterparty information.
+              example:
+                - TAX_ID
+                - REGISTRATION_NUMBER

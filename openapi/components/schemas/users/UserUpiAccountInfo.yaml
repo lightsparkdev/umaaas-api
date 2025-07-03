@@ -1,4 +1,3 @@
 allOf:
-  - $ref: ./UserBankAccountInfo.yaml
   - $ref: ../common/UpiAccountInfo.yaml
-  - type: object
+  - $ref: ./BankAccountBase.yaml
