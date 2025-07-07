@@ -1,6 +1,6 @@
 package com.lightspark.uma.umaaas.routes
 
-import com.lightspark.uma.umaaas.lib.getEnvVar
+import com.lightspark.uma.umaaas.lib.UmaaasConfig
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.request.get
@@ -18,7 +18,8 @@ import io.ktor.server.routing.get
 
 fun Route.configureUmaRewrites() {
     val httpClient = HttpClient(CIO)
-    val forwardDomain = getEnvVar("UMAAAS_FORWARD_DOMAIN")
+    val config = UmaaasConfig.fromEnv()
+    val forwardDomain = config.forwardDomain
     println("🔧 UMAAAS_FORWARD_DOMAIN: $forwardDomain")
 
     // Rewrite /.well-known/lnurlp/:path* to your UMA as a service sub domain
@@ -124,7 +125,6 @@ fun Route.configureUmaRewrites() {
                 contentType = response.contentType(),
                 status = response.status
             ) {
-                // Forward response headers
                 response.headers.forEach { key, values ->
                     if (key.lowercase() !in listOf("content-length", "transfer-encoding")) {
                         values.forEach { value ->

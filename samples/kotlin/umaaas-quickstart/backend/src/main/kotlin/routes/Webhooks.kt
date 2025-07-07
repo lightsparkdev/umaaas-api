@@ -2,9 +2,9 @@ package com.lightspark.uma.umaaas.routes
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.lightspark.uma.umaaas.lib.JsonUtils
+import com.lightspark.uma.umaaas.lib.UmaaasConfig
 import com.lightspark.uma.umaaas.lib.WebhookStream
 import com.lightspark.uma.umaaas.lib.WebhookUtils
-import com.lightspark.uma.umaaas.lib.getEnvVar
 import com.lightspark.umaaas.core.JsonValue
 import com.lightspark.umaaas.core.jsonMapper
 import com.lightspark.umaaas.models.receiver.CounterpartyFieldDefinition
@@ -24,8 +24,8 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Route.webhookRoutes() {
-    val webhookPublicKey = getEnvVar("UMAAAS_WEBHOOK_PUBLIC_KEY").replace("\\n", "\n")
-    WebhookUtils.setPublicKey(webhookPublicKey)
+    val config = UmaaasConfig.fromEnv()
+    WebhookUtils.setPublicKey(config.webhookPublicKey)
 
     route("/api/webhooks") {
         post {
@@ -49,7 +49,6 @@ fun Route.webhookRoutes() {
                         return@post
                     }
                 }
-
 
                 val objectMapper = jsonMapper()
                 val rawPayload: Map<String, Any> = objectMapper.readValue(rawBody)

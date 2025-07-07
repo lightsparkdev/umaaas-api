@@ -27,6 +27,7 @@ bin/
 
 # Local Environment files
 .env
+local.properties
 
 # Quickstart generated folders
 /samples/kotlin/umaaas-quickstart/backend/src/main/resources/static

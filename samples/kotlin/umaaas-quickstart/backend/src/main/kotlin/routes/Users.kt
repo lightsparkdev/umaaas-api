@@ -22,7 +22,6 @@ fun Route.userRoutes() {
                 val queryParams = call.request.queryParameters
                 println("User list query params: $queryParams")
                 
-                // Build query parameters from request
                 val userListParams = UserListParams.builder().apply {
                     queryParams["cursor"]?.let { cursor(it) }
                     queryParams["limit"]?.toIntOrNull()?.let { limit(it.toLong()) }

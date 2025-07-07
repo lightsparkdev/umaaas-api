@@ -18,7 +18,7 @@ fun Route.transactionRoutes() {
             try {
                 val queryParams = call.request.queryParameters
                 println("Transaction list query params: $queryParams")
-                // Build query parameters from request
+
                 val transactionListParams = TransactionListParams.builder().apply {
                     queryParams["cursor"]?.let { cursor(it) }
                     queryParams["limit"]?.toIntOrNull()?.let { limit(it.toLong()) }
