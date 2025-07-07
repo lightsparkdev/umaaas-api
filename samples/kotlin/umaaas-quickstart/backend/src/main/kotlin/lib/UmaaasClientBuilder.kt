@@ -6,9 +6,10 @@ import com.lightspark.umaaas.client.UmaaasClient
 object UmaaasClientBuilder {
 
     val client: UmaaasClient by lazy {
+        val config = UmaaasConfig.fromEnv()
         UmaaasOkHttpClient.builder()
-            .username(getEnvVar("UMAAAS_CLIENT_ID"))
-            .password(getEnvVar("UMAAAS_CLIENT_SECRET"))
+            .username(config.clientId)
+            .password(config.clientSecret)
             .maxRetries(2)
             .build()
     }
