@@ -3,7 +3,9 @@ package com.lightspark.uma.umaaas.routes
 import com.lightspark.uma.umaaas.lib.JsonUtils
 import com.lightspark.uma.umaaas.lib.UmaaasClientBuilder
 import com.lightspark.umaaas.core.jsonMapper
+import com.lightspark.umaaas.models.users.BankAccountType
 import com.lightspark.umaaas.models.users.IndividualUser
+import com.lightspark.umaaas.models.users.UserBankAccountInfo
 import com.lightspark.umaaas.models.users.UserCreateParams
 import com.lightspark.umaaas.models.users.UserListParams
 import com.lightspark.umaaas.models.users.UserType
@@ -63,8 +65,15 @@ fun Route.userRoutes() {
                 }
                 jsonNode.get("nationality")?.asText()?.let { individualUserBuilder.nationality(it) }
                 jsonNode.get("bankAccountInfo")?.let { bankInfo ->
-                    val bankAccountInfo = objectMapper.convertValue(bankInfo, com.lightspark.umaaas.models.users.UserBankAccountInfo::class.java)
-                    individualUserBuilder.bankAccountInfo(bankAccountInfo)
+                    val bankAccountInfoBuilder = UserBankAccountInfo.UserUsAccountInfo.builder()
+                    bankAccountInfoBuilder.accountType(BankAccountType.US_ACCOUNT)
+                    bankAccountInfoBuilder.accountCategory(UserBankAccountInfo.UserUsAccountInfo.AccountCategory.CHECKING)
+                    bankInfo.get("platformAccountId")?.asText()?.let { bankAccountInfoBuilder.platformAccountId(it) }
+                    bankInfo.get("accountNumber")?.asText()?.let { bankAccountInfoBuilder.accountNumber(it) }
+                    bankInfo.get("routingNumber")?.asText()?.let { bankAccountInfoBuilder.routingNumber(it) }
+                    bankInfo.get("bankName")?.asText()?.let { bankAccountInfoBuilder.bankName(it) }
+                    bankInfo.get("accountHolderName")?.asText()?.let { bankAccountInfoBuilder.accountHolderName(it) }
+                    individualUserBuilder.bankAccountInfo(bankAccountInfoBuilder.build())
                 }
                 jsonNode.get("address")?.let { addressNode ->
                     val addressBuilder = com.lightspark.umaaas.models.users.Address.builder()
