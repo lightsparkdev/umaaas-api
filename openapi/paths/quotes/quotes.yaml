@@ -139,7 +139,7 @@ post:
               - type: object
                 properties:
                   code:
-                    example: additional_info_required
+                    example: MISSING_MANDATORY_USER_INFO
                   message:
                     example: Additional counterparty information required
                   details:
