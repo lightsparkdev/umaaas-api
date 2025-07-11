@@ -5697,60 +5697,6 @@ The side of the quote which should be locked and specified in the `lockedCurrenc
 |lei|string|false|none|Legal Entity Identifier for the Uma Provider|
 |allowListStatus|boolean|false|none|Whether this Uma Provider is on your allow list|
 
-<h2 id="tocS_WebhookType">WebhookType</h2>
-<!-- backwards compatibility -->
-<a id="schemawebhooktype"></a>
-<a id="schema_WebhookType"></a>
-<a id="tocSwebhooktype"></a>
-<a id="tocswebhooktype"></a>
-
-```json
-"INCOMING_PAYMENT"
-
-```
-
-Type of webhook event, used by the receiver to identify which webhook is being received
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|*anonymous*|string|false|none|Type of webhook event, used by the receiver to identify which webhook is being received|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|*anonymous*|INCOMING_PAYMENT|
-|*anonymous*|OUTGOING_PAYMENT|
-|*anonymous*|TEST|
-|*anonymous*|BULK_UPLOAD|
-|*anonymous*|INVITATION_CLAIMED|
-
-<h2 id="tocS_BaseWebhook">BaseWebhook</h2>
-<!-- backwards compatibility -->
-<a id="schemabasewebhook"></a>
-<a id="schema_BaseWebhook"></a>
-<a id="tocSbasewebhook"></a>
-<a id="tocsbasewebhook"></a>
-
-```json
-{
-  "timestamp": "2023-08-15T14:32:00Z",
-  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
-  "type": "INCOMING_PAYMENT"
-}
-
-```
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|timestamp|string(date-time)|true|none|ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)|
-|webhookId|string|true|none|Unique identifier for this webhook delivery (can be used for idempotency)|
-|type|[WebhookType](#schemawebhooktype)|true|none|Type of webhook event|
-
 <h2 id="tocS_IncomingPaymentWebhook">IncomingPaymentWebhook</h2>
 <!-- backwards compatibility -->
 <a id="schemaincomingpaymentwebhook"></a>
@@ -5811,7 +5757,7 @@ Type of webhook event, used by the receiver to identify which webhook is being r
 
 ### Properties
 
-allOf
+allOf - discriminator: BaseWebhook.type
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
@@ -5825,6 +5771,292 @@ and
 |» transaction|[IncomingTransaction](#schemaincomingtransaction)|true|none|none|
 |» type|[WebhookType](#schemawebhooktype)|false|none|Type of webhook event|
 |» requestedReceiverUserInfoFields|[[CounterpartyFieldDefinition](#schemacounterpartyfielddefinition)]|false|none|Information required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which UMAaaS does not already have from initial user registration.|
+
+<h2 id="tocS_BaseWebhook">BaseWebhook</h2>
+<!-- backwards compatibility -->
+<a id="schemabasewebhook"></a>
+<a id="schema_BaseWebhook"></a>
+<a id="tocSbasewebhook"></a>
+<a id="tocsbasewebhook"></a>
+
+```json
+{
+  "timestamp": "2023-08-15T14:32:00Z",
+  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
+  "type": "INCOMING_PAYMENT"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|timestamp|string(date-time)|true|none|ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)|
+|webhookId|string|true|none|Unique identifier for this webhook delivery (can be used for idempotency)|
+|type|[WebhookType](#schemawebhooktype)|true|none|Type of webhook event|
+
+<h2 id="tocS_WebhookType">WebhookType</h2>
+<!-- backwards compatibility -->
+<a id="schemawebhooktype"></a>
+<a id="schema_WebhookType"></a>
+<a id="tocSwebhooktype"></a>
+<a id="tocswebhooktype"></a>
+
+```json
+"INCOMING_PAYMENT"
+
+```
+
+Type of webhook event, used by the receiver to identify which webhook is being received
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|string|false|none|Type of webhook event, used by the receiver to identify which webhook is being received|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|*anonymous*|INCOMING_PAYMENT|
+|*anonymous*|OUTGOING_PAYMENT|
+|*anonymous*|TEST|
+|*anonymous*|BULK_UPLOAD|
+|*anonymous*|INVITATION_CLAIMED|
+
+<h2 id="tocS_OutgoingPaymentWebhook">OutgoingPaymentWebhook</h2>
+<!-- backwards compatibility -->
+<a id="schemaoutgoingpaymentwebhook"></a>
+<a id="schema_OutgoingPaymentWebhook"></a>
+<a id="tocSoutgoingpaymentwebhook"></a>
+<a id="tocsoutgoingpaymentwebhook"></a>
+
+```json
+{
+  "timestamp": "2023-08-15T14:32:00Z",
+  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
+  "type": "INCOMING_PAYMENT",
+  "transaction": {
+    "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
+    "status": "CREATED",
+    "type": "INCOMING",
+    "senderUmaAddress": "$sender@external.domain",
+    "receiverUmaAddress": "$recipient@uma.domain",
+    "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
+    "platformUserId": "18d3e5f7b4a9c2",
+    "settledAt": "2023-08-15T14:30:00Z",
+    "createdAt": "2023-08-15T14:25:18Z",
+    "description": "Payment for invoice #1234",
+    "counterpartyInformation": {
+      "FULL_NAME": "John Sender",
+      "DATE_OF_BIRTH": "1985-06-15",
+      "NATIONALITY": "DE"
+    },
+    "sentAmount": {
+      "amount": 12550,
+      "currency": {
+        "code": "USD",
+        "name": "United States Dollar",
+        "symbol": "$",
+        "decimals": 2
+      }
+    },
+    "receivedAmount": {
+      "amount": 12550,
+      "currency": {
+        "code": "USD",
+        "name": "United States Dollar",
+        "symbol": "$",
+        "decimals": 2
+      }
+    },
+    "exchangeRate": 1.08,
+    "fees": 10,
+    "quoteId": "Quote:019542f5-b3e7-1d02-0000-000000000006",
+    "paymentInstructions": {
+      "reference": "UMA-Q12345-REF",
+      "instructionsNotes": "Please ensure the reference code is included in the payment memo/description field",
+      "bankAccountInfo": {
+        "accountType": "CLABE"
+      }
+    },
+    "refund": {
+      "reference": "UMA-Q12345-REFUND",
+      "initiatedAt": "2023-08-15T14:30:00Z",
+      "settledAt": "2023-08-15T14:30:00Z"
+    },
+    "rateDetails": {
+      "counterpartyMultiplier": 1.08,
+      "counterpartyFixedFee": 10,
+      "umaaasMultiplier": 0.925,
+      "umaaasFixedFee": 10,
+      "umaaasVariableFeeRate": 0.003,
+      "umaaasVariableFeeAmount": 30
+    },
+    "failureReason": "QUOTE_EXPIRED"
+  }
+}
+
+```
+
+### Properties
+
+allOf - discriminator: BaseWebhook.type
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[BaseWebhook](#schemabasewebhook)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+|» transaction|[OutgoingTransaction](#schemaoutgoingtransaction)|true|none|none|
+|» type|[WebhookType](#schemawebhooktype)|false|none|Type of webhook event|
+
+<h2 id="tocS_TestWebhookRequest">TestWebhookRequest</h2>
+<!-- backwards compatibility -->
+<a id="schematestwebhookrequest"></a>
+<a id="schema_TestWebhookRequest"></a>
+<a id="tocStestwebhookrequest"></a>
+<a id="tocstestwebhookrequest"></a>
+
+```json
+{
+  "timestamp": "2023-08-15T14:32:00Z",
+  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
+  "type": "INCOMING_PAYMENT"
+}
+
+```
+
+### Properties
+
+allOf - discriminator: BaseWebhook.type
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[BaseWebhook](#schemabasewebhook)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+|» type|[WebhookType](#schemawebhooktype)|false|none|Type of webhook event|
+
+<h2 id="tocS_BulkUploadWebhookRequest">BulkUploadWebhookRequest</h2>
+<!-- backwards compatibility -->
+<a id="schemabulkuploadwebhookrequest"></a>
+<a id="schema_BulkUploadWebhookRequest"></a>
+<a id="tocSbulkuploadwebhookrequest"></a>
+<a id="tocsbulkuploadwebhookrequest"></a>
+
+```json
+{
+  "timestamp": "2023-08-15T14:32:00Z",
+  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
+  "type": "INCOMING_PAYMENT",
+  "bulkUserImportJob": {
+    "jobId": "Job:019542f5-b3e7-1d02-0000-000000000006",
+    "status": "PROCESSING",
+    "progress": {
+      "total": 5000,
+      "processed": 2500,
+      "successful": 2450,
+      "failed": 50
+    },
+    "errors": [
+      {
+        "correlationId": "biz456",
+        "error": {
+          "code": "string",
+          "message": "string",
+          "details": {}
+        }
+      }
+    ],
+    "completedAt": "2023-08-15T14:32:00Z"
+  }
+}
+
+```
+
+### Properties
+
+allOf - discriminator: BaseWebhook.type
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[BaseWebhook](#schemabasewebhook)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+|» bulkUserImportJob|[BulkUserImportJob](#schemabulkuserimportjob)|true|none|none|
+|» type|[WebhookType](#schemawebhooktype)|false|none|Type of webhook event|
+
+<h2 id="tocS_InvitationClaimedWebhook">InvitationClaimedWebhook</h2>
+<!-- backwards compatibility -->
+<a id="schemainvitationclaimedwebhook"></a>
+<a id="schema_InvitationClaimedWebhook"></a>
+<a id="tocSinvitationclaimedwebhook"></a>
+<a id="tocsinvitationclaimedwebhook"></a>
+
+```json
+{
+  "timestamp": "2023-08-15T14:32:00Z",
+  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
+  "type": "INVITATION_CLAIMED",
+  "invitation": {
+    "code": "019542f5",
+    "createdAt": "2023-09-01T14:30:00Z",
+    "claimedAt": "2023-09-01T14:30:00Z",
+    "url": "https://uma.me/i/019542f5",
+    "expiresAt": "2023-09-01T14:30:00Z",
+    "inviterUma": "$inviter@uma.domain",
+    "inviteeUma": "$invitee@uma.domain",
+    "status": "PENDING",
+    "amountToSend": {
+      "amount": 12550,
+      "currency": {
+        "code": "USD",
+        "name": "United States Dollar",
+        "symbol": "$",
+        "decimals": 2
+      }
+    }
+  }
+}
+
+```
+
+### Properties
+
+allOf - discriminator: BaseWebhook.type
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[BaseWebhook](#schemabasewebhook)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+|» invitation|[UmaInvitation](#schemaumainvitation)|true|none|none|
+|» type|string|false|none|Type of webhook event|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|type|INVITATION_CLAIMED|
 
 <h2 id="tocS_IncomingPaymentWebhookResponse">IncomingPaymentWebhookResponse</h2>
 <!-- backwards compatibility -->
@@ -5912,236 +6144,4 @@ and
 |---|---|---|---|---|
 |*anonymous*|object|false|none|none|
 |» requiredFields|[string]|false|none|List of fields that are required by the platform, but are not present in the counterparty information.|
-
-<h2 id="tocS_OutgoingPaymentWebhook">OutgoingPaymentWebhook</h2>
-<!-- backwards compatibility -->
-<a id="schemaoutgoingpaymentwebhook"></a>
-<a id="schema_OutgoingPaymentWebhook"></a>
-<a id="tocSoutgoingpaymentwebhook"></a>
-<a id="tocsoutgoingpaymentwebhook"></a>
-
-```json
-{
-  "timestamp": "2023-08-15T14:32:00Z",
-  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
-  "type": "INCOMING_PAYMENT",
-  "transaction": {
-    "id": "Transaction:019542f5-b3e7-1d02-0000-000000000004",
-    "status": "CREATED",
-    "type": "INCOMING",
-    "senderUmaAddress": "$sender@external.domain",
-    "receiverUmaAddress": "$recipient@uma.domain",
-    "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
-    "platformUserId": "18d3e5f7b4a9c2",
-    "settledAt": "2023-08-15T14:30:00Z",
-    "createdAt": "2023-08-15T14:25:18Z",
-    "description": "Payment for invoice #1234",
-    "counterpartyInformation": {
-      "FULL_NAME": "John Sender",
-      "DATE_OF_BIRTH": "1985-06-15",
-      "NATIONALITY": "DE"
-    },
-    "sentAmount": {
-      "amount": 12550,
-      "currency": {
-        "code": "USD",
-        "name": "United States Dollar",
-        "symbol": "$",
-        "decimals": 2
-      }
-    },
-    "receivedAmount": {
-      "amount": 12550,
-      "currency": {
-        "code": "USD",
-        "name": "United States Dollar",
-        "symbol": "$",
-        "decimals": 2
-      }
-    },
-    "exchangeRate": 1.08,
-    "fees": 10,
-    "quoteId": "Quote:019542f5-b3e7-1d02-0000-000000000006",
-    "paymentInstructions": {
-      "reference": "UMA-Q12345-REF",
-      "instructionsNotes": "Please ensure the reference code is included in the payment memo/description field",
-      "bankAccountInfo": {
-        "accountType": "CLABE"
-      }
-    },
-    "refund": {
-      "reference": "UMA-Q12345-REFUND",
-      "initiatedAt": "2023-08-15T14:30:00Z",
-      "settledAt": "2023-08-15T14:30:00Z"
-    },
-    "rateDetails": {
-      "counterpartyMultiplier": 1.08,
-      "counterpartyFixedFee": 10,
-      "umaaasMultiplier": 0.925,
-      "umaaasFixedFee": 10,
-      "umaaasVariableFeeRate": 0.003,
-      "umaaasVariableFeeAmount": 30
-    },
-    "failureReason": "QUOTE_EXPIRED"
-  }
-}
-
-```
-
-### Properties
-
-allOf
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|*anonymous*|[BaseWebhook](#schemabasewebhook)|false|none|none|
-
-and
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|*anonymous*|object|false|none|none|
-|» transaction|[OutgoingTransaction](#schemaoutgoingtransaction)|true|none|none|
-|» type|[WebhookType](#schemawebhooktype)|false|none|Type of webhook event|
-
-<h2 id="tocS_TestWebhookRequest">TestWebhookRequest</h2>
-<!-- backwards compatibility -->
-<a id="schematestwebhookrequest"></a>
-<a id="schema_TestWebhookRequest"></a>
-<a id="tocStestwebhookrequest"></a>
-<a id="tocstestwebhookrequest"></a>
-
-```json
-{
-  "timestamp": "2023-08-15T14:32:00Z",
-  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
-  "type": "INCOMING_PAYMENT"
-}
-
-```
-
-### Properties
-
-allOf
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|*anonymous*|[BaseWebhook](#schemabasewebhook)|false|none|none|
-
-and
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|*anonymous*|object|false|none|none|
-|» type|[WebhookType](#schemawebhooktype)|false|none|Type of webhook event|
-
-<h2 id="tocS_BulkUploadWebhookRequest">BulkUploadWebhookRequest</h2>
-<!-- backwards compatibility -->
-<a id="schemabulkuploadwebhookrequest"></a>
-<a id="schema_BulkUploadWebhookRequest"></a>
-<a id="tocSbulkuploadwebhookrequest"></a>
-<a id="tocsbulkuploadwebhookrequest"></a>
-
-```json
-{
-  "timestamp": "2023-08-15T14:32:00Z",
-  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
-  "type": "INCOMING_PAYMENT",
-  "bulkUserImportJob": {
-    "jobId": "Job:019542f5-b3e7-1d02-0000-000000000006",
-    "status": "PROCESSING",
-    "progress": {
-      "total": 5000,
-      "processed": 2500,
-      "successful": 2450,
-      "failed": 50
-    },
-    "errors": [
-      {
-        "correlationId": "biz456",
-        "error": {
-          "code": "string",
-          "message": "string",
-          "details": {}
-        }
-      }
-    ],
-    "completedAt": "2023-08-15T14:32:00Z"
-  }
-}
-
-```
-
-### Properties
-
-allOf
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|*anonymous*|[BaseWebhook](#schemabasewebhook)|false|none|none|
-
-and
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|*anonymous*|object|false|none|none|
-|» bulkUserImportJob|[BulkUserImportJob](#schemabulkuserimportjob)|true|none|none|
-|» type|[WebhookType](#schemawebhooktype)|false|none|Type of webhook event|
-
-<h2 id="tocS_InvitationClaimedWebhook">InvitationClaimedWebhook</h2>
-<!-- backwards compatibility -->
-<a id="schemainvitationclaimedwebhook"></a>
-<a id="schema_InvitationClaimedWebhook"></a>
-<a id="tocSinvitationclaimedwebhook"></a>
-<a id="tocsinvitationclaimedwebhook"></a>
-
-```json
-{
-  "timestamp": "2023-08-15T14:32:00Z",
-  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
-  "type": "INVITATION_CLAIMED",
-  "invitation": {
-    "code": "019542f5",
-    "createdAt": "2023-09-01T14:30:00Z",
-    "claimedAt": "2023-09-01T14:30:00Z",
-    "url": "https://uma.me/i/019542f5",
-    "expiresAt": "2023-09-01T14:30:00Z",
-    "inviterUma": "$inviter@uma.domain",
-    "inviteeUma": "$invitee@uma.domain",
-    "status": "PENDING",
-    "amountToSend": {
-      "amount": 12550,
-      "currency": {
-        "code": "USD",
-        "name": "United States Dollar",
-        "symbol": "$",
-        "decimals": 2
-      }
-    }
-  }
-}
-
-```
-
-### Properties
-
-allOf
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|*anonymous*|[BaseWebhook](#schemabasewebhook)|false|none|none|
-
-and
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|*anonymous*|object|false|none|none|
-|» invitation|[UmaInvitation](#schemaumainvitation)|true|none|none|
-|» type|string|false|none|Type of webhook event|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|type|INVITATION_CLAIMED|
 
