@@ -74,7 +74,7 @@ export default function SandboxPayments({ currUser, quoteResponse }: SandboxPaym
         userId: currUser.id,
         receivingCurrencyAmount: receivingAmountSmallestUnit,
         receivingCurrencyCode: receivingCurrencyCode,
-        senderUmaAddress: '$success.usd@sandbox.umaaas.money.dev.dev.sparkinfra.net',
+        senderUmaAddress: '$success.usd@sandbox.umaaas.uma.money',
       };
 
       const res = await fetch('/api/sandbox/receive', {
