@@ -3,8 +3,6 @@
   "version": "1.0.0",
   "description": "UMA as a Service API Schema and Documentation",
   "scripts": {
-    "prebuild:markdown": "npm run build:openapi",
-    "build:markdown": "npx widdershins openapi.yaml -o generated/api-docs.md --omitHeader --language_tabs 'javascript:JavaScript' 'python:Python'",
     "build": "npm run build:markdown",
     "build:openapi": "npx @redocly/cli bundle openapi/openapi.yaml -o openapi.yaml",
     "prelint:oepnapi": "npm run build:openapi",

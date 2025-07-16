@@ -5,13 +5,11 @@ install:
 	cd docusaurus-docs && npm install
 
 build:
-	npm run build
+	npm run build:openapi
 	cd docusaurus-docs && npm run build
 
-build-markdown:
-	npm run build:markdown
-
 build-docs:
+    npm run build:openapi
 	cd docusaurus-docs && npm run build
 
 build-openapi:
@@ -19,9 +17,6 @@ build-openapi:
 
 serve-docs:
 	cd docusaurus-docs && npm run start
-
-serve-markdown:
-	npm run serve:markdown
 
 lint:
 	npm run lint
