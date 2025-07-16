@@ -1,0 +1,13 @@
+allOf:
+  - $ref: ../common/Error.yaml
+  - type: object
+    properties:
+      code:
+        type: string
+        description: |
+           Error code indicating the type of webhook failure:
+           - `WEBHOOK_ENDPOINT_NOT_SET` (400) - Webhook URL is not configured
+           - `WEBHOOK_DELIVERY_ERROR` (400) - Service did not receive an expected response from webhook URL
+        enum: 
+          - WEBHOOK_ENDPOINT_NOT_SET
+          - WEBHOOK_DELIVERY_ERROR
