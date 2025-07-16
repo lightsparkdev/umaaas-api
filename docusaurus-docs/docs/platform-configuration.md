@@ -139,9 +139,9 @@ Requirements for a valid UMA domain:
 - Must be a valid domain name format
 - Should be a domain that you control
 - Must proxy incoming requests to the UMAaaS API as follows:
-  - `https://<umaDomain>/.well-known/lnurlp/*` -> `https://<proxyUmaaasSubdomain>.uma.money/.well-known/lnurlp/*`
-  - `https://<umaDomain>/.well-known/lnurlpubkey` -> `https://<proxyUmaaasSubdomain>.uma.money/.well-known/lnurlpubkey`
-  - `https://<umaDomain>/.well-known/uma-configuration` -> `https://<proxyUmaaasSubdomain>.uma.money/.well-known/uma-configuration`
+  - `https://<umaDomain>/.well-known/lnurlp/*` -> `https://<proxyUmaaasSubdomain>.umaaas.uma.money/.well-known/lnurlp/*`
+  - `https://<umaDomain>/.well-known/lnurlpubkey` -> `https://<proxyUmaaasSubdomain>.umaaas.uma.money/.well-known/lnurlpubkey`
+  - `https://<umaDomain>/.well-known/uma-configuration` -> `https://<proxyUmaaasSubdomain>.umaaas.uma.money/.well-known/uma-configuration`
 
 ### Webhook Endpoint
 
