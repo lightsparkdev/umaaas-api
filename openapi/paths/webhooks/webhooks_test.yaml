@@ -18,7 +18,7 @@ post:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/Error.yaml
+            $ref: ../../components/schemas/errors/TestWebhookError.yaml
     '401':
       description: Unauthorized
       content:
