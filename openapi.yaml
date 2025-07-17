@@ -3065,6 +3065,11 @@ components:
     IncomingRateDetails:
       description: Details about the rate and fees for an incoming transaction.
       type: object
+      required:
+        - umaaasMultiplier
+        - umaaasFixedFee
+        - umaaasVariableFeeRate
+        - umaaasVariableFeeAmount
       properties:
         umaaasMultiplier:
           type: number
@@ -3221,6 +3226,13 @@ components:
     OutgoingRateDetails:
       description: Details about the rate and fees for an outgoing transaction or quote.
       type: object
+      required:
+        - counterpartyMultiplier
+        - counterpartyFixedFee
+        - umaaasMultiplier
+        - umaaasFixedFee
+        - umaaasVariableFeeRate
+        - umaaasVariableFeeAmount
       properties:
         counterpartyMultiplier:
           type: number

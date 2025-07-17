@@ -1,5 +1,12 @@
 description: Details about the rate and fees for an outgoing transaction or quote.
 type: object
+required:
+  - counterpartyMultiplier
+  - counterpartyFixedFee
+  - umaaasMultiplier
+  - umaaasFixedFee
+  - umaaasVariableFeeRate
+  - umaaasVariableFeeAmount
 properties:
   counterpartyMultiplier:
     type: number
