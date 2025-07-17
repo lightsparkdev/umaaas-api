@@ -1,5 +1,10 @@
 description: Details about the rate and fees for an incoming transaction.
 type: object
+required:
+  - umaaasMultiplier
+  - umaaasFixedFee
+  - umaaasVariableFeeRate
+  - umaaasVariableFeeAmount
 properties:
   umaaasMultiplier:
     type: number
