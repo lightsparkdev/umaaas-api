@@ -18,19 +18,22 @@ jobs:
   build:
     name: Build OpenAPI Documentation
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-      
-      - name: Install dependencies
+          cache-dependency-path: |
+            package-lock.json
+            docusaurus-docs/package-lock.json
+
+      - name: Install root dependencies
         run: npm ci
-      
+
       - name: Build documentation
-        run: npm run build 
+        run: npm run build:docs
