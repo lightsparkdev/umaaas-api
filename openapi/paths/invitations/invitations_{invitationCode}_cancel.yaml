@@ -50,7 +50,7 @@ post:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/Error.yaml
+            $ref: ../../components/schemas/errors/Error401.yaml
     '403':
       description: Forbidden - Only the platform which created the invitation can cancel it
       content:
