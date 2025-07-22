@@ -2847,8 +2847,10 @@ components:
         - ADDRESS
         - TAX_ID
         - REGISTRATION_NUMBER
-        - ACCOUNT_NUMBER
         - USER_TYPE
+        - COUNTRY_OF_RESIDENCE
+        - ACCOUNT_IDENTIFIER
+        - FI_LEGAL_ENTITY_NAME
       description: Name of a type of field containing info about a platform's user or counterparty user.
       example: FULL_NAME
     CounterpartyFieldDefinition:
