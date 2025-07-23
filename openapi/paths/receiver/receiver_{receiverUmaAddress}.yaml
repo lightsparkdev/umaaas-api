@@ -82,6 +82,12 @@ get:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error404.yaml
+    '412':
+      description: Counterparty doesn't support UMA version
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error412.yaml
     '424':
       description: Counterparty issue
       content:

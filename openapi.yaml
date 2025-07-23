@@ -1154,6 +1154,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+        '412':
+          description: Counterparty doesn't support UMA version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error412'
         '424':
           description: Counterparty issue
           content:
@@ -1266,26 +1272,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error401'
-        '422':
-          description: |
-            Unprocessable Entity - Additional counterparty information required,
-            or the payment cannot be completed for another reason.
+        '412':
+          description: Counterparty doesn't support UMA version
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/Error'
-                  - type: object
-                    properties:
-                      code:
-                        example: MISSING_MANDATORY_USER_INFO
-                      message:
-                        example: Additional counterparty information required
-                      details:
-                        example:
-                          requiredFields:
-                            - TAX_ID
-                            - REGISTRATION_NUMBER
+                $ref: '#/components/schemas/Error412'
         '424':
           description: Counterparty issue
           content:
@@ -3688,6 +3680,23 @@ components:
           description: The maximum amount that can be received in this currency.
           exclusiveMinimum: 0
           example: 1000000
+    Error412:
+      type: object
+      properties:
+        code:
+          type: string
+          description: |
+            | Error Code | Description |
+            |------------|-------------|
+            | UNSUPPORTED_UMA_VERSION | Counterparty doesn't support UMA as a service UMA version |
+          enum:
+            - UNSUPPORTED_UMA_VERSIONED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
     Error424:
       type: object
       properties:
