@@ -55,7 +55,7 @@ post:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/Error.yaml
+            $ref: ../../components/schemas/errors/Error404.yaml
     '409':
       description: >-
         Conflict - Payment is not in a pending state or has already been
