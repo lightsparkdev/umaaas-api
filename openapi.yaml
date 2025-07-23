@@ -2865,6 +2865,12 @@ components:
       required:
         - name
         - mandatory
+    TransactionType:
+      type: string
+      enum:
+        - INCOMING
+        - OUTGOING
+      description: Type of transaction (incoming payment or outgoing payment)
     PlatformCurrencyConfig:
       type: object
       properties:
@@ -2905,11 +2911,17 @@ components:
           example:
             - NATIONALITY
             - DATE_OF_BIRTH
+        enabledTransactionTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionType'
+          description: List of transaction types that are enabled for this currency.
       required:
         - currencyCode
         - minAmount
         - maxAmount
         - requiredCounterpartyFields
+        - enabledTransactionTypes
     PlatformConfig:
       type: object
       properties:
@@ -3332,12 +3344,6 @@ components:
         - FAILED
         - REFUNDED
       description: Status of a payment transaction
-    TransactionType:
-      type: string
-      enum:
-        - INCOMING
-        - OUTGOING
-      description: Type of transaction (incoming payment or outgoing payment)
     CurrencyPreference:
       type: object
       required:

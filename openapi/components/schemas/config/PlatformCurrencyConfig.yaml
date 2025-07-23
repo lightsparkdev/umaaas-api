@@ -45,8 +45,14 @@ properties:
     example:
       - NATIONALITY
       - DATE_OF_BIRTH
+  enabledTransactionTypes:
+    type: array
+    items:
+      $ref: ../transactions/TransactionType.yaml
+    description: List of transaction types that are enabled for this currency.
 required:
   - currencyCode
   - minAmount
   - maxAmount
   - requiredCounterpartyFields
+  - enabledTransactionTypes
