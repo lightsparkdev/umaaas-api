@@ -1821,7 +1821,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Invitation not found
           content:
@@ -1888,7 +1888,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Reference not found
           content:
@@ -1963,7 +1963,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error403'
         '404':
           description: Sender or receiver not found
           content:
@@ -2196,7 +2196,7 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error403'
         '422':
           description: |
             Unprocessable Entity - Additional counterparty information required.
@@ -3765,6 +3765,29 @@ components:
           description: |-
             The amount to send to the invitee when the invitation is claimed. This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter platform either does not send the payment or the payment fails, the invitee will not receive this amount. This field is primarily used for display purposes on the claiming side of the invitation.
             This field is useful for "send-by-link" style user flows where an inviter can send a payment simply by sharing a link without knowing the receiver's UMA address. Note that these sends can only be sender-locked, meaning that the sender will not know ahead of time how much the receiver will receive in the receiving currency.
+    Error403:
+      type: object
+      properties:
+        code:
+          type: string
+          description: |
+            | Error Code | Description |
+            |------------|-------------|
+            | FORBIDDEN | Insufficient permissions |
+            | USER_NOT_READY | User exists but is not ready for operation |
+            | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account | 
+            | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits | 
+          enum:
+            - FORBIDDEN
+            - USER_NOT_READY
+            - COUNTERPARTY_NOT_ALLOWED
+            - VELOCITY_LIMIT_EXCEEDED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
     UmaProvider:
       type: object
       properties:
