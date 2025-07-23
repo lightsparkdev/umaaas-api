@@ -31,7 +31,7 @@ get:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/Error.yaml
+            $ref: ../../components/schemas/errors/Error404.yaml
 delete:
   summary: Delete API token by ID
   description: Delete an API token by their system-generated ID
@@ -60,4 +60,4 @@ delete:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/Error.yaml
+            $ref: ../../components/schemas/errors/Error404.yaml
