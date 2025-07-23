@@ -82,3 +82,9 @@ get:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error404.yaml
+    '424':
+      description: Counterparty issue
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error424.yaml
