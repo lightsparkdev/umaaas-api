@@ -1,0 +1,20 @@
+type: object
+properties:
+  code:
+    type: string
+    description: |
+      | Error Code | Description |
+      |------------|-------------|
+      | INTERNAL | Internal server error |
+      | GRID_SWITCH_ERROR | Grid switch error |
+      | INTERNAL_ERROR | Internal server error | 
+    enum:
+      - INTERNAL
+      - GRID_SWITCH_ERROR
+      - INTERNAL_ERROR
+  message:
+    type: string
+    description: Error message
+  details:
+    type: object
+    description: Additional error details
