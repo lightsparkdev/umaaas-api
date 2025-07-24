@@ -19,6 +19,12 @@ get:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error401.yaml
+    '500':
+      description: Internal service error
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error500.yaml
 patch:
   summary: Update platform configuration
   description: Update the platform configuration settings
@@ -77,3 +83,9 @@ patch:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error401.yaml
+    '500':
+      description: Internal service error
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error500.yaml

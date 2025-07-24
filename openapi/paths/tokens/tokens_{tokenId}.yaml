@@ -32,6 +32,12 @@ get:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error404.yaml
+    '500':
+      description: Internal service error
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error500.yaml
 delete:
   summary: Delete API token by ID
   description: Delete an API token by their system-generated ID
@@ -61,3 +67,9 @@ delete:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error404.yaml
+    '500':
+      description: Internal service error
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error500.yaml
