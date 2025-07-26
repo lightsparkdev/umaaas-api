@@ -3343,6 +3343,7 @@ components:
         - REJECTED
         - FAILED
         - REFUNDED
+        - EXPIRED
       description: Status of a payment transaction
     CurrencyPreference:
       type: object
