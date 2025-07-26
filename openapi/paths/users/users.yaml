@@ -92,7 +92,7 @@ post:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/Error.yaml
+            $ref: ../../components/schemas/errors/Error401.yaml
     '409':
       description: Conflict - User with the UMA address already exists
       content:
@@ -227,4 +227,4 @@ get:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/Error.yaml
+            $ref: ../../components/schemas/errors/Error401.yaml
