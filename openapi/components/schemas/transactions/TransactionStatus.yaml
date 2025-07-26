@@ -7,4 +7,5 @@ enum:
   - REJECTED
   - FAILED
   - REFUNDED
+  - EXPIRED
 description: Status of a payment transaction
