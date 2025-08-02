@@ -6,7 +6,7 @@ properties:
       | Error Code | Description |
       |------------|-------------|
       | UNAUTHORIZED | Issue with API credentials |
-      | INVALID_SIGNATURE | Counterparty UMA response signature is invalid | 
+      | INVALID_SIGNATURE | Signature header is invalid | 
     enum:
       - UNAUTHORIZED
       - INVALID_SIGNATURE
