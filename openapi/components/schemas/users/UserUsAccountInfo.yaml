@@ -1,3 +1,6 @@
 allOf:
   - $ref: ../common/UsAccountInfo.yaml
   - $ref: ./BankAccountBase.yaml
+  - type: object
+    required:
+      - accountHolderName
