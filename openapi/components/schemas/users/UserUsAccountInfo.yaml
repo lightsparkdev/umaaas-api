@@ -4,3 +4,8 @@ allOf:
   - type: object
     required:
       - accountHolderName
+    properties:
+      accountHolderName:
+        type: string
+        description: Name of the account holder
+        example: Jane Doe
