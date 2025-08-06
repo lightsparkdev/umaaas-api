@@ -3163,22 +3163,18 @@ components:
       allOf:
         - $ref: '#/components/schemas/PaymentBankAccountInfo'
         - $ref: '#/components/schemas/ClabeAccountInfo'
-        - type: object
     PaymentUsAccountInfo:
       allOf:
         - $ref: '#/components/schemas/PaymentBankAccountInfo'
         - $ref: '#/components/schemas/UsAccountInfo'
-        - type: object
     PaymentPixAccountInfo:
       allOf:
         - $ref: '#/components/schemas/PaymentBankAccountInfo'
         - $ref: '#/components/schemas/PixAccountInfo'
-        - type: object
     PaymentIbanAccountInfo:
       allOf:
         - $ref: '#/components/schemas/PaymentBankAccountInfo'
         - $ref: '#/components/schemas/IbanAccountInfo'
-        - type: object
     PaymentFboAccountInfo:
       allOf:
         - $ref: '#/components/schemas/PaymentBankAccountInfo'
@@ -3203,7 +3199,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/PaymentBankAccountInfo'
         - $ref: '#/components/schemas/UpiAccountInfo'
-        - type: object
     PaymentInstructions:
       type: object
       required:
@@ -3439,7 +3434,22 @@ components:
             DATE_OF_BIRTH: '1990-01-01'
             NATIONALITY: FR
         paymentInstructions:
-          $ref: '#/components/schemas/PaymentInstructions'
+          oneOf:
+            - $ref: '#/components/schemas/PaymentClabeAccountInfo'
+            - $ref: '#/components/schemas/PaymentUsAccountInfo'
+            - $ref: '#/components/schemas/PaymentPixAccountInfo'
+            - $ref: '#/components/schemas/PaymentIbanAccountInfo'
+            - $ref: '#/components/schemas/PaymentFboAccountInfo'
+            - $ref: '#/components/schemas/PaymentUpiAccountInfo'
+          discriminator:
+            propertyName: accountType
+            mapping:
+              CLABE: '#/components/schemas/PaymentClabeAccountInfo'
+              US_ACCOUNT: '#/components/schemas/PaymentUsAccountInfo'
+              PIX: '#/components/schemas/PaymentPixAccountInfo'
+              IBAN: '#/components/schemas/PaymentIbanAccountInfo'
+              FBO: '#/components/schemas/PaymentFboAccountInfo'
+              UPI: '#/components/schemas/PaymentUpiAccountInfo'
         status:
           type: string
           enum:
