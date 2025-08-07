@@ -3454,7 +3454,7 @@ components:
             DATE_OF_BIRTH: '1990-01-01'
             NATIONALITY: FR
         paymentInstructions:
-          ref: ../common/PaymentInstructions.yaml
+          $ref: '#/components/schemas/PaymentInstructions'
         status:
           type: string
           enum:
