@@ -16,4 +16,19 @@ properties:
       Please ensure the reference code is included in the payment
       memo/description field
   bankAccountInfo:
-    $ref: ./PaymentBankAccountInfo.yaml
+    oneOf:
+      - $ref: ../common/PaymentClabeAccountInfo.yaml
+      - $ref: ../common/PaymentUsAccountInfo.yaml
+      - $ref: ../common/PaymentPixAccountInfo.yaml
+      - $ref: ../common/PaymentIbanAccountInfo.yaml
+      - $ref: ../common/PaymentFboAccountInfo.yaml
+      - $ref: ../common/PaymentUpiAccountInfo.yaml
+    discriminator:
+      propertyName: accountType
+      mapping:
+        CLABE: ../common/PaymentClabeAccountInfo.yaml
+        US_ACCOUNT: ../common/PaymentUsAccountInfo.yaml
+        PIX: ../common/PaymentPixAccountInfo.yaml
+        IBAN: ../common/PaymentIbanAccountInfo.yaml
+        FBO: ../common/PaymentFboAccountInfo.yaml
+        UPI: ../common/PaymentUpiAccountInfo.yaml
