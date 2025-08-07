@@ -2633,6 +2633,11 @@ components:
         - type: object
           required:
             - accountHolderName
+          properties:
+            accountHolderName:
+              type: string
+              description: Name of the account holder
+              example: Jane Doe
     PixAccountInfo:
       type: object
       required:
@@ -3143,6 +3148,10 @@ components:
             failureReason:
               $ref: '#/components/schemas/IncomingTransactionFailureReason'
               description: If the transaction failed, this field provides the reason for failure.
+    PaymentClabeAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: '#/components/schemas/ClabeAccountInfo'
     PaymentBankAccountInfo:
       type: object
       required:
@@ -3159,10 +3168,6 @@ components:
           IBAN: '#/components/schemas/PaymentIbanAccountInfo'
           FBO: '#/components/schemas/PaymentFboAccountInfo'
           UPI: '#/components/schemas/PaymentUpiAccountInfo'
-    PaymentClabeAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - $ref: '#/components/schemas/ClabeAccountInfo'
     PaymentUsAccountInfo:
       allOf:
         - $ref: '#/components/schemas/PaymentBankAccountInfo'
@@ -3214,7 +3219,22 @@ components:
           description: Additional human-readable instructions for making the payment
           example: Please ensure the reference code is included in the payment memo/description field
         bankAccountInfo:
-          $ref: '#/components/schemas/PaymentBankAccountInfo'
+          oneOf:
+            - $ref: '#/components/schemas/PaymentClabeAccountInfo'
+            - $ref: '#/components/schemas/PaymentUsAccountInfo'
+            - $ref: '#/components/schemas/PaymentPixAccountInfo'
+            - $ref: '#/components/schemas/PaymentIbanAccountInfo'
+            - $ref: '#/components/schemas/PaymentFboAccountInfo'
+            - $ref: '#/components/schemas/PaymentUpiAccountInfo'
+          discriminator:
+            propertyName: accountType
+            mapping:
+              CLABE: '#/components/schemas/PaymentClabeAccountInfo'
+              US_ACCOUNT: '#/components/schemas/PaymentUsAccountInfo'
+              PIX: '#/components/schemas/PaymentPixAccountInfo'
+              IBAN: '#/components/schemas/PaymentIbanAccountInfo'
+              FBO: '#/components/schemas/PaymentFboAccountInfo'
+              UPI: '#/components/schemas/PaymentUpiAccountInfo'
     Refund:
       type: object
       required:
@@ -3434,22 +3454,7 @@ components:
             DATE_OF_BIRTH: '1990-01-01'
             NATIONALITY: FR
         paymentInstructions:
-          oneOf:
-            - $ref: '#/components/schemas/PaymentClabeAccountInfo'
-            - $ref: '#/components/schemas/PaymentUsAccountInfo'
-            - $ref: '#/components/schemas/PaymentPixAccountInfo'
-            - $ref: '#/components/schemas/PaymentIbanAccountInfo'
-            - $ref: '#/components/schemas/PaymentFboAccountInfo'
-            - $ref: '#/components/schemas/PaymentUpiAccountInfo'
-          discriminator:
-            propertyName: accountType
-            mapping:
-              CLABE: '#/components/schemas/PaymentClabeAccountInfo'
-              US_ACCOUNT: '#/components/schemas/PaymentUsAccountInfo'
-              PIX: '#/components/schemas/PaymentPixAccountInfo'
-              IBAN: '#/components/schemas/PaymentIbanAccountInfo'
-              FBO: '#/components/schemas/PaymentFboAccountInfo'
-              UPI: '#/components/schemas/PaymentUpiAccountInfo'
+          $ref: '#/components/schemas/PaymentInstructions'
         status:
           type: string
           enum:
