@@ -21,6 +21,7 @@ export function useFormData() {
     bankAccountInfo: {
       accountType: 'US_ACCOUNT',
       accountNumber: '',
+      accountHolderName: '',
       routingNumber: '',
       accountCategory: 'CHECKING',
       bankName: '',
@@ -32,11 +33,12 @@ export function useFormData() {
   useEffect(() => {
     const generateInitialData = (): FormData => {
       const domain = import.meta.env.VITE_UMAAAS_UMA_DOMAIN || window.location.hostname;
+      const fullName = faker.person.fullName();
       return {
         platformUserId: faker.string.uuid(),
         umaAddress: `$${faker.internet.username().toLowerCase()}@${domain}`,
         userType: 'INDIVIDUAL' as const,
-        fullName: faker.person.fullName(),
+        fullName: fullName,
         dateOfBirth: faker.date.birthdate({ min: 18, max: 80, mode: 'age' }).toISOString().split('T')[0],
         nationality: 'US',
         address: {
@@ -50,6 +52,7 @@ export function useFormData() {
         bankAccountInfo: {
           accountType: 'US_ACCOUNT' as const,
           accountNumber: faker.finance.accountNumber(11),
+          accountHolderName: fullName,
           routingNumber: faker.finance.routingNumber(),
           accountCategory: faker.helpers.arrayElement(['CHECKING', 'SAVINGS']) as 'CHECKING' | 'SAVINGS',
           bankName: faker.company.name() + ' Bank',
@@ -81,11 +84,12 @@ export function useFormData() {
 
   const generateNewData = () => {
     const domain = import.meta.env.VITE_UMAAAS_UMA_DOMAIN || (typeof window !== 'undefined' ? window.location.hostname : 'localhost:3000');
+    const fullName = faker.person.fullName();
     setFormData({
       platformUserId: faker.string.uuid(),
       umaAddress: `$${faker.internet.username().toLowerCase()}@${domain}`,
       userType: 'INDIVIDUAL',
-      fullName: faker.person.fullName(),
+      fullName: fullName,
       dateOfBirth: faker.date.birthdate({ min: 18, max: 80, mode: 'age' }).toISOString().split('T')[0],
       nationality: 'US',
       address: {
@@ -99,6 +103,7 @@ export function useFormData() {
       bankAccountInfo: {
         accountType: 'US_ACCOUNT',
         accountNumber: faker.finance.accountNumber(11),
+        accountHolderName: fullName,
         routingNumber: faker.finance.routingNumber(),
         accountCategory: faker.helpers.arrayElement(['CHECKING', 'SAVINGS']),
         bankName: faker.company.name() + ' Bank',

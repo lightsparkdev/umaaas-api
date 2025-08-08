@@ -16,6 +16,7 @@ export interface FormData {
   bankAccountInfo: {
     accountType: 'US_ACCOUNT';
     accountNumber: string;
+    accountHolderName: string;
     routingNumber: string;
     accountCategory: 'CHECKING' | 'SAVINGS';
     bankName: string;

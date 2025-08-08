@@ -74,6 +74,7 @@ fun Route.paymentsRoutes() {
                             }
                         }
                     )
+
                     .receivingCurrencyCode(json.get("receivingCurrencyCode").asText())
                     .sendingCurrencyCode(json.get("sendingCurrencyCode").asText())
                     .description(json.get("description").asText())
