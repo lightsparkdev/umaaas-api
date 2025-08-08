@@ -62,6 +62,9 @@ properties:
     items:
       $ref: ../transactions/TransactionType.yaml
     description: List of transaction types that are enabled for this currency.
+    example: 
+      - OUTGOING
+      - INCOMING
 required:
   - currencyCode
   - minAmount

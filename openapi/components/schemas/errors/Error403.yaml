@@ -1,5 +1,10 @@
 type: object
 properties:
+  status:
+    enum:
+      - 403
+    type: integer
+    description: HTTP status code
   code:
     type: string
     description: |
