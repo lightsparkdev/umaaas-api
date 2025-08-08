@@ -45,6 +45,18 @@ properties:
     example:
       - NATIONALITY
       - DATE_OF_BIRTH
+  umaProviderRequiredCounterpartyUserFields:
+    type: array
+    items:
+      $ref: ../users/UserInfoFieldName.yaml
+    description: >-
+      List of fields that are required by the underlying UMA provider for this
+      currency. If the counterparty does not provide these fields, quote
+      requests will fail.
+    readOnly: true
+    example:
+      - FULL_NAME
+      - COUNTRY_OF_RESIDENCE
   enabledTransactionTypes:
     type: array
     items:
