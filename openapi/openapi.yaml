@@ -92,6 +92,8 @@ paths:
     $ref: paths/quotes/quotes.yaml
   /quotes/{quoteId}:
     $ref: paths/quotes/quotes_{quoteId}.yaml
+  /quotes/{quoteId}/retry:
+    $ref: paths/quotes/quotes_{quoteId}_retry.yaml
   /users/bulk/csv:
     $ref: paths/users/users_bulk_csv.yaml
   /users/bulk/jobs/{jobId}:

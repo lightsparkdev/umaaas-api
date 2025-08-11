@@ -1318,6 +1318,91 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /quotes/{quoteId}/retry:
+    post:
+      summary: Retry an incomplete payment
+      description: |
+        In the case where a customer is debited but the Lightning payment fails to complete, integrators can retry the payment using this endpoint.  
+
+        Payments retried with this endpoint will debit from the sender and deliver to the recipient the same amount as the original quote.
+        As UMA as a service does not persist customer PII, retries need to start with a lookup request to retrieve the original quote's recipient counter party data requirements then pass that sender information in the request body.
+        Before calling this endpoint, you should reach out to the UMA as a service team to investigate the underlying issue.  As part of resolution, they'll update the transaction to the appropriate state.  The quote / transaction to retry must be in a `FAILED` or `REFUNDED` state.
+      operationId: retryQuote
+      tags:
+        - Sending Payments
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: quoteId
+          in: path
+          description: ID of the quote to retry
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - lookupId
+              properties:
+                lookupId:
+                  type: string
+                  description: Unique identifier for the prior receiver uma address lookup request.
+                  example: Lookup:019542f5-b3e7-1d02-0000-000000000009
+                senderUserInfo:
+                  type: object
+                  additionalProperties: true
+                  description: |
+                    Key-value pairs of information about the sender which was requested by the counterparty (recipient) institution.
+                    Any fields specified in `requiredPayerDataFields` from the response of the `/receiver/{receiverUmaAddress}` (lookupUma) endpoint
+                    MUST be provided here if they were requested. If the counterparty (recipient) institution did not request any information,
+                    this field can be omitted.
+                  example:
+                    FULL_NAME: Jane Receiver
+                    NATIONALITY: FR
+      responses:
+        '201':
+          description: |
+            Quote created successfully. The response includes payment instructions
+            that the client can use to execute the payment through their banking provider.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+        '400':
+          description: Bad request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: |
+            Unprocessable Entity - Additional counterparty information required,
+            or the payment cannot be completed for another reason.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+                  - type: object
+                    properties:
+                      code:
+                        example: MISSING_MANDATORY_USER_INFO
+                      message:
+                        example: Additional counterparty information required
+                      details:
+                        example:
+                          requiredFields:
+                            - TAX_ID
+                            - REGISTRATION_NUMBER
   /users/bulk/csv:
     post:
       summary: Upload users via CSV file
@@ -3024,6 +3109,10 @@ components:
           type: string
           description: Platform-specific ID of the user (sender for outgoing, recipient for incoming)
           example: 18d3e5f7b4a9c2
+        previousTransactionId:
+          type: string
+          description: ID of the previous transaction that this transaction is retrying or correcting, if applicable
+          example: Transaction:019542f5-b3e7-1d02-0000-000000000003
         settledAt:
           type: string
           format: date-time
@@ -3478,6 +3567,10 @@ components:
           type: string
           description: The ID of the transaction created from this quote.
           example: Transaction:019542f5-b3e7-1d02-0000-000000000005
+        previousQuoteId:
+          description: ID of the quote that is being retried
+          type: string
+          example: Quote:019542f5-b3e7-1d02-0000-000000000001
         rateDetails:
           $ref: '#/components/schemas/OutgoingRateDetails'
           description: Details about the rate and fees for the transaction.
