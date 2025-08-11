@@ -3687,6 +3687,10 @@ components:
             - CANCELLED
           description: The status of the invitation
           example: PENDING
+        firstName:
+          type: string
+          description: The inviter's first name.  Will be displayed when the recipient clicks the invite link
+          example: Jane
         amountToSend:
           $ref: '#/components/schemas/CurrencyAmount'
           description: |-
