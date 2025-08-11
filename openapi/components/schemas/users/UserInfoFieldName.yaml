@@ -12,6 +12,7 @@ enum:
   - COUNTRY_OF_RESIDENCE
   - ACCOUNT_IDENTIFIER
   - FI_LEGAL_ENTITY_NAME
+  - FI_ADDRESS
 description: >-
   Name of a type of field containing info about a platform's user or
   counterparty user.
