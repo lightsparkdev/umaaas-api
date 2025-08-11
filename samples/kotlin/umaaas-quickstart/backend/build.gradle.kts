@@ -1,31 +1,25 @@
-
 plugins {
     kotlin("jvm") version "2.1.21"
     kotlin("plugin.serialization") version "2.1.21"
     alias(libs.plugins.ktor)
+    id("com.github.node-gradle.node") version "7.1.0"
 }
 
-tasks.register<Exec>("buildFrontend") {
-    dependsOn("npmInstall")
-    workingDir = file("../frontend")
-    commandLine("npm", "run", "build")
-    group = "build"
-    description = "Build the frontend React application"
+node {
+    version.set("22.15.0")
+    download.set(true)
+    nodeProjectDir.set(file("../frontend"))
 }
 
-tasks.register<Exec>("npmInstall") {
-    workingDir = file("../frontend")
-    commandLine("npm", "install")
-    group = "build"
-    description = "Install frontend dependencies"
-    
-    inputs.file("../frontend/package.json")
-    inputs.file("../frontend/package-lock.json")
-    outputs.dir("../frontend/node_modules")
+val npmBuild by tasks.register<com.github.gradle.node.npm.task.NpmTask>("npmBuild") {
+    dependsOn(tasks.named("npmInstall"))
+    args.set(listOf("run", "build")) 
 }
+
+tasks.named<com.github.gradle.node.npm.task.NpmInstallTask>("npmInstall")
 
 tasks.named("processResources") {
-    dependsOn("buildFrontend")
+    dependsOn("npmBuild")
 }
 
 kotlin {
