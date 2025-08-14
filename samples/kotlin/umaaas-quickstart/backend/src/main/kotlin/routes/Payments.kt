@@ -5,6 +5,7 @@ import com.lightspark.uma.umaaas.lib.JsonUtils
 import com.lightspark.uma.umaaas.lib.UmaaasClientBuilder
 import com.lightspark.umaaas.models.quotes.QuoteCreateParams
 import com.lightspark.umaaas.models.receiver.ReceiverLookupParams
+import com.lightspark.umaaas.core.JsonValue
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
@@ -74,7 +75,19 @@ fun Route.paymentsRoutes() {
                             }
                         }
                     )
-
+                    .senderUserInfo(
+                        QuoteCreateParams.SenderUserInfo.builder().apply {
+                            json.get("senderUserInfo")?.fields()?.forEach { (key, value) ->
+                                val jsonValue = when {
+                                    value.isTextual -> JsonValue.from(value.asText())
+                                    value.isNumber -> JsonValue.from(value.asText())
+                                    value.isBoolean -> JsonValue.from(value.asBoolean().toString())
+                                    else -> throw IllegalArgumentException("Unsupported JSON value type for key: $key")
+                                }
+                                putAdditionalProperty(key, jsonValue)
+                            }
+                        }.build()
+                    )
                     .receivingCurrencyCode(json.get("receivingCurrencyCode").asText())
                     .sendingCurrencyCode(json.get("sendingCurrencyCode").asText())
                     .description(json.get("description").asText())
