@@ -1,0 +1,48 @@
+post:
+  summary: Trigger payment from a FBO account
+  description: >
+    This endpoint should only be used for when your account is configured for FBO payments.  It triggers funding a quote from your FBO account to initiate payment.
+  operationId: fboConfirm
+  tags:
+    - Sending Payments
+  security:
+    - BasicAuth: []
+  parameters:
+    - name: quoteId
+      in: path
+      description: ID of the quote to pay from FBO
+      required: true
+      schema:
+        type: string
+  responses:
+    '200':
+      description: >
+        Payment successful.  This updates the transaction to PROCESSING.
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/transactions/Transaction.yaml
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/Error.yaml
+    '403':
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/Error.yaml
+    '404':
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/Error.yaml
+    '500':
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/common/Error.yaml
