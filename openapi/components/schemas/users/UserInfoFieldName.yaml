@@ -1,7 +1,7 @@
 type: string
 enum:
   - FULL_NAME
-  - DATE_OF_BIRTH
+  - BIRTH_DATE
   - NATIONALITY
   - PHONE_NUMBER
   - EMAIL

@@ -156,7 +156,7 @@ Response:
       "mandatory": true
     },
     {
-      "name": "DATE_OF_BIRTH",
+      "name": "BIRTH_DATE",
       "mandatory": true
     }
   ],
@@ -209,7 +209,7 @@ Response:
   "feesIncluded": 100,
   "counterpartyInformation": {
     "FULL_NAME": "Jane Receiver",
-    "DATE_OF_BIRTH": "1990-01-01"
+    "BIRTH_DATE": "1990-01-01"
   },
   "paymentInstructions": {
     "reference": "UMA-Q12345-REF",
@@ -258,7 +258,7 @@ Response:
   "feesIncluded": 100,
   "counterpartyInformation": {
     "FULL_NAME": "Jane Receiver",
-    "DATE_OF_BIRTH": "1990-01-01"
+    "BIRTH_DATE": "1990-01-01"
   },
   "paymentInstructions": {
     "reference": "UMA-Q12345-REF",
@@ -398,7 +398,7 @@ Request body:
           "mandatory": true
         },
         {
-          "name": "DATE_OF_BIRTH",
+          "name": "BIRTH_DATE",
           "mandatory": true
         }
       ]
@@ -423,7 +423,7 @@ Request body:
   "platformUserId": "9f84e0c2a72c4fa",
   "userType": "INDIVIDUAL",
   "fullName": "John Sender",
-  "dateOfBirth": "1985-06-15",
+  "birthDate": "1985-06-15",
   "address": {
     "line1": "123 Pine Street",
     "line2": "Unit 501",
@@ -469,7 +469,7 @@ When someone initiates a payment to one of your users' UMA addresses, you'll rec
     "platformUserId": "9f84e0c2a72c4fa",
     "counterpartyInformation": {
       "FULL_NAME": "John Sender",
-      "DATE_OF_BIRTH": "1985-06-15"
+      "BIRTH_DATE": "1985-06-15"
     },
     "reconciliationInstructions": {
       "reference": "REF-123456789"

@@ -59,7 +59,7 @@ properties:
     additionalProperties: true
     example:
       FULL_NAME: John Sender
-      DATE_OF_BIRTH: '1985-06-15'
+      BIRTH_DATE: '1985-06-15'
       NATIONALITY: DE
 discriminator:
   propertyName: type

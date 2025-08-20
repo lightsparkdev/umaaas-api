@@ -66,7 +66,7 @@ Request body:
   "platformUserId": "9f84e0c2a72c4fa",
   "userType": "INDIVIDUAL",
   "fullName": "John Receiver",
-  "dateOfBirth": "1985-06-15",
+  "birthDate": "1985-06-15",
   "address": {
     "line1": "123 Pine Street",
     "line2": "Unit 501",
@@ -118,7 +118,7 @@ When someone initiates a payment to one of your users' UMA addresses, you'll rec
     "description": "Payment for services",
     "counterpartyInformation": {
       "FULL_NAME": "Mary Sender",
-      "DATE_OF_BIRTH": "1985-06-15"
+      "BIRTH_DATE": "1985-06-15"
     },
     "reconciliationInstructions": {
       "reference": "REF-123456789"
@@ -238,7 +238,7 @@ When the payment completes, your webhook endpoint will receive another notificat
     "description": "Payment for services",
     "counterpartyInformation": {
       "FULL_NAME": "Mary Sender",
-      "DATE_OF_BIRTH": "1985-06-15"
+      "BIRTH_DATE": "1985-06-15"
     },
     "reconciliationInstructions": {
       "reference": "REF-123456789"
