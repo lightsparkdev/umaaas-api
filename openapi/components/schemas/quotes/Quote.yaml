@@ -60,7 +60,7 @@ properties:
     additionalProperties: true
     example:
       FULL_NAME: Jane Receiver
-      DATE_OF_BIRTH: '1990-01-01'
+      BIRTH_DATE: '1990-01-01'
       NATIONALITY: FR
   paymentInstructions:
     $ref: ../common/PaymentInstructions.yaml

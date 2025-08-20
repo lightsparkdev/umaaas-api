@@ -28,7 +28,7 @@ properties:
     example:
       - name: FULL_NAME
         mandatory: true
-      - name: DATE_OF_BIRTH
+      - name: BIRTH_DATE
         mandatory: true
       - name: NATIONALITY
         mandatory: true
@@ -44,7 +44,7 @@ properties:
     readOnly: true
     example:
       - NATIONALITY
-      - DATE_OF_BIRTH
+      - BIRTH_DATE
   umaProviderRequiredCounterpartyUserFields:
     type: array
     items:

@@ -91,7 +91,7 @@ Response:
       "mandatory": true
     },
     {
-      "name": "DATE_OF_BIRTH",
+      "name": "BIRTH_DATE",
       "mandatory": true
     }
   ]
@@ -119,7 +119,7 @@ Request body:
   "description": "Invoice #1234 payment",
   "payerInformation": {
     "FULL_NAME": "John Doe",
-    "DATE_OF_BIRTH": "1990-01-01"
+    "BIRTH_DATE": "1990-01-01"
   }
 }
 ```
@@ -148,7 +148,7 @@ Response:
   "feesIncluded": 100,
   "counterpartyInformation": {
     "FULL_NAME": "Jane Doe",
-    "DATE_OF_BIRTH": "1992-03-25"
+    "BIRTH_DATE": "1992-03-25"
   },
   "paymentInstructions": {
     "reference": "UMA-Q12345-REF",
@@ -197,7 +197,7 @@ Response:
   "feesIncluded": 100,
   "counterpartyInformation": {
     "FULL_NAME": "Jane Doe",
-    "DATE_OF_BIRTH": "1992-03-25"
+    "BIRTH_DATE": "1992-03-25"
   },
   "paymentInstructions": {
     "reference": "UMA-Q12345-REF",

@@ -134,7 +134,7 @@ POST /users
   "platformUserId": "test_123",
   "userType": "INDIVIDUAL",
   "fullName": "Test User",
-  "dateOfBirth": "1990-01-01",
+  "birthDate": "1990-01-01",
   "address": {
     "line1": "123 Test St",
     "city": "Testville",

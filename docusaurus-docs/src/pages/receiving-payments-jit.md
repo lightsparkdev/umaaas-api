@@ -67,7 +67,7 @@ Request body:
       "mandatory": true
     },
     {
-      "name": "DATE_OF_BIRTH",
+      "name": "BIRTH_DATE",
       "mandatory": true
     }
   ]
@@ -121,7 +121,7 @@ When someone initiates a payment to one of your users' UMA addresses, you'll rec
     "description": "Payment for services",
     "counterpartyInformation": {
       "fullName": "John Sender",
-      "dateOfBirth": "1985-06-15"
+      "birthDate": "1985-06-15"
     },
     "requiredPayeeInformationFields": [
       {
@@ -129,7 +129,7 @@ When someone initiates a payment to one of your users' UMA addresses, you'll rec
         "mandatory": true
       },
       {
-        "name": "DATE_OF_BIRTH",
+        "name": "BIRTH_DATE",
         "mandatory": true
       }
     ]
@@ -146,7 +146,7 @@ To approve the payment, respond with a 200 OK status and include the payee infor
 {
   "payeeInformation": {
     "fullName": "John Sender",
-    "dateOfBirth": "1985-06-15"
+    "birthDate": "1985-06-15"
   },
   "bankAccountInfo": {
     "accountType": "CLABE",

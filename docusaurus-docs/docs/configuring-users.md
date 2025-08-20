@@ -88,7 +88,7 @@ Example request body for an individual user (ensure all `umaProviderRequiredUser
   "platformUserId": "9f84e0c2a72c4fa",
   "userType": "INDIVIDUAL",
   "fullName": "John Sender",
-  "dateOfBirth": "1985-06-15",
+  "birthDate": "1985-06-15",
   "address": {
     "line1": "Paseo de la Reforma 222",
     "line2": "Piso 15",
@@ -324,7 +324,7 @@ POST /users/bulk/csv
 The CSV file should follow a specific format with required and optional columns based on user type. Here's an example:
 
 ```csv
-umaAddress,platformUserId,userType,fullName,dateOfBirth,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId,businessLegalName,routingNumber,accountCategory
+umaAddress,platformUserId,userType,fullName,birthDate,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId,businessLegalName,routingNumber,accountCategory
 john.doe@uma.domain.com,user123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,Chase Bank,chase_primary_1234,,222888888,SAVINGS
 cme@uma.domain.com,biz456,BUSINESS,,,400 Commerce Way,Austin,TX,78701,US,US_ACCOUNT,987654321,Bank of America,boa_business_5678,Acme Corp,121212121,CHECKING
 ```
@@ -393,7 +393,7 @@ Required columns for all users:
 Required columns for individual users:
 
 - fullName: Individual's full name
-- dateOfBirth: Date of birth in YYYY-MM-DD format
+- birthDate: Date of birth in YYYY-MM-DD format
 - addressLine1: Street address line 1
 - city: City
 - state: State/Province/Region
@@ -458,7 +458,7 @@ For IBAN:
 ### Example CSV
 
 ```csv
-umaAddress,platformUserId,userType,fullName,dateOfBirth,addressLine1,city,state,postalCode,country,accountType,accountNumber,routingNumber,accountCategory,bankName,platformAccountId
+umaAddress,platformUserId,userType,fullName,birthDate,addressLine1,city,state,postalCode,country,accountType,accountNumber,routingNumber,accountCategory,bankName,platformAccountId
 $john.doe@uma.domain.com,user123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,987654321,CHECKING,Chase Bank,chase_primary_1234
 $acme@uma.domain.com,biz456,BUSINESS,Acme Corp,,400 Commerce Way,Austin,TX,78701,US,US_ACCOUNT,987654321,123456789,CHECKING,Bank of America,boa_business_5678,businessLegalName,Acme Corporation
 ```

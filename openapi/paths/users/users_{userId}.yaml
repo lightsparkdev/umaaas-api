@@ -62,7 +62,7 @@ patch:
                 fullName:
                   type: string
                   description: Individual's full name
-                dateOfBirth:
+                birthDate:
                   type: string
                   format: date
                   description: Date of birth in ISO 8601 format (YYYY-MM-DD)
@@ -101,7 +101,7 @@ patch:
             value:
               userType: INDIVIDUAL
               fullName: John Smith
-              dateOfBirth: '1985-06-15'
+              birthDate: '1985-06-15'
               address:
                 line1: 456 Market St
                 city: San Francisco

@@ -56,7 +56,7 @@ patch:
                   mandatory: true
                 - name: NATIONALITY
                   mandatory: true
-                - name: DATE_OF_BIRTH
+                - name: BIRTH_DATE
                   mandatory: true
   responses:
     '200':

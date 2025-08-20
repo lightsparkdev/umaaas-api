@@ -34,7 +34,7 @@ Response example:
           "mandatory": true
         },
         {
-          "name": "DATE_OF_BIRTH",
+          "name": "BIRTH_DATE",
           "mandatory": true
         }
       ],
@@ -76,7 +76,7 @@ Request body:
           "mandatory": true
         },
         {
-          "name": "DATE_OF_BIRTH",
+          "name": "BIRTH_DATE",
           "mandatory": true
         },
         {
@@ -107,7 +107,7 @@ Response:
           "mandatory": true
         },
         {
-          "name": "DATE_OF_BIRTH",
+          "name": "BIRTH_DATE",
           "mandatory": true
         },
         {
@@ -171,7 +171,7 @@ Available counterparty fields (to be specified with a `name` and `mandatory` fla
 | Field Name (type `UserInfoFieldName`) | Description |
 |---------------------------------------|-------------|
 | `FULL_NAME` | Full legal name of the individual or business |
-| `DATE_OF_BIRTH` | Date of birth in YYYY-MM-DD format (for individuals) |
+| `BIRTH_DATE` | Date of birth in YYYY-MM-DD format (for individuals) |
 | `NATIONALITY` | Nationality of the individual |
 | `ADDRESS` | Physical address including country, city, etc. |
 | `PHONE_NUMBER` | Contact phone number including country code |

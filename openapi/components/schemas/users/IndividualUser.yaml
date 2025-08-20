@@ -8,7 +8,7 @@ allOf:
         type: string
         description: Individual's full name
         example: John Michael Doe
-      dateOfBirth:
+      birthDate:
         type: string
         format: date
         description: Date of birth in ISO 8601 format (YYYY-MM-DD)

@@ -29,7 +29,7 @@ post:
               platformUserId: 7b3c5a89d2f1e0
               userType: INDIVIDUAL
               fullName: Jane Doe
-              dateOfBirth: '1992-03-25'
+              birthDate: '1992-03-25'
               address:
                 line1: 123 Pine Street
                 line2: Unit 501

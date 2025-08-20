@@ -64,7 +64,7 @@ paths:
                   platformUserId: 7b3c5a89d2f1e0
                   userType: INDIVIDUAL
                   fullName: Jane Doe
-                  dateOfBirth: '1992-03-25'
+                  birthDate: '1992-03-25'
                   address:
                     line1: 123 Pine Street
                     line2: Unit 501
@@ -321,7 +321,7 @@ paths:
                     fullName:
                       type: string
                       description: Individual's full name
-                    dateOfBirth:
+                    birthDate:
                       type: string
                       format: date
                       description: Date of birth in ISO 8601 format (YYYY-MM-DD)
@@ -360,7 +360,7 @@ paths:
                 value:
                   userType: INDIVIDUAL
                   fullName: John Smith
-                  dateOfBirth: '1985-06-15'
+                  birthDate: '1985-06-15'
                   address:
                     line1: 456 Market St
                     city: San Francisco
@@ -735,7 +735,7 @@ paths:
                       mandatory: true
                     - name: NATIONALITY
                       mandatory: true
-                    - name: DATE_OF_BIRTH
+                    - name: BIRTH_DATE
                       mandatory: true
       responses:
         '200':
@@ -1469,7 +1469,7 @@ paths:
 
         Required columns for individual users:
         - fullName: Individual's full name
-        - dateOfBirth: Date of birth in YYYY-MM-DD format
+        - birthDate: Date of birth in YYYY-MM-DD format
         - addressLine1: Street address line 1
         - city: City
         - state: State/Province/Region
@@ -1523,7 +1523,7 @@ paths:
 
         ### Example CSV
         ```csv
-        umaAddress,platformUserId,userType,fullName,dateOfBirth,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId,businessLegalName,routingNumber,accountCategory
+        umaAddress,platformUserId,userType,fullName,birthDate,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId,businessLegalName,routingNumber,accountCategory
         john.doe@uma.domain.com,user123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,Chase Bank,chase_primary_1234,,222888888,SAVINGS
         acme@uma.domain.com,biz456,BUSINESS,,,400 Commerce Way,Austin,TX,78701,US,US_ACCOUNT,987654321,Bank of America,boa_business_5678,Acme Corp,121212121,CHECKING
         ```
@@ -2120,7 +2120,7 @@ webhooks:
                       reference: REF-123456789
                     counterpartyInformation:
                       FULL_NAME: John Sender
-                      DATE_OF_BIRTH: '1985-06-15'
+                      BIRTH_DATE: '1985-06-15'
                       NATIONALITY: US
                   requestedReceiverUserInfoFields:
                     - name: NATIONALITY
@@ -2586,7 +2586,7 @@ components:
               type: string
               description: Individual's full name
               example: John Michael Doe
-            dateOfBirth:
+            birthDate:
               type: string
               format: date
               description: Date of birth in ISO 8601 format (YYYY-MM-DD)
@@ -2982,7 +2982,7 @@ components:
       type: string
       enum:
         - FULL_NAME
-        - DATE_OF_BIRTH
+        - BIRTH_DATE
         - NATIONALITY
         - PHONE_NUMBER
         - EMAIL
@@ -3041,7 +3041,7 @@ components:
           example:
             - name: FULL_NAME
               mandatory: true
-            - name: DATE_OF_BIRTH
+            - name: BIRTH_DATE
               mandatory: true
             - name: NATIONALITY
               mandatory: true
@@ -3053,7 +3053,7 @@ components:
           readOnly: true
           example:
             - NATIONALITY
-            - DATE_OF_BIRTH
+            - BIRTH_DATE
         umaProviderRequiredCounterpartyUserFields:
           type: array
           items:
@@ -3179,7 +3179,7 @@ components:
           additionalProperties: true
           example:
             FULL_NAME: John Sender
-            DATE_OF_BIRTH: '1985-06-15'
+            BIRTH_DATE: '1985-06-15'
             NATIONALITY: DE
       discriminator:
         propertyName: type
@@ -3599,7 +3599,7 @@ components:
           additionalProperties: true
           example:
             FULL_NAME: Jane Receiver
-            DATE_OF_BIRTH: '1990-01-01'
+            BIRTH_DATE: '1990-01-01'
             NATIONALITY: FR
         paymentInstructions:
           $ref: '#/components/schemas/PaymentInstructions'
