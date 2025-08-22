@@ -134,6 +134,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
     get:
       summary: List users
       description: |
@@ -256,6 +262,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /users/{userId}:
     parameters:
       - name: userId
@@ -298,6 +310,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
     patch:
       summary: Update user by ID
       description: Update a user's metadata by their system-generated ID
@@ -427,6 +445,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
     delete:
       summary: Delete user by ID
       description: Delete a user by their system-generated ID
@@ -467,6 +491,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /tokens:
     post:
       summary: Create a new API token
@@ -515,6 +545,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
     get:
       summary: List tokens
       description: |
@@ -612,6 +648,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /tokens/{tokenId}:
     parameters:
       - name: tokenId
@@ -647,6 +689,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
     delete:
       summary: Delete API token by ID
       description: Delete an API token by their system-generated ID
@@ -676,6 +724,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /config:
     get:
       summary: Get platform configuration
@@ -698,6 +752,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
     patch:
       summary: Update platform configuration
       description: Update the platform configuration settings
@@ -756,6 +816,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /webhooks/test:
     post:
       summary: Send a test webhook
@@ -784,6 +850,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /transactions/{transactionId}:
     parameters:
       - name: transactionId
@@ -819,6 +891,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /transactions:
     get:
       summary: List transactions
@@ -956,6 +1034,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /transactions/{transactionId}/approve:
     post:
       summary: Approve a pending incoming payment
@@ -1016,6 +1100,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /transactions/{transactionId}/reject:
     post:
       summary: Reject a pending incoming payment
@@ -1076,6 +1166,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /receiver/{receiverUmaAddress}:
     get:
       summary: Look up a UMA address for payment
@@ -1166,6 +1262,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error424'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /quotes:
     post:
       summary: Create a payment quote
@@ -1284,6 +1386,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error424'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /quotes/{quoteId}:
     get:
       summary: Get quote by ID
@@ -1322,6 +1430,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /quotes/{quoteId}/retry:
     post:
       summary: Retry an incomplete payment
@@ -1578,6 +1692,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /users/bulk/jobs/{jobId}:
     get:
       summary: Get bulk import job status
@@ -1621,6 +1741,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /invitations:
     post:
       summary: Create an UMA invitation from a given platform user.
@@ -1678,6 +1804,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /invitations/{invitationCode}:
     get:
       summary: Get a specific UMA invitation by code.
@@ -1714,6 +1846,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /invitations/{invitationCode}/claim:
     post:
       summary: Claim an UMA invitation
@@ -1776,6 +1914,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /invitations/{invitationCode}/cancel:
     post:
       summary: Cancel an UMA invitation
@@ -1832,6 +1976,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /sandbox/send:
     post:
       summary: Simulate sending funds
@@ -1899,6 +2049,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /sandbox/receive:
     post:
       summary: Simulate payment send to test receiving a payment
@@ -1974,6 +2130,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /uma-providers:
     get:
       summary: This endpoint provides a list of counterparties that are available.
@@ -2060,6 +2222,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
 webhooks:
   incoming-payment:
     post:
@@ -3004,6 +3172,27 @@ components:
           enum:
             - UNAUTHORIZED
             - INVALID_SIGNATURE
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+    Error500:
+      type: object
+      properties:
+        code:
+          type: string
+          description: |
+            | Error Code | Description |
+            |------------|-------------|
+            | INTERNAL | Internal server error |
+            | GRID_SWITCH_ERROR | Grid switch error |
+            | INTERNAL_ERROR | Internal server error | 
+          enum:
+            - INTERNAL
+            - GRID_SWITCH_ERROR
+            - INTERNAL_ERROR
         message:
           type: string
           description: Error message
