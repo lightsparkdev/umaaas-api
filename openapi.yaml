@@ -121,7 +121,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
@@ -249,7 +249,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
@@ -414,7 +414,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
@@ -508,7 +508,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
@@ -605,7 +605,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
@@ -663,7 +663,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
@@ -749,7 +749,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
@@ -777,7 +777,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
@@ -949,7 +949,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
@@ -997,7 +997,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
@@ -1057,7 +1057,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
@@ -1141,7 +1141,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
@@ -1253,7 +1253,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
@@ -1667,7 +1667,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
@@ -1759,7 +1759,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
@@ -1809,7 +1809,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
@@ -1876,7 +1876,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
@@ -1951,7 +1951,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized
           content:
@@ -2176,7 +2176,7 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized - Signature validation failed
           content:
@@ -2315,7 +2315,7 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized - Signature validation failed
           content:
@@ -2372,7 +2372,7 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized - Signature validation failed
           content:
@@ -2460,7 +2460,7 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized - Signature validation failed
           content:
@@ -2534,7 +2534,7 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error400'
         '401':
           description: Unauthorized - Signature validation failed
           content:
@@ -2918,12 +2918,69 @@ components:
                   type: string
                   description: Tax identification number
                   example: EIN-987654321
-    Error:
+    Error400:
       type: object
       properties:
         code:
           type: string
-          description: Error code
+          description: |
+            | Error Code | Description |
+            |------------|-------------|
+            | INVALID_INPUT | Invalid input provided |
+            | MISSING_MANDATORY_USER_INFO | Required user information is missing |
+            | INVITATION_ALREADY_CLAIMED | Invitation has already been claimed |
+            | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
+            | INVALID_UMA_ADDRESS | UMA address format is invalid |
+            | INVITATION_CANCELLED | Invitation has been cancelled |
+            | QUOTE_REQUEST_FAILED | An issue occurred during the quote process this is retryable |
+            | INVALID_PAYREQ_RESPONSE | Counterparty Payreq response was invalid |
+            | INVALID_RECEIVER | Receiver is invalid |
+            | PARSE_PAYREQ_RESPONSE_ERROR | Error parsing receiver PayReq response |
+            | CERT_CHAIN_INVALID | Counterparty certificate chain is invalid |
+            | CERT_CHAIN_EXPIRED | Counterparty certificate chain has expired |
+            | INVALID_PUBKEY_FORMAT | Counterparty Public key format is invalid |
+            | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
+            | SENDER_NOT_ACCEPTED | Sender is not accepted |
+            | AMOUNT_OUT_OF_RANGE | Amount is out of range |
+            | INVALID_CURRENCY | Currency is invalid |
+            | INVALID_TIMESTAMP | Timestamp is invalid |
+            | INVALID_NONCE | Nonce is invalid |
+            | INVALID_REQUEST_FORMAT | Request format is invalid |
+            | INVALID_BANK_ACCOUNT | Bank account is invalid |
+            | SELF_PAYMENT | Self payment not allowed |
+            | LOOKUP_REQUEST_FAILED | Lookup request failed |
+            | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
+            | INVALID_AMOUNT | Amount is invalid |
+            | WEBHOOK_ENDPOINT_NOT_SET | Webhook endpoint is not set |
+            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error | 
+          enum:
+            - INVALID_INPUT
+            - MISSING_MANDATORY_USER_INFO
+            - INVITATION_ALREADY_CLAIMED
+            - INVITATIONS_NOT_CONFIGURED
+            - INVALID_UMA_ADDRESS
+            - INVITATION_CANCELLED
+            - QUOTE_REQUEST_FAILED
+            - INVALID_PAYREQ_RESPONSE
+            - INVALID_RECEIVER
+            - PARSE_PAYREQ_RESPONSE_ERROR
+            - CERT_CHAIN_INVALID
+            - CERT_CHAIN_EXPIRED
+            - INVALID_PUBKEY_FORMAT
+            - MISSING_REQUIRED_UMA_PARAMETERS
+            - SENDER_NOT_ACCEPTED
+            - AMOUNT_OUT_OF_RANGE
+            - INVALID_CURRENCY
+            - INVALID_TIMESTAMP
+            - INVALID_NONCE
+            - INVALID_REQUEST_FORMAT
+            - INVALID_BANK_ACCOUNT
+            - SELF_PAYMENT
+            - LOOKUP_REQUEST_FAILED
+            - PARSE_LNURLP_RESPONSE_ERROR
+            - INVALID_AMOUNT
+            - WEBHOOK_ENDPOINT_NOT_SET
+            - WEBHOOK_DELIVERY_ERROR
         message:
           type: string
           description: Error message
@@ -2943,6 +3000,18 @@ components:
           enum:
             - UNAUTHORIZED
             - INVALID_SIGNATURE
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error code
         message:
           type: string
           description: Error message
