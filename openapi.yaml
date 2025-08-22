@@ -2758,6 +2758,17 @@ components:
 
         If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
   schemas:
+    AllErrors:
+      anyOf:
+        - $ref: '#/components/schemas/Error400'
+        - $ref: '#/components/schemas/Error401'
+        - $ref: '#/components/schemas/Error403'
+        - $ref: '#/components/schemas/Error404'
+        - $ref: '#/components/schemas/Error409'
+        - $ref: '#/components/schemas/Error412'
+        - $ref: '#/components/schemas/Error424'
+        - $ref: '#/components/schemas/Error500'
+        - $ref: '#/components/schemas/Error501'
     UserType:
       type: string
       enum:
@@ -3111,6 +3122,11 @@ components:
     Error400:
       type: object
       properties:
+        status:
+          enum:
+            - 400
+          type: integer
+          description: HTTP status code
         code:
           type: string
           description: |
@@ -3180,13 +3196,18 @@ components:
     Error401:
       type: object
       properties:
+        status:
+          enum:
+            - 401
+          type: integer
+          description: HTTP status code
         code:
           type: string
           description: |
             | Error Code | Description |
             |------------|-------------|
             | UNAUTHORIZED | Issue with API credentials |
-            | INVALID_SIGNATURE | Counterparty UMA response signature is invalid | 
+            | INVALID_SIGNATURE | Signature header is invalid | 
           enum:
             - UNAUTHORIZED
             - INVALID_SIGNATURE
@@ -3199,6 +3220,11 @@ components:
     Error500:
       type: object
       properties:
+        status:
+          enum:
+            - 500
+          type: integer
+          description: HTTP status code
         code:
           type: string
           description: |
@@ -3220,6 +3246,11 @@ components:
     Error409:
       type: object
       properties:
+        status:
+          enum:
+            - 409
+          type: integer
+          description: HTTP status code
         code:
           type: string
           description: |
@@ -3239,6 +3270,11 @@ components:
     Error501:
       type: object
       properties:
+        status:
+          enum:
+            - 501
+          type: integer
+          description: HTTP status code
         code:
           type: string
           description: |
@@ -3258,6 +3294,11 @@ components:
     Error404:
       type: object
       properties:
+        status:
+          enum:
+            - 404
+          type: integer
+          description: HTTP status code
         code:
           type: string
           description: |
@@ -3909,6 +3950,11 @@ components:
     Error412:
       type: object
       properties:
+        status:
+          enum:
+            - 412
+          type: integer
+          description: HTTP status code
         code:
           type: string
           description: |
@@ -3926,6 +3972,11 @@ components:
     Error424:
       type: object
       properties:
+        status:
+          enum:
+            - 424
+          type: integer
+          description: HTTP status code
         code:
           type: string
           description: |
@@ -4157,6 +4208,11 @@ components:
     Error403:
       type: object
       properties:
+        status:
+          enum:
+            - 403
+          type: integer
+          description: HTTP status code
         code:
           type: string
           description: |
