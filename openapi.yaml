@@ -3121,6 +3121,10 @@ components:
                   example: EIN-987654321
     Error400:
       type: object
+      required:
+        - message
+        - status
+        - code
       properties:
         status:
           enum:
@@ -3195,6 +3199,10 @@ components:
           description: Additional error details
     Error401:
       type: object
+      required:
+        - message
+        - status
+        - code
       properties:
         status:
           enum:
@@ -3219,6 +3227,10 @@ components:
           description: Additional error details
     Error500:
       type: object
+      required:
+        - message
+        - status
+        - code
       properties:
         status:
           enum:
@@ -3245,6 +3257,10 @@ components:
           description: Additional error details
     Error409:
       type: object
+      required:
+        - message
+        - status
+        - code
       properties:
         status:
           enum:
@@ -3269,6 +3285,10 @@ components:
           description: Additional error details
     Error501:
       type: object
+      required:
+        - message
+        - status
+        - code
       properties:
         status:
           enum:
@@ -3293,6 +3313,10 @@ components:
           description: Additional error details
     Error404:
       type: object
+      required:
+        - message
+        - status
+        - code
       properties:
         status:
           enum:
@@ -3949,6 +3973,10 @@ components:
           example: 1000000
     Error412:
       type: object
+      required:
+        - message
+        - status
+        - code
       properties:
         status:
           enum:
@@ -3971,6 +3999,10 @@ components:
           description: Additional error details
     Error424:
       type: object
+      required:
+        - message
+        - status
+        - code
       properties:
         status:
           enum:
@@ -4207,6 +4239,10 @@ components:
             This field is useful for "send-by-link" style user flows where an inviter can send a payment simply by sharing a link without knowing the receiver's UMA address. Note that these sends can only be sender-locked, meaning that the sender will not know ahead of time how much the receiver will receive in the receiving currency.
     Error403:
       type: object
+      required:
+        - message
+        - status
+        - code
       properties:
         status:
           enum:
