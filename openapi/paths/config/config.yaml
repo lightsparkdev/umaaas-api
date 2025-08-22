@@ -18,7 +18,7 @@ get:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/Error.yaml
+            $ref: ../../components/schemas/errors/Error401.yaml
 patch:
   summary: Update platform configuration
   description: Update the platform configuration settings
@@ -76,4 +76,4 @@ patch:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/Error.yaml
+            $ref: ../../components/schemas/errors/Error401.yaml
