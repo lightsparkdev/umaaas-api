@@ -49,7 +49,7 @@ post:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/Error.yaml
+            $ref: ../../components/schemas/errors/Error400.yaml
     '401':
       description: Unauthorized
       content:
