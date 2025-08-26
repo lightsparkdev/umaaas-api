@@ -38,7 +38,7 @@ get:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/Error.yaml
+            $ref: ../../components/schemas/errors/Error404.yaml
 patch:
   summary: Update user by ID
   description: Update a user's metadata by their system-generated ID
@@ -167,7 +167,7 @@ patch:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/Error.yaml
+            $ref: ../../components/schemas/errors/Error404.yaml
 delete:
   summary: Delete user by ID
   description: Delete a user by their system-generated ID
@@ -201,7 +201,7 @@ delete:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/Error.yaml
+            $ref: ../../components/schemas/errors/Error404.yaml
     '410':
       description: User deleted already
       content:

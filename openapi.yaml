@@ -297,7 +297,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error404'
     patch:
       summary: Update user by ID
       description: Update a user's metadata by their system-generated ID
@@ -426,7 +426,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error404'
     delete:
       summary: Delete user by ID
       description: Delete a user by their system-generated ID
@@ -460,7 +460,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error404'
         '410':
           description: User deleted already
           content:
@@ -646,7 +646,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error404'
     delete:
       summary: Delete API token by ID
       description: Delete an API token by their system-generated ID
@@ -675,7 +675,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error404'
   /config:
     get:
       summary: Get platform configuration
@@ -818,7 +818,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error404'
   /transactions:
     get:
       summary: List transactions
@@ -1009,7 +1009,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error404'
         '409':
           description: Conflict - Payment is not in a pending state or has already been processed or timed out.
           content:
@@ -1069,7 +1069,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error404'
         '409':
           description: Conflict - Payment is not in a pending state or has already been processed or timed out.
           content:
@@ -1153,7 +1153,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error404'
   /quotes:
     post:
       summary: Create a payment quote
@@ -1317,7 +1317,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error404'
   /quotes/{quoteId}/retry:
     post:
       summary: Retry an incomplete payment
@@ -1616,7 +1616,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error404'
   /invitations:
     post:
       summary: Create an UMA invitation from a given platform user.
@@ -1709,7 +1709,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error404'
   /invitations/{invitationCode}/claim:
     post:
       summary: Claim an UMA invitation
@@ -1771,7 +1771,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error404'
   /invitations/{invitationCode}/cancel:
     post:
       summary: Cancel an UMA invitation
@@ -1827,7 +1827,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error404'
   /sandbox/send:
     post:
       summary: Simulate sending funds
@@ -1894,7 +1894,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error404'
   /sandbox/receive:
     post:
       summary: Simulate payment send to test receiving a payment
@@ -1969,7 +1969,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error404'
   /uma-providers:
     get:
       summary: This endpoint provides a list of counterparties that are available.
@@ -3012,6 +3012,37 @@ components:
         code:
           type: string
           description: Error code
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+    Error404:
+      type: object
+      properties:
+        code:
+          type: string
+          description: |
+            | Error Code | Description |
+            |------------|-------------|
+            | TRANSACTION_NOT_FOUND | Transaction not found |
+            | INVITATION_NOT_FOUND | Invitation not found |
+            | USER_NOT_FOUND | User not found |
+            | QUOTE_NOT_FOUND | Quote not found |
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
+            | TOKEN_NOT_FOUND | Token not found |
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+            | REFERENCE_NOT_FOUND | Reference not found | 
+          enum:
+            - TRANSACTION_NOT_FOUND
+            - INVITATION_NOT_FOUND
+            - USER_NOT_FOUND
+            - QUOTE_NOT_FOUND
+            - LOOKUP_REQUEST_NOT_FOUND
+            - TOKEN_NOT_FOUND
+            - BULK_UPLOAD_JOB_NOT_FOUND
+            - REFERENCE_NOT_FOUND
         message:
           type: string
           description: Error message
