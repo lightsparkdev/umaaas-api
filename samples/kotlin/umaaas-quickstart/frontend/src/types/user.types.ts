@@ -3,7 +3,7 @@ export interface FormData {
   umaAddress: string;
   userType: 'INDIVIDUAL';
   fullName: string;
-  dateOfBirth: string;
+  birthDate: string;
   nationality: string;
   address: {
     line1: string;

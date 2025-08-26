@@ -136,8 +136,8 @@ private fun buildResponseUserData(requestedFields: List<CounterpartyFieldDefinit
             "FULL_NAME" -> {
                 builder.putAdditionalProperty("FULL_NAME", JsonValue.from("Sample Name"))
             }
-            "DATE_OF_BIRTH" -> {
-                builder.putAdditionalProperty("DATE_OF_BIRTH", JsonValue.from("1980-01-01"))
+            "BIRTH_DATE" -> {
+                builder.putAdditionalProperty("BIRTH_DATE", JsonValue.from("1980-01-01"))
             }
             "NATIONALITY" -> {
                 builder.putAdditionalProperty("NATINOALITY" , JsonValue.from("US"))
