@@ -14,11 +14,9 @@ properties:
     description: |
       | Error Code | Description |
       |------------|-------------|
-      | INTERNAL | Internal server error |
       | GRID_SWITCH_ERROR | Grid switch error |
-      | INTERNAL_ERROR | Internal server error | 
+      | INTERNAL_ERROR | Internal server or UMA error | 
     enum:
-      - INTERNAL
       - GRID_SWITCH_ERROR
       - INTERNAL_ERROR
   message:
