@@ -133,7 +133,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error409'
     get:
       summary: List users
       description: |
@@ -1015,7 +1015,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error409'
   /transactions/{transactionId}/reject:
     post:
       summary: Reject a pending incoming payment
@@ -1075,7 +1075,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error409'
   /receiver/{receiverUmaAddress}:
     get:
       summary: Look up a UMA address for payment
@@ -2327,7 +2327,7 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error409'
   test-webhook:
     post:
       summary: Test webhook for integration verification
@@ -2384,7 +2384,7 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error409'
   bulk-upload:
     post:
       summary: Bulk upload status webhook
@@ -2472,7 +2472,7 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error409'
   invitation-claimed:
     post:
       summary: Invitation claimed webhook
@@ -2546,7 +2546,7 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error409'
 components:
   securitySchemes:
     BasicAuth:
@@ -3006,12 +3006,19 @@ components:
         details:
           type: object
           description: Additional error details
-    Error:
+    Error409:
       type: object
       properties:
         code:
           type: string
-          description: Error code
+          description: |
+            | Error Code | Description |
+            |------------|-------------|
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+            | UMA_ADDRESS_EXISTS | UMA address already exists | 
+          enum:
+            - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+            - UMA_ADDRESS_EXISTS
         message:
           type: string
           description: Error message
@@ -3043,6 +3050,18 @@ components:
             - TOKEN_NOT_FOUND
             - BULK_UPLOAD_JOB_NOT_FOUND
             - REFERENCE_NOT_FOUND
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error code
         message:
           type: string
           description: Error message
