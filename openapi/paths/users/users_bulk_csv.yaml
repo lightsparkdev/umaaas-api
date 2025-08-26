@@ -184,4 +184,4 @@ post:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/Error.yaml
+            $ref: ../../components/schemas/errors/Error401.yaml

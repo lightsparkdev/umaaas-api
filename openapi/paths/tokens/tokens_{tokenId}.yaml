@@ -25,7 +25,7 @@ get:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/Error.yaml
+            $ref: ../../components/schemas/errors/Error401.yaml
     '404':
       description: Token not found
       content:
@@ -54,7 +54,7 @@ delete:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/common/Error.yaml
+            $ref: ../../components/schemas/errors/Error401.yaml
     '404':
       description: Token not found
       content:

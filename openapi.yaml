@@ -127,7 +127,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '409':
           description: Conflict - User with the UMA address already exists
           content:
@@ -255,7 +255,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
   /users/{userId}:
     parameters:
       - name: userId
@@ -291,7 +291,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: User not found
           content:
@@ -420,7 +420,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: User not found
           content:
@@ -454,7 +454,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: User not found
           content:
@@ -514,7 +514,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
     get:
       summary: List tokens
       description: |
@@ -611,7 +611,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
   /tokens/{tokenId}:
     parameters:
       - name: tokenId
@@ -640,7 +640,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Token not found
           content:
@@ -669,7 +669,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Token not found
           content:
@@ -697,7 +697,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
     patch:
       summary: Update platform configuration
       description: Update the platform configuration settings
@@ -755,7 +755,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
   /webhooks/test:
     post:
       summary: Send a test webhook
@@ -783,7 +783,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
   /transactions/{transactionId}:
     parameters:
       - name: transactionId
@@ -812,7 +812,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Transaction not found
           content:
@@ -955,7 +955,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
   /transactions/{transactionId}/approve:
     post:
       summary: Approve a pending incoming payment
@@ -1003,7 +1003,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Transaction not found
           content:
@@ -1063,7 +1063,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Transaction not found
           content:
@@ -1147,7 +1147,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: UMA address not found
           content:
@@ -1259,7 +1259,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '422':
           description: |
             Unprocessable Entity - Additional counterparty information required,
@@ -1311,7 +1311,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Quote not found
           content:
@@ -1573,7 +1573,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
   /users/bulk/jobs/{jobId}:
     get:
       summary: Get bulk import job status
@@ -1610,7 +1610,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Job not found
           content:
@@ -1673,7 +1673,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
   /invitations/{invitationCode}:
     get:
       summary: Get a specific UMA invitation by code.
@@ -1703,7 +1703,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Invitation not found
           content:
@@ -1765,7 +1765,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '404':
           description: Invitation not found
           content:
@@ -1815,7 +1815,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Forbidden - Only the platform which created the invitation can cancel it
           content:
@@ -1882,7 +1882,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Forbidden - request was made with a production platform token
           content:
@@ -1957,7 +1957,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: Forbidden - request was made with a production platform token
           content:
@@ -2055,7 +2055,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
 webhooks:
   incoming-payment:
     post:
@@ -2182,7 +2182,7 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '403':
           description: |
             Forbidden - Payment rejected by the client.
@@ -2321,7 +2321,7 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '409':
           description: Conflict - Webhook has already been processed (duplicate webhookId)
           content:
@@ -2378,7 +2378,7 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '409':
           description: Conflict - Webhook has already been processed (duplicate webhookId)
           content:
@@ -2466,7 +2466,7 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '409':
           description: Conflict - Webhook has already been processed (duplicate webhookId)
           content:
@@ -2540,7 +2540,7 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error401'
         '409':
           description: Conflict - Webhook has already been processed (duplicate webhookId)
           content:
@@ -2924,6 +2924,25 @@ components:
         code:
           type: string
           description: Error code
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+    Error401:
+      type: object
+      properties:
+        code:
+          type: string
+          description: |
+            | Error Code | Description |
+            |------------|-------------|
+            | UNAUTHORIZED | Issue with API credentials |
+            | INVALID_SIGNATURE | Counterparty UMA response signature is invalid | 
+          enum:
+            - UNAUTHORIZED
+            - INVALID_SIGNATURE
         message:
           type: string
           description: Error message
