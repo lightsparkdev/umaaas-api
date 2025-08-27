@@ -5,6 +5,7 @@ import com.lightspark.uma.umaaas.lib.UmaaasClientBuilder
 import com.lightspark.umaaas.core.jsonMapper
 import com.lightspark.umaaas.models.users.BankAccountType
 import com.lightspark.umaaas.models.users.IndividualUser
+import com.lightspark.umaaas.models.users.UsAccountInfo
 import com.lightspark.umaaas.models.users.UserBankAccountInfo
 import com.lightspark.umaaas.models.users.UserCreateParams
 import com.lightspark.umaaas.models.users.UserListParams
@@ -60,14 +61,14 @@ fun Route.userRoutes() {
                     .platformUserId(jsonNode.get("platformUserId").asText())
                     .userType(UserType.INDIVIDUAL)
                 jsonNode.get("fullName")?.asText()?.let { individualUserBuilder.fullName(it) }
-                jsonNode.get("dateOfBirth")?.asText()?.let { 
-                    individualUserBuilder.dateOfBirth(java.time.LocalDate.parse(it))
+                jsonNode.get("birthDate")?.asText()?.let { 
+                    individualUserBuilder.birthDate(java.time.LocalDate.parse(it))
                 }
                 jsonNode.get("nationality")?.asText()?.let { individualUserBuilder.nationality(it) }
                 jsonNode.get("bankAccountInfo")?.let { bankInfo ->
                     val bankAccountInfoBuilder = UserBankAccountInfo.UserUsAccountInfo.builder()
                     bankAccountInfoBuilder.accountType(BankAccountType.US_ACCOUNT)
-                    bankAccountInfoBuilder.accountCategory(UserBankAccountInfo.UserUsAccountInfo.AccountCategory.CHECKING)
+                    bankAccountInfoBuilder.accountCategory(UsAccountInfo.AccountCategory.CHECKING)
                     bankInfo.get("platformAccountId")?.asText()?.let { bankAccountInfoBuilder.platformAccountId(it) }
                     bankInfo.get("accountNumber")?.asText()?.let { bankAccountInfoBuilder.accountNumber(it) }
                     bankInfo.get("routingNumber")?.asText()?.let { bankAccountInfoBuilder.routingNumber(it) }

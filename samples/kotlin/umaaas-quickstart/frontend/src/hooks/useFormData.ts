@@ -8,7 +8,7 @@ export function useFormData() {
     umaAddress: '',
     userType: 'INDIVIDUAL',
     fullName: '',
-    dateOfBirth: '',
+    birthDate: '',
     nationality: 'US',
     address: {
       line1: '',
@@ -39,7 +39,7 @@ export function useFormData() {
         umaAddress: `$${faker.internet.username().toLowerCase()}@${domain}`,
         userType: 'INDIVIDUAL' as const,
         fullName: fullName,
-        dateOfBirth: faker.date.birthdate({ min: 18, max: 80, mode: 'age' }).toISOString().split('T')[0],
+        birthDate: faker.date.birthdate({ min: 18, max: 80, mode: 'age' }).toISOString().split('T')[0],
         nationality: 'US',
         address: {
           line1: faker.location.streetAddress(),
@@ -90,7 +90,7 @@ export function useFormData() {
       umaAddress: `$${faker.internet.username().toLowerCase()}@${domain}`,
       userType: 'INDIVIDUAL',
       fullName: fullName,
-      dateOfBirth: faker.date.birthdate({ min: 18, max: 80, mode: 'age' }).toISOString().split('T')[0],
+      birthDate: faker.date.birthdate({ min: 18, max: 80, mode: 'age' }).toISOString().split('T')[0],
       nationality: 'US',
       address: {
         line1: faker.location.streetAddress(),
