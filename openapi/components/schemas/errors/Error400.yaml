@@ -1,4 +1,8 @@
 type: object
+required: 
+  - message
+  - status
+  - code
 properties:
   status:
     enum:
