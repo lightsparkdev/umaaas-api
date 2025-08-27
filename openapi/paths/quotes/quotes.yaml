@@ -127,26 +127,12 @@ post:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error401.yaml
-    '422':
-      description: |
-        Unprocessable Entity - Additional counterparty information required,
-        or the payment cannot be completed for another reason.
+    '412':
+      description: Counterparty doesn't support UMA version
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: ../../components/schemas/common/Error.yaml
-              - type: object
-                properties:
-                  code:
-                    example: MISSING_MANDATORY_USER_INFO
-                  message:
-                    example: Additional counterparty information required
-                  details:
-                    example:
-                      requiredFields:
-                        - TAX_ID
-                        - REGISTRATION_NUMBER
+            $ref: ../../components/schemas/errors/Error412.yaml
     '424':
       description: Counterparty issue
       content:
