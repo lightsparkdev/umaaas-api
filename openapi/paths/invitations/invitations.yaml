@@ -20,6 +20,10 @@ post:
               type: string
               description: The UMA address of the user creating the invitation
               example: $inviter@uma.domain
+            firstName:
+              type: string
+              description: First name of the invitee to show as part of the invite
+              example: Alice
             amountToSend:
               description: >
                 An amount to send (in the smallest unit of the user's currency)
