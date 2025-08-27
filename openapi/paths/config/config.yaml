@@ -57,6 +57,9 @@ patch:
             - currencyCode: USD
               minAmount: 100
               maxAmount: 1000000
+              enabledTransactionTypes:
+                - OUTGOING
+                - INCOMING
               requiredCounterpartyFields:
                 - name: FULL_NAME
                   mandatory: true
