@@ -147,3 +147,9 @@ post:
                       requiredFields:
                         - TAX_ID
                         - REGISTRATION_NUMBER
+    '424':
+      description: Counterparty issue
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error424.yaml
