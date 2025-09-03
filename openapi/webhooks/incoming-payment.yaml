@@ -136,6 +136,9 @@ post:
         If `requestedReceiverUserInfoFields` were present in the webhook
         request, the corresponding fields for the recipient must be included in
         this response in the `receiverUserInfo` object.
+
+        If `requiresBankAccountInfo` is true, the platform must include the bank
+        account information in the webhook response in the `bankAccountInfo` object.
       content:
         application/json:
           schema:

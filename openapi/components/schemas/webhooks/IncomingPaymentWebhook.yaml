@@ -15,7 +15,14 @@ allOf:
         items:
           $ref: ../common/CounterpartyFieldDefinition.yaml
         description: >-
-          Information required by the sender's VASP about the recipient.
-          Platform must provide these in the 200 OK response if approving.
-          Note that this only includes fields which UMAaaS does not
-          already have from initial user registration.
+          Information required by the sender's VASP or the banking provider
+          about the recipient. Platform must provide these in the 200 OK
+          response if approving. Note that this only includes fields which
+          UMAaaS does not already have from initial user registration.
+      requiresBankAccountInfo:
+        type: boolean
+        description: >-
+          Whether the platform needs to provide the bank account information
+          in the webhook response. Note that this is only applicable if bank
+          account information was not provided during initial user registration.
+        example: true
