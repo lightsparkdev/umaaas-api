@@ -35,7 +35,7 @@ sequenceDiagram
         UMAaaS->>Client: Webhook: INCOMING_PAYMENT (COMPLETED)
         Client-->>UMAaaS: HTTP 200 OK (acknowledge completion)
     else Payment rejected
-        Client-->>UMAaaS: HTTP 400 Bad Request with rejection reason
+        Client-->>UMAaaS: HTTP 403 Forbidden with rejection reason
         UMAaaS->>Sender: Failed payreq response.
     end
 ```
