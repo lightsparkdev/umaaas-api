@@ -122,12 +122,13 @@ When someone initiates a payment to one of your users' UMA addresses, you'll rec
     },
     "reconciliationInstructions": {
       "reference": "REF-123456789"
-    },
-    "requestedReceiverUserInfoFields": [
-      { "name": "NATIONALITY", "mandatory": true },
-      { "name": "FULL_NAME", "mandatory": true }
-    ]
+    }
   },
+  "requestedReceiverUserInfoFields": [
+    { "name": "COUNTRY_OF_RESIDENCE", "mandatory": true },
+    { "name": "FULL_NAME", "mandatory": true },
+    { "name": "NATIONALITY", "mandatory": false }
+  ],
   "timestamp": "2023-08-15T14:32:00Z",
   "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
   "type": "INCOMING_PAYMENT"
@@ -150,7 +151,7 @@ Example `200 OK` response body when information was requested and provided:
 ```json
 {
   "receiverUserInfo": {
-    "NATIONALITY": "US",
+    "COUNTRY_OF_RESIDENCE": "US",
     "FULL_NAME": "John Receiver"
   }
 }
@@ -188,7 +189,7 @@ Request body (if information was requested):
 ```json
 {
   "receiverUserInfo": {
-    "NATIONALITY": "US",
+    "COUNTRY_OF_RESIDENCE": "US",
     "FULL_NAME": "John Receiver"
   }
 }
