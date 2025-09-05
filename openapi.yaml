@@ -2359,6 +2359,7 @@ webhooks:
             Webhook received successfully. 
             For PENDING transactions, this indicates approval to proceed with the payment.
             If `requestedReceiverUserInfoFields` were present in the webhook request, the corresponding fields for the recipient must be included in this response in the `receiverUserInfo` object.
+            If `requiresBankAccountInfo` is true, the platform must include the bank account information in the webhook response in the `bankAccountInfo` object.
           content:
             application/json:
               schema:
@@ -2787,8 +2788,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/User'
         - type: object
-          required:
-            - bankAccountInfo
           properties:
             fullName:
               type: string
@@ -3527,6 +3526,10 @@ components:
           type: string
           description: UMA domain for this platform
           example: platform.uma.domain
+        proxyUmaaasSubdomain:
+          type: string
+          description: The subdomain that incoming requests will be proxied to
+          example: platform
         webhookEndpoint:
           type: string
           description: URL where webhook notifications will be sent
@@ -4335,7 +4338,11 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/CounterpartyFieldDefinition'
-              description: Information required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which UMAaaS does not already have from initial user registration.
+              description: Information required by the sender's VASP or the banking provider about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which UMAaaS does not already have from initial user registration.
+            requiresBankAccountInfo:
+              type: boolean
+              description: Whether the platform needs to provide the bank account information in the webhook response. Note that this is only applicable if bank account information was not provided during initial user registration.
+              example: true
     BaseWebhook:
       type: object
       required:
@@ -4429,6 +4436,9 @@ components:
           type: object
           additionalProperties: true
           description: Information about the recipient, provided by the platform if requested in the webhook via `requestedReceiverUserInfoFields` and the payment is approved.
+        bankAccountInfo:
+          $ref: '#/components/schemas/UserBankAccountInfo'
+          description: Bank account information, provided by the platform if `requiresBankAccountInfo` is true.
     IncomingPaymentWebhookForbiddenResponse:
       allOf:
         - $ref: '#/components/schemas/Error'

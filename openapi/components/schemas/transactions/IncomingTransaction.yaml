@@ -9,7 +9,7 @@ allOf:
         description: Amount received in the recipient's currency
       reconciliationInstructions:
         $ref: ../common/ReconciliationInstructions.yaml
-        description: Included for all transactions except those with "CREATED" status
+        description: Present when available; this varies by region and banking provider and may not be included until "COMPLETED" status
       rateDetails:
         $ref: ./IncomingRateDetails.yaml
         description: Details about the rate and fees for the transaction.

@@ -43,7 +43,7 @@ The process consists of five main steps:
 1. **Platform configuration** (one-time setup) to set your UMA domain and required counterparty fields
 2. **Register users** with their bank account information so they can receive payments
 3. **Set up webhook endpoints** to receive notifications about incoming payments
-4. **Receive and approve/reject incoming payments** via webhooks
+4. **Provide user information and approve/reject incoming payments** via webhooks
 5. **Receive completion notification** when the payment completes
 
 ## Step 1: Platform configuration (one-time setup)
@@ -122,12 +122,13 @@ When someone initiates a payment to one of your users' UMA addresses, you'll rec
     },
     "reconciliationInstructions": {
       "reference": "REF-123456789"
-    },
-    "requestedReceiverUserInfoFields": [
-      { "name": "NATIONALITY", "mandatory": true },
-      { "name": "FULL_NAME", "mandatory": true }
-    ]
+    }
   },
+  "requestedReceiverUserInfoFields": [
+    { "name": "NATIONALITY", "mandatory": true },
+    { "name": "FULL_NAME", "mandatory": true }
+  ],
+  "requiresBankAccountInfo": true,
   "timestamp": "2023-08-15T14:32:00Z",
   "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
   "type": "INCOMING_PAYMENT"
@@ -142,8 +143,8 @@ You have two options for approving or rejecting the payment:
 
 To approve the payment synchronously, respond with a `200 OK` status:
 
-- If the `requestedReceiverUserInfoFields` array was present in the webhook request and contained mandatory fields, your `200 OK` response **must** include a JSON body containing a `receiverUserInfo` object. This object should contain the key-value pairs for the information fields that were requested.
-- If `requestedReceiverUserInfoFields` was not present, was empty, or contained only non-mandatory fields for which you have no information, your `200 OK` response can have an empty body.
+- If the `requestedReceiverUserInfoFields` array was present in the webhook request and contained mandatory fields, your `200 OK` response **must** include a JSON body containing a `receiverUserInfo` object. This object should contain the key-value pairs for the information fields that were requested. If `requiresBankAccountInfo` was `true` in the webhook request, your response must also include your user's `bankAccountInfo`.
+- If `requestedReceiverUserInfoFields` was not present, was empty, or contained only non-mandatory fields for which you have no information and `requiresBankAccountInfo` was false, your `200 OK` response can have an empty body.
 
 Example `200 OK` response body when information was requested and provided:
 
@@ -152,6 +153,10 @@ Example `200 OK` response body when information was requested and provided:
   "receiverUserInfo": {
     "NATIONALITY": "US",
     "FULL_NAME": "John Receiver"
+  },
+  "bankAccountInfo": {
+    "vpa": "receiver@psp",
+    "accountType": "UPI"
   }
 }
 ```
@@ -190,6 +195,10 @@ Request body (if information was requested):
   "receiverUserInfo": {
     "NATIONALITY": "US",
     "FULL_NAME": "John Receiver"
+  },
+  "bankAccountInfo": {
+    "vpa": "receiver@psp",
+    "accountType": "UPI"
   }
 }
 ```
