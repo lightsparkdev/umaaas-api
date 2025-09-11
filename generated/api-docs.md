@@ -3093,7 +3093,7 @@ BasicAuth
 
 ```javascript
 const inputBody = '{
-  "senderUmaAddress": "$success.usd@sandbox.uma.money",
+  "senderUmaAddress": "$success.usd@sandbox.umaaas.uma.money",
   "receiverUmaAddress": "$receiver@uma.domain",
   "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
   "receivingCurrencyCode": "USD",
@@ -3142,7 +3142,7 @@ This endpoint is only for the sandbox environment and will fail for production p
 
 ```json
 {
-  "senderUmaAddress": "$success.usd@sandbox.uma.money",
+  "senderUmaAddress": "$success.usd@sandbox.umaaas.uma.money",
   "receiverUmaAddress": "$receiver@uma.domain",
   "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
   "receivingCurrencyCode": "USD",

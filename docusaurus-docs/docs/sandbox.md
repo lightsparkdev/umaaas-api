@@ -23,7 +23,7 @@ sequenceDiagram
     participant Test as Test UMA Address
 
     Note over Client, UMAaaS: Testing Outgoing Payments
-    Client->>UMAaaS: GET /receiver/$success.usd@sandbox.uma.money
+    Client->>UMAaaS: GET /receiver/$success.usd@sandbox.umaaas.uma.money
     UMAaaS-->>Client: Supported currencies and requirements
     Client->>UMAaaS: POST /quotes
     UMAaaS-->>Client: Quote with payment instructions
@@ -59,11 +59,12 @@ The sandbox provides several test UMA addresses you can use to simulate differen
 
 | UMA Address | Description |
 |------------|-------------|
-| `$success.usd@sandbox.uma.money` | Always succeeds, sends USD |
-| `$success.eur@sandbox.uma.money` | Always succeeds, sends EUR |
-| `$success.mxn@sandbox.uma.money` | Always succeeds, sends MXN |
-| `$pending.long.usd@sandbox.uma.money` | Simulates a long-pending payment |
-| `$fail.compliance.usd@sandbox.uma.money` | Simulates compliance check failure |
+| `$success.usd@sandbox.umaaas.uma.money` | Always succeeds, sends USD |
+| `$success.eur@sandbox.umaaas.uma.money` | Always succeeds, sends EUR |
+| `$success.mxn@sandbox.umaaas.uma.money` | Always succeeds, sends MXN |
+| `$success.inr@sandbox.umaaas.uma.money` | Always succeeds, sends INR |
+| `$pending.long.usd@sandbox.umaaas.uma.money` | Simulates a long-pending payment |
+| `$fail.compliance.usd@sandbox.umaaas.uma.money` | Simulates compliance check failure |
 
 ## Testing Outgoing Payments
 
@@ -72,7 +73,7 @@ To test sending payments from your platform, follow these steps:
 1. Look up a sandbox UMA address:
 
 ```http
-GET /receiver/$success.usd@sandbox.uma.money
+GET /receiver/$success.usd@sandbox.umaaas.uma.money
 ```
 
 2. Create a quote as normal:
@@ -108,7 +109,7 @@ To test receiving payments to your platform's users, use the sandbox receive end
 ```http
 POST /sandbox/receive
 {
-  "senderUmaAddress": "$success.usd@sandbox.uma.money",
+  "senderUmaAddress": "$success.usd@sandbox.umaaas.uma.money",
   "receiverUmaAddress": "$your.user@your.domain",
   "receivingCurrencyCode": "USD",
   "receivingCurrencyAmount": 5000
@@ -157,7 +158,7 @@ POST /users
 ```http
 POST /sandbox/receive
 {
-  "senderUmaAddress": "$success.usd@sandbox.uma.money",
+  "senderUmaAddress": "$success.usd@sandbox.umaaas.uma.money",
   "receiverUmaAddress": "$test.user@your.domain",
   "receivingCurrencyCode": "USD",
   "receivingCurrencyAmount": 5000
@@ -168,7 +169,7 @@ POST /sandbox/receive
 
 ```http
 # 1. Look up recipient
-GET /receiver/$success.usd@sandbox.uma.money
+GET /receiver/$success.usd@sandbox.umaaas.uma.money
 
 # 2. Create quote
 POST /quotes
@@ -196,21 +197,21 @@ You can test various error scenarios using the special sandbox UMA addresses:
 1. Test compliance failures:
 
 ```http
-GET /receiver/$fail.compliance.usd@sandbox.uma.money
+GET /receiver/$fail.compliance.usd@sandbox.umaaas.uma.money
 # ... create quote and attempt payment
 ```
 
 2. Test long-pending payments:
 
 ```http
-GET /receiver/$pending.long.usd@sandbox.uma.money
+GET /receiver/$pending.long.usd@sandbox.umaaas.uma.money
 # ... create quote and attempt payment
 ```
 
 3. Non-existent UMA address:
 
 ```http
-GET /receiver/$non.existent.usd@sandbox.uma.money
+GET /receiver/$non.existent.usd@sandbox.umaaas.uma.money
 # ... should return 404 Not Found
 ```
 
