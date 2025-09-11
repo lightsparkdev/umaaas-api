@@ -25,7 +25,7 @@ post:
             senderUmaAddress:
               type: string
               description: UMA address of the sender from the sandbox
-              example: $success.usd@sandbox.uma.money
+              example: $success.usd@sandbox.umaaas.uma.money
             receiverUmaAddress:
               type: string
               description: UMA address of the receiver (optional if userId is provided)
