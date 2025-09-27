@@ -1,0 +1,107 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "willow",
+  "name": "UMA Connect Developer Documentation",
+  "description": "UMA as a service enables modern financial institutions to easily send and receive global UMA payments.  UMA is an open, instant, low cost payment network that allows senders and receivers to use their local currencies while settlement occurs over crypto rails.  The following documentation helps developers understand UMA as a service and how to integrate with it.",
+  "colors": {
+    "primary": "#16A34A",
+    "light": "#07C983",
+    "dark": "#15803D"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "UMA Connect",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": ["index"]
+          },
+          {
+            "group": "Developer Guides",
+            "pages": [
+              "uma-connect/developer-guides/platform-configuration",
+              "uma-connect/developer-guides/configuring-users",
+              "uma-connect/developer-guides/sending-payments",
+              "uma-connect/developer-guides/receiving-payments",
+              "uma-connect/developer-guides/webhooks",
+              "uma-connect/developer-guides/sandbox-testing",
+              "uma-connect/developer-guides/invitations"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Pay To Bank",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": ["pay-to-bank/getting-started/introduction"]
+          },
+          {
+            "group": "Developer Guides",
+            "pages": ["pay-to-bank/developer-guides/platform-configuration"]
+          }
+        ]
+      },
+      {
+        "tab": "API reference",
+        "openapi": "openapi.yaml",
+        "groups": [
+          {
+            "group": "Using the API",
+            "pages": [
+              "api-reference/environments", 
+              "api-reference/authentication"]
+          },
+          {
+            "group": "API documentation",
+            
+            "pages":[
+              "/api-reference/users/list-users",
+              "/api-reference/users/add-a-new-user"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Changelog",
+        "groups": [
+          {
+            "group": "Changelog",
+            "pages": ["changelog"]
+          }
+        ]
+      }
+    ]
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Github",
+        "href": "https://github.com/lightsparkdev/umaaas-api",
+        "icon": "github"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Dashboard",
+      "href": "https://dash.lightspark.com"
+    }
+  },
+  "contextual": {
+    "options": ["copy", "view", "chatgpt", "claude"]
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/lightspark",
+      "github": "https://github.com/lightsparkdev",
+      "linkedin": "https://linkedin.com/company/lightspark-group"
+    }
+  }
+}
