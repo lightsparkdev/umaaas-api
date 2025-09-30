@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "UMA as a Service API Schema and Documentation",
   "scripts": {
-    "build:openapi": "npx @redocly/cli bundle openapi/openapi.yaml -o openapi.yaml",
+    "build:openapi": "npx @redocly/cli bundle openapi/openapi.yaml -o openapi.yaml && cp openapi.yaml mintlify/openapi.yaml",
     "build:docs": "cd docusaurus-docs && npm ci && npm run build",
     "prelint:openapi": "npm run build:openapi",
-    "lint:openapi": "npx @redocly/cli bundle openapi/openapi.yaml -o openapi.yaml && npx @redocly/cli lint openapi.yaml",
+    "lint:openapi": "npx @redocly/cli bundle openapi/openapi.yaml -o openapi.yaml && npx @redocly/cli lint openapi.yaml && cp openapi.yaml mintlify/openapi.yaml",
     "lint:markdown": "markdownlint --config .markdownlint.json \"docusaurus-docs/docs/*.md\"",
     "lint": "npm run lint:openapi && npm run lint:markdown",
     "validate": "npm run lint:openapi",
