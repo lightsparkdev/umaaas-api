@@ -1,5 +1,5 @@
 allOf:
-  - $ref: ./User.yaml
+  - $ref: ./CounterParty.yaml
   - type: object
     required:
       - bankAccountInfo
@@ -26,7 +26,3 @@ allOf:
             type: string
             description: Tax identification number
             example: EIN-987654321
-      beneficialOwners:
-        type: array 
-        items:
-          - $ref: ./UltimateBeneficialOwner.yaml

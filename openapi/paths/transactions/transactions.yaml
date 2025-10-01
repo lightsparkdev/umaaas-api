@@ -22,21 +22,21 @@ get:
       required: false
       schema:
         type: string
-    - name: umaAddress
+    - name: accountIdentifier
       in: query
-      description: Filter by UMA address (either sender or receiver)
+      description: Filter by account identifier (either sender or receiver)
       required: false
       schema:
         type: string
-    - name: senderUmaAddress
+    - name: senderAccountIdentifier
       in: query
-      description: Filter by sender UMA address
+      description: Filter by sender account identifier
       required: false
       schema:
         type: string
-    - name: receiverUmaAddress
+    - name: receiverAccountIdentifier
       in: query
-      description: Filter by receiver UMA address
+      description: Filter by receiver account identifier
       required: false
       schema:
         type: string
