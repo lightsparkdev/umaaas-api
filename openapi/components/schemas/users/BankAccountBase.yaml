@@ -2,6 +2,18 @@ type: object
 required:
   - accountType
 properties:
+  id: 
+    type: string 
+    description: The system generated identifier of this account 
+    example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+  currency: 
+    type: string 
+    description: The ISO 4217 currency code or ISO 24165 code
+    example: USD
+  ownerId: 
+    type: string 
+    description: The user this account is tied to 
+    example: da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7
   platformAccountId:
     type: string
     description: >
@@ -24,14 +36,29 @@ properties:
       - Maintaining consistency between UMAaaS and your platform's account
       records
     example: acc_123456789
-  accountType:
-    $ref: ../common/BankAccountType.yaml
-discriminator: 
-  propertyName: accountType
-  mapping: 
-    CLABE: ./UserClabeAccountInfo.yaml
-    US_ACCOUNT: ./UserUsAccountInfo.yaml
-    PIX: ./UserPixAccountInfo.yaml
-    IBAN: ./UserIbanAccountInfo.yaml
-    FBO: ./UserFboAccountInfo.yaml
-    UPI: ./UserUpiAccountInfo.yaml
+  accountInfo:
+    type: object 
+    description: Details of the external bank account 
+    properties:
+      accountType:
+        $ref: ../common/BankAccountType.yaml
+    discriminator: 
+      propertyName: accountType
+      mapping: 
+        CLABE: ./UserClabeAccountInfo.yaml
+        US_ACCOUNT: ./UserUsAccountInfo.yaml
+        PIX: ./UserPixAccountInfo.yaml
+        IBAN: ./UserIbanAccountInfo.yaml
+        FBO: ./UserFboAccountInfo.yaml
+        UPI: ./UserUpiAccountInfo.yaml
+  accountSource:
+    type: string 
+    enum:
+      - INTERNAL_ACCOUNT
+      - EXTERNAL_ACCOUNT
+    description: Whether this is an internal or external account 
+  discriminator:
+    propertyName: accountSource 
+    mapping:
+      INTERNAL_ACCOUNT: ./InternalAccount.yaml 
+      EXTERNAL_ACCOUNT: ./External_Account.yaml
