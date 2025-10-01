@@ -1,0 +1,159 @@
+post:
+  summary: Add a new account
+  description: >-
+    Add a new internal or external account associated with a user or counterparty
+  operationId: createAccount
+  tags:
+    - Account
+  security:
+    - BasicAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          oneOf:
+            - $ref: ../../components/schemas/users/InternalAccount.yaml
+            - $ref: ../../components/schemas/users/ExternalAccount.yaml
+          discriminator:
+            propertyName: userType
+            mapping:
+              INTERNAL_ACCOUNT: ../../components/schemas/users/InternalAccount.yaml
+              EXTERNAL_ACCOUNT: ../../components/schemas/users/ExternalAccount.yaml
+  responses:
+    '200':
+      description: Account created successfully
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: ../../components/schemas/users/InternalAccount.yaml
+              - $ref: ../../components/schemas/users/ExternalAccount.yaml
+            discriminator:
+              propertyName: userType
+              mapping:
+                INTERNAL_ACCOUNT: ../../components/schemas/users/InternalAccount.yaml
+                EXTERNAL_ACCOUNT: ../../components/schemas/users/ExternalAccount.yaml
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error400.yaml
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error401.yaml
+    '500':
+      description: Internal service error
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error500.yaml
+    '501':
+      description: Not implemented
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error501.yaml
+get:
+  summary: Get all accounts
+  description: >
+    Retrieve a list of accounts with optional filtering parameters. Returns all
+    accounts that match the specified filters. If no filters are provided, returns all accounts
+    (paginated).
+  operationId: listAccounts
+  tags:
+    - Account
+  security:
+    - BasicAuth: []
+  parameters:
+    - name: accountSource
+      in: query
+      description: Filter by internal or external account
+      required: false
+      schema:
+        type: string
+    - name: currency
+      in: query
+      description: Filter by currency code
+      required: false
+      schema:
+        type: string
+    - name: userId
+      in: query
+      description: Filter by accounts associated with a specific user
+      required: false
+      schema:
+        type: string
+    - name: limit
+      in: query
+      description: Maximum number of results to return (default 20, max 100)
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    - name: cursor
+      in: query
+      description: Cursor for pagination (returned from previous request)
+      required: false
+      schema:
+        type: string
+  responses:
+    '200':
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - data
+              - hasMore
+            properties:
+              data:
+                type: array
+                description: List of accounts matching the filter criteria
+                items: 
+                  oneOf:
+                    - $ref: ../../components/schemas/users/InternalAccount.yaml
+                    - $ref: ../../components/schemas/users/ExternalAccount.yaml
+                  discriminator:
+                    propertyName: accountSource
+                    mapping:
+                      INTERNAL_ACCOUNT: ../../components/schemas/users/IndividualUser.yaml
+                      EXTERNAL_ACCOUNT: ../../components/schemas/users/BusinessUser.yaml
+              hasMore:
+                type: boolean
+                description: Indicates if more results are available beyond this page
+              nextCursor:
+                type: string
+                description: >-
+                  Cursor to retrieve the next page of results (only present if
+                  hasMore is true)
+              totalCount:
+                type: integer
+                description: >-
+                  Total number of users matching the criteria (excluding
+                  pagination)
+    '400':
+      description: Bad request - Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error400.yaml
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error401.yaml
+    '500':
+      description: Internal service error
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error500.yaml
