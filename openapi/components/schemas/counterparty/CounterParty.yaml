@@ -1,22 +1,24 @@
 type: object
 required:
   - platformUserId
-  - userType
+  - counterPartyType
+  - endUserId
 properties:
   id:
     type: string
     description: System-generated unique identifier
     readOnly: true
     example: User:019542f5-b3e7-1d02-0000-000000000001
-  umaAddress:
-    type: string
-    description: Optional UMA address identifier
-    examples: $john.doe@uma.domain.com
+  endUserId:
+    type: string 
+    description: The end user this counterparty is registered to 
+    examples:
+      - 57dedf0c-f919-42b0-b584-73ea68d42aac
   platformUserId:
     type: string
     description: Platform-specific user identifier
     example: 9f84e0c2a72c4fa
-  userType:
+  counterPartyType:
     $ref: ./UserType.yaml
   createdAt:
     type: string
@@ -36,7 +38,7 @@ properties:
     example: false
     readOnly: true
 discriminator:
-  propertyName: userType
+  propertyName: counterPartyType
   mapping:
-    INDIVIDUAL: ./IndividualUser.yaml
-    BUSINESS: ./BusinessUser.yaml
+    INDIVIDUAL: ./IndividualCounterParty.yaml
+    BUSINESS: ./BusinessCounterParty.yaml
