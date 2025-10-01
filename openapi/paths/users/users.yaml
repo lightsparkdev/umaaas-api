@@ -1,7 +1,7 @@
 post:
   summary: Add a new user
   description: >-
-    Register a new user in the system with UMA address and bank account
+    Register a new user in the system with an account identifier and bank account
     information
   operationId: createUser
   tags:
@@ -47,7 +47,6 @@ post:
           businessUser:
             summary: Create business user example
             value:
-              umaAddress: $acme@uma.domain.com
               platformUserId: 6e4d2c0b8a9f3
               userType: BUSINESS
               businessInfo:
@@ -133,7 +132,7 @@ get:
         type: string
     - name: umaAddress
       in: query
-      description: Filter by UMA address
+      description: Filter by uma address
       required: false
       schema:
         type: string

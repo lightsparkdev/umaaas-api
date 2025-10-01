@@ -1,0 +1,8 @@
+allOf:
+  - $ref: ./BankAccountBase.yaml
+  - properties:
+      balance:
+        type: number 
+        format: decimal 
+        description: Balance of the account 
+        example: 99.95
