@@ -62,6 +62,7 @@ post:
                 currency (eg. cents). See `lockedCurrencySide` for more
                 information.
               exclusiveMinimum: 0
+              maximum: 9000000000000000
               example: 1000
             description:
               type: string
