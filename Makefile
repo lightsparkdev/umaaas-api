@@ -18,6 +18,9 @@ build-openapi:
 serve-docs:
 	cd docusaurus-docs && npm run start
 
+mint:
+	cd mintlify && mint dev
+
 lint:
 	npm run lint
 

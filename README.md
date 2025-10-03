@@ -835,6 +835,13 @@ cd docusaurus-docs && npm run start
 
 # Or use make
 make serve-docs
+
+# Serve Mintlify documentation:
+
+# First install mint if you haven't already
+npm i -g mint
+
+mint dev # or make mint
 ```
 
 ## OpenAPI
