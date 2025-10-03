@@ -1,8 +1,13 @@
 type: object
 required:
+  - accountType
   - clabeNumber
   - bankName
 properties:
+  accountType:
+    allOf:
+      - $ref: ./BankAccountType.yaml
+    example: CLABE
   clabeNumber:
     type: string
     description: 18-digit CLABE number (Mexican banking standard)
