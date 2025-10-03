@@ -54,14 +54,6 @@
             "pages": [
               "api-reference/environments", 
               "api-reference/authentication"]
-          },
-          {
-            "group": "API documentation",
-            
-            "pages":[
-              "/api-reference/users/list-users",
-              "/api-reference/users/add-a-new-user"
-            ]
           }
         ]
       },

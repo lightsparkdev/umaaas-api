@@ -79,10 +79,14 @@ components:
         - $ref: components/schemas/errors/Error501.yaml
 
 paths:
+  /account: 
+    $ref: paths/account/account.yaml
   /users:
     $ref: paths/users/users.yaml
   /users/{userId}:
     $ref: paths/users/users_{userId}.yaml
+  /users/{userId}/kyc:
+    $ref: paths/users/users_{userId}_kyc.yaml
   /tokens:
     $ref: paths/tokens/tokens.yaml
   /tokens/{tokenId}:

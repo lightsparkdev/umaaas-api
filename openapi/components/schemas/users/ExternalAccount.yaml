@@ -1,0 +1,19 @@
+allOf:
+  - $ref: ./BankAccountBase.yaml
+  - properties:
+      balance:
+        type: number 
+        format: decimal 
+        description: Balance of the account 
+        example: 99.95
+      beneficiary:
+        description: Beneficiary of the account 
+        oneOf:
+          - $ref: ../counterparty/BusinessCounterParty.yaml
+          - $ref: ../counterparty/IndividualCounterParty.yaml
+        discriminator:
+          propertyName: counterpartyType
+          mapping:
+            INDIVIDUAL_COUNTERPARTY: ../counterparty/BusinessCounterParty.yaml
+            BUSINESS_COUNTERPARTY: ../counterparty/IndividualCounterParty.yaml
+          
