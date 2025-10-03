@@ -2,12 +2,10 @@ allOf:
   - $ref: ./CounterParty.yaml
   - type: object
     required:
-      - bankAccountInfo
+      - address 
     properties:
       address:
         $ref: ../common/Address.yaml
-      bankAccountInfo:
-        $ref: ../users/UserBankAccountInfo.yaml
       businessInfo:
         type: object
         required:

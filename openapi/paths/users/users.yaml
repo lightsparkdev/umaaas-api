@@ -37,13 +37,6 @@ post:
                 state: WA
                 postalCode: '98101'
                 country: US
-              bankAccountInfo:
-                accountType: US_ACCOUNT
-                accountNumber: '12345678901'
-                routingNumber: '123456789'
-                accountCategory: CHECKING
-                bankName: Chase Bank
-                platformAccountId: chase_primary_1234
           businessUser:
             summary: Create business user example
             value:
@@ -59,13 +52,6 @@ post:
                 state: TX
                 postalCode: '78701'
                 country: US
-              bankAccountInfo:
-                accountType: US_ACCOUNT
-                accountNumber: '98765432109'
-                routingNumber: '987654321'
-                accountCategory: CHECKING
-                bankName: Bank of America
-                platformAccountId: boa_business_5678
   responses:
     '201':
       description: User created successfully
