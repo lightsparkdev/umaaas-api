@@ -1,31 +1,28 @@
 get:
   summary: Get quote by ID
   description: >
-    Retrieve a quote by its ID. If the quote has been settled, it will include 
-
-    the transaction ID. This allows clients to track the full lifecycle of a
-    payment
-
-    from quote creation to settlement.
+    Retrieve a quote by its ID. If the quote has been confirmed, it will include 
+    the current status and all transfer details.
   operationId: getQuoteById
   tags:
     - Sending Payments
   security:
     - BasicAuth: []
   parameters:
-    - name: quoteId
+    - name: id
       in: path
       description: ID of the quote to retrieve
       required: true
       schema:
         type: string
+      example: GridQuote:019542f5-b3e7-1d02-0000-000000000001
   responses:
     '200':
       description: Quote retrieved successfully
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/quotes/Quote.yaml
+            $ref: ../../components/schemas/quotes/GridQuote.yaml
     '401':
       description: Unauthorized
       content:
@@ -44,3 +41,4 @@ get:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error500.yaml
+
