@@ -1,13 +1,9 @@
 allOf:
   - $ref: ./User.yaml
   - type: object
-    required:
-      - bankAccountInfo
     properties:
       address:
         $ref: ../common/Address.yaml
-      bankAccountInfo:
-        $ref: ./UserBankAccountInfo.yaml
       businessInfo:
         type: object
         required:
@@ -29,4 +25,4 @@ allOf:
       beneficialOwners:
         type: array 
         items:
-          - $ref: ./UltimateBeneficialOwner.yaml
+          $ref: ./UltimateBeneficialOwner.yaml

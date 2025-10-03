@@ -2,7 +2,8 @@ allOf:
   - $ref: ./CounterParty.yaml
   - type: object
     required:
-      - bankAccountInfo
+      - fullName
+      - nationality
     properties:
       fullName:
         type: string
@@ -19,5 +20,3 @@ allOf:
         example: US
       address:
         $ref: ../common/Address.yaml
-      bankAccountInfo:
-        $ref: ../users/UserBankAccountInfo.yaml

@@ -11,7 +11,8 @@ properties:
   umaAddress:
     type: string
     description: Optional UMA address identifier
-    examples: $john.doe@uma.domain.com
+    examples: 
+      - $john.doe@uma.domain.com
   platformUserId:
     type: string
     description: Platform-specific user identifier

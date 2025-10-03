@@ -158,8 +158,8 @@ paths:
                       discriminator:
                         propertyName: accountSource
                         mapping:
-                          INTERNAL_ACCOUNT: '#/components/schemas/IndividualUser'
-                          EXTERNAL_ACCOUNT: '#/components/schemas/BusinessUser'
+                          INTERNAL_ACCOUNT: '#/components/schemas/InternalAccount'
+                          EXTERNAL_ACCOUNT: '#/components/schemas/ExternalAccount'
                   hasMore:
                     type: boolean
                     description: Indicates if more results are available beyond this page
@@ -225,13 +225,6 @@ paths:
                     state: WA
                     postalCode: '98101'
                     country: US
-                  bankAccountInfo:
-                    accountType: US_ACCOUNT
-                    accountNumber: '12345678901'
-                    routingNumber: '123456789'
-                    accountCategory: CHECKING
-                    bankName: Chase Bank
-                    platformAccountId: chase_primary_1234
               businessUser:
                 summary: Create business user example
                 value:
@@ -247,13 +240,6 @@ paths:
                     state: TX
                     postalCode: '78701'
                     country: US
-                  bankAccountInfo:
-                    accountType: US_ACCOUNT
-                    accountNumber: '98765432109'
-                    routingNumber: '987654321'
-                    accountCategory: CHECKING
-                    bankName: Bank of America
-                    platformAccountId: boa_business_5678
       responses:
         '201':
           description: User created successfully
@@ -651,6 +637,58 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /users/{userId}/kyc:
+    parameters:
+      - name: userId
+        in: path
+        description: System-generated unique user identifier
+        required: true
+        schema:
+          type: string
+      - name: redirect_uri
+        in: query
+        description: An optional uri a user will be redirected to after completing the hosted kyc flow
+        required: false
+        schema:
+          type: string
+    get:
+      summary: Get a hosted kyc link for a user
+      description: Retrieve a kyc link by a user system-generated ID
+      operationId: getKycLinkForUser
+      tags:
+        - Users
+      security:
+        - BasicAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                properties:
+                  url:
+                    schema:
+                      type: string
+                    description: A hosted kyc link
+                    example: http%3A%2F%2Fexample.com%2Fredirect
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal service error
           content:
@@ -1488,6 +1526,7 @@ paths:
                   format: int64
                   description: The amount to send/receive in the smallest unit of the locked currency (eg. cents). See `lockedCurrencySide` for more information.
                   exclusiveMinimum: 0
+                  maximum: 9000000000000000
                   example: 1000
                 description:
                   type: string
@@ -2930,50 +2969,91 @@ components:
         - $ref: '#/components/schemas/Error424'
         - $ref: '#/components/schemas/Error500'
         - $ref: '#/components/schemas/Error501'
-    IndividualUser:
+    InternalAccount:
       allOf:
-        - $ref: '#/components/schemas/User'
-        - type: object
-          required:
-            - bankAccountInfo
-          properties:
-            fullName:
-              type: string
-              description: Individual's full name
-              example: John Michael Doe
-            birthDate:
-              type: string
-              format: date
-              description: Date of birth in ISO 8601 format (YYYY-MM-DD)
-              example: '1990-01-15'
-            nationality:
-              type: string
-              description: Country code (ISO 3166-1 alpha-2)
-              example: US
-            address:
-              $ref: '#/components/schemas/Address'
-            bankAccountInfo:
-              $ref: '#/components/schemas/UserBankAccountInfo'
-    User:
+        - $ref: '#/components/schemas/BankAccountBase'
+        - properties:
+            balance:
+              type: number
+              format: decimal
+              description: Balance of the account
+              example: 99.95
+    BankAccountBase:
       type: object
       required:
-        - platformUserId
-        - userType
+        - accountSource
+      properties:
+        id:
+          type: string
+          description: The system generated identifier of this account
+          example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+        currency:
+          type: string
+          description: The ISO 4217 currency code or ISO 24165 code
+          example: USD
+        ownerId:
+          type: string
+          description: The user this account is tied to
+          example: da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7
+        platformAccountId:
+          type: string
+          description: |
+            Platform-specific identifier for this bank account. This optional field allows platforms
+            to link bank accounts to their internal account systems. The value can be any string
+            that helps identify the account in your system (e.g. database IDs, custom references, etc.).
+
+            This field is particularly useful when:
+            - Tracking multiple bank accounts for the same user
+            - Linking accounts to internal accounting systems
+            - Maintaining consistency between UMAaaS and your platform's account records
+          example: acc_123456789
+        accountInfo:
+          type: object
+          description: Details of the external bank account
+          properties:
+            accountType:
+              $ref: '#/components/schemas/BankAccountType'
+          discriminator:
+            propertyName: accountType
+            mapping:
+              CLABE: '#/components/schemas/UserClabeAccountInfo'
+              US_ACCOUNT: '#/components/schemas/UserUsAccountInfo'
+              PIX: '#/components/schemas/UserPixAccountInfo'
+              IBAN: '#/components/schemas/UserIbanAccountInfo'
+              FBO: '#/components/schemas/UserFboAccountInfo'
+              UPI: '#/components/schemas/UserUpiAccountInfo'
+        accountSource:
+          type: string
+          enum:
+            - INTERNAL_ACCOUNT
+            - EXTERNAL_ACCOUNT
+          description: Whether this is an internal or external account
+      discriminator:
+        propertyName: accountSource
+        mapping:
+          INTERNAL_ACCOUNT: '#/components/schemas/InternalAccount'
+          EXTERNAL_ACCOUNT: '#/components/schemas/ExternalAccount'
+    CounterParty:
+      type: object
+      required:
+        - counterPartyType
+        - userId
       properties:
         id:
           type: string
           description: System-generated unique identifier
           readOnly: true
           example: User:019542f5-b3e7-1d02-0000-000000000001
-        umaAddress:
+        userId:
           type: string
-          description: Optional UMA address identifier
-          examples: $john.doe@uma.domain.com
+          description: The user this counterparty is registered to
+          examples:
+            - 57dedf0c-f919-42b0-b584-73ea68d42aac
         platformUserId:
           type: string
           description: Platform-specific user identifier
           example: 9f84e0c2a72c4fa
-        userType:
+        counterPartyType:
           $ref: '#/components/schemas/UserType'
         createdAt:
           type: string
@@ -2993,10 +3073,10 @@ components:
           example: false
           readOnly: true
       discriminator:
-        propertyName: userType
+        propertyName: counterPartyType
         mapping:
-          INDIVIDUAL: '#/components/schemas/IndividualUser'
-          BUSINESS: '#/components/schemas/BusinessUser'
+          INDIVIDUAL: '#/components/schemas/IndividualCounterParty'
+          BUSINESS: '#/components/schemas/BusinessCounterParty'
     Address:
       type: object
       required:
@@ -3028,6 +3108,82 @@ components:
           type: string
           description: Country code (ISO 3166-1 alpha-2)
           example: US
+    IndividualCounterParty:
+      allOf:
+        - $ref: '#/components/schemas/CounterParty'
+        - type: object
+          required:
+            - fullName
+            - nationality
+          properties:
+            fullName:
+              type: string
+              description: Individual's full name
+              example: John Michael Doe
+            birthDate:
+              type: string
+              format: date
+              description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+              example: '1990-01-15'
+            nationality:
+              type: string
+              description: Country code (ISO 3166-1 alpha-2)
+              example: US
+            address:
+              $ref: '#/components/schemas/Address'
+    BusinessCounterParty:
+      allOf:
+        - $ref: '#/components/schemas/CounterParty'
+        - type: object
+          required:
+            - address
+          properties:
+            address:
+              $ref: '#/components/schemas/Address'
+            businessInfo:
+              type: object
+              required:
+                - legalName
+              description: Additional information required for business entities
+              properties:
+                legalName:
+                  type: string
+                  description: Legal name of the business
+                  example: Acme Corporation, Inc.
+                registrationNumber:
+                  type: string
+                  description: Business registration number
+                  example: BRN-123456789
+                taxId:
+                  type: string
+                  description: Tax identification number
+                  example: EIN-987654321
+    UserType:
+      type: string
+      enum:
+        - INDIVIDUAL
+        - BUSINESS
+      description: Whether the user is an individual or a business entity
+      example: INDIVIDUAL
+    ExternalAccount:
+      allOf:
+        - $ref: '#/components/schemas/BankAccountBase'
+        - properties:
+            balance:
+              type: number
+              format: decimal
+              description: Balance of the account
+              example: 99.95
+            beneficiary:
+              description: Beneficiary of the account
+              oneOf:
+                - $ref: '#/components/schemas/BusinessCounterParty'
+                - $ref: '#/components/schemas/IndividualCounterParty'
+              discriminator:
+                propertyName: counterpartyType
+                mapping:
+                  INDIVIDUAL_COUNTERPARTY: '#/components/schemas/BusinessCounterParty'
+                  BUSINESS_COUNTERPARTY: '#/components/schemas/IndividualCounterParty'
     ClabeAccountInfo:
       type: object
       required:
@@ -3086,61 +3242,6 @@ components:
           type: string
           description: Name of the account holder
           example: John Doe
-    BankAccountBase:
-      type: object
-      required:
-        - accountType
-      properties:
-        id:
-          type: string
-          description: The system generated identifier of this account
-          example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-        currency:
-          type: string
-          description: The ISO 4217 currency code or ISO 24165 code
-          example: USD
-        ownerId:
-          type: string
-          description: The user this account is tied to
-          example: da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7
-        platformAccountId:
-          type: string
-          description: |
-            Platform-specific identifier for this bank account. This optional field allows platforms
-            to link bank accounts to their internal account systems. The value can be any string
-            that helps identify the account in your system (e.g. database IDs, custom references, etc.).
-
-            This field is particularly useful when:
-            - Tracking multiple bank accounts for the same user
-            - Linking accounts to internal accounting systems
-            - Maintaining consistency between UMAaaS and your platform's account records
-          example: acc_123456789
-        accountInfo:
-          type: object
-          description: Details of the external bank account
-          properties:
-            accountType:
-              $ref: '#/components/schemas/BankAccountType'
-          discriminator:
-            propertyName: accountType
-            mapping:
-              CLABE: '#/components/schemas/UserClabeAccountInfo'
-              US_ACCOUNT: '#/components/schemas/UserUsAccountInfo'
-              PIX: '#/components/schemas/UserPixAccountInfo'
-              IBAN: '#/components/schemas/UserIbanAccountInfo'
-              FBO: '#/components/schemas/UserFboAccountInfo'
-              UPI: '#/components/schemas/UserUpiAccountInfo'
-        accountSource:
-          type: string
-          enum:
-            - INTERNAL_ACCOUNT
-            - EXTERNAL_ACCOUNT
-          description: Whether this is an internal or external account
-        discriminator:
-          propertyName: accountSource
-          mapping:
-            INTERNAL_ACCOUNT: ./InternalAccount.yaml
-            EXTERNAL_ACCOUNT: ./External_Account.yaml
     UserUsAccountInfo:
       allOf:
         - $ref: '#/components/schemas/UsAccountInfo'
@@ -3253,189 +3354,6 @@ components:
         - FBO
         - UPI
       description: Type of bank account information
-    UserBankAccountInfo:
-      oneOf:
-        - $ref: '#/components/schemas/UserClabeAccountInfo'
-        - $ref: '#/components/schemas/UserUsAccountInfo'
-        - $ref: '#/components/schemas/UserPixAccountInfo'
-        - $ref: '#/components/schemas/UserIbanAccountInfo'
-        - $ref: '#/components/schemas/UserFboAccountInfo'
-        - $ref: '#/components/schemas/UserUpiAccountInfo'
-      discriminator:
-        propertyName: accountType
-        mapping:
-          CLABE: '#/components/schemas/UserClabeAccountInfo'
-          US_ACCOUNT: '#/components/schemas/UserUsAccountInfo'
-          PIX: '#/components/schemas/UserPixAccountInfo'
-          IBAN: '#/components/schemas/UserIbanAccountInfo'
-          FBO: '#/components/schemas/UserFboAccountInfo'
-          UPI: '#/components/schemas/UserUpiAccountInfo'
-    BusinessUser:
-      allOf:
-        - $ref: '#/components/schemas/User'
-        - type: object
-          required:
-            - bankAccountInfo
-          properties:
-            address:
-              $ref: '#/components/schemas/Address'
-            bankAccountInfo:
-              $ref: '#/components/schemas/UserBankAccountInfo'
-            businessInfo:
-              type: object
-              required:
-                - legalName
-              description: Additional information required for business entities
-              properties:
-                legalName:
-                  type: string
-                  description: Legal name of the business
-                  example: Acme Corporation, Inc.
-                registrationNumber:
-                  type: string
-                  description: Business registration number
-                  example: BRN-123456789
-                taxId:
-                  type: string
-                  description: Tax identification number
-                  example: EIN-987654321
-            beneficialOwners:
-              type: array
-              items:
-                - $ref: ./UltimateBeneficialOwner.yaml
-    UserType:
-      type: string
-      enum:
-        - INDIVIDUAL
-        - BUSINESS
-      description: Whether the user is an individual or a business entity
-      example: INDIVIDUAL
-    InternalAccount:
-      allOf:
-        - $ref: '#/components/schemas/BankAccountBase'
-        - properties:
-            balance:
-              type: number
-              format: decimal
-              description: Balance of the account
-              example: 99.95
-    CounterParty:
-      type: object
-      required:
-        - platformUserId
-        - counterPartyType
-        - endUserId
-      properties:
-        id:
-          type: string
-          description: System-generated unique identifier
-          readOnly: true
-          example: User:019542f5-b3e7-1d02-0000-000000000001
-        endUserId:
-          type: string
-          description: The end user this counterparty is registered to
-          examples:
-            - 57dedf0c-f919-42b0-b584-73ea68d42aac
-        platformUserId:
-          type: string
-          description: Platform-specific user identifier
-          example: 9f84e0c2a72c4fa
-        counterPartyType:
-          $ref: '#/components/schemas/UserType'
-        createdAt:
-          type: string
-          format: date-time
-          description: Creation timestamp
-          readOnly: true
-          example: '2023-07-21T17:32:28Z'
-        updatedAt:
-          type: string
-          format: date-time
-          description: Last update timestamp
-          readOnly: true
-          example: '2023-07-21T17:32:28Z'
-        isDeleted:
-          type: boolean
-          description: Whether the user is marked as deleted
-          example: false
-          readOnly: true
-      discriminator:
-        propertyName: counterPartyType
-        mapping:
-          INDIVIDUAL: '#/components/schemas/IndividualCounterParty'
-          BUSINESS: '#/components/schemas/BusinessCounterParty'
-    IndividualCounterParty:
-      allOf:
-        - $ref: '#/components/schemas/CounterParty'
-        - type: object
-          required:
-            - bankAccountInfo
-          properties:
-            fullName:
-              type: string
-              description: Individual's full name
-              example: John Michael Doe
-            birthDate:
-              type: string
-              format: date
-              description: Date of birth in ISO 8601 format (YYYY-MM-DD)
-              example: '1990-01-15'
-            nationality:
-              type: string
-              description: Country code (ISO 3166-1 alpha-2)
-              example: US
-            address:
-              $ref: '#/components/schemas/Address'
-            bankAccountInfo:
-              $ref: '#/components/schemas/UserBankAccountInfo'
-    BusinessCounterParty:
-      allOf:
-        - $ref: '#/components/schemas/CounterParty'
-        - type: object
-          required:
-            - bankAccountInfo
-          properties:
-            address:
-              $ref: '#/components/schemas/Address'
-            bankAccountInfo:
-              $ref: '#/components/schemas/UserBankAccountInfo'
-            businessInfo:
-              type: object
-              required:
-                - legalName
-              description: Additional information required for business entities
-              properties:
-                legalName:
-                  type: string
-                  description: Legal name of the business
-                  example: Acme Corporation, Inc.
-                registrationNumber:
-                  type: string
-                  description: Business registration number
-                  example: BRN-123456789
-                taxId:
-                  type: string
-                  description: Tax identification number
-                  example: EIN-987654321
-    ExternalAccount:
-      allOf:
-        - $ref: '#/components/schemas/BankAccountBase'
-        - properties:
-            balance:
-              type: number
-              format: decimal
-              description: Balance of the account
-              example: 99.95
-            beneficiary:
-              description: Beneficiary of the account
-              oneOf:
-                - $ref: '#/components/schemas/BusinessCounterParty'
-                - $ref: '#/components/schemas/IndividualCounterParty'
-              discriminator:
-                propertyName: counterpartyType
-                mapping:
-                  INDIVIDUAL_COUNTERPARTY: '#/components/schemas/BusinessCounterParty'
-                  BUSINESS_COUNTERPARTY: '#/components/schemas/IndividualCounterParty'
     Error400:
       type: object
       required:
@@ -3598,6 +3516,166 @@ components:
         details:
           type: object
           description: Additional error details
+    IndividualUser:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            fullName:
+              type: string
+              description: Individual's full name
+              example: John Michael Doe
+            birthDate:
+              type: string
+              format: date
+              description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+              example: '1990-01-15'
+            nationality:
+              type: string
+              description: Country code (ISO 3166-1 alpha-2)
+              example: US
+            address:
+              $ref: '#/components/schemas/Address'
+    User:
+      type: object
+      required:
+        - platformUserId
+        - userType
+      properties:
+        id:
+          type: string
+          description: System-generated unique identifier
+          readOnly: true
+          example: User:019542f5-b3e7-1d02-0000-000000000001
+        umaAddress:
+          type: string
+          description: Optional UMA address identifier
+          examples:
+            - $john.doe@uma.domain.com
+        platformUserId:
+          type: string
+          description: Platform-specific user identifier
+          example: 9f84e0c2a72c4fa
+        userType:
+          $ref: '#/components/schemas/UserType'
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          readOnly: true
+          example: '2023-07-21T17:32:28Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          readOnly: true
+          example: '2023-07-21T17:32:28Z'
+        isDeleted:
+          type: boolean
+          description: Whether the user is marked as deleted
+          example: false
+          readOnly: true
+      discriminator:
+        propertyName: userType
+        mapping:
+          INDIVIDUAL: '#/components/schemas/IndividualUser'
+          BUSINESS: '#/components/schemas/BusinessUser'
+    UltimateBeneficialOwner:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          required:
+            - fullName
+            - individualType
+          properties:
+            id:
+              type: string
+              description: System-generated unique identifier
+              readOnly: true
+              example: UBOUser:019542f5-b3e7-1d02-0000-000000000001
+            fullName:
+              type: string
+              description: Individual's full name
+              example: John Michael Doe
+            emailAddress:
+              type: string
+              format: email
+              description: Email address of the individual
+              example: example@test.com
+            birthDate:
+              type: string
+              format: date
+              description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+              example: '1990-01-15'
+            nationality:
+              type: string
+              description: Country code (ISO 3166-1 alpha-2)
+              example: US
+            address:
+              $ref: '#/components/schemas/Address'
+            individualType:
+              type: string
+              enum:
+                - OFFICER
+                - BENEFICIAL_OWNER
+                - CONTROL_PERSON
+                - AUTHORIZED_PERSON
+              description: Type of individual in the corporation
+              example: BENEFICIAL_OWNER
+            percentageOwnership:
+              type: number
+              description: Percent of ownership when individual type is benificial owner
+              example: 10
+            title:
+              type: string
+              description: Title at company
+              example: CEO, COO, President
+            createdAt:
+              type: string
+              format: date-time
+              description: Creation timestamp
+              readOnly: true
+              example: '2023-07-21T17:32:28Z'
+            updatedAt:
+              type: string
+              format: date-time
+              description: Last update timestamp
+              readOnly: true
+              example: '2023-07-21T17:32:28Z'
+            isDeleted:
+              type: boolean
+              description: Whether the user is marked as deleted
+              example: false
+              readOnly: true
+    BusinessUser:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            address:
+              $ref: '#/components/schemas/Address'
+            businessInfo:
+              type: object
+              required:
+                - legalName
+              description: Additional information required for business entities
+              properties:
+                legalName:
+                  type: string
+                  description: Legal name of the business
+                  example: Acme Corporation, Inc.
+                registrationNumber:
+                  type: string
+                  description: Business registration number
+                  example: BRN-123456789
+                taxId:
+                  type: string
+                  description: Tax identification number
+                  example: EIN-987654321
+            beneficialOwners:
+              type: array
+              items:
+                $ref: '#/components/schemas/UltimateBeneficialOwner'
     Error409:
       type: object
       required:
@@ -3678,73 +3756,23 @@ components:
         details:
           type: object
           description: Additional error details
-    UltimateBeneficialOwner:
-      allOf:
-        - $ref: '#/components/schemas/User'
-        - type: object
-          required:
-            - fullName
-            - individualType
-          properties:
-            id:
-              type: string
-              description: System-generated unique identifier
-              readOnly: true
-              example: UBOUser:019542f5-b3e7-1d02-0000-000000000001
-            fullName:
-              type: string
-              description: Individual's full name
-              example: John Michael Doe
-            emailAddress:
-              type: string
-              format: email
-              description: Email address of the individual
-              example: example@test.com
-            birthDate:
-              type: string
-              format: date
-              description: Date of birth in ISO 8601 format (YYYY-MM-DD)
-              example: '1990-01-15'
-            nationality:
-              type: string
-              description: Country code (ISO 3166-1 alpha-2)
-              example: US
-            address:
-              $ref: '#/components/schemas/Address'
-            individualType:
-              type: string
-              enum:
-                - OFFICER
-                - BENEFICIAL_OWNER
-                - CONTROL_PERSON
-                - AUTHORIZED_PERSON
-              description: Type of individual in the corporation
-              example: BENEFICIAL_OWNER
-            percentageOwnership:
-              type: number
-              description: Percent of ownership when individual type is benificial owner
-              example: 10
-            title:
-              type: string
-              description: Title at company
-              example: CEO, COO, President
-            createdAt:
-              type: string
-              format: date-time
-              description: Creation timestamp
-              readOnly: true
-              example: '2023-07-21T17:32:28Z'
-            updatedAt:
-              type: string
-              format: date-time
-              description: Last update timestamp
-              readOnly: true
-              example: '2023-07-21T17:32:28Z'
-            isDeleted:
-              type: boolean
-              description: Whether the user is marked as deleted
-              example: false
-              readOnly: true
+    UserBankAccountInfo:
+      oneOf:
+        - $ref: '#/components/schemas/UserClabeAccountInfo'
+        - $ref: '#/components/schemas/UserUsAccountInfo'
+        - $ref: '#/components/schemas/UserPixAccountInfo'
+        - $ref: '#/components/schemas/UserIbanAccountInfo'
+        - $ref: '#/components/schemas/UserFboAccountInfo'
+        - $ref: '#/components/schemas/UserUpiAccountInfo'
+      discriminator:
+        propertyName: accountType
+        mapping:
+          CLABE: '#/components/schemas/UserClabeAccountInfo'
+          US_ACCOUNT: '#/components/schemas/UserUsAccountInfo'
+          PIX: '#/components/schemas/UserPixAccountInfo'
+          IBAN: '#/components/schemas/UserIbanAccountInfo'
+          FBO: '#/components/schemas/UserFboAccountInfo'
+          UPI: '#/components/schemas/UserUpiAccountInfo'
     Permission:
       type: string
       enum:

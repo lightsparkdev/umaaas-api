@@ -1,8 +1,6 @@
 allOf:
   - $ref: ./User.yaml
   - type: object
-    required:
-      - bankAccountInfo
     properties:
       fullName:
         type: string
@@ -19,5 +17,3 @@ allOf:
         example: US
       address:
         $ref: ../common/Address.yaml
-      bankAccountInfo:
-        $ref: ./UserBankAccountInfo.yaml
