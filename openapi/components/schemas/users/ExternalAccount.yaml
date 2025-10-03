@@ -9,11 +9,11 @@ allOf:
       beneficiary:
         description: Beneficiary of the account 
         oneOf:
-          - $ref: ../../components/schemas/counterparty/BusinessCounterParty.yaml
-          - $ref: ../../components/schemas/counterparty/IndividualCounterParty.yaml
+          - $ref: ../counterparty/BusinessCounterParty.yaml
+          - $ref: ../counterparty/IndividualCounterParty.yaml
         discriminator:
           propertyName: counterpartyType
           mapping:
-            INDIVIDUAL_COUNTERPARTY: ../../components/schemas/counterparty/BusinessCounterParty.yaml
-            BUSINESS_COUNTERPARTY: ../../components/schemas/counterparty/IndividualCounterParty.yaml
+            INDIVIDUAL_COUNTERPARTY: ../counterparty/BusinessCounterParty.yaml
+            BUSINESS_COUNTERPARTY: ../counterparty/IndividualCounterParty.yaml
           

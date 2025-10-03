@@ -34,10 +34,163 @@ tags:
   - name: API Tokens
     description: Endpoints to programatically manage API tokens
 paths:
+  /account:
+    post:
+      summary: Add a new account
+      description: Add a new internal or external account associated with a user or counterparty
+      operationId: createAccount
+      tags:
+        - Account
+      security:
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/InternalAccount'
+                - $ref: '#/components/schemas/ExternalAccount'
+              discriminator:
+                propertyName: userType
+                mapping:
+                  INTERNAL_ACCOUNT: '#/components/schemas/InternalAccount'
+                  EXTERNAL_ACCOUNT: '#/components/schemas/ExternalAccount'
+      responses:
+        '200':
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/InternalAccount'
+                  - $ref: '#/components/schemas/ExternalAccount'
+                discriminator:
+                  propertyName: userType
+                  mapping:
+                    INTERNAL_ACCOUNT: '#/components/schemas/InternalAccount'
+                    EXTERNAL_ACCOUNT: '#/components/schemas/ExternalAccount'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+        '501':
+          description: Not implemented
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error501'
+    get:
+      summary: Get all accounts
+      description: |
+        Retrieve a list of accounts with optional filtering parameters. Returns all accounts that match the specified filters. If no filters are provided, returns all accounts (paginated).
+      operationId: listAccounts
+      tags:
+        - Account
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: accountSource
+          in: query
+          description: Filter by internal or external account
+          required: false
+          schema:
+            type: string
+        - name: currency
+          in: query
+          description: Filter by currency code
+          required: false
+          schema:
+            type: string
+        - name: userId
+          in: query
+          description: Filter by accounts associated with a specific user
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Maximum number of results to return (default 20, max 100)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: cursor
+          in: query
+          description: Cursor for pagination (returned from previous request)
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - hasMore
+                properties:
+                  data:
+                    type: array
+                    description: List of accounts matching the filter criteria
+                    items:
+                      oneOf:
+                        - $ref: '#/components/schemas/InternalAccount'
+                        - $ref: '#/components/schemas/ExternalAccount'
+                      discriminator:
+                        propertyName: accountSource
+                        mapping:
+                          INTERNAL_ACCOUNT: '#/components/schemas/IndividualUser'
+                          EXTERNAL_ACCOUNT: '#/components/schemas/BusinessUser'
+                  hasMore:
+                    type: boolean
+                    description: Indicates if more results are available beyond this page
+                  nextCursor:
+                    type: string
+                    description: Cursor to retrieve the next page of results (only present if hasMore is true)
+                  totalCount:
+                    type: integer
+                    description: Total number of users matching the criteria (excluding pagination)
+        '400':
+          description: Bad request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /users:
     post:
       summary: Add a new user
-      description: Register a new user in the system with UMA address and bank account information
+      description: Register a new user in the system with an account identifier and bank account information
       operationId: createUser
       tags:
         - Users
@@ -82,7 +235,6 @@ paths:
               businessUser:
                 summary: Create business user example
                 value:
-                  umaAddress: $acme@uma.domain.com
                   platformUserId: 6e4d2c0b8a9f3
                   userType: BUSINESS
                   businessInfo:
@@ -165,7 +317,7 @@ paths:
             type: string
         - name: umaAddress
           in: query
-          description: Filter by UMA address
+          description: Filter by uma address
           required: false
           schema:
             type: string
@@ -378,6 +530,8 @@ paths:
                       $ref: '#/components/schemas/Address'
                     bankAccountInfo:
                       $ref: '#/components/schemas/UserBankAccountInfo'
+                    beneficialOwners:
+                      $ref: '#/components/schemas/UltimateBeneficialOwner'
             examples:
               individualUpdate:
                 summary: Update individual user example
@@ -937,21 +1091,21 @@ paths:
           required: false
           schema:
             type: string
-        - name: umaAddress
+        - name: accountIdentifier
           in: query
-          description: Filter by UMA address (either sender or receiver)
+          description: Filter by account identifier (either sender or receiver)
           required: false
           schema:
             type: string
-        - name: senderUmaAddress
+        - name: senderAccountIdentifier
           in: query
-          description: Filter by sender UMA address
+          description: Filter by sender account identifier
           required: false
           schema:
             type: string
-        - name: receiverUmaAddress
+        - name: receiverAccountIdentifier
           in: query
-          description: Filter by receiver UMA address
+          description: Filter by receiver account identifier
           required: false
           schema:
             type: string
@@ -2776,13 +2930,6 @@ components:
         - $ref: '#/components/schemas/Error424'
         - $ref: '#/components/schemas/Error500'
         - $ref: '#/components/schemas/Error501'
-    UserType:
-      type: string
-      enum:
-        - INDIVIDUAL
-        - BUSINESS
-      description: Whether the user is an individual or a business entity
-      example: INDIVIDUAL
     IndividualUser:
       allOf:
         - $ref: '#/components/schemas/User'
@@ -2810,7 +2957,6 @@ components:
     User:
       type: object
       required:
-        - umaAddress
         - platformUserId
         - userType
       properties:
@@ -2821,8 +2967,8 @@ components:
           example: User:019542f5-b3e7-1d02-0000-000000000001
         umaAddress:
           type: string
-          description: full UMA address
-          example: $john.doe@uma.domain.com
+          description: Optional UMA address identifier
+          examples: $john.doe@uma.domain.com
         platformUserId:
           type: string
           description: Platform-specific user identifier
@@ -2945,6 +3091,18 @@ components:
       required:
         - accountType
       properties:
+        id:
+          type: string
+          description: The system generated identifier of this account
+          example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+        currency:
+          type: string
+          description: The ISO 4217 currency code or ISO 24165 code
+          example: USD
+        ownerId:
+          type: string
+          description: The user this account is tied to
+          example: da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7
         platformAccountId:
           type: string
           description: |
@@ -2957,17 +3115,32 @@ components:
             - Linking accounts to internal accounting systems
             - Maintaining consistency between UMAaaS and your platform's account records
           example: acc_123456789
-        accountType:
-          $ref: '#/components/schemas/BankAccountType'
-      discriminator:
-        propertyName: accountType
-        mapping:
-          CLABE: '#/components/schemas/UserClabeAccountInfo'
-          US_ACCOUNT: '#/components/schemas/UserUsAccountInfo'
-          PIX: '#/components/schemas/UserPixAccountInfo'
-          IBAN: '#/components/schemas/UserIbanAccountInfo'
-          FBO: '#/components/schemas/UserFboAccountInfo'
-          UPI: '#/components/schemas/UserUpiAccountInfo'
+        accountInfo:
+          type: object
+          description: Details of the external bank account
+          properties:
+            accountType:
+              $ref: '#/components/schemas/BankAccountType'
+          discriminator:
+            propertyName: accountType
+            mapping:
+              CLABE: '#/components/schemas/UserClabeAccountInfo'
+              US_ACCOUNT: '#/components/schemas/UserUsAccountInfo'
+              PIX: '#/components/schemas/UserPixAccountInfo'
+              IBAN: '#/components/schemas/UserIbanAccountInfo'
+              FBO: '#/components/schemas/UserFboAccountInfo'
+              UPI: '#/components/schemas/UserUpiAccountInfo'
+        accountSource:
+          type: string
+          enum:
+            - INTERNAL_ACCOUNT
+            - EXTERNAL_ACCOUNT
+          description: Whether this is an internal or external account
+        discriminator:
+          propertyName: accountSource
+          mapping:
+            INTERNAL_ACCOUNT: ./InternalAccount.yaml
+            EXTERNAL_ACCOUNT: ./External_Account.yaml
     UserUsAccountInfo:
       allOf:
         - $ref: '#/components/schemas/UsAccountInfo'
@@ -3126,6 +3299,143 @@ components:
                   type: string
                   description: Tax identification number
                   example: EIN-987654321
+            beneficialOwners:
+              type: array
+              items:
+                - $ref: ./UltimateBeneficialOwner.yaml
+    UserType:
+      type: string
+      enum:
+        - INDIVIDUAL
+        - BUSINESS
+      description: Whether the user is an individual or a business entity
+      example: INDIVIDUAL
+    InternalAccount:
+      allOf:
+        - $ref: '#/components/schemas/BankAccountBase'
+        - properties:
+            balance:
+              type: number
+              format: decimal
+              description: Balance of the account
+              example: 99.95
+    CounterParty:
+      type: object
+      required:
+        - platformUserId
+        - counterPartyType
+        - endUserId
+      properties:
+        id:
+          type: string
+          description: System-generated unique identifier
+          readOnly: true
+          example: User:019542f5-b3e7-1d02-0000-000000000001
+        endUserId:
+          type: string
+          description: The end user this counterparty is registered to
+          examples:
+            - 57dedf0c-f919-42b0-b584-73ea68d42aac
+        platformUserId:
+          type: string
+          description: Platform-specific user identifier
+          example: 9f84e0c2a72c4fa
+        counterPartyType:
+          $ref: '#/components/schemas/UserType'
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          readOnly: true
+          example: '2023-07-21T17:32:28Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          readOnly: true
+          example: '2023-07-21T17:32:28Z'
+        isDeleted:
+          type: boolean
+          description: Whether the user is marked as deleted
+          example: false
+          readOnly: true
+      discriminator:
+        propertyName: counterPartyType
+        mapping:
+          INDIVIDUAL: '#/components/schemas/IndividualCounterParty'
+          BUSINESS: '#/components/schemas/BusinessCounterParty'
+    IndividualCounterParty:
+      allOf:
+        - $ref: '#/components/schemas/CounterParty'
+        - type: object
+          required:
+            - bankAccountInfo
+          properties:
+            fullName:
+              type: string
+              description: Individual's full name
+              example: John Michael Doe
+            birthDate:
+              type: string
+              format: date
+              description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+              example: '1990-01-15'
+            nationality:
+              type: string
+              description: Country code (ISO 3166-1 alpha-2)
+              example: US
+            address:
+              $ref: '#/components/schemas/Address'
+            bankAccountInfo:
+              $ref: '#/components/schemas/UserBankAccountInfo'
+    BusinessCounterParty:
+      allOf:
+        - $ref: '#/components/schemas/CounterParty'
+        - type: object
+          required:
+            - bankAccountInfo
+          properties:
+            address:
+              $ref: '#/components/schemas/Address'
+            bankAccountInfo:
+              $ref: '#/components/schemas/UserBankAccountInfo'
+            businessInfo:
+              type: object
+              required:
+                - legalName
+              description: Additional information required for business entities
+              properties:
+                legalName:
+                  type: string
+                  description: Legal name of the business
+                  example: Acme Corporation, Inc.
+                registrationNumber:
+                  type: string
+                  description: Business registration number
+                  example: BRN-123456789
+                taxId:
+                  type: string
+                  description: Tax identification number
+                  example: EIN-987654321
+    ExternalAccount:
+      allOf:
+        - $ref: '#/components/schemas/BankAccountBase'
+        - properties:
+            balance:
+              type: number
+              format: decimal
+              description: Balance of the account
+              example: 99.95
+            beneficiary:
+              description: Beneficiary of the account
+              oneOf:
+                - $ref: '#/components/schemas/BusinessCounterParty'
+                - $ref: '#/components/schemas/IndividualCounterParty'
+              discriminator:
+                propertyName: counterpartyType
+                mapping:
+                  INDIVIDUAL_COUNTERPARTY: '#/components/schemas/BusinessCounterParty'
+                  BUSINESS_COUNTERPARTY: '#/components/schemas/IndividualCounterParty'
     Error400:
       type: object
       required:
@@ -3260,34 +3570,6 @@ components:
         details:
           type: object
           description: Additional error details
-    Error409:
-      type: object
-      required:
-        - message
-        - status
-        - code
-      properties:
-        status:
-          enum:
-            - 409
-          type: integer
-          description: HTTP status code
-        code:
-          type: string
-          description: |
-            | Error Code | Description |
-            |------------|-------------|
-            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
-            | UMA_ADDRESS_EXISTS | UMA address already exists | 
-          enum:
-            - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
-            - UMA_ADDRESS_EXISTS
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
     Error501:
       type: object
       required:
@@ -3310,6 +3592,34 @@ components:
           enum:
             - UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY
             - NOT_IMPLEMENTED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+    Error409:
+      type: object
+      required:
+        - message
+        - status
+        - code
+      properties:
+        status:
+          enum:
+            - 409
+          type: integer
+          description: HTTP status code
+        code:
+          type: string
+          description: |
+            | Error Code | Description |
+            |------------|-------------|
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+            | UMA_ADDRESS_EXISTS | UMA address already exists | 
+          enum:
+            - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+            - UMA_ADDRESS_EXISTS
         message:
           type: string
           description: Error message
@@ -3368,6 +3678,73 @@ components:
         details:
           type: object
           description: Additional error details
+    UltimateBeneficialOwner:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          required:
+            - fullName
+            - individualType
+          properties:
+            id:
+              type: string
+              description: System-generated unique identifier
+              readOnly: true
+              example: UBOUser:019542f5-b3e7-1d02-0000-000000000001
+            fullName:
+              type: string
+              description: Individual's full name
+              example: John Michael Doe
+            emailAddress:
+              type: string
+              format: email
+              description: Email address of the individual
+              example: example@test.com
+            birthDate:
+              type: string
+              format: date
+              description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+              example: '1990-01-15'
+            nationality:
+              type: string
+              description: Country code (ISO 3166-1 alpha-2)
+              example: US
+            address:
+              $ref: '#/components/schemas/Address'
+            individualType:
+              type: string
+              enum:
+                - OFFICER
+                - BENEFICIAL_OWNER
+                - CONTROL_PERSON
+                - AUTHORIZED_PERSON
+              description: Type of individual in the corporation
+              example: BENEFICIAL_OWNER
+            percentageOwnership:
+              type: number
+              description: Percent of ownership when individual type is benificial owner
+              example: 10
+            title:
+              type: string
+              description: Title at company
+              example: CEO, COO, President
+            createdAt:
+              type: string
+              format: date-time
+              description: Creation timestamp
+              readOnly: true
+              example: '2023-07-21T17:32:28Z'
+            updatedAt:
+              type: string
+              format: date-time
+              description: Last update timestamp
+              readOnly: true
+              example: '2023-07-21T17:32:28Z'
+            isDeleted:
+              type: boolean
+              description: Whether the user is marked as deleted
+              example: false
+              readOnly: true
     Permission:
       type: string
       enum:
