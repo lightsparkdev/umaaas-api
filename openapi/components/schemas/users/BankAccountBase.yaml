@@ -1,6 +1,4 @@
 type: object
-required:
-  - accountSource
 properties:
   id: 
     type: string 
@@ -37,28 +35,29 @@ properties:
       records
     example: acc_123456789
   accountInfo:
-    type: object 
-    description: Details of the external bank account 
-    properties:
-      accountType:
-        $ref: ../common/BankAccountType.yaml
+    oneOf:
+      - title: CLABE Account
+        $ref: ../common/ClabeAccountInfo.yaml
+      - title: US Bank Account
+        $ref: ../common/UsAccountInfo.yaml
+      - title: PIX Account
+        $ref: ../common/PixAccountInfo.yaml
+      - title: IBAN Account
+        $ref: ../common/IbanAccountInfo.yaml
+      - title: FBO Account
+        $ref: ../common/FboAccountInfo.yaml
+      - title: UPI Account
+        $ref: ../common/UpiAccountInfo.yaml
+      - title: Spark Wallet
+        $ref: ../common/SparkWalletInfo.yaml
     discriminator: 
       propertyName: accountType
       mapping: 
-        CLABE: ./UserClabeAccountInfo.yaml
-        US_ACCOUNT: ./UserUsAccountInfo.yaml
-        PIX: ./UserPixAccountInfo.yaml
-        IBAN: ./UserIbanAccountInfo.yaml
-        FBO: ./UserFboAccountInfo.yaml
-        UPI: ./UserUpiAccountInfo.yaml
-  accountSource:
-    type: string 
-    enum:
-      - INTERNAL_ACCOUNT
-      - EXTERNAL_ACCOUNT
-    description: Whether this is an internal or external account
-discriminator:
-  propertyName: accountSource 
-  mapping:
-    INTERNAL_ACCOUNT: ./InternalAccount.yaml 
-    EXTERNAL_ACCOUNT: ./ExternalAccount.yaml
+        CLABE: ../common/ClabeAccountInfo.yaml
+        US_ACCOUNT: ../common/UsAccountInfo.yaml
+        PIX: ../common/PixAccountInfo.yaml
+        IBAN: ../common/IbanAccountInfo.yaml
+        FBO: ../common/FboAccountInfo.yaml
+        UPI: ../common/UpiAccountInfo.yaml
+        SPARK_WALLET: ../common/SparkWalletInfo.yaml
+    description: Details of the external bank account

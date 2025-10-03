@@ -1,8 +1,13 @@
 type: object
 required:
+  - accountType
   - iban
   - bankName
 properties:
+  accountType:
+    allOf:
+      - $ref: ./BankAccountType.yaml
+    example: IBAN
   iban:
     type: string
     description: International Bank Account Number
