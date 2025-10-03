@@ -1,11 +1,12 @@
 allOf:
   - $ref: ./BankAccountBase.yaml
   - properties:
-      balance:
-        type: number 
-        format: decimal 
-        description: Balance of the account 
-        example: 99.95
+      userId:
+        type: string
+        example: User:019542f5-b3e7-1d02-0000-000000000001
+      status:
+        type: string
+        description: Status of the external account
       beneficiary:
         description: Beneficiary of the account 
         oneOf:
