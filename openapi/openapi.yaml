@@ -85,6 +85,8 @@ paths:
     $ref: paths/users/users.yaml
   /users/{userId}:
     $ref: paths/users/users_{userId}.yaml
+  /users/{userId}/kyc:
+    $ref: paths/users/users_{userId}_kyc.yaml
   /tokens:
     $ref: paths/tokens/tokens.yaml
   /tokens/{tokenId}:

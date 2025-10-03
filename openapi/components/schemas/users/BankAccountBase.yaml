@@ -1,6 +1,6 @@
 type: object
 required:
-  - accountType
+  - accountSource
 properties:
   id: 
     type: string 
@@ -56,9 +56,9 @@ properties:
     enum:
       - INTERNAL_ACCOUNT
       - EXTERNAL_ACCOUNT
-    description: Whether this is an internal or external account 
-  discriminator:
-    propertyName: accountSource 
-    mapping:
-      INTERNAL_ACCOUNT: ./InternalAccount.yaml 
-      EXTERNAL_ACCOUNT: ./External_Account.yaml
+    description: Whether this is an internal or external account
+discriminator:
+  propertyName: accountSource 
+  mapping:
+    INTERNAL_ACCOUNT: ./InternalAccount.yaml 
+    EXTERNAL_ACCOUNT: ./ExternalAccount.yaml
