@@ -80,9 +80,7 @@ components:
 
 paths:
   /account: 
-    $ref: paths/account.yaml
-  /account/user/{userId}: 
-    $ref: paths/account_user_{userId}.yaml
+    $ref: paths/account/account.yaml
   /users:
     $ref: paths/users/users.yaml
   /users/{userId}:

@@ -40,7 +40,7 @@ allOf:
         description: Type of individual in the corporation 
         example: BENEFICIAL_OWNER
       percentageOwnership:
-        type: int 
+        type: number
         description: Percent of ownership when individual type is benificial owner
         example: 10 
       title: 
