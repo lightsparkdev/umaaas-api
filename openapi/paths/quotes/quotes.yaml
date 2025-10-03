@@ -1,26 +1,130 @@
-post:
-  summary: Create a payment quote
+get:
+  summary: List quotes
   description: >
-    Generate a quote for a payment from one UMA address to another.
+    Retrieve a list of quotes with optional filtering parameters. Returns all
+    quotes that match the specified filters. If no filters are provided, returns all quotes
+    (paginated).
+  operationId: listGridQuotes
+  tags:
+    - Sending Payments
+  security:
+    - BasicAuth: []
+  parameters:
+    - name: userId
+      in: query
+      description: Filter by user ID
+      required: false
+      schema:
+        type: string
+    - name: status
+      in: query
+      description: Filter by quote status
+      required: false
+      schema:
+        type: string
+        enum:
+          - PENDING
+          - CONFIRMED
+          - EXPIRED
+          - FAILED
+    - name: createdAfter
+      in: query
+      description: Filter quotes created after this timestamp (inclusive)
+      required: false
+      schema:
+        type: string
+        format: date-time
+    - name: createdBefore
+      in: query
+      description: Filter quotes created before this timestamp (inclusive)
+      required: false
+      schema:
+        type: string
+        format: date-time
+    - name: limit
+      in: query
+      description: Maximum number of results to return (default 20, max 100)
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    - name: cursor
+      in: query
+      description: Cursor for pagination (returned from previous request)
+      required: false
+      schema:
+        type: string
+    - name: sortOrder
+      in: query
+      description: Order to sort results in
+      required: false
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        default: desc
+  responses:
+    '200':
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - data
+              - hasMore
+            properties:
+              data:
+                type: array
+                description: List of quotes matching the criteria
+                items:
+                  $ref: ../../components/schemas/quotes/GridQuote.yaml
+              hasMore:
+                type: boolean
+                description: Indicates if more results are available beyond this page
+              nextCursor:
+                type: string
+                description: >-
+                  Cursor to retrieve the next page of results (only present if
+                  hasMore is true)
+              totalCount:
+                type: integer
+                description: >-
+                  Total number of quotes matching the criteria (excluding
+                  pagination)
+    '400':
+      description: Bad request - Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error400.yaml
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error401.yaml
+    '500':
+      description: Internal service error
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error500.yaml
+post:
+  summary: Create a quote
+  description: >
+    Lock in a quote for transferring funds between a source account and destination account
+    with currency exchange. This endpoint is specifically for cross-currency transfers where
+    the source and destination accounts have different currencies.
+    
 
-    The quote locks in exchange rates and fees for a set period of time and
-    provides
-
-    payment instructions that can be used to execute the payment.
-
-
-    Depending on the `lockedCurrencySide` parameter, either the sending amount
-    or 
-
-    receiving amount will be locked.
-
-
-    The returned quote includes payment instructions with the banking details
-
-    needed to execute the payment and fulfill the quote. These instructions
-
-    must be followed precisely, including any reference codes provided.
-  operationId: createQuote
+    **Important:** If you are transferring funds in the same currency (no exchange required), use the `/transfer-in`
+    or `/transfer-out` endpoints instead.
+    
+  operationId: createGridQuote
   tags:
     - Sending Payments
   security:
@@ -32,90 +136,75 @@ post:
         schema:
           type: object
           required:
-            - lookupId
-            - sendingCurrencyCode
-            - receivingCurrencyCode
-            - lockedCurrencySide
-            - lockedCurrencyAmount
+            - userId
+            - source
+            - destination
+            - amount
           properties:
-            lookupId:
+            userId:
               type: string
-              description: >-
-                Unique identifier for the prior receiver uma address lookup
-                request.
-              example: Lookup:019542f5-b3e7-1d02-0000-000000000009
-            sendingCurrencyCode:
-              type: string
-              description: Currency code for the sending amount
-              example: USD
-            receivingCurrencyCode:
-              type: string
-              description: Currency code for the receiving amount
-              example: EUR
-            lockedCurrencySide:
-              $ref: ../../components/schemas/quotes/QuoteLockSide.yaml
-            lockedCurrencyAmount:
+              description: The ID of the user initiating the transfer
+              example: User:019542f5-b3e7-1d02-0000-000000000001
+            source:
+              type: object
+              required:
+                - account_id
+                - currency
+              properties:
+                account_id:
+                  type: string
+                  description: Source account identifier
+                  example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                currency:
+                  type: string
+                  description: Currency code for the source account
+                  example: USD
+              description: Source account details
+            destination:
+              type: object
+              required:
+                - account_id
+                - currency
+              properties:
+                account_id:
+                  type: string
+                  description: Destination account identifier
+                  example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                currency:
+                  type: string
+                  description: Currency code for the destination account
+                  example: EUR
+              description: Destination account details
+            amount:
               type: integer
               format: int64
               description: >-
-                The amount to send/receive in the smallest unit of the locked
-                currency (eg. cents). See `lockedCurrencySide` for more
-                information.
+                The amount to transfer in the smallest unit of the source currency (eg. cents)
               exclusiveMinimum: 0
               maximum: 9000000000000000
-              example: 1000
-            description:
-              type: string
-              description: Optional description/memo for the payment
-              example: 'Invoice #1234 payment'
-            senderUserInfo:
-              type: object
-              additionalProperties: true
-              description: >
-                Key-value pairs of information about the sender which was
-                requested by the counterparty (recipient) institution.
-
-                Any fields specified in `requiredPayerDataFields` from the
-                response of the `/receiver/{receiverUmaAddress}` (lookupUma)
-                endpoint
-
-                MUST be provided here if they were requested. If the
-                counterparty (recipient) institution did not request any
-                information,
-
-                this field can be omitted.
-              example:
-                FULL_NAME: Jane Receiver
-                NATIONALITY: FR
+              example: 10000
         examples:
-          lockSendAmount:
-            summary: Lock sending amount
+          usdToEur:
+            summary: USD to EUR transfer
             value:
-              lookupId: LookupRequest:019542f5-b3e7-1d02-0000-000000000009
-              sendingCurrencyCode: USD
-              receivingCurrencyCode: EUR
-              lockedCurrencySide: SENDING
-              lockedCurrencyAmount: 1000
-              description: 'Payment for invoice #1234'
-          lockReceiveAmount:
-            summary: Lock receiving amount
-            value:
-              lookupId: LookupRequest:019542f5-b3e7-1d02-0000-000000000009
-              sendingCurrencyCode: USD
-              receivingCurrencyCode: EUR
-              lockedCurrencySide: RECEIVING
-              lockedCurrencyAmount: 9200
+              userId: User:019542f5-b3e7-1d02-0000-000000000001
+              source:
+                account_id: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                currency: USD
+              destination:
+                account_id: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                currency: EUR
+              amount: 10000
   responses:
     '201':
       description: >
-        Quote created successfully. The response includes payment instructions
-
-        that the client can use to execute the payment through their banking
-        provider.
+        Quote created successfully. The response includes all input details along with
+        
+        rate_details containing the exchange rate and fee breakdown.
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/quotes/Quote.yaml
+            $ref: ../../components/schemas/quotes/GridQuote.yaml
     '400':
       description: Bad request - Missing or invalid parameters
       content:
@@ -128,18 +217,12 @@ post:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error401.yaml
-    '412':
-      description: Counterparty doesn't support UMA version
+    '404':
+      description: User or account not found
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/errors/Error412.yaml
-    '424':
-      description: Counterparty issue
-      content:
-        application/json:
-          schema:
-            $ref: ../../components/schemas/errors/Error424.yaml
+            $ref: ../../components/schemas/errors/Error404.yaml
     '500':
       description: Internal service error
       content:
@@ -152,3 +235,4 @@ post:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error501.yaml
+
