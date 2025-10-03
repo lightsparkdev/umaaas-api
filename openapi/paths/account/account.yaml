@@ -1,7 +1,7 @@
 post:
   summary: Add a new account
   description: >-
-    Add a new internal or external account associated with a user or counterparty
+    Add a new account associated with a user or counterparty
   operationId: createAccount
   tags:
     - Account
@@ -124,8 +124,8 @@ get:
                   discriminator:
                     propertyName: accountSource
                     mapping:
-                      INTERNAL_ACCOUNT: ../../components/schemas/users/IndividualUser.yaml
-                      EXTERNAL_ACCOUNT: ../../components/schemas/users/BusinessUser.yaml
+                      INTERNAL_ACCOUNT: ../../components/schemas/users/InternalAccount.yaml
+                      EXTERNAL_ACCOUNT: ../../components/schemas/users/ExternalAccount.yaml
               hasMore:
                 type: boolean
                 description: Indicates if more results are available beyond this page
