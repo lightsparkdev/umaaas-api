@@ -7,7 +7,7 @@ allOf:
       address:
         $ref: ../common/Address.yaml
       bankAccountInfo:
-        $ref: ./UserBankAccountInfo.yaml
+        $ref: ../users/UserBankAccountInfo.yaml
       businessInfo:
         type: object
         required:
