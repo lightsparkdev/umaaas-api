@@ -25,10 +25,10 @@ get:
       content:
         application/json:
           schema:
+            type: object
             properties:
               url:
-                schema:
-                  type: string 
+                type: string 
                 description: A hosted kyc link
                 example: http%3A%2F%2Fexample.com%2Fredirect
     '401':

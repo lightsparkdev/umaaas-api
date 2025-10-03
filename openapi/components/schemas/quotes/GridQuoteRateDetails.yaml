@@ -1,0 +1,55 @@
+description: Details about the exchange rate and fees for a grid quote.
+type: object
+required:
+  - exchangeRate
+  - fees
+properties:
+  exchangeRate:
+    type: number
+    format: double
+    description: >-
+      The exchange rate from source currency to destination currency.
+      Represents how much of the destination currency you receive per unit of source currency.
+    exclusiveMinimum: 0
+    example: 0.92
+  fees:
+    type: object
+    required:
+      - totalFees
+      - fixedFee
+      - variableFeeRate
+      - variableFeeAmount
+    properties:
+      totalFees:
+        type: integer
+        format: int64
+        description: >-
+          The total fees for this quote in the smallest unit of the source
+          currency (eg. cents). This is the sum of fixedFee and variableFeeAmount.
+        minimum: 0
+        example: 40
+      fixedFee:
+        type: integer
+        format: int64
+        description: >-
+          The fixed fee charged to execute the quote in the smallest unit of the
+          source currency (eg. cents).
+        minimum: 0
+        example: 10
+      variableFeeRate:
+        type: number
+        format: double
+        description: >-
+          The variable fee rate as a percentage of the source currency amount.
+          For example, 0.003 represents 0.3%.
+        minimum: 0
+        example: 0.003
+      variableFeeAmount:
+        type: integer
+        format: int64
+        description: >-
+          The variable fee amount in the smallest unit of the source currency
+          (eg. cents). This is the source amount times variableFeeRate.
+        minimum: 0
+        example: 30
+    description: Breakdown of all fees applicable to this quote

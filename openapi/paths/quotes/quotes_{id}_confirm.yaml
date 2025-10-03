@@ -1,0 +1,63 @@
+post:
+  summary: Confirm a quote
+  description: >
+    Confirm and execute a quote by its ID. This endpoint locks in the quote
+    
+    and initiates the transfer between the source and destination accounts.
+    
+    Once confirmed, the quote cannot be cancelled and the transfer will be processed.
+  operationId: confirmGridQuote
+  tags:
+    - Sending Payments
+  security:
+    - BasicAuth: []
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: The unique identifier of the quote to confirm
+      schema:
+        type: string
+      example: GridQuote:019542f5-b3e7-1d02-0000-000000000001
+  responses:
+    '200':
+      description: >
+        Quote confirmed successfully. The transfer has been initiated and
+        
+        the quote status has been updated.
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/quotes/GridQuote.yaml
+    '400':
+      description: Bad request - Invalid quote ID or quote cannot be confirmed
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error400.yaml
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error401.yaml
+    '404':
+      description: Quote not found
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error404.yaml
+    '409':
+      description: Conflict - Quote already confirmed, expired, or in invalid state
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error409.yaml
+    '500':
+      description: Internal service error
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error500.yaml
+
+

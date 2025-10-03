@@ -20,10 +20,16 @@ tags:
       also configure these settings in the UMAaas dashboard.
   - name: Users
     description: User management endpoints for creating and updating user information
+  - name: External Accounts
+    description: External account management endpoints for creating and managing external bank accounts
+  - name: Transfer In
+    description: Endpoints for transferring funds from external accounts to internal accounts
+  - name: Transfer Out
+    description: Endpoints for transferring funds from internal accounts to external accounts
+  - name: Sending Payments
+    description: Endpoints for creating and confirming quotes for transfers between accounts
   - name: Transactions
     description: Endpoints for retrieving transaction information
-  - name: Sending Payments
-    description: Endpoints for creating and managing payment quotes and executing payments
   - name: Webhooks
     description: Webhook endpoints and configuration for receiving notifications
   - name: Invitations
@@ -79,40 +85,42 @@ components:
         - $ref: components/schemas/errors/Error501.yaml
 
 paths:
-  /account: 
-    $ref: paths/account/account.yaml
+  /config:
+    $ref: paths/config/config.yaml
+  /tokens:
+    $ref: paths/tokens/tokens.yaml
+  /tokens/{tokenId}:
+    $ref: paths/tokens/tokens_{tokenId}.yaml
   /users:
     $ref: paths/users/users.yaml
   /users/{userId}:
     $ref: paths/users/users_{userId}.yaml
   /users/{userId}/kyc:
     $ref: paths/users/users_{userId}_kyc.yaml
-  /tokens:
-    $ref: paths/tokens/tokens.yaml
-  /tokens/{tokenId}:
-    $ref: paths/tokens/tokens_{tokenId}.yaml
-  /config:
-    $ref: paths/config/config.yaml
-  /webhooks/test:
-    $ref: paths/webhooks/webhooks_test.yaml
-  /transactions/{transactionId}:
-    $ref: paths/transactions/transactions_{transactionId}.yaml
+  /internal-account: 
+    $ref: paths/internal-account/account.yaml
+  /external-accounts:
+    $ref: paths/external_accounts/external_accounts.yaml
+  /transfer-in:
+    $ref: paths/transfer_in/transfer_in.yaml
+  /transfer-out:
+    $ref: paths/transfer_out/transfer_out.yaml
+  /quotes/{id}:
+    $ref: paths/quotes/quotes_{id}.yaml
+  /quotes:
+    $ref: paths/quotes/quotes.yaml
+  /quotes/{id}/confirm:
+    $ref: paths/quotes/quotes_{id}_confirm.yaml
   /transactions:
     $ref: paths/transactions/transactions.yaml
+  /transactions/{transactionId}:
+    $ref: paths/transactions/transactions_{transactionId}.yaml
   /transactions/{transactionId}/approve:
     $ref: paths/transactions/transactions_{transactionId}_approve.yaml
   /transactions/{transactionId}/reject:
     $ref: paths/transactions/transactions_{transactionId}_reject.yaml
-  /receiver/{receiverUmaAddress}:
-    $ref: paths/receiver/receiver_{receiverUmaAddress}.yaml
-  /quotes:
-    $ref: paths/quotes/quotes.yaml
-  /quotes/{quoteId}:
-    $ref: paths/quotes/quotes_{quoteId}.yaml
-  /quotes/{quoteId}/retry:
-    $ref: paths/quotes/quotes_{quoteId}_retry.yaml
-  /fbo/confirm/{quoteId}:
-    $ref: paths/fbo/fbo_confirm_{quoteId}.yaml
+  /webhooks/test:
+    $ref: paths/webhooks/webhooks_test.yaml
   /users/bulk/csv:
     $ref: paths/users/users_bulk_csv.yaml
   /users/bulk/jobs/{jobId}:

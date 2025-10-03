@@ -1,0 +1,13 @@
+type: object
+required:
+  - accountType
+  - address
+properties:
+  accountType:
+    allOf:
+      - $ref: ./BankAccountType.yaml
+    example: SPARK_WALLET
+  address:
+    type: string
+    description: Spark wallet address
+    example: '0x1234567890abcdef1234567890abcdef12345678'

@@ -1,9 +1,14 @@
 type: object
 required:
+  - accountType
   - accountNumber
   - routingNumber
   - accountCategory
 properties:
+  accountType:
+    allOf:
+      - $ref: ./BankAccountType.yaml
+    example: US_ACCOUNT
   accountNumber:
     type: string
     description: US bank account number

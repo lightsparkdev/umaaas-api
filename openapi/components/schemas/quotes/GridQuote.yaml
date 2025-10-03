@@ -1,0 +1,88 @@
+type: object
+required:
+  - quoteId
+  - userId
+  - source
+  - destination
+  - amount
+  - receivingAmount
+  - rateDetails
+  - createdAt
+  - expiresAt
+properties:
+  quoteId:
+    type: string
+    description: Unique identifier for this grid quote
+    example: GridQuote:019542f5-b3e7-1d02-0000-000000000001
+  userId:
+    type: string
+    description: The ID of the user initiating the transfer
+    example: User:019542f5-b3e7-1d02-0000-000000000001
+  source:
+    type: object
+    required:
+      - accountId
+      - currency
+    properties:
+      accountId:
+        type: string
+        description: Source account identifier
+        example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+      currency:
+        type: string
+        description: Currency code for the source account
+        example: USD
+    description: Source account details
+  destination:
+    type: object
+    required:
+      - accountId
+      - currency
+    properties:
+      accountId:
+        type: string
+        description: Destination account identifier
+        example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+      currency:
+        type: string
+        description: Currency code for the destination account
+        example: EUR
+    description: Destination account details
+  amount:
+    type: integer
+    format: int64
+    description: >-
+      The amount to transfer in the smallest unit of the source currency (eg. cents)
+    exclusiveMinimum: 0
+    example: 10000
+  receivingAmount:
+    type: integer
+    format: int64
+    description: >-
+      The amount that will be received in the smallest unit of the destination
+      currency (eg. cents) after currency exchange and fees are applied.
+    exclusiveMinimum: 0
+    example: 9168
+  rateDetails:
+    $ref: ./GridQuoteRateDetails.yaml
+  createdAt:
+    type: string
+    format: date-time
+    description: When this quote was created
+    example: '2025-10-03T12:00:00Z'
+  expiresAt:
+    type: string
+    format: date-time
+    description: When this quote expires (typically 1-5 minutes after creation)
+    example: '2025-10-03T12:05:00Z'
+  status:
+    type: string
+    enum:
+      - PENDING
+      - PROCESSING
+      - COMPLETED
+      - FAILED
+      - EXPIRED
+    description: Current status of the quote
+    example: PENDING
+
