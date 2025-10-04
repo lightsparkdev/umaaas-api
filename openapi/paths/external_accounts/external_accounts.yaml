@@ -38,7 +38,7 @@ get:
       schema:
         type: string
   responses:
-    '200':
+    "200":
       description: Successful operation
       content:
         application/json:
@@ -66,19 +66,19 @@ get:
                 description: >-
                   Total number of external accounts matching the criteria (excluding
                   pagination)
-    '400':
+    "400":
       description: Bad request - Invalid parameters
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error400.yaml
-    '401':
+    "401":
       description: Unauthorized
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error401.yaml
-    '500':
+    "500":
       description: Internal service error
       content:
         application/json:
@@ -99,7 +99,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: ../../components/schemas/users/ExternalAccount.yaml
+          $ref: ../../components/schemas/external_accounts/ExternalAccountCreateRequest.yaml
         examples:
           usBankAccount:
             summary: Create external US bank account
@@ -107,15 +107,14 @@ post:
               currency: USD
               platformAccountId: ext_acc_123456
               userId: User:019542f5-b3e7-1d02-0000-000000000001
-              status: ACTIVE
               beneficiary:
                 counterpartyType: INDIVIDUAL_COUNTERPARTY
                 fullName: John Doe
                 email: john.doe@example.com
               accountInfo:
                 accountType: US_ACCOUNT
-                accountNumber: '12345678901'
-                routingNumber: '123456789'
+                accountNumber: "12345678901"
+                routingNumber: "123456789"
                 accountCategory: CHECKING
                 bankName: Chase Bank
           sparkWallet:
@@ -124,44 +123,42 @@ post:
               currency: BTC
               platformAccountId: spark_wallet_001
               userId: User:019542f5-b3e7-1d02-0000-000000000001
-              status: ACTIVE
               beneficiary:
                 counterpartyType: INDIVIDUAL_COUNTERPARTY
                 fullName: Jane Smith
                 email: jane.smith@example.com
               accountInfo:
                 accountType: SPARK_WALLET
-                address: '0x1234567890abcdef1234567890abcdef12345678'
+                address: "0x1234567890abcdef1234567890abcdef12345678"
                 name: My Spark Wallet
   responses:
-    '201':
+    "201":
       description: External account created successfully
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/users/ExternalAccount.yaml
-    '400':
+    "400":
       description: Bad request
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error400.yaml
-    '401':
+    "401":
       description: Unauthorized
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error401.yaml
-    '409':
+    "409":
       description: Conflict - External account already exists
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error409.yaml
-    '500':
+    "500":
       description: Internal service error
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error500.yaml
-

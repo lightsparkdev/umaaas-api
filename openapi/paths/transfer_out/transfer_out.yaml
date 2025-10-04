@@ -21,13 +21,7 @@ get:
       description: Filter by transfer status
       required: false
       schema:
-        type: string
-        enum:
-          - PENDING
-          - PROCESSING
-          - COMPLETED
-          - FAILED
-          - CANCELLED
+        $ref: ../../components/schemas/transfers/TransferStatus.yaml
     - name: sourceAccountId
       in: query
       description: Filter by source internal account ID
@@ -56,7 +50,7 @@ get:
       schema:
         type: string
   responses:
-    '200':
+    "200":
       description: Successful operation
       content:
         application/json:
@@ -70,44 +64,24 @@ get:
                 type: array
                 description: List of transfer-out requests matching the filter criteria
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                      description: The transfer request ID
-                      example: transfer_019542f5-b3e7-1d02-0000-000000000002
-                    userId:
-                      type: string
-                      description: The ID of the user
-                      example: User:019542f5-b3e7-1d02-0000-000000000001
-                    source:
-                      type: object
+                  allOf:
+                    - $ref: ../../components/schemas/transfers/Transfer.yaml
+                    - type: object
                       properties:
-                        accountId:
-                          type: string
-                          description: Internal account ID
-                          example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-                    destination:
-                      type: object
-                      properties:
-                        accountId:
-                          type: string
-                          description: External account ID
-                          example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-                    status:
-                      type: string
-                      description: Status of the transfer
-                      example: PENDING
-                    createdAt:
-                      type: string
-                      format: date-time
-                      description: Timestamp when the transfer was created
-                      example: 2025-10-03T12:00:00Z
-                    updatedAt:
-                      type: string
-                      format: date-time
-                      description: Timestamp when the transfer was last updated
-                      example: 2025-10-03T12:30:00Z
+                        source:
+                          type: object
+                          properties:
+                            accountId:
+                              type: string
+                              description: Internal account ID
+                              example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                        destination:
+                          type: object
+                          properties:
+                            accountId:
+                              type: string
+                              description: External account ID
+                              example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
               hasMore:
                 type: boolean
                 description: Indicates if more results are available beyond this page
@@ -121,19 +95,19 @@ get:
                 description: >-
                   Total number of transfer-out requests matching the criteria (excluding
                   pagination)
-    '400':
+    "400":
       description: Bad request - Invalid parameters
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error400.yaml
-    '401':
+    "401":
       description: Unauthorized
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error401.yaml
-    '500':
+    "500":
       description: Internal service error
       content:
         application/json:
@@ -194,67 +168,50 @@ post:
               destination:
                 accountId: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
   responses:
-    '201':
+    "201":
       description: Transfer-out request created successfully
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              id:
-                type: string
-                description: The transfer request ID
-                example: transfer_019542f5-b3e7-1d02-0000-000000000002
-              userId:
-                type: string
-                description: The ID of the user
-                example: User:019542f5-b3e7-1d02-0000-000000000001
-              source:
-                type: object
+            allOf:
+              - $ref: ../../components/schemas/transfers/Transfer.yaml
+              - type: object
                 properties:
-                  accountId:
-                    type: string
-                    description: Internal account ID
-                    example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-              destination:
-                type: object
-                properties:
-                  accountId:
-                    type: string
-                    description: External account ID
-                    example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-              status:
-                type: string
-                description: Status of the transfer
-                example: PENDING
-              createdAt:
-                type: string
-                format: date-time
-                description: Timestamp when the transfer was created
-                example: 2025-10-03T12:00:00Z
-    '400':
+                  source:
+                    type: object
+                    properties:
+                      accountId:
+                        type: string
+                        description: Internal account ID
+                        example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                  destination:
+                    type: object
+                    properties:
+                      accountId:
+                        type: string
+                        description: External account ID
+                        example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+    "400":
       description: Bad request - Invalid parameters
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error400.yaml
-    '401':
+    "401":
       description: Unauthorized
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error401.yaml
-    '404':
+    "404":
       description: User or account not found
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error404.yaml
-    '500':
+    "500":
       description: Internal service error
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error500.yaml
-
-

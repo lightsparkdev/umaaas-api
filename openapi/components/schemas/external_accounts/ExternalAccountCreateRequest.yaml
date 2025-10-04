@@ -1,9 +1,9 @@
 allOf:
-  - $ref: ./BankAccountBase.yaml
-  - properties:
-      status:
-        type: string
-        description: Status of the external account
+  - $ref: ../users/BankAccountBase.yaml
+  - type: object
+    required:
+      - beneficiary
+    properties:
       beneficiary:
         description: Beneficiary of the account
         oneOf:
