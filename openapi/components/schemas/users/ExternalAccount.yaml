@@ -10,8 +10,10 @@ allOf:
       beneficiary:
         description: Beneficiary of the account 
         oneOf:
-          - $ref: ../counterparty/BusinessCounterParty.yaml
-          - $ref: ../counterparty/IndividualCounterParty.yaml
+          - title: Business Counterparty
+            $ref: ../counterparty/BusinessCounterParty.yaml
+          - title: Individual Counterparty
+            $ref: ../counterparty/IndividualCounterParty.yaml
         discriminator:
           propertyName: counterpartyType
           mapping:
