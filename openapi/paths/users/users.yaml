@@ -29,7 +29,11 @@ post:
                     userType:
                       type: string
                       enum: [INDIVIDUAL]
-                      description: User type
+                      description: User type 
+                    kycUrl:
+                      type: string 
+                      description: A kyc url to be shared with your individual user if kyc needs to be completed 
+                      example: http%3A%2F%2Fexample.com%2Fkyc
             - title: Business User
               allOf:
                 - $ref: ../../components/schemas/users/BusinessUserUpdate.yaml
@@ -46,6 +50,10 @@ post:
                       type: string
                       enum: [BUSINESS]
                       description: User type
+                    kycUrl:
+                      type: string 
+                      description: A kyc url to be shared with your business user if kyc needs to be completed 
+                      example: http%3A%2F%2Fexample.com%2Fkyc
           discriminator:
             propertyName: userType
             mapping:

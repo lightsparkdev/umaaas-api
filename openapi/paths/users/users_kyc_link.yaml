@@ -1,19 +1,13 @@
 parameters:
-  - name: userId
-    in: path
-    description: System-generated unique user identifier
-    required: true
-    schema:
-      type: string
   - name: redirect_uri
     in: query 
-    description: An optional uri a user will be redirected to after completing the hosted kyc flow 
+    description: An optional uri a customer will be redirected to after completing the hosted kyc flow 
     required: false 
     schema:
       type: string
 get:
-  summary: Get a hosted kyc link for a user
-  description: Retrieve a kyc link by a user system-generated ID
+  summary: Get a kyc link for onboarding a customer
+  description: Generate a hosted kyc link to onboard a customer
   operationId: getKycLinkForUser
   tags:
     - Users
@@ -27,25 +21,20 @@ get:
           schema:
             type: object
             properties:
-              url:
+              kycUrl:
                 type: string 
-                description: A hosted kyc link
-                example: "http://example.com/redirect"
+                description: A hosted kyc link for your customer to complete kyc
+                example: http%3A%2F%2Fexample.com%2Fredirect
     '401':
       description: Unauthorized
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error401.yaml
-    '404':
-      description: User not found
-      content:
-        application/json:
-          schema:
-            $ref: ../../components/schemas/errors/Error404.yaml
     '500':
       description: Internal service error
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error500.yaml
+
