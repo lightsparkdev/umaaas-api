@@ -389,16 +389,48 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: '#/components/schemas/IndividualUser'
-                - $ref: '#/components/schemas/BusinessUser'
+                - title: Individual User
+                  allOf:
+                    - $ref: '#/components/schemas/IndividualUserUpdate'
+                    - type: object
+                      required:
+                        - platformUserId
+                        - userType
+                      properties:
+                        platformUserId:
+                          type: string
+                          description: Platform-specific user identifier
+                          example: 9f84e0c2a72c4fa
+                        userType:
+                          type: string
+                          enum:
+                            - INDIVIDUAL
+                          description: User type
+                - title: Business User
+                  allOf:
+                    - $ref: '#/components/schemas/BusinessUserUpdate'
+                    - type: object
+                      required:
+                        - platformUserId
+                        - userType
+                      properties:
+                        platformUserId:
+                          type: string
+                          description: Platform-specific user identifier
+                          example: 9f84e0c2a72c4fa
+                        userType:
+                          type: string
+                          enum:
+                            - BUSINESS
+                          description: User type
               discriminator:
                 propertyName: userType
                 mapping:
-                  INDIVIDUAL: '#/components/schemas/IndividualUser'
-                  BUSINESS: '#/components/schemas/BusinessUser'
+                  INDIVIDUAL: '#/components/schemas/IndividualUserUpdate'
+                  BUSINESS: '#/components/schemas/BusinessUserUpdate'
             examples:
-              individualUser:
-                summary: Create individual user example
+              individualUserWithUmaAddress:
+                summary: Create individual user with UMA address, including deposit bank account information.
                 value:
                   umaAddress: $jane.doe@uma.domain.com
                   platformUserId: 7b3c5a89d2f1e0
@@ -411,6 +443,26 @@ paths:
                     city: Seattle
                     state: WA
                     postalCode: '98101'
+                    country: US
+                  bankAccountInfo:
+                    accountType: US_ACCOUNT
+                    accountNumber: '12345678901'
+                    routingNumber: '123456789'
+                    accountCategory: CHECKING
+                    bankName: Chase Bank
+                    platformAccountId: chase_primary_1234
+              individualUserWithoutUmaAddress:
+                summary: Create individual user without UMA address (will be generated)
+                value:
+                  platformUserId: 7b3c5a89d2f1e0
+                  userType: INDIVIDUAL
+                  fullName: John Smith
+                  birthDate: '1985-06-10'
+                  address:
+                    line1: 456 Oak Avenue
+                    city: Portland
+                    state: OR
+                    postalCode: '97201'
                     country: US
               businessUser:
                 summary: Create business user example
@@ -434,8 +486,10 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/IndividualUser'
-                  - $ref: '#/components/schemas/BusinessUser'
+                  - title: Individual User
+                    $ref: '#/components/schemas/IndividualUser'
+                  - title: Business User
+                    $ref: '#/components/schemas/BusinessUser'
                 discriminator:
                   propertyName: userType
                   mapping:
@@ -565,8 +619,10 @@ paths:
                     description: List of users matching the filter criteria
                     items:
                       oneOf:
-                        - $ref: '#/components/schemas/IndividualUser'
-                        - $ref: '#/components/schemas/BusinessUser'
+                        - title: Individual User
+                          $ref: '#/components/schemas/IndividualUser'
+                        - title: Business User
+                          $ref: '#/components/schemas/BusinessUser'
                       discriminator:
                         propertyName: userType
                         mapping:
@@ -622,8 +678,10 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/IndividualUser'
-                  - $ref: '#/components/schemas/BusinessUser'
+                  - title: Individual User
+                    $ref: '#/components/schemas/IndividualUser'
+                  - title: Business User
+                    $ref: '#/components/schemas/BusinessUser'
                 discriminator:
                   propertyName: userType
                   mapping:
@@ -661,50 +719,15 @@ paths:
           application/json:
             schema:
               oneOf:
-                - type: object
-                  title: individualUpdate
-                  properties:
-                    umaAddress:
-                      type: string
-                      description: Full UMA address
-                    fullName:
-                      type: string
-                      description: Individual's full name
-                    birthDate:
-                      type: string
-                      format: date
-                      description: Date of birth in ISO 8601 format (YYYY-MM-DD)
-                    nationality:
-                      type: string
-                      description: Country code (ISO 3166-1 alpha-2)
-                    address:
-                      $ref: '#/components/schemas/Address'
-                    bankAccountInfo:
-                      $ref: '#/components/schemas/UserBankAccountInfo'
-                - type: object
-                  title: businessUpdate
-                  properties:
-                    umaAddress:
-                      type: string
-                      description: Full UMA address
-                    businessInfo:
-                      type: object
-                      properties:
-                        legalName:
-                          type: string
-                          description: Legal name of the business
-                        registrationNumber:
-                          type: string
-                          description: Business registration number
-                        taxId:
-                          type: string
-                          description: Tax identification number
-                    address:
-                      $ref: '#/components/schemas/Address'
-                    bankAccountInfo:
-                      $ref: '#/components/schemas/UserBankAccountInfo'
-                    beneficialOwners:
-                      $ref: '#/components/schemas/UltimateBeneficialOwner'
+                - title: Individual User Update
+                  $ref: '#/components/schemas/IndividualUserUpdate'
+                - title: Business User Update
+                  $ref: '#/components/schemas/BusinessUserUpdate'
+              discriminator:
+                propertyName: userType
+                mapping:
+                  INDIVIDUAL: '#/components/schemas/IndividualUserUpdate'
+                  BUSINESS: '#/components/schemas/BusinessUserUpdate'
             examples:
               individualUpdate:
                 summary: Update individual user example
@@ -753,8 +776,10 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/IndividualUser'
-                  - $ref: '#/components/schemas/BusinessUser'
+                  - title: Individual User
+                    $ref: '#/components/schemas/IndividualUser'
+                  - title: Business User
+                    $ref: '#/components/schemas/BusinessUser'
                 discriminator:
                   propertyName: userType
                   mapping:
@@ -799,8 +824,10 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/IndividualUser'
-                  - $ref: '#/components/schemas/BusinessUser'
+                  - title: Individual User
+                    $ref: '#/components/schemas/IndividualUser'
+                  - title: Business User
+                    $ref: '#/components/schemas/BusinessUser'
                 discriminator:
                   propertyName: userType
                   mapping:
@@ -863,7 +890,7 @@ paths:
                   url:
                     type: string
                     description: A hosted kyc link
-                    example: http%3A%2F%2Fexample.com%2Fredirect
+                    example: http://example.com/redirect
         '401':
           description: Unauthorized
           content:
@@ -3611,7 +3638,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PlatformCurrencyConfig'
-          description: List of currencies supported by the platform
+          description: |
+            List of currencies supported by the platform. This is what the platform's
+            customers are able to hold, send, and receive.
+        isRegulatedFinancialInstitution:
+          type: boolean
+          description: |
+            Whether the platform is a regulated financial institution. This is used to
+            determine if the platform's customers must be KYC/KYB'd by Lightspark via
+            the KYC link flow. This can only be set by Lightspark during platform
+            creation.
+          example: false
         createdAt:
           type: string
           format: date-time
@@ -3904,6 +3941,7 @@ components:
     User:
       type: object
       required:
+        - umaAddress
         - platformUserId
         - userType
       properties:
@@ -3914,9 +3952,8 @@ components:
           example: User:019542f5-b3e7-1d02-0000-000000000001
         umaAddress:
           type: string
-          description: Optional UMA address identifier
-          examples:
-            - $john.doe@uma.domain.com
+          description: Full UMA address (always present in responses, even if system-generated).
+          example: $john.doe@uma.domain.com
         platformUserId:
           type: string
           description: Platform-specific user identifier
@@ -4072,46 +4109,6 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/UltimateBeneficialOwner'
-    Error409:
-      type: object
-      required:
-        - message
-        - status
-        - code
-      properties:
-        status:
-          enum:
-            - 409
-          type: integer
-          description: HTTP status code
-        code:
-          type: string
-          description: |
-            | Error Code | Description |
-            |------------|-------------|
-            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
-            | UMA_ADDRESS_EXISTS | UMA address already exists | 
-          enum:
-            - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
-            - UMA_ADDRESS_EXISTS
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-    Error:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Error code
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
     BankAccountType:
       type: string
       enum:
@@ -4407,6 +4404,112 @@ components:
           IBAN: '#/components/schemas/UserIbanAccountInfo'
           FBO: '#/components/schemas/UserFboAccountInfo'
           UPI: '#/components/schemas/UserUpiAccountInfo'
+    IndividualUserUpdate:
+      type: object
+      properties:
+        userType:
+          type: string
+          enum:
+            - INDIVIDUAL
+          description: User type
+        umaAddress:
+          type: string
+          description: |
+            Optional UMA address identifier. If not provided during user creation, one will be generated by the system.
+            If provided during user update, the UMA address will be updated to the provided value.
+          example: $john.doe@uma.domain.com
+        fullName:
+          type: string
+          description: Individual's full name
+          example: John Michael Doe
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+          example: '1990-01-15'
+        nationality:
+          type: string
+          description: Country code (ISO 3166-1 alpha-2)
+          example: US
+        address:
+          $ref: '#/components/schemas/Address'
+        bankAccountInfo:
+          $ref: '#/components/schemas/UserBankAccountInfo'
+    BusinessUserUpdate:
+      type: object
+      properties:
+        userType:
+          type: string
+          enum:
+            - BUSINESS
+          description: User type
+        umaAddress:
+          type: string
+          description: Optional UMA address identifier. If not provided, will be generated by the system.
+          example: $acme@uma.domain.com
+        businessInfo:
+          type: object
+          properties:
+            legalName:
+              type: string
+              description: Legal name of the business
+              example: Acme Corporation, Inc.
+            registrationNumber:
+              type: string
+              description: Business registration number
+              example: BRN-123456789
+            taxId:
+              type: string
+              description: Tax identification number
+              example: EIN-987654321
+        address:
+          $ref: '#/components/schemas/Address'
+        bankAccountInfo:
+          $ref: '#/components/schemas/UserBankAccountInfo'
+        beneficialOwners:
+          type: array
+          items:
+            $ref: '#/components/schemas/UltimateBeneficialOwner'
+    Error409:
+      type: object
+      required:
+        - message
+        - status
+        - code
+      properties:
+        status:
+          enum:
+            - 409
+          type: integer
+          description: HTTP status code
+        code:
+          type: string
+          description: |
+            | Error Code | Description |
+            |------------|-------------|
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+            | UMA_ADDRESS_EXISTS | UMA address already exists | 
+          enum:
+            - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+            - UMA_ADDRESS_EXISTS
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error code
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
     InternalAccount:
       allOf:
         - $ref: '#/components/schemas/BankAccountBase'
