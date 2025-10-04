@@ -105,6 +105,8 @@ paths:
     $ref: paths/transfer_in/transfer_in.yaml
   /transfer-out:
     $ref: paths/transfer_out/transfer_out.yaml
+  /receiver/{receiverUmaAddress}:
+    $ref: paths/receiver/uma/receiver_uma_{receiverUmaAddress}.yaml
   /quotes/{id}:
     $ref: paths/quotes/quotes_{id}.yaml
   /quotes:
