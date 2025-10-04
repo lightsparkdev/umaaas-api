@@ -4389,12 +4389,18 @@ components:
         - $ref: '#/components/schemas/BankAccountBase'
     UserBankAccountInfo:
       oneOf:
-        - $ref: '#/components/schemas/UserClabeAccountInfo'
-        - $ref: '#/components/schemas/UserUsAccountInfo'
-        - $ref: '#/components/schemas/UserPixAccountInfo'
-        - $ref: '#/components/schemas/UserIbanAccountInfo'
-        - $ref: '#/components/schemas/UserFboAccountInfo'
-        - $ref: '#/components/schemas/UserUpiAccountInfo'
+        - title: CLABE Account
+          $ref: '#/components/schemas/UserClabeAccountInfo'
+        - title: US Bank Account
+          $ref: '#/components/schemas/UserUsAccountInfo'
+        - title: PIX Account
+          $ref: '#/components/schemas/UserPixAccountInfo'
+        - title: IBAN Account
+          $ref: '#/components/schemas/UserIbanAccountInfo'
+        - title: FBO Account
+          $ref: '#/components/schemas/UserFboAccountInfo'
+        - title: UPI Account
+          $ref: '#/components/schemas/UserUpiAccountInfo'
       discriminator:
         propertyName: accountType
         mapping:
@@ -4626,8 +4632,10 @@ components:
             beneficiary:
               description: Beneficiary of the account
               oneOf:
-                - $ref: '#/components/schemas/BusinessCounterParty'
-                - $ref: '#/components/schemas/IndividualCounterParty'
+                - title: Business Counterparty
+                  $ref: '#/components/schemas/BusinessCounterParty'
+                - title: Individual Counterparty
+                  $ref: '#/components/schemas/IndividualCounterParty'
               discriminator:
                 propertyName: counterpartyType
                 mapping:
@@ -5016,12 +5024,18 @@ components:
           example: Please ensure the reference code is included in the payment memo/description field
         bankAccountInfo:
           oneOf:
-            - $ref: '#/components/schemas/PaymentClabeAccountInfo'
-            - $ref: '#/components/schemas/PaymentUsAccountInfo'
-            - $ref: '#/components/schemas/PaymentPixAccountInfo'
-            - $ref: '#/components/schemas/PaymentIbanAccountInfo'
-            - $ref: '#/components/schemas/PaymentFboAccountInfo'
-            - $ref: '#/components/schemas/PaymentUpiAccountInfo'
+            - title: CLABE Account
+              $ref: '#/components/schemas/PaymentClabeAccountInfo'
+            - title: US Bank Account
+              $ref: '#/components/schemas/PaymentUsAccountInfo'
+            - title: PIX Account
+              $ref: '#/components/schemas/PaymentPixAccountInfo'
+            - title: IBAN Account
+              $ref: '#/components/schemas/PaymentIbanAccountInfo'
+            - title: FBO Account
+              $ref: '#/components/schemas/PaymentFboAccountInfo'
+            - title: UPI Account
+              $ref: '#/components/schemas/PaymentUpiAccountInfo'
           discriminator:
             propertyName: accountType
             mapping:
