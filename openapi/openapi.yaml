@@ -26,8 +26,8 @@ tags:
     description: Endpoints for transferring funds from external accounts to internal accounts
   - name: Transfer Out
     description: Endpoints for transferring funds from internal accounts to external accounts
-  - name: Sending Payments
-    description: Endpoints for creating and confirming quotes for transfers between accounts
+  - name: Cross-Currency Payments
+    description: Endpoints for creating and confirming quotes for cross-currency transfers.
   - name: Transactions
     description: Endpoints for retrieving transaction information
   - name: Webhooks
@@ -109,12 +109,14 @@ paths:
     $ref: paths/receiver/uma/receiver_uma_{receiverUmaAddress}.yaml
   /receiver/external-account/{accountId}:
     $ref: paths/receiver/external-account/receiver_external-account_{accountId}.yaml
-  /quotes/{id}:
-    $ref: paths/quotes/quotes_{id}.yaml
+  /quotes/{quoteId}:
+    $ref: paths/quotes/quotes_{quoteId}.yaml
   /quotes:
     $ref: paths/quotes/quotes.yaml
-  /quotes/{id}/confirm:
-    $ref: paths/quotes/quotes_{id}_confirm.yaml
+  /quotes/{quoteId}/retry:
+    $ref: paths/quotes/quotes_{quoteId}_retry.yaml
+  /quotes/{quoteId}/execute:
+    $ref: paths/quotes/quotes_{quoteId}_execute.yaml
   /transactions:
     $ref: paths/transactions/transactions.yaml
   /transactions/{transactionId}:
