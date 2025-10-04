@@ -1653,6 +1653,102 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
+  /receiver/{receiverUmaAddress}:
+    get:
+      summary: Look up a UMA address for payment
+      description: |
+        Lookup a receiving UMA address to determine supported currencies and exchange rates.
+        This endpoint helps platforms determine what currencies they can send to a given UMA address.
+      operationId: lookupUma
+      tags:
+        - Sending Payments
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: receiverUmaAddress
+          in: path
+          description: UMA address of the intended recipient
+          required: true
+          schema:
+            type: string
+        - name: senderUmaAddress
+          in: query
+          description: UMA address of the sender (optional if userId is provided)
+          required: false
+          schema:
+            type: string
+        - name: userId
+          in: query
+          description: System ID of the sender (optional if senderUmaAddress is provided)
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful lookup
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - receiverUmaAddress
+                  - supportedCurrencies
+                  - lookupId
+                properties:
+                  receiverUmaAddress:
+                    type: string
+                    description: The UMA address that was looked up
+                    example: $receiver@uma.domain
+                  supportedCurrencies:
+                    type: array
+                    description: List of currencies supported by the receiving UMA address
+                    items:
+                      $ref: '#/components/schemas/CurrencyPreference'
+                  requiredPayerDataFields:
+                    type: array
+                    description: Fields required by the receiving institution about the payer before payment can be completed
+                    items:
+                      $ref: '#/components/schemas/CounterpartyFieldDefinition'
+                  lookupId:
+                    type: string
+                    description: Unique identifier for the lookup. Needed in the subsequent create quote request.
+                    example: Lookup:019542f5-b3e7-1d02-0000-000000000009
+        '400':
+          description: Bad request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: UMA address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '412':
+          description: Counterparty doesn't support UMA version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error412'
+        '424':
+          description: Counterparty issue
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error424'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /quotes/{id}:
     get:
       summary: Get quote by ID
@@ -4641,6 +4737,111 @@ components:
                 mapping:
                   INDIVIDUAL_COUNTERPARTY: '#/components/schemas/BusinessCounterParty'
                   BUSINESS_COUNTERPARTY: '#/components/schemas/IndividualCounterParty'
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "SAT" for satoshis, "USDC" for USDCoin, etc.)
+          example: USD
+        name:
+          type: string
+          description: Full name of the currency
+          example: United States Dollar
+        symbol:
+          type: string
+          description: Symbol of the currency
+          example: $
+        decimals:
+          type: integer
+          description: Number of decimal places for the currency
+          minimum: 0
+          example: 2
+    CurrencyPreference:
+      type: object
+      required:
+        - currency
+        - estimatedExchangeRate
+        - min
+        - max
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        estimatedExchangeRate:
+          type: number
+          description: An estimated exchange rate from the sender's currency to this currency. This is not a locked rate and is subject to change when calling the quotes endpoint.
+          exclusiveMinimum: 0
+          example: 1.08
+        min:
+          type: integer
+          format: int64
+          description: The minimum amount that can be received in this currency.
+          exclusiveMinimum: 0
+          example: 1
+        max:
+          type: integer
+          format: int64
+          description: The maximum amount that can be received in this currency.
+          exclusiveMinimum: 0
+          example: 1000000
+    Error412:
+      type: object
+      required:
+        - message
+        - status
+        - code
+      properties:
+        status:
+          enum:
+            - 412
+          type: integer
+          description: HTTP status code
+        code:
+          type: string
+          description: |
+            | Error Code | Description |
+            |------------|-------------|
+            | UNSUPPORTED_UMA_VERSION | Counterparty doesn't support UMA as a service UMA version |
+          enum:
+            - UNSUPPORTED_UMA_VERSIONED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+    Error424:
+      type: object
+      required:
+        - message
+        - status
+        - code
+      properties:
+        status:
+          enum:
+            - 424
+          type: integer
+          description: HTTP status code
+        code:
+          type: string
+          description: |
+            | Error Code | Description |
+            |------------|-------------|
+            | PAYREQ_REQUEST_FAILED | Payment request failed |
+            | COUNTERPARTY_PUBKEY_FETCH_ERROR | Error fetching counterparty public key |
+            | NO_COMPATIBLE_UMA_VERSION | No compatible UMA version |
+            | LNURLP_REQUEST_FAILED | LNURLP request failed | 
+          enum:
+            - PAYREQ_REQUEST_FAILED
+            - COUNTERPARTY_PUBKEY_FETCH_ERROR
+            - NO_COMPATIBLE_UMA_VERSION
+            - LNURLP_REQUEST_FAILED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
     GridQuoteRateDetails:
       description: Details about the exchange rate and fees for a grid quote.
       type: object
@@ -4846,26 +5047,6 @@ components:
         mapping:
           INCOMING: '#/components/schemas/IncomingTransaction'
           OUTGOING: '#/components/schemas/OutgoingTransaction'
-    Currency:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "SAT" for satoshis, "USDC" for USDCoin, etc.)
-          example: USD
-        name:
-          type: string
-          description: Full name of the currency
-          example: United States Dollar
-        symbol:
-          type: string
-          description: Symbol of the currency
-          example: $
-        decimals:
-          type: integer
-          description: Number of decimal places for the currency
-          minimum: 0
-          example: 2
     CurrencyAmount:
       type: object
       required:
@@ -5512,61 +5693,3 @@ components:
               example:
                 - TAX_ID
                 - REGISTRATION_NUMBER
-    Error412:
-      type: object
-      required:
-        - message
-        - status
-        - code
-      properties:
-        status:
-          enum:
-            - 412
-          type: integer
-          description: HTTP status code
-        code:
-          type: string
-          description: |
-            | Error Code | Description |
-            |------------|-------------|
-            | UNSUPPORTED_UMA_VERSION | Counterparty doesn't support UMA as a service UMA version |
-          enum:
-            - UNSUPPORTED_UMA_VERSIONED
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-    Error424:
-      type: object
-      required:
-        - message
-        - status
-        - code
-      properties:
-        status:
-          enum:
-            - 424
-          type: integer
-          description: HTTP status code
-        code:
-          type: string
-          description: |
-            | Error Code | Description |
-            |------------|-------------|
-            | PAYREQ_REQUEST_FAILED | Payment request failed |
-            | COUNTERPARTY_PUBKEY_FETCH_ERROR | Error fetching counterparty public key |
-            | NO_COMPATIBLE_UMA_VERSION | No compatible UMA version |
-            | LNURLP_REQUEST_FAILED | LNURLP request failed | 
-          enum:
-            - PAYREQ_REQUEST_FAILED
-            - COUNTERPARTY_PUBKEY_FETCH_ERROR
-            - NO_COMPATIBLE_UMA_VERSION
-            - LNURLP_REQUEST_FAILED
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
