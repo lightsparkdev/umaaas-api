@@ -95,8 +95,8 @@ paths:
     $ref: paths/users/users.yaml
   /users/{userId}:
     $ref: paths/users/users_{userId}.yaml
-  /users/{userId}/kyc:
-    $ref: paths/users/users_{userId}_kyc.yaml
+  /users/kyc-link:
+    $ref: paths/users/users_kyc_link.yaml
   /internal-account: 
     $ref: paths/internal-account/account.yaml
   /external-accounts:
@@ -105,8 +105,10 @@ paths:
     $ref: paths/transfer_in/transfer_in.yaml
   /transfer-out:
     $ref: paths/transfer_out/transfer_out.yaml
-  /receiver/{receiverUmaAddress}:
+  /receiver/uma/{receiverUmaAddress}:
     $ref: paths/receiver/uma/receiver_uma_{receiverUmaAddress}.yaml
+  /receiver/external-account/{accountId}:
+    $ref: paths/receiver/external-account/receiver_external-account_{accountId}.yaml
   /quotes/{id}:
     $ref: paths/quotes/quotes_{id}.yaml
   /quotes:
