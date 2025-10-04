@@ -20,8 +20,10 @@ get:
         application/json:
           schema:
             oneOf:
-              - $ref: ../../components/schemas/users/IndividualUser.yaml
-              - $ref: ../../components/schemas/users/BusinessUser.yaml
+              - title: Individual User
+                $ref: ../../components/schemas/users/IndividualUser.yaml
+              - title: Business User
+                $ref: ../../components/schemas/users/BusinessUser.yaml
             discriminator:
               propertyName: userType
               mapping:
@@ -59,50 +61,15 @@ patch:
       application/json:
         schema:
           oneOf:
-            - type: object
-              title: individualUpdate
-              properties:
-                umaAddress:
-                  type: string
-                  description: Full UMA address
-                fullName:
-                  type: string
-                  description: Individual's full name
-                birthDate:
-                  type: string
-                  format: date
-                  description: Date of birth in ISO 8601 format (YYYY-MM-DD)
-                nationality:
-                  type: string
-                  description: Country code (ISO 3166-1 alpha-2)
-                address:
-                  $ref: ../../components/schemas/common/Address.yaml
-                bankAccountInfo:
-                  $ref: ../../components/schemas/users/UserBankAccountInfo.yaml
-            - type: object
-              title: businessUpdate
-              properties:
-                umaAddress:
-                  type: string
-                  description: Full UMA address
-                businessInfo:
-                  type: object
-                  properties:
-                    legalName:
-                      type: string
-                      description: Legal name of the business
-                    registrationNumber:
-                      type: string
-                      description: Business registration number
-                    taxId:
-                      type: string
-                      description: Tax identification number
-                address:
-                  $ref: ../../components/schemas/common/Address.yaml
-                bankAccountInfo:
-                  $ref: ../../components/schemas/users/UserBankAccountInfo.yaml
-                beneficialOwners:
-                  $ref: ../../components/schemas/users/UltimateBeneficialOwner.yaml
+            - title: Individual User Update
+              $ref: ../../components/schemas/users/IndividualUserUpdate.yaml
+            - title: Business User Update
+              $ref: ../../components/schemas/users/BusinessUserUpdate.yaml
+          discriminator:
+            propertyName: userType
+            mapping:
+              INDIVIDUAL: ../../components/schemas/users/IndividualUserUpdate.yaml
+              BUSINESS: ../../components/schemas/users/BusinessUserUpdate.yaml
         examples:
           individualUpdate:
             summary: Update individual user example
@@ -151,8 +118,10 @@ patch:
         application/json:
           schema:
             oneOf:
-              - $ref: ../../components/schemas/users/IndividualUser.yaml
-              - $ref: ../../components/schemas/users/BusinessUser.yaml
+              - title: Individual User
+                $ref: ../../components/schemas/users/IndividualUser.yaml
+              - title: Business User
+                $ref: ../../components/schemas/users/BusinessUser.yaml
             discriminator:
               propertyName: userType
               mapping:
@@ -197,8 +166,10 @@ delete:
         application/json:
           schema:
             oneOf:
-              - $ref: ../../components/schemas/users/IndividualUser.yaml
-              - $ref: ../../components/schemas/users/BusinessUser.yaml
+              - title: Individual User
+                $ref: ../../components/schemas/users/IndividualUser.yaml
+              - title: Business User
+                $ref: ../../components/schemas/users/BusinessUser.yaml
             discriminator:
               propertyName: userType
               mapping:
