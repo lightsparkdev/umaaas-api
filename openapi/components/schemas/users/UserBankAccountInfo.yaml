@@ -1,10 +1,16 @@
 oneOf:
-  - $ref: ./UserClabeAccountInfo.yaml
-  - $ref: ./UserUsAccountInfo.yaml
-  - $ref: ./UserPixAccountInfo.yaml
-  - $ref: ./UserIbanAccountInfo.yaml
-  - $ref: ./UserFboAccountInfo.yaml
-  - $ref: ./UserUpiAccountInfo.yaml
+  - title: CLABE Account
+    $ref: ./UserClabeAccountInfo.yaml
+  - title: US Bank Account
+    $ref: ./UserUsAccountInfo.yaml
+  - title: PIX Account
+    $ref: ./UserPixAccountInfo.yaml
+  - title: IBAN Account
+    $ref: ./UserIbanAccountInfo.yaml
+  - title: FBO Account
+    $ref: ./UserFboAccountInfo.yaml
+  - title: UPI Account
+    $ref: ./UserUpiAccountInfo.yaml
 discriminator:
   propertyName: accountType
   mapping:
