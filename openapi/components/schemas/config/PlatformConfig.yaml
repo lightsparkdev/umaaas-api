@@ -21,7 +21,17 @@ properties:
     type: array
     items:
       $ref: ./PlatformCurrencyConfig.yaml
-    description: List of currencies supported by the platform
+    description: |
+      List of currencies supported by the platform. This is what the platform's
+      customers are able to hold, send, and receive.
+  isRegulatedFinancialInstitution:
+    type: boolean
+    description: |
+      Whether the platform is a regulated financial institution. This is used to
+      determine if the platform's customers must be KYC/KYB'd by Lightspark via
+      the KYC link flow. This can only be set by Lightspark during platform
+      creation.
+    example: false
   createdAt:
     type: string
     format: date-time
