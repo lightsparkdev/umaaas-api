@@ -19,6 +19,8 @@ properties:
     example: 9f84e0c2a72c4fa
   userType:
     $ref: ./UserType.yaml
+  kycStatus:
+    $ref: ./KycStatus.yaml
   createdAt:
     type: string
     format: date-time
