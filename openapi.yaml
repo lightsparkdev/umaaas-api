@@ -4112,6 +4112,17 @@ components:
         details:
           type: object
           description: Additional error details
+    BankAccountType:
+      type: string
+      enum:
+        - CLABE
+        - US_ACCOUNT
+        - PIX
+        - IBAN
+        - FBO
+        - UPI
+        - SPARK_WALLET
+      description: Type of bank account information
     ClabeAccountInfo:
       type: object
       required:
@@ -4120,10 +4131,8 @@ components:
         - bankName
       properties:
         accountType:
-          type: string
-          enum:
-            - CLABE
-          description: Type of account
+          allOf:
+            - $ref: '#/components/schemas/BankAccountType'
           example: CLABE
         clabeNumber:
           type: string
@@ -4149,10 +4158,8 @@ components:
         - accountCategory
       properties:
         accountType:
-          type: string
-          enum:
-            - US_ACCOUNT
-          description: Type of account
+          allOf:
+            - $ref: '#/components/schemas/BankAccountType'
           example: US_ACCOUNT
         accountNumber:
           type: string
@@ -4188,10 +4195,8 @@ components:
         - pixKeyType
       properties:
         accountType:
-          type: string
-          enum:
-            - PIX
-          description: Type of account
+          allOf:
+            - $ref: '#/components/schemas/BankAccountType'
           example: PIX
         pixKey:
           type: string
@@ -4223,10 +4228,8 @@ components:
         - bankName
       properties:
         accountType:
-          type: string
-          enum:
-            - IBAN
-          description: Type of account
+          allOf:
+            - $ref: '#/components/schemas/BankAccountType'
           example: IBAN
         iban:
           type: string
@@ -4255,10 +4258,8 @@ components:
         - currencyCode
       properties:
         accountType:
-          type: string
-          enum:
-            - FBO
-          description: Type of account
+          allOf:
+            - $ref: '#/components/schemas/BankAccountType'
           example: FBO
         currencyCode:
           type: string
@@ -4271,10 +4272,8 @@ components:
         - vpa
       properties:
         accountType:
-          type: string
-          enum:
-            - UPI
-          description: Type of account
+          allOf:
+            - $ref: '#/components/schemas/BankAccountType'
           example: UPI
         vpa:
           type: string
@@ -4291,10 +4290,8 @@ components:
         - address
       properties:
         accountType:
-          type: string
-          enum:
-            - SPARK_WALLET
-          description: Type of account
+          allOf:
+            - $ref: '#/components/schemas/BankAccountType'
           example: SPARK_WALLET
         address:
           type: string
@@ -4900,16 +4897,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/PaymentBankAccountInfo'
         - $ref: '#/components/schemas/UpiAccountInfo'
-    BankAccountType:
-      type: string
-      enum:
-        - CLABE
-        - US_ACCOUNT
-        - PIX
-        - IBAN
-        - FBO
-        - UPI
-      description: Type of bank account information
     PaymentInstructions:
       type: object
       required:

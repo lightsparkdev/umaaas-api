@@ -30,7 +30,7 @@ get:
               url:
                 type: string 
                 description: A hosted kyc link
-                example: http%3A%2F%2Fexample.com%2Fredirect
+                example: "http://example.com/redirect"
     '401':
       description: Unauthorized
       content:
