@@ -406,6 +406,10 @@ paths:
                           enum:
                             - INDIVIDUAL
                           description: User type
+                        kycUrl:
+                          type: string
+                          description: A kyc url to be shared with your individual user if kyc needs to be completed
+                          example: http%3A%2F%2Fexample.com%2Fkyc
                 - title: Business User
                   allOf:
                     - $ref: '#/components/schemas/BusinessUserUpdate'
@@ -423,6 +427,10 @@ paths:
                           enum:
                             - BUSINESS
                           description: User type
+                        kycUrl:
+                          type: string
+                          description: A kyc url to be shared with your business user if kyc needs to be completed
+                          example: http%3A%2F%2Fexample.com%2Fkyc
               discriminator:
                 propertyName: userType
                 mapping:
@@ -857,23 +865,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
-  /users/{userId}/kyc:
+  /users/kyc-link:
     parameters:
-      - name: userId
-        in: path
-        description: System-generated unique user identifier
-        required: true
-        schema:
-          type: string
       - name: redirect_uri
         in: query
-        description: An optional uri a user will be redirected to after completing the hosted kyc flow
+        description: An optional uri a customer will be redirected to after completing the hosted kyc flow
         required: false
         schema:
           type: string
     get:
-      summary: Get a hosted kyc link for a user
-      description: Retrieve a kyc link by a user system-generated ID
+      summary: Get a kyc link for onboarding a customer
+      description: Generate a hosted kyc link to onboard a customer
       operationId: getKycLinkForUser
       tags:
         - Users
@@ -887,22 +889,16 @@ paths:
               schema:
                 type: object
                 properties:
-                  url:
+                  kycUrl:
                     type: string
-                    description: A hosted kyc link
-                    example: http://example.com/redirect
+                    description: A hosted kyc link for your customer to complete kyc
+                    example: http%3A%2F%2Fexample.com%2Fredirect
         '401':
           description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error401'
-        '404':
-          description: User not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
         '500':
           description: Internal service error
           content:
@@ -1653,7 +1649,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
-  /receiver/{receiverUmaAddress}:
+  /receiver/uma/{receiverUmaAddress}:
     get:
       summary: Look up a UMA address for payment
       description: |
@@ -1689,30 +1685,16 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                required:
-                  - receiverUmaAddress
-                  - supportedCurrencies
-                  - lookupId
-                properties:
-                  receiverUmaAddress:
-                    type: string
-                    description: The UMA address that was looked up
-                    example: $receiver@uma.domain
-                  supportedCurrencies:
-                    type: array
-                    description: List of currencies supported by the receiving UMA address
-                    items:
-                      $ref: '#/components/schemas/CurrencyPreference'
-                  requiredPayerDataFields:
-                    type: array
-                    description: Fields required by the receiving institution about the payer before payment can be completed
-                    items:
-                      $ref: '#/components/schemas/CounterpartyFieldDefinition'
-                  lookupId:
-                    type: string
-                    description: Unique identifier for the lookup. Needed in the subsequent create quote request.
-                    example: Lookup:019542f5-b3e7-1d02-0000-000000000009
+                allOf:
+                  - $ref: '#/components/schemas/ReceiverLookupResponse'
+                  - type: object
+                    required:
+                      - receiverUmaAddress
+                    properties:
+                      receiverUmaAddress:
+                        type: string
+                        description: The UMA address that was looked up
+                        example: $receiver@uma.domain
         '400':
           description: Bad request - Missing or invalid parameters
           content:
@@ -1727,6 +1709,89 @@ paths:
                 $ref: '#/components/schemas/Error401'
         '404':
           description: UMA address not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '412':
+          description: Counterparty doesn't support UMA version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error412'
+        '424':
+          description: Counterparty issue
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error424'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /receiver/external-account/{accountId}:
+    get:
+      summary: Look up an external account for payment
+      description: |
+        Lookup an external account by ID to determine supported currencies and exchange rates.
+        This endpoint helps platforms determine what currencies they can send to a given external account, along with the current estimated exchange rates and minimum and maximum amounts that can be sent.
+      operationId: lookupExternalAccount
+      tags:
+        - Sending Payments
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: accountId
+          in: path
+          description: System-generated ID of the external account
+          required: true
+          schema:
+            type: string
+            example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+        - name: senderUmaAddress
+          in: query
+          description: UMA address of the sender (optional if userId is provided)
+          required: false
+          schema:
+            type: string
+        - name: userId
+          in: query
+          description: System ID of the sender (optional if senderUmaAddress is provided)
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful lookup
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ReceiverLookupResponse'
+                  - type: object
+                    required:
+                      - accountId
+                    properties:
+                      accountId:
+                        type: string
+                        description: The external account ID that was looked up
+                        example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+        '400':
+          description: Bad request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: External account not found
           content:
             application/json:
               schema:
@@ -4056,6 +4121,8 @@ components:
           example: 9f84e0c2a72c4fa
         userType:
           $ref: '#/components/schemas/UserType'
+        kycStatus:
+          $ref: '#/components/schemas/KycStatus'
         createdAt:
           type: string
           format: date-time
@@ -4205,6 +4272,19 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/UltimateBeneficialOwner'
+    KycStatus:
+      type: string
+      enum:
+        - APPROVED
+        - REJECTED
+        - PENDING_REVIEW
+        - EXPIRED
+        - CANCELED
+        - MANUALLY_APPROVED
+        - MANUALLY_REJECTED
+        - NOT_STARTED
+      description: The current kyc status of a user
+      example: ACCEPTED
     BankAccountType:
       type: string
       enum:
@@ -4784,6 +4864,26 @@ components:
           description: The maximum amount that can be received in this currency.
           exclusiveMinimum: 0
           example: 1000000
+    ReceiverLookupResponse:
+      type: object
+      required:
+        - supportedCurrencies
+        - lookupId
+      properties:
+        supportedCurrencies:
+          type: array
+          description: List of currencies supported by the receiving account
+          items:
+            $ref: '#/components/schemas/CurrencyPreference'
+        requiredPayerDataFields:
+          type: array
+          description: Fields required by the receiving institution about the payer before payment can be completed
+          items:
+            $ref: '#/components/schemas/CounterpartyFieldDefinition'
+        lookupId:
+          type: string
+          description: Unique identifier for the lookup. Needed in the subsequent create quote request.
+          example: Lookup:019542f5-b3e7-1d02-0000-000000000009
     Error412:
       type: object
       required:
