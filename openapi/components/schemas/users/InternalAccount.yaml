@@ -9,7 +9,7 @@ properties:
   id:
     type: string
     description: The ID of the internal account
-    example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+    example: InternalAccount:12dcbd6-dced-4ec4-b756-3c3a9ea3d123
   userId:
     type: string
     description: The ID of the user associated with the internal account

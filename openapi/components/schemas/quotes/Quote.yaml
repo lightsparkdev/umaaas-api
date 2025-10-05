@@ -49,7 +49,7 @@ properties:
           accountId:
             type: string
             description: Source account identifier
-            example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+            example: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
           currency:
             type: string
             description: Currency code for the source account
@@ -95,7 +95,7 @@ properties:
           accountId:
             type: string
             description: Destination account identifier
-            example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+            example: ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
           currency:
             type: string
             description: Currency code for the destination account

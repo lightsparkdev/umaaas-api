@@ -1,9 +1,5 @@
 type: object
 properties:
-  id:
-    type: string
-    description: The system generated identifier of this account
-    example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
   currency:
     type: string
     description: The ISO 4217 currency code or ISO 24165 code
@@ -11,7 +7,7 @@ properties:
   customerId:
     type: string
     description: The customer this account is tied to
-    example: da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7
+    example: Customer:da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7
   platformAccountId:
     type: string
     description: >
