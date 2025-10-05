@@ -24,6 +24,8 @@ tags:
     description: Internal account management endpoints for creating and managing internal accounts.
   - name: External Accounts
     description: External account management endpoints for creating and managing external bank accounts
+  - name: Plaid
+    description: Plaid integration endpoints for securely connecting and verifying bank accounts. Use these endpoints to generate Plaid Link tokens and create verified external accounts.
   - name: Transfer In
     description: Endpoints for transferring funds from external accounts to internal accounts
   - name: Transfer Out
@@ -946,6 +948,133 @@ paths:
                 $ref: '#/components/schemas/Error401'
         '409':
           description: Conflict - External account already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /plaid/link-tokens:
+    post:
+      summary: Request Plaid Link token
+      description: |
+        Creates a Plaid Link token that can be used to initialize Plaid Link in your application.
+        The Link token is used to authenticate the user and allow them to select their bank account.
+
+        **Async Flow:**
+        1. Platform calls this endpoint to get a link_token and callbackUrl
+        2. Platform displays Plaid Link UI to the end user using the link_token
+        3. End user authenticates with their bank and selects an account
+        4. Plaid returns a public_token to the platform
+        5. Platform POSTs the public_token to the callbackUrl
+        6. Lightspark exchanges the public_token with Plaid and creates the external account asynchronously
+        7. Platform receives a webhook notification when the external account is ready
+      operationId: createPlaidLinkToken
+      tags:
+        - Plaid
+      security:
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaidLinkTokenRequest'
+            example:
+              customerId: User:019542f5-b3e7-1d02-0000-000000000001
+              currency: USD
+              platformAccountId: ext_acc_plaid_123
+              redirectUri: https://yourapp.com/plaid/oauth-redirect
+      responses:
+        '200':
+          description: Link token created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaidLinkTokenResponse'
+        '400':
+          description: Bad request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /plaid/callback/{sessionId}:
+    post:
+      summary: Submit Plaid public token
+      description: |
+        After the user completes Plaid Link authentication, the platform should POST
+        the public_token to this callback URL (provided in the link token response).
+
+        This will trigger asynchronous processing:
+        1. Lightspark exchanges the public_token for an access_token with Plaid
+        2. Lightspark retrieves and verifies the account details
+        3. An external account is created
+        4. A webhook notification is sent to the platform when complete
+      operationId: submitPlaidPublicToken
+      tags:
+        - Plaid
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          description: The unique session identifier from the callbackUrl
+          schema:
+            type: string
+          example: session_abc123xyz
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaidCallbackRequest'
+            example:
+              publicToken: public-sandbox-12345678-1234-1234-1234-123456789012
+              accountId: plaid_account_id_123
+      responses:
+        '202':
+          description: |
+            Public token accepted and external account creation initiated.
+            The platform will receive a webhook notification when the external account is ready.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaidCallbackResponse'
+        '400':
+          description: Bad request - Invalid public token or session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Session not found or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: Session already used
           content:
             application/json:
               schema:
@@ -4989,6 +5118,99 @@ components:
               BUSINESS_COUNTERPARTY: '#/components/schemas/IndividualCounterParty'
         accountInfo:
           $ref: '#/components/schemas/UserBankAccountInfo'
+    PlaidLinkTokenRequest:
+      type: object
+      required:
+        - customerId
+        - currency
+      properties:
+        customerId:
+          type: string
+          description: The ID of the customer for whom to create the Plaid Link token and external account
+          example: User:019542f5-b3e7-1d02-0000-000000000001
+        currency:
+          type: string
+          description: The ISO 4217 currency code for the external account to be created
+          example: USD
+        platformAccountId:
+          type: string
+          description: |
+            Optional platform-specific identifier for the external account to be created. This allows platforms to link accounts to their internal account systems.
+          example: ext_acc_plaid_123
+        redirectUri:
+          type: string
+          description: |
+            Optional redirect URI for OAuth flows. Required for some institutions. This is where the user will be redirected after completing authentication.
+          example: https://yourapp.com/plaid/oauth-redirect
+        webhookUrl:
+          type: string
+          description: |
+            Optional webhook URL to receive Plaid events. If not provided, Lightspark's default webhook handler will be used.
+          example: https://yourapp.com/webhooks/plaid
+    PlaidLinkTokenResponse:
+      type: object
+      required:
+        - linkToken
+        - expiration
+        - callbackUrl
+      properties:
+        linkToken:
+          type: string
+          description: |
+            The Plaid Link token to be used to initialize Plaid Link in your application. This token is single-use and expires after the specified expiration time.
+          example: link-sandbox-12345678-1234-1234-1234-123456789012
+        expiration:
+          type: string
+          format: date-time
+          description: |
+            The ISO 8601 timestamp when this link token expires. Link tokens typically expire after 4 hours.
+          example: '2025-10-05T18:30:00Z'
+        callbackUrl:
+          type: string
+          description: |
+            The URL where the platform should POST the public_token after the user completes Plaid Link authentication. This will trigger asynchronous external account creation.
+          example: https://api.uma.money/umaaas/2025-05-15/plaid/callback/session_abc123xyz
+        requestId:
+          type: string
+          description: A unique identifier for this request, useful for debugging
+          example: req_abc123def456
+    PlaidCallbackRequest:
+      type: object
+      required:
+        - publicToken
+      properties:
+        publicToken:
+          type: string
+          description: |
+            The public token returned by Plaid Link after the user successfully
+            authenticates and selects an account.
+          example: public-sandbox-12345678-1234-1234-1234-123456789012
+        accountId:
+          type: string
+          description: |
+            Optional Plaid account ID if the user selected a specific account.
+            If not provided, the default account will be used.
+          example: plaid_account_id_123
+    PlaidCallbackResponse:
+      type: object
+      required:
+        - status
+        - message
+      properties:
+        status:
+          type: string
+          enum:
+            - PROCESSING
+          description: Status of the external account creation
+          example: PROCESSING
+        message:
+          type: string
+          description: Human-readable message about the processing status
+          example: External account creation initiated. You will receive a webhook notification when complete.
+        requestId:
+          type: string
+          description: A unique identifier for this request, useful for debugging
+          example: req_abc123def456
     TransferStatus:
       type: string
       enum:

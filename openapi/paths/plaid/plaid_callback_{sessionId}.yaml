@@ -10,8 +10,6 @@ post:
     3. An external account is created
     4. A webhook notification is sent to the platform when complete
 
-    **Note:** No authentication is required for this endpoint as the sessionId
-    acts as a secure, single-use token.
   operationId: submitPlaidPublicToken
   tags:
     - Plaid
@@ -32,16 +30,6 @@ post:
         example:
           publicToken: public-sandbox-12345678-1234-1234-1234-123456789012
           accountId: plaid_account_id_123
-          metadata:
-            institution:
-              name: Chase
-              institutionId: ins_3
-            accounts:
-              - id: plaid_account_id_123
-                name: Plaid Checking
-                mask: "0000"
-                type: depository
-                subtype: checking
   responses:
     "202":
       description: |
