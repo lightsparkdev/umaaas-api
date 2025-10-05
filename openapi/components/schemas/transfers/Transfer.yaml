@@ -3,7 +3,7 @@ properties:
   id:
     type: string
     description: The transfer request ID
-    example: transfer_019542f5-b3e7-1d02-0000-000000000001
+    example: Transfer:019542f5-b3e7-1d02-0000-000000000001
   userId:
     type: string
     description: The ID of the user
@@ -14,12 +14,14 @@ properties:
       accountId:
         type: string
         description: Source account ID
+        example: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
   destination:
     type: object
     properties:
       accountId:
         type: string
         description: Destination account ID
+        example: ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
   status:
     $ref: ./TransferStatus.yaml
   createdAt:
