@@ -158,5 +158,7 @@ webhooks:
     $ref: webhooks/bulk-upload.yaml
   invitation-claimed:
     $ref: webhooks/invitation-claimed.yaml
+  kyc-status:
+    $ref: webhooks/kyc-status.yaml
 security:
   - BasicAuth: []
