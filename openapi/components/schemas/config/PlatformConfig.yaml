@@ -9,7 +9,7 @@ properties:
     type: string
     description: UMA domain for this platform
     example: platform.uma.domain
-  proxyUmaaasSubdomain:
+  proxyUmaSubdomain:
     type: string
     description: The subdomain that incoming requests will be proxied to
     example: platform

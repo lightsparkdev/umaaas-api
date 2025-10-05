@@ -1,6 +1,6 @@
 post:
   summary: Create a new API token
-  description: Create a new API token to access the UMAaaS APIs.
+  description: Create a new API token to access the Grid APIs.
   operationId: createToken
   tags:
     - API Tokens

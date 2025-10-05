@@ -3,7 +3,7 @@ post:
   description: >
     Webhook that is called when an invitation is claimed by a user.
 
-    This endpoint should be implemented by platform clients of the UMAaaS API.
+    This endpoint should be implemented by platform clients of the Grid API.
 
 
     When a user claims an invitation, this webhook is triggered to notify the
@@ -29,12 +29,12 @@ post:
 
     ### Authentication
 
-    The webhook includes a signature in the `X-UMAaas-Signature` header that
-    allows you to verify that the webhook was sent by UMAaas.
+    The webhook includes a signature in the `X-Grid-Signature` header that
+    allows you to verify that the webhook was sent by Grid.
 
     To verify the signature:
 
-    1. Get the UMAaas public key provided to you during integration
+    1. Get the Grid public key provided to you during integration
 
     2. Decode the base64 signature from the header
 
