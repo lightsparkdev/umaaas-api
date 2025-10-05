@@ -19,7 +19,7 @@ get:
       required: true
       schema:
         type: string
-        example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+        example: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
     - name: senderUmaAddress
       in: query
       description: UMA address of the sender (optional if userId is provided)
@@ -47,7 +47,7 @@ get:
                   accountId:
                     type: string
                     description: The external account ID that was looked up
-                    example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                    example: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
     '400':
       description: Bad request - Missing or invalid parameters
       content:

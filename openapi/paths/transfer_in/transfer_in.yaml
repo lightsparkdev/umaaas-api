@@ -74,14 +74,14 @@ get:
                             accountId:
                               type: string
                               description: External account ID
-                              example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                              example: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
                         destination:
                           type: object
                           properties:
                             accountId:
                               type: string
                               description: Internal account ID
-                              example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                              example: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
               hasMore:
                 type: boolean
                 description: Indicates if more results are available beyond this page
@@ -146,7 +146,7 @@ post:
                 accountId:
                   type: string
                   description: Reference to an external account ID
-                  example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                  example: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
               description: Source external account details
             destination:
               type: object
@@ -156,7 +156,7 @@ post:
                 accountId:
                   type: string
                   description: Reference to an internal account ID
-                  example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                  example: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
               description: Destination internal account details
         examples:
           transferIn:
@@ -164,33 +164,16 @@ post:
             value:
               userId: User:019542f5-b3e7-1d02-0000-000000000001
               source:
-                accountId: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                accountId: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
               destination:
-                accountId: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                accountId: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
   responses:
     "201":
       description: Transfer-in request created successfully
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: ../../components/schemas/transfers/Transfer.yaml
-              - type: object
-                properties:
-                  source:
-                    type: object
-                    properties:
-                      accountId:
-                        type: string
-                        description: External account ID
-                        example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-                  destination:
-                    type: object
-                    properties:
-                      accountId:
-                        type: string
-                        description: Internal account ID
-                        example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+            $ref: ../../components/schemas/transfers/Transfer.yaml
     "400":
       description: Bad request - Invalid parameters
       content:
