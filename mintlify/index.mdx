@@ -1,59 +1,159 @@
 ---
-title: "Introduction"
-description: "Introduction to UMA Connect"
+title: "Lightspark Grid"
+mode: "custom"
 ---
 
-# Introduction to UMA as a Service
+export const HeroCard = ({ title, description, href, icon }) => {
+  return (
+    <a className="group cursor-pointer pb-8 hero-card grow-0 basis-full sm:basis-1/2 lg:basis-[30%]" href={href}>
+      <img src={icon} alt="Globe icon" />
+      <div className="card-content">
+        <h3 className="highlight">{title}</h3>
+        <span>{description}</span>
+      </div>
+    </a>
+  );
+};
 
-Welcome to the UMA as a Service (UMAaaS) documentation. UMA as a Service is an API that facilitates global payments to and from UMA addresses, which are human-readable addresses that can send to and from any currency.
+<div className="flex flex-col items-center self-stretch w-full hero">
+  <div className="flex flex-col items-center gap-[48px]">
+    <div className="flex items-center title">
+      <img
+        className="h-12 w-auto"
+        src="/images/grid.svg"
+        alt="Lightspark Grid"
+      />
+      <span className="pl-[19px] text-[64px] leading-none inline-flex items-center h-12 py-0 tracking-tight">
+        Grid
+      </span>
+    </div>
+    <div className="flex justify-center subtext">
+      <p>
+        <span className="highlight">Commands for money.</span> One API/SDK to
+        send, receive, and settle value globally—fiat, stablecoins, or Bitcoin.
+        Always real time, always low cost, built on an open network.
+      </p>
+    </div>
+    <div className="flex justify-center">
+      <button className="call-to-action">Get started</button>
+    </div>
+  </div>
+</div>
+<div className="flex usecase w-full justify-center items-center">
+  <div className="section mx-auto">
+    <div>
+    <h2 className="highlight">Build with Lightspark Grid</h2>
+    <h2>Choose your use case</h2>
+    </div>
+    <div className="flex flex-col">
+      <div className="flex items-stretch w-full gap-6 flex-wrap">
+        <HeroCard
+          title="Cross-border payments"
+          description="Send value instantly across currencies and borders."
+          href="/uma-connect/developer-guides/"
+          icon="/images/IconGlobus.svg"
+        />
+        <HeroCard
+          title="Pay to bank"
+          description="Accept funds via bank transfers, wallets, or UMAs, and settle them in the currency of your choice."
+          href="/uma-connect/developer-guides/"
+          icon="/images/IconGlobus.svg"
+        />
+        <HeroCard
+          title="Ramp"
+          description="Convert between crypto and fiat currencies."
+          href="/uma-connect"
+          icon="/images/IconGlobus.svg"
+        />
+        <HeroCard
+          title="Rewards & cashback"
+          description="Deliver micro-payouts at scale instantly and in local currency."
+          href="/uma-connect"
+          icon="/images/IconGlobus.svg"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+<div className="flex usecase w-full justify-center items-center">
+  <div className="section mx-auto">
+  <div>
+    <h2 className="highlight">Get started</h2>
+    <h2>Grid resources</h2>
+    </div>
+    <div className="flex flex-col gap-8">
+      <div className="flex items-stretch w-full gap-6 flex-wrap">
+        <HeroCard
+          title="SDKs"
+          description="Simplify implementation with our SDKs."
+          href="/uma-connect"
+          icon="/images/IconGlobus.svg"
+        />
+        <HeroCard
+          title="Samples"
+          description="Sample code to show you end to end flows and error handling."
+          href="/uma-connect"
+          icon="/images/IconGlobus.svg"
+        />
+        <HeroCard
+          title="Tools"
+          description="Tools and resources to help you understand and test payment flows."
+          href="/uma-connect"
+          icon="/images/IconGlobus.svg"
+        />
+        <HeroCard
+          title="Postman collection"
+          description="Quickly get started with Grid using our Postman collection."
+          href="/uma-connect"
+          icon="/images/IconGlobus.svg"
+        />
+      </div>
+    </div>
+  </div>
+</div>
 
-## Overview
-
-The UMAaas API provides endpoints for:
-
-1. Platform Configuration - Managing platform-specific settings such as UMA domain and required counterparty fields
-2. User Management - Adding and updating users with their UMA addresses and bank account information
-3. Sending Payments - Creating and executing payments to UMA addresses
-4. Receiving Payments - Receiving payments from UMA addresses and approving or rejecting them
-5. Fetching Transactions - Fetching transactions by ID or by quote ID
-
-## Getting Started
-
-To start integrating UMA as a Service, follow these steps:
-
-1. [Set up your platform configuration](/uma-connect/developer-guides/platform-configuration)
-2. [Configure your users](/uma-connect/developer-guides/configuring-users)
-3. [Send payments](/uma-connect/developer-guides/sending-payments)
-4. [Receive payments](/uma-connect/developer-guides/receiving-payments)
-5. [Handle webhooks](/uma-connect/developer-guides/webhooks)
-
-## Authentication
-
-All API requests must include HTTP Basic Authentication using the `Authorization` header. The credentials should be provided in the format `<api token id>:<api client secret>` and then Base64 encoded.
-
-Example:
-
-```http
-Authorization: Basic <base64-encoded-credentials>
-```
-
-Where `<base64-encoded-credentials>` is the Base64 encoding of `<api token id>:<api client secret>`.
-
-You can generate a new API token and client secret at any time in the UMAaas dashboard.
-
-## API Reference
-
-For detailed information about the API endpoints, request and response formats, and available operations, refer to the [API Reference](/api) section.
-
-## Support
-
-If you need assistance with UMA as a Service, please contact our support team at [support@lightspark.com](mailto:support@lightspark.com) or visit our support portal at [https://support.lightspark.com](https://support.lightspark.com).
-
-## About This Documentation
-
-This documentation is organized into the following sections:
-
-- **Guides**: Step-by-step instructions for implementing UMA as a Service features
-- **API Reference**: Detailed documentation of API endpoints and schemas
-
-We continuously improve our documentation. If you have any suggestions or find any issues, please let us know through our [GitHub repository](https://github.com/lightsparkdev/umaaas-api).
+<div className="flex w-full justify-center items-center mb-6">
+  <div className="footer mx-auto">
+    <a href="https://x.com/lightspark" target="_blank" className="h-fit">
+      <span className="sr-only">x</span>
+      <svg
+        className="w-5 h-5 bg-gray-400 dark:bg-gray-500 hover:bg-gray-500 dark:hover:bg-gray-400"
+        style={{
+          maskImage: 'url("/images/x-twitter.svg")',
+          maskRepeat: "no-repeat",
+          maskPosition: "center center",
+        }}
+      ></svg>
+    </a>
+    <a
+      href="https://github.com/lightsparkdev"
+      target="_blank"
+      className="h-fit"
+    >
+      <span className="sr-only">github</span>
+      <svg
+        className="w-5 h-5 bg-gray-400 dark:bg-gray-500 hover:bg-gray-500 dark:hover:bg-gray-400"
+        style={{
+          maskImage: 'url("/images/github.svg")',
+          maskRepeat: "no-repeat",
+          maskPosition: "center center",
+        }}
+      ></svg>
+    </a>
+    <a
+      href="https://linkedin.com/company/lightspark-group"
+      target="_blank"
+      className="h-fit"
+    >
+      <span className="sr-only">linkedin</span>
+      <svg
+        className="w-5 h-5 bg-gray-400 dark:bg-gray-500 hover:bg-gray-500 dark:hover:bg-gray-400"
+        style={{
+          maskImage: 'url("/images/linkedin.svg")',
+          maskRepeat: "no-repeat",
+          maskPosition: "center center",
+        }}
+      ></svg>
+    </a>
+  </div>
+</div>

@@ -1,22 +1,31 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "willow",
+  "theme": "mint",
   "name": "UMA Connect Developer Documentation",
   "description": "UMA as a service enables modern financial institutions to easily send and receive global UMA payments.  UMA is an open, instant, low cost payment network that allows senders and receivers to use their local currencies while settlement occurs over crypto rails.  The following documentation helps developers understand UMA as a service and how to integrate with it.",
   "colors": {
-    "primary": "#16A34A",
+    "primary": "#1A1A1A",
     "light": "#07C983",
-    "dark": "#15803D"
+    "dark": "#00B3E0"
+  },
+  "background": {
+    "color": {
+      "light": "#F8F8F7"
+    }
   },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
+        "tab": "Overview",
+        "pages": ["index"]
+      },
+      {
         "tab": "UMA Connect",
         "groups": [
           {
             "group": "Getting Started",
-            "pages": ["index"]
+            "pages": ["uma-connect/developer-guides/index"]
           },
           {
             "group": "Developer Guides",
@@ -59,8 +68,8 @@
             "group": "API documentation",
             
             "pages":[
-              "/api-reference/users/list-users",
-              "/api-reference/users/add-a-new-user"
+              "POST /users",
+              "GET /users"
             ]
           }
         ]
@@ -103,5 +112,14 @@
       "github": "https://github.com/lightsparkdev",
       "linkedin": "https://linkedin.com/company/lightspark-group"
     }
+  },
+  "head": {
+    "links": [
+      { "rel": "preload", "href": "/fonts/suisse-intl/SuisseIntl-Medium.woff2", "as": "font", "type": "font/woff2", "crossOrigin": "anonymous" },
+      { "rel": "preload", "href": "/fonts/suisse-intl/SuisseIntl-Regular.woff2", "as": "font", "type": "font/woff2", "crossOrigin": "anonymous" },
+      { "rel": "preload", "href": "/fonts/suisse-intl/SuisseIntl-Bold.woff2", "as": "font", "type": "font/woff2", "crossOrigin": "anonymous" },
+      { "rel": "stylesheet", "href": "/styles/fonts.css" },
+      { "rel": "stylesheet", "href": "/styles/styles.css" }
+    ]
   }
 }
