@@ -1,28 +1,9 @@
 type: object
 required:
   - counterPartyType
-  - updatedAt
-  - createdAt
 properties:
   counterPartyType:
     $ref: ../users/UserType.yaml
-  createdAt:
-    type: string
-    format: date-time
-    description: Creation timestamp
-    readOnly: true
-    example: '2023-07-21T17:32:28Z'
-  updatedAt:
-    type: string
-    format: date-time
-    description: Last update timestamp
-    readOnly: true
-    example: '2023-07-21T17:32:28Z'
-  isDeleted:
-    type: boolean
-    description: Whether the user is marked as deleted
-    example: false
-    readOnly: true
 discriminator:
   propertyName: counterPartyType
   mapping:

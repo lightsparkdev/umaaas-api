@@ -108,7 +108,7 @@ post:
               platformAccountId: ext_acc_123456
               userId: User:019542f5-b3e7-1d02-0000-000000000001
               beneficiary:
-                counterpartyType: INDIVIDUAL_COUNTERPARTY
+                counterPartyType: INDIVIDUAL
                 fullName: John Doe
                 email: john.doe@example.com
               accountInfo:
@@ -117,6 +117,7 @@ post:
                 routingNumber: "123456789"
                 accountCategory: CHECKING
                 bankName: Chase Bank
+                accountHolderName: John Doe
           sparkWallet:
             summary: Create external Spark wallet
             value:
@@ -124,13 +125,12 @@ post:
               platformAccountId: spark_wallet_001
               userId: User:019542f5-b3e7-1d02-0000-000000000001
               beneficiary:
-                counterpartyType: INDIVIDUAL_COUNTERPARTY
+                counterPartyType: INDIVIDUAL
                 fullName: Jane Smith
                 email: jane.smith@example.com
               accountInfo:
                 accountType: SPARK_WALLET
-                address: "0x1234567890abcdef1234567890abcdef12345678"
-                name: My Spark Wallet
+                address: "sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu"
   responses:
     "201":
       description: External account created successfully
