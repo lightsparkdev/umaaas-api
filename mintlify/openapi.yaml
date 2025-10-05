@@ -3613,6 +3613,77 @@ webhooks:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error409'
+  kyc-status:
+    post:
+      summary: Kyc customer status change
+      description: |
+        Webhook that is called when the kyc status of a customer is updated.
+        This endpoint should be implemented by clients of the Grid API.
+
+        ### Authentication
+        The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas.
+        To verify the signature:
+        1. Get the UMAaas public key provided to you during integration
+        2. Decode the base64 signature from the header
+        3. Create a SHA-256 hash of the request body
+        4. Verify the signature using the public key and the hash
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+        ### KYC/B Flow
+        This webhook is triggered when KYC/B has reached a decision on a customer. Generally most customers will finish KYC within a few minutes.  Others might be rejected because of incorrect data passed in or may have been flagged for manual review.
+        The webhook will only trigger for final states. This will be APPROVED, REJECTED, EXPIRED, CANCELED, MANUALLY_APPROVED, MANUALLY_REJECTED.
+
+          * APPROVED: The customer has been approved.
+          * REJECTED: The customer has been rejected after a KYC check. 
+          * PENDING_REVIEW: KYC check is in progress.
+          * EXPIRED: KYC check has expired. This is generally because a customer did not submit all required information needed within a session.
+          * CANCELED: KYC check was canceled.
+          * MANUALLY_APPROVED: The customer was manually approved.
+          * MANUALLY_REJECTED: The customer was manually rejected.
+          * NOT_STARTED: KYC has not started on the customer.
+      operationId: kycStatusWebhook
+      tags:
+        - Webhooks
+      security:
+        - WebhookSignature: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KycStatusWebhook'
+            examples:
+              kycApprovedWebhook:
+                summary: When a customer kyc has been approved
+                value:
+                  customerId: User:019542f5-b3e7-1d02-0000-000000000001
+                  kycStatus: APPROVED
+                  type: KYC_STATUS
+                  timestamp: '2023-08-15T14:32:00Z'
+                  webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000007
+      responses:
+        '200':
+          description: |
+            Webhook received successfully. 
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized - Signature validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '409':
+          description: Conflict - Webhook has already been processed (duplicate webhookId)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
 components:
   securitySchemes:
     BasicAuth:
@@ -5898,6 +5969,7 @@ components:
           TEST: '#/components/schemas/TestWebhookRequest'
           BULK_UPLOAD: '#/components/schemas/BulkUploadWebhookRequest'
           INVITATION_CLAIMED: '#/components/schemas/InvitationClaimedWebhook'
+          KYC_STATUS: '#/components/schemas/KycStatusWebhook'
     WebhookType:
       type: string
       enum:
@@ -5906,6 +5978,7 @@ components:
         - TEST
         - BULK_UPLOAD
         - INVITATION_CLAIMED
+        - KYC_STATUS
       description: Type of webhook event, used by the receiver to identify which webhook is being received
     OutgoingPaymentWebhook:
       allOf:
@@ -5957,6 +6030,20 @@ components:
                 - INVITATION_CLAIMED
               description: Type of webhook event
               example: INVITATION_CLAIMED
+    KycStatusWebhook:
+      allOf:
+        - $ref: '#/components/schemas/BaseWebhook'
+        - type: object
+          required:
+            - customerId
+            - kycStatus
+          properties:
+            customerId:
+              type: string
+              description: System generated id of the customer
+              example: User:019542f5-b3e7-1d02-0000-000000000001
+            kycStatus:
+              $ref: '#/components/schemas/KycStatus'
     IncomingPaymentWebhookResponse:
       type: object
       properties:

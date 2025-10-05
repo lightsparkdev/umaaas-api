@@ -28,3 +28,4 @@ discriminator:
     TEST: ./TestWebhookRequest.yaml
     BULK_UPLOAD: ../users/BulkUploadWebhookRequest.yaml
     INVITATION_CLAIMED: ./InvitationClaimedWebhook.yaml
+    KYC_STATUS: ./KycStatusWebhook.yaml
