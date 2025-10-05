@@ -1,0 +1,51 @@
+type: object
+required:
+  - publicToken
+properties:
+  publicToken:
+    type: string
+    description: |
+      The public token returned by Plaid Link after the user successfully
+      authenticates and selects an account.
+    example: public-sandbox-12345678-1234-1234-1234-123456789012
+  accountId:
+    type: string
+    description: |
+      Optional Plaid account ID if the user selected a specific account.
+      If not provided, the default account will be used.
+    example: plaid_account_id_123
+  metadata:
+    type: object
+    description: |
+      Optional metadata about the Plaid Link session, such as institution
+      information and account details
+    properties:
+      institution:
+        type: object
+        properties:
+          name:
+            type: string
+            example: Chase
+          institutionId:
+            type: string
+            example: ins_3
+      accounts:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              example: plaid_account_id_123
+            name:
+              type: string
+              example: Plaid Checking
+            mask:
+              type: string
+              example: "0000"
+            type:
+              type: string
+              example: depository
+            subtype:
+              type: string
+              example: checking

@@ -1,0 +1,30 @@
+type: object
+required:
+  - linkToken
+  - expiration
+  - callbackUrl
+properties:
+  linkToken:
+    type: string
+    description: >
+      The Plaid Link token to be used to initialize Plaid Link in your application.
+      This token is single-use and expires after the specified expiration time.
+    example: link-sandbox-12345678-1234-1234-1234-123456789012
+  expiration:
+    type: string
+    format: date-time
+    description: >
+      The ISO 8601 timestamp when this link token expires.
+      Link tokens typically expire after 4 hours.
+    example: "2025-10-05T18:30:00Z"
+  callbackUrl:
+    type: string
+    description: >
+      The URL where the platform should POST the public_token after the user
+      completes Plaid Link authentication. This will trigger asynchronous
+      external account creation.
+    example: https://api.uma.money/umaaas/2025-05-15/plaid/callback/session_abc123xyz
+  requestId:
+    type: string
+    description: A unique identifier for this request, useful for debugging
+    example: req_abc123def456

@@ -1,0 +1,19 @@
+type: object
+required:
+  - status
+  - message
+properties:
+  status:
+    type: string
+    enum:
+      - PROCESSING
+    description: Status of the external account creation
+    example: PROCESSING
+  message:
+    type: string
+    description: Human-readable message about the processing status
+    example: External account creation initiated. You will receive a webhook notification when complete.
+  requestId:
+    type: string
+    description: A unique identifier for this request, useful for debugging
+    example: req_abc123def456
