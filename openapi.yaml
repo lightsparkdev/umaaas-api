@@ -178,7 +178,7 @@ paths:
                         kycUrl:
                           type: string
                           description: A kyc url to be shared with your individual user if kyc needs to be completed
-                          example: http%3A%2F%2Fexample.com%2Fkyc
+                          example: https://example.com/kyc
                 - title: Business User
                   allOf:
                     - $ref: '#/components/schemas/BusinessUserUpdate'
@@ -199,7 +199,7 @@ paths:
                         kycUrl:
                           type: string
                           description: A kyc url to be shared with your business user if kyc needs to be completed
-                          example: http%3A%2F%2Fexample.com%2Fkyc
+                          example: https://example.com/kyc
               discriminator:
                 propertyName: userType
                 mapping:
@@ -661,7 +661,7 @@ paths:
                   kycUrl:
                     type: string
                     description: A hosted kyc link for your customer to complete kyc
-                    example: http%3A%2F%2Fexample.com%2Fredirect
+                    example: https://example.com/redirect
         '401':
           description: Unauthorized
           content:
