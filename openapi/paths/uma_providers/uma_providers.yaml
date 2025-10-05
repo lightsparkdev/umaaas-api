@@ -62,7 +62,7 @@ get:
           schema:
             properties:
               data:
-                description: List of available Uma Providers using Umaaas
+                description: List of available Uma Providers using Grid
                 type: array
                 items:
                   $ref: '../../components/schemas/uma_providers/UmaProvider.yaml'

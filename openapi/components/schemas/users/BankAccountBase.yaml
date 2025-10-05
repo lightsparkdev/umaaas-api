@@ -23,7 +23,7 @@ properties:
 
       - Linking accounts to internal accounting systems
 
-      - Maintaining consistency between UMAaaS and your platform's account
+      - Maintaining consistency between Grid and your platform's account
       records
     example: acc_123456789
     discriminator:

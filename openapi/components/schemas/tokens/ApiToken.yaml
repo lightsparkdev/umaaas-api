@@ -24,12 +24,12 @@ properties:
     type: string
     description: >-
       An opaque identifier that should be used as a client_id (or username)  in
-      the HTTP Basic Authentication scheme when issuing http requests to UMAaaS.
+      the HTTP Basic Authentication scheme when issuing http requests to Grid.
     example: 01947d2284054f890000e63bca4810df
   clientSecret:
     type: string
     description: >-
-      The secret that should be used to authenticate against UMAaaS API. This
+      The secret that should be used to authenticate against Grid API. This
       secret is not stored and will never be available again after creation. 
       Platform must keep this secret secure as it grants access to the account.
     example: ed0ad25881e234cc28fb2dec0a4fe64e4172
