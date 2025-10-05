@@ -862,7 +862,7 @@ paths:
                   platformAccountId: ext_acc_123456
                   userId: User:019542f5-b3e7-1d02-0000-000000000001
                   beneficiary:
-                    counterpartyType: INDIVIDUAL_COUNTERPARTY
+                    counterPartyType: INDIVIDUAL
                     fullName: John Doe
                     email: john.doe@example.com
                   accountInfo:
@@ -871,6 +871,7 @@ paths:
                     routingNumber: '123456789'
                     accountCategory: CHECKING
                     bankName: Chase Bank
+                    accountHolderName: John Doe
               sparkWallet:
                 summary: Create external Spark wallet
                 value:
@@ -878,13 +879,12 @@ paths:
                   platformAccountId: spark_wallet_001
                   userId: User:019542f5-b3e7-1d02-0000-000000000001
                   beneficiary:
-                    counterpartyType: INDIVIDUAL_COUNTERPARTY
+                    counterPartyType: INDIVIDUAL
                     fullName: Jane Smith
                     email: jane.smith@example.com
                   accountInfo:
                     accountType: SPARK_WALLET
-                    address: '0x1234567890abcdef1234567890abcdef12345678'
-                    name: My Spark Wallet
+                    address: sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
       responses:
         '201':
           description: External account created successfully
@@ -4177,32 +4177,6 @@ components:
         - UPI
         - SPARK_WALLET
       description: Type of bank account information
-    ClabeAccountInfo:
-      type: object
-      required:
-        - accountType
-        - clabeNumber
-        - bankName
-      properties:
-        accountType:
-          allOf:
-            - $ref: '#/components/schemas/BankAccountType'
-          example: CLABE
-        clabeNumber:
-          type: string
-          description: 18-digit CLABE number (Mexican banking standard)
-          example: '123456789012345678'
-          minLength: 18
-          maxLength: 18
-          pattern: ^[0-9]{18}$
-        bankName:
-          type: string
-          description: Name of the bank
-          example: BBVA Mexico
-        accountHolderName:
-          type: string
-          description: Name of the account holder
-          example: John Doe
     UsAccountInfo:
       type: object
       required:
@@ -4241,6 +4215,77 @@ components:
           type: string
           description: Name of the account holder
           example: John Doe
+    ClabeAccountInfo:
+      type: object
+      required:
+        - accountType
+        - clabeNumber
+        - bankName
+      properties:
+        accountType:
+          allOf:
+            - $ref: '#/components/schemas/BankAccountType'
+          example: CLABE
+        clabeNumber:
+          type: string
+          description: 18-digit CLABE number (Mexican banking standard)
+          example: '123456789012345678'
+          minLength: 18
+          maxLength: 18
+          pattern: ^[0-9]{18}$
+        bankName:
+          type: string
+          description: Name of the bank
+          example: BBVA Mexico
+        accountHolderName:
+          type: string
+          description: Name of the account holder
+          example: John Doe
+    BankAccountBase:
+      type: object
+      properties:
+        currency:
+          type: string
+          description: The ISO 4217 currency code or ISO 24165 code
+          example: USD
+        platformAccountId:
+          type: string
+          description: |
+            Platform-specific identifier for this bank account. This optional field allows platforms
+            to link bank accounts to their internal account systems. The value can be any string
+            that helps identify the account in your system (e.g. database IDs, custom references, etc.).
+
+            This field is particularly useful when:
+            - Tracking multiple bank accounts for the same user
+            - Linking accounts to internal accounting systems
+            - Maintaining consistency between UMAaaS and your platform's account records
+          example: acc_123456789
+          discriminator:
+            propertyName: accountType
+            mapping:
+              CLABE: '#/components/schemas/UserClabeAccountInfo'
+              US_ACCOUNT: '#/components/schemas/UserUsAccountInfo'
+              PIX: '#/components/schemas/UserPixAccountInfo'
+              IBAN: '#/components/schemas/UserIbanAccountInfo'
+              FBO: '#/components/schemas/UserFboAccountInfo'
+              UPI: '#/components/schemas/UserUpiAccountInfo'
+              SPARK_WALLET: '#/components/schemas/UserSparkWalletInfo'
+    UserClabeAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/ClabeAccountInfo'
+        - $ref: '#/components/schemas/BankAccountBase'
+    UserUsAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/UsAccountInfo'
+        - $ref: '#/components/schemas/BankAccountBase'
+        - type: object
+          required:
+            - accountHolderName
+          properties:
+            accountHolderName:
+              type: string
+              description: Name of the account holder
+              example: Jane Doe
     PixAccountInfo:
       type: object
       required:
@@ -4274,6 +4319,10 @@ components:
           type: string
           description: Name of the account holder
           example: John Doe
+    UserPixAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PixAccountInfo'
+        - $ref: '#/components/schemas/BankAccountBase'
     IbanAccountInfo:
       type: object
       required:
@@ -4305,20 +4354,21 @@ components:
           type: string
           description: Name of the account holder
           example: John Doe
-    FboAccountInfo:
-      type: object
-      required:
-        - accountType
-        - currencyCode
-      properties:
-        accountType:
-          allOf:
-            - $ref: '#/components/schemas/BankAccountType'
-          example: FBO
-        currencyCode:
-          type: string
-          description: Three-letter currency code (ISO 4217)
-          example: USD
+    UserIbanAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/IbanAccountInfo'
+        - $ref: '#/components/schemas/BankAccountBase'
+    UserFboAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/BankAccountBase'
+        - type: object
+          required:
+            - currencyCode
+          properties:
+            currencyCode:
+              type: string
+              description: Three-letter currency code (ISO 4217)
+              example: USD
     UpiAccountInfo:
       type: object
       required:
@@ -4337,6 +4387,10 @@ components:
           type: string
           description: Name of the account holder
           example: John Doe
+    UserUpiAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/UpiAccountInfo'
+        - $ref: '#/components/schemas/BankAccountBase'
     SparkWalletInfo:
       type: object
       required:
@@ -4351,101 +4405,16 @@ components:
           type: string
           description: Spark wallet address
           example: sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
-    BankAccountBase:
-      type: object
-      properties:
-        currency:
-          type: string
-          description: The ISO 4217 currency code or ISO 24165 code
-          example: USD
-        customerId:
-          type: string
-          description: The customer this account is tied to
-          example: Customer:da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7
-        platformAccountId:
-          type: string
-          description: |
-            Platform-specific identifier for this bank account. This optional field allows platforms
-            to link bank accounts to their internal account systems. The value can be any string
-            that helps identify the account in your system (e.g. database IDs, custom references, etc.).
-
-            This field is particularly useful when:
-            - Tracking multiple bank accounts for the same user
-            - Linking accounts to internal accounting systems
-            - Maintaining consistency between UMAaaS and your platform's account records
-          example: acc_123456789
-        accountInfo:
-          oneOf:
-            - title: CLABE Account
-              $ref: '#/components/schemas/ClabeAccountInfo'
-            - title: US Bank Account
-              $ref: '#/components/schemas/UsAccountInfo'
-            - title: PIX Account
-              $ref: '#/components/schemas/PixAccountInfo'
-            - title: IBAN Account
-              $ref: '#/components/schemas/IbanAccountInfo'
-            - title: FBO Account
-              $ref: '#/components/schemas/FboAccountInfo'
-            - title: UPI Account
-              $ref: '#/components/schemas/UpiAccountInfo'
-            - title: Spark Wallet
-              $ref: '#/components/schemas/SparkWalletInfo'
-          discriminator:
-            propertyName: accountType
-            mapping:
-              CLABE: '#/components/schemas/ClabeAccountInfo'
-              US_ACCOUNT: '#/components/schemas/UsAccountInfo'
-              PIX: '#/components/schemas/PixAccountInfo'
-              IBAN: '#/components/schemas/IbanAccountInfo'
-              FBO: '#/components/schemas/FboAccountInfo'
-              UPI: '#/components/schemas/UpiAccountInfo'
-              SPARK_WALLET: '#/components/schemas/SparkWalletInfo'
-          description: Details of the external bank account
-    UserClabeAccountInfo:
+    UserSparkWalletInfo:
       allOf:
-        - $ref: '#/components/schemas/ClabeAccountInfo'
-        - $ref: '#/components/schemas/BankAccountBase'
-    UserUsAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/UsAccountInfo'
-        - $ref: '#/components/schemas/BankAccountBase'
-        - type: object
-          required:
-            - accountHolderName
-          properties:
-            accountHolderName:
-              type: string
-              description: Name of the account holder
-              example: Jane Doe
-    UserPixAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/PixAccountInfo'
-        - $ref: '#/components/schemas/BankAccountBase'
-    UserIbanAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/IbanAccountInfo'
-        - $ref: '#/components/schemas/BankAccountBase'
-    UserFboAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/BankAccountBase'
-        - type: object
-          required:
-            - currencyCode
-          properties:
-            currencyCode:
-              type: string
-              description: Three-letter currency code (ISO 4217)
-              example: USD
-    UserUpiAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/UpiAccountInfo'
+        - $ref: '#/components/schemas/SparkWalletInfo'
         - $ref: '#/components/schemas/BankAccountBase'
     UserBankAccountInfo:
       oneOf:
-        - title: CLABE Account
-          $ref: '#/components/schemas/UserClabeAccountInfo'
         - title: US Bank Account
           $ref: '#/components/schemas/UserUsAccountInfo'
+        - title: CLABE Account
+          $ref: '#/components/schemas/UserClabeAccountInfo'
         - title: PIX Account
           $ref: '#/components/schemas/UserPixAccountInfo'
         - title: IBAN Account
@@ -4454,15 +4423,18 @@ components:
           $ref: '#/components/schemas/UserFboAccountInfo'
         - title: UPI Account
           $ref: '#/components/schemas/UserUpiAccountInfo'
+        - title: Spark Wallet
+          $ref: '#/components/schemas/UserSparkWalletInfo'
       discriminator:
         propertyName: accountType
         mapping:
-          CLABE: '#/components/schemas/UserClabeAccountInfo'
           US_ACCOUNT: '#/components/schemas/UserUsAccountInfo'
+          CLABE: '#/components/schemas/UserClabeAccountInfo'
           PIX: '#/components/schemas/UserPixAccountInfo'
           IBAN: '#/components/schemas/UserIbanAccountInfo'
           FBO: '#/components/schemas/UserFboAccountInfo'
           UPI: '#/components/schemas/UserUpiAccountInfo'
+          SPARK_WALLET: '#/components/schemas/UserSparkWalletInfo'
     IndividualUserUpdate:
       type: object
       properties:
@@ -4494,6 +4466,10 @@ components:
           $ref: '#/components/schemas/Address'
         bankAccountInfo:
           $ref: '#/components/schemas/UserBankAccountInfo'
+          description: |
+            Optional bank account information for a default receiving account where incoming payments will be deposited.
+            This field should only be used by platforms that are regulated financial institutions and can directly
+            receive incoming funds. Other platforms should add external accounts instead.
     BusinessUserUpdate:
       type: object
       properties:
@@ -4794,28 +4770,9 @@ components:
       type: object
       required:
         - counterPartyType
-        - updatedAt
-        - createdAt
       properties:
         counterPartyType:
           $ref: '#/components/schemas/UserType'
-        createdAt:
-          type: string
-          format: date-time
-          description: Creation timestamp
-          readOnly: true
-          example: '2023-07-21T17:32:28Z'
-        updatedAt:
-          type: string
-          format: date-time
-          description: Last update timestamp
-          readOnly: true
-          example: '2023-07-21T17:32:28Z'
-        isDeleted:
-          type: boolean
-          description: Whether the user is marked as deleted
-          example: false
-          readOnly: true
       discriminator:
         propertyName: counterPartyType
         mapping:
@@ -4867,53 +4824,60 @@ components:
                   description: Tax identification number
                   example: EIN-987654321
     ExternalAccount:
-      allOf:
-        - $ref: '#/components/schemas/BankAccountBase'
-        - type: object
-          required:
-            - id
-            - status
-            - beneficiary
-          properties:
-            id:
-              type: string
-              description: The system generated identifier of this account
-              example: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-            status:
-              $ref: '#/components/schemas/ExternalAccountStatus'
-              description: Status of the external account
-              example: ACTIVE
-            beneficiary:
-              description: Beneficiary of the account
-              oneOf:
-                - title: Business Counterparty
-                  $ref: '#/components/schemas/BusinessCounterParty'
-                - title: Individual Counterparty
-                  $ref: '#/components/schemas/IndividualCounterParty'
-              discriminator:
-                propertyName: counterpartyType
-                mapping:
-                  INDIVIDUAL_COUNTERPARTY: '#/components/schemas/BusinessCounterParty'
-                  BUSINESS_COUNTERPARTY: '#/components/schemas/IndividualCounterParty'
+      type: object
+      required:
+        - id
+        - customerId
+        - status
+        - beneficiary
+        - accountInfo
+      properties:
+        id:
+          type: string
+          description: The system generated identifier of this account
+          example: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+        customerId:
+          type: string
+          description: The customer this account is tied to
+          example: Customer:da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7
+        status:
+          $ref: '#/components/schemas/ExternalAccountStatus'
+          description: Status of the external account
+          example: ACTIVE
+        beneficiary:
+          description: Beneficiary of the account
+          oneOf:
+            - title: Individual Counterparty
+              $ref: '#/components/schemas/IndividualCounterParty'
+            - title: Business Counterparty
+              $ref: '#/components/schemas/BusinessCounterParty'
+          discriminator:
+            propertyName: counterpartyType
+            mapping:
+              INDIVIDUAL_COUNTERPARTY: '#/components/schemas/BusinessCounterParty'
+              BUSINESS_COUNTERPARTY: '#/components/schemas/IndividualCounterParty'
+        accountInfo:
+          $ref: '#/components/schemas/UserBankAccountInfo'
     ExternalAccountCreateRequest:
-      allOf:
-        - $ref: '#/components/schemas/BankAccountBase'
-        - type: object
-          required:
-            - beneficiary
-          properties:
-            beneficiary:
-              description: Beneficiary of the account
-              oneOf:
-                - title: Business Counterparty
-                  $ref: '#/components/schemas/BusinessCounterParty'
-                - title: Individual Counterparty
-                  $ref: '#/components/schemas/IndividualCounterParty'
-              discriminator:
-                propertyName: counterpartyType
-                mapping:
-                  INDIVIDUAL_COUNTERPARTY: '#/components/schemas/BusinessCounterParty'
-                  BUSINESS_COUNTERPARTY: '#/components/schemas/IndividualCounterParty'
+      type: object
+      required:
+        - beneficiary
+        - accountInfo
+      properties:
+        beneficiary:
+          description: Beneficiary of the account
+          oneOf:
+            - title: Business Counterparty
+              $ref: '#/components/schemas/BusinessCounterParty'
+            - title: Individual Counterparty
+              $ref: '#/components/schemas/IndividualCounterParty'
+          discriminator:
+            propertyName: counterpartyType
+            mapping:
+              INDIVIDUAL_COUNTERPARTY: '#/components/schemas/BusinessCounterParty'
+              BUSINESS_COUNTERPARTY: '#/components/schemas/IndividualCounterParty'
+        accountInfo:
+          $ref: '#/components/schemas/UserBankAccountInfo'
     TransferStatus:
       type: string
       enum:
