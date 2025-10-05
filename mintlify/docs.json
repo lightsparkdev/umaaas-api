@@ -56,7 +56,6 @@
       },
       {
         "tab": "API reference",
-        "openapi": "openapi.yaml",
         "groups": [
           {
             "group": "Using the API",
@@ -66,11 +65,7 @@
           },
           {
             "group": "API documentation",
-            
-            "pages":[
-              "POST /users",
-              "GET /users"
-            ]
+            "openapi": "openapi.yaml"
           }
         ]
       },
