@@ -1,12 +1,12 @@
 post:
   summary: Invitation claimed webhook
   description: >
-    Webhook that is called when an invitation is claimed by a user.
+    Webhook that is called when an invitation is claimed by a customer.
 
     This endpoint should be implemented by platform clients of the UMAaaS API.
 
 
-    When a user claims an invitation, this webhook is triggered to notify the
+    When a customer claims an invitation, this webhook is triggered to notify the
     platform that:
 
     1. The invitation has been successfully claimed
@@ -20,7 +20,7 @@ post:
 
     - Track invitation usage and conversion rates
 
-    - Trigger onboarding flows for new users who joined via invitation
+    - Trigger onboarding flows for new customers who joined via invitation
 
     - Apply referral bonuses or rewards to the inviter
 

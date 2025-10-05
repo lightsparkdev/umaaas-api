@@ -22,11 +22,11 @@ get:
         example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
     - name: senderUmaAddress
       in: query
-      description: UMA address of the sender (optional if userId is provided)
+      description: UMA address of the sender (optional if customerId is provided)
       required: false
       schema:
         type: string
-    - name: userId
+    - name: customerId
       in: query
       description: System ID of the sender (optional if senderUmaAddress is provided)
       required: false

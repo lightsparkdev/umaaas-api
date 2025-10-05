@@ -73,28 +73,28 @@ get:
         type: string
     - name: createdAfter
       in: query
-      description: Filter users created after this timestamp (inclusive)
+      description: Filter customers created after this timestamp (inclusive)
       required: false
       schema:
         type: string
         format: date-time
     - name: createdBefore
       in: query
-      description: Filter users created before this timestamp (inclusive)
+      description: Filter customers created before this timestamp (inclusive)
       required: false
       schema:
         type: string
         format: date-time
     - name: updatedAfter
       in: query
-      description: Filter users updated after this timestamp (inclusive)
+      description: Filter customers updated after this timestamp (inclusive)
       required: false
       schema:
         type: string
         format: date-time
     - name: updatedBefore
       in: query
-      description: Filter users updated before this timestamp (inclusive)
+      description: Filter customers updated before this timestamp (inclusive)
       required: false
       schema:
         type: string

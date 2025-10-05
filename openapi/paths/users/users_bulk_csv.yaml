@@ -1,10 +1,10 @@
 post:
-  summary: Upload users via CSV file
+  summary: Upload customer via CSV file
   description: >
-    Upload a CSV file containing user information for bulk creation. The CSV
+    Upload a CSV file containing customer information for bulk creation. The CSV
     file should follow
 
-    a specific format with required and optional columns based on user type.
+    a specific format with required and optional columns based on customer type.
 
 
     ### CSV Format
@@ -12,16 +12,16 @@ post:
     The CSV file should have the following columns:
 
 
-    Required columns for all users:
+    Required columns for all customers:
 
-    - umaAddress: The user's UMA address (e.g., $john.doe@uma.domain.com)
+    - umaAddress: The customer's UMA address (e.g., $john.doe@uma.domain.com)
 
-    - platformUserId: Your platform's unique identifier for the user
+    - platformUserId: Your platform's unique identifier for the customer
 
-    - userType: Either "INDIVIDUAL" or "BUSINESS"
+    - customerType: Either "INDIVIDUAL" or "BUSINESS"
 
 
-    Required columns for individual users:
+    Required columns for individual customerss:
 
     - fullName: Individual's full name
 
@@ -44,7 +44,7 @@ post:
     - bankName: Name of the bank
 
 
-    Required columns for business users:
+    Required columns for business customers:
 
     - businessLegalName: Legal name of the business
 
@@ -65,21 +65,21 @@ post:
     - bankName: Name of the bank
 
 
-    Optional columns for all users:
+    Optional columns for all customers:
 
     - addressLine2: Street address line 2
 
     - platformAccountId: Your platform's identifier for the bank account
 
-    - description: Optional description for the user
+    - description: Optional description for the customer
 
 
-    Optional columns for individual users:
+    Optional columns for individual customers:
 
-    - email: User's email address
+    - email: Customer's email address
 
 
-    Optional columns for business users:
+    Optional columns for business customers:
 
     - businessRegistrationNumber: Business registration number
 
@@ -123,7 +123,7 @@ post:
 
     ```csv
 
-    umaAddress,platformUserId,userType,fullName,birthDate,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId,businessLegalName,routingNumber,accountCategory
+    umaAddress,platformUserId,customerType,fullName,birthDate,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId,businessLegalName,routingNumber,accountCategory
 
     john.doe@uma.domain.com,user123,INDIVIDUAL,John Doe,1990-01-15,123 Main
     St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,Chase
@@ -139,11 +139,11 @@ post:
     The upload process is asynchronous and will return a job ID that can be used
     to track progress.
 
-    You can monitor the job status using the `/users/bulk/jobs/{jobId}`
+    You can monitor the job status using the `/customers/bulk/jobs/{jobId}`
     endpoint.
   operationId: uploadUsersCsv
   tags:
-    - Users
+    - Customers
   security:
     - BasicAuth: []
   requestBody:
@@ -158,7 +158,7 @@ post:
             file:
               type: string
               format: binary
-              description: CSV file containing user information
+              description: CSV file containing customer information
   responses:
     '202':
       description: CSV upload accepted for processing
