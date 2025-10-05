@@ -21,6 +21,8 @@ tags:
     description: Platform configuration endpoints for managing global settings. You can also configure these settings in the UMAaas dashboard.
   - name: Users
     description: User management endpoints for creating and updating user information
+  - name: Internal Accounts
+    description: Internal account management endpoints for creating and managing internal accounts.
   - name: External Accounts
     description: External account management endpoints for creating and managing external bank accounts
   - name: Transfer In
@@ -676,10 +678,14 @@ paths:
     get:
       summary: Get all internal accounts
       description: |
-        Retrieve a list of internal accounts with optional filtering parameters. Returns all internal accounts that match the specified filters. If no filters are provided, returns all internal accounts (paginated).
+        Retrieve a list of internal accounts with optional filtering parameters. Returns all
+        internal accounts that match the specified filters. If no filters are provided, returns all internal accounts
+        (paginated).
+
+        Internal accounts are created automatically when a user is created based on the platform configuration.
       operationId: listInternalAccounts
       tags:
-        - Internal Account
+        - Internal Accounts
       security:
         - BasicAuth: []
       parameters:

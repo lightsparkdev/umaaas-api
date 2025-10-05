@@ -20,6 +20,8 @@ tags:
       also configure these settings in the UMAaas dashboard.
   - name: Users
     description: User management endpoints for creating and updating user information
+  - name: Internal Accounts
+    description: Internal account management endpoints for creating and managing internal accounts.
   - name: External Accounts
     description: External account management endpoints for creating and managing external bank accounts
   - name: Transfer In

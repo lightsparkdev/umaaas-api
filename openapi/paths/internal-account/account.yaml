@@ -1,12 +1,14 @@
 get:
   summary: Get all internal accounts
-  description: >
+  description: |
     Retrieve a list of internal accounts with optional filtering parameters. Returns all
     internal accounts that match the specified filters. If no filters are provided, returns all internal accounts
     (paginated).
+
+    Internal accounts are created automatically when a user is created based on the platform configuration.
   operationId: listInternalAccounts
   tags:
-    - Internal Account
+    - Internal Accounts
   security:
     - BasicAuth: []
   parameters:

@@ -6,7 +6,7 @@ get:
     (paginated).
   operationId: listInternalAccounts
   tags:
-    - Internal Account
+    - Internal Accounts
   security:
     - BasicAuth: []
   parameters:
