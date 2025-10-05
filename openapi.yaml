@@ -2182,6 +2182,69 @@ paths:
                           requiredFields:
                             - TAX_ID
                             - REGISTRATION_NUMBER
+  /quotes/{quoteId}/execute:
+    post:
+      summary: Execute a quote
+      description: |
+        Execute a quote by its ID. This endpoint initiates the transfer between
+        the source and destination accounts.
+
+        This endpoint can only be used for quotes with a `source` which is either an internal account,
+        or has direct pull functionality (e.g. ACH pull with an external account).
+
+        Once executed, the quote cannot be cancelled and the transfer will be processed.
+      operationId: executeQuote
+      tags:
+        - Cross-Currency Payments
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: quoteId
+          in: path
+          required: true
+          description: The unique identifier of the quote to execute
+          schema:
+            type: string
+          example: Quote:019542f5-b3e7-1d02-0000-000000000001
+      responses:
+        '200':
+          description: |
+            Quote confirmed successfully. The transfer has been initiated and
+            the quote status has been updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+        '400':
+          description: Bad request - Invalid quote ID or quote cannot be confirmed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Quote not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: Conflict - Quote already confirmed, expired, or in invalid state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /transactions:
     get:
       summary: List transactions
@@ -4733,15 +4796,179 @@ components:
         details:
           type: object
           description: Additional error details
-    InternalAccount:
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "SAT" for satoshis, "USDC" for USDCoin, etc.)
+          example: USD
+        name:
+          type: string
+          description: Full name of the currency
+          example: United States Dollar
+        symbol:
+          type: string
+          description: Symbol of the currency
+          example: $
+        decimals:
+          type: integer
+          description: Number of decimal places for the currency
+          minimum: 0
+          example: 2
+    CurrencyAmount:
+      type: object
+      required:
+        - amount
+        - currency
+      properties:
+        amount:
+          type: integer
+          format: int64
+          description: Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)
+          example: 12550
+        currency:
+          $ref: '#/components/schemas/Currency'
+    PaymentClabeAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/BankAccountBase'
-        - properties:
-            balance:
-              type: number
-              format: decimal
-              description: Balance of the account
-              example: 99.95
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: '#/components/schemas/ClabeAccountInfo'
+    PaymentBankAccountInfo:
+      type: object
+      required:
+        - accountType
+      properties:
+        accountType:
+          $ref: '#/components/schemas/BankAccountType'
+      discriminator:
+        propertyName: accountType
+        mapping:
+          CLABE: '#/components/schemas/PaymentClabeAccountInfo'
+          US_ACCOUNT: '#/components/schemas/PaymentUsAccountInfo'
+          PIX: '#/components/schemas/PaymentPixAccountInfo'
+          IBAN: '#/components/schemas/PaymentIbanAccountInfo'
+          FBO: '#/components/schemas/PaymentFboAccountInfo'
+          UPI: '#/components/schemas/PaymentUpiAccountInfo'
+          SPARK_WALLET: '#/components/schemas/PaymentSparkWalletInfo'
+    PaymentUsAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: '#/components/schemas/UsAccountInfo'
+    PaymentPixAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: '#/components/schemas/PixAccountInfo'
+    PaymentIbanAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: '#/components/schemas/IbanAccountInfo'
+    PaymentFboAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - type: object
+          required:
+            - paymentUrl
+            - paymentMethod
+          properties:
+            paymentUrl:
+              type: string
+              format: uri
+              description: The url to make request to in order to confirm payment
+              example: https://api.umaaas.uma.money/confirm
+            paymentMethod:
+              type: string
+              enum:
+                - POST
+                - GET
+              description: The HTTP method to use for confirming the payment
+              example: POST
+    PaymentUpiAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: '#/components/schemas/UpiAccountInfo'
+    PaymentSparkWalletInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: '#/components/schemas/SparkWalletInfo'
+      properties:
+        invoice:
+          type: string
+          description: Invoice for the payment
+          example: lnbc15u1p3xnhl2pp5jptserfk3zk4qy42tlucycrfwxhydvlemu9pqr93tuzlv9cc7g3sdqsvfhkcap3xyhx7un8cqzpgxqzjcsp5f8c52y2stc300gl6s4xswtjpc37hrnnr3c9wvtgjfuvqmpm35evq9qyyssqy4lgd8tj637qcjp05rdpxxykjenthxftej7a2zzmwrmrl70fyj9hvj0rewhzj7jfyuwkwcg9g2jpwtk3wkjtwnkdks84hsnu8xps5vsq4gj5hs
+    PaymentInstructions:
+      type: object
+      required:
+        - reference
+        - bankAccountInfo
+      properties:
+        reference:
+          type: string
+          description: Unique reference code that must be included with the payment to properly credit it
+          example: UMA-Q12345-REF
+        instructionsNotes:
+          type: string
+          description: Additional human-readable instructions for making the payment
+          example: Please ensure the reference code is included in the payment memo/description field
+        bankAccountInfo:
+          oneOf:
+            - title: CLABE Account
+              $ref: '#/components/schemas/PaymentClabeAccountInfo'
+            - title: US Bank Account
+              $ref: '#/components/schemas/PaymentUsAccountInfo'
+            - title: PIX Account
+              $ref: '#/components/schemas/PaymentPixAccountInfo'
+            - title: IBAN Account
+              $ref: '#/components/schemas/PaymentIbanAccountInfo'
+            - title: FBO Account
+              $ref: '#/components/schemas/PaymentFboAccountInfo'
+            - title: UPI Account
+              $ref: '#/components/schemas/PaymentUpiAccountInfo'
+            - title: Spark Wallet
+              $ref: '#/components/schemas/PaymentSparkWalletInfo'
+          discriminator:
+            propertyName: accountType
+            mapping:
+              CLABE: '#/components/schemas/PaymentClabeAccountInfo'
+              US_ACCOUNT: '#/components/schemas/PaymentUsAccountInfo'
+              PIX: '#/components/schemas/PaymentPixAccountInfo'
+              IBAN: '#/components/schemas/PaymentIbanAccountInfo'
+              FBO: '#/components/schemas/PaymentFboAccountInfo'
+              UPI: '#/components/schemas/PaymentUpiAccountInfo'
+              SPARK_WALLET: '#/components/schemas/PaymentSparkWalletInfo'
+    InternalAccount:
+      type: object
+      required:
+        - id
+        - balance
+        - fundingPaymentInstructions
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          description: The ID of the internal account
+          example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+        userId:
+          type: string
+          description: The ID of the user associated with the internal account
+          example: User:019542f5-b3e7-1d02-0000-000000000001
+        balance:
+          $ref: '#/components/schemas/CurrencyAmount'
+        fundingPaymentInstructions:
+          type: array
+          description: Payment instructions for funding the account
+          items:
+            $ref: '#/components/schemas/PaymentInstructions'
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the internal account was created
+          example: '2025-10-03T12:30:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the internal account was last updated
+          example: '2025-10-03T12:30:00Z'
     CounterParty:
       type: object
       required:
@@ -4858,26 +5085,6 @@ components:
                 mapping:
                   INDIVIDUAL_COUNTERPARTY: '#/components/schemas/BusinessCounterParty'
                   BUSINESS_COUNTERPARTY: '#/components/schemas/IndividualCounterParty'
-    Currency:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "SAT" for satoshis, "USDC" for USDCoin, etc.)
-          example: USD
-        name:
-          type: string
-          description: Full name of the currency
-          example: United States Dollar
-        symbol:
-          type: string
-          description: Symbol of the currency
-          example: $
-        decimals:
-          type: integer
-          description: Number of decimal places for the currency
-          minimum: 0
-          example: 2
     CurrencyPreference:
       type: object
       required:
@@ -4983,112 +5190,6 @@ components:
         details:
           type: object
           description: Additional error details
-    PaymentClabeAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - $ref: '#/components/schemas/ClabeAccountInfo'
-    PaymentBankAccountInfo:
-      type: object
-      required:
-        - accountType
-      properties:
-        accountType:
-          $ref: '#/components/schemas/BankAccountType'
-      discriminator:
-        propertyName: accountType
-        mapping:
-          CLABE: '#/components/schemas/PaymentClabeAccountInfo'
-          US_ACCOUNT: '#/components/schemas/PaymentUsAccountInfo'
-          PIX: '#/components/schemas/PaymentPixAccountInfo'
-          IBAN: '#/components/schemas/PaymentIbanAccountInfo'
-          FBO: '#/components/schemas/PaymentFboAccountInfo'
-          UPI: '#/components/schemas/PaymentUpiAccountInfo'
-          SPARK_WALLET: '#/components/schemas/PaymentSparkWalletInfo'
-    PaymentUsAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - $ref: '#/components/schemas/UsAccountInfo'
-    PaymentPixAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - $ref: '#/components/schemas/PixAccountInfo'
-    PaymentIbanAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - $ref: '#/components/schemas/IbanAccountInfo'
-    PaymentFboAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - type: object
-          required:
-            - paymentUrl
-            - paymentMethod
-          properties:
-            paymentUrl:
-              type: string
-              format: uri
-              description: The url to make request to in order to confirm payment
-              example: https://api.umaaas.uma.money/confirm
-            paymentMethod:
-              type: string
-              enum:
-                - POST
-                - GET
-              description: The HTTP method to use for confirming the payment
-              example: POST
-    PaymentUpiAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - $ref: '#/components/schemas/UpiAccountInfo'
-    PaymentSparkWalletInfo:
-      allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - $ref: '#/components/schemas/SparkWalletInfo'
-      properties:
-        invoice:
-          type: string
-          description: Invoice for the payment
-          example: lnbc15u1p3xnhl2pp5jptserfk3zk4qy42tlucycrfwxhydvlemu9pqr93tuzlv9cc7g3sdqsvfhkcap3xyhx7un8cqzpgxqzjcsp5f8c52y2stc300gl6s4xswtjpc37hrnnr3c9wvtgjfuvqmpm35evq9qyyssqy4lgd8tj637qcjp05rdpxxykjenthxftej7a2zzmwrmrl70fyj9hvj0rewhzj7jfyuwkwcg9g2jpwtk3wkjtwnkdks84hsnu8xps5vsq4gj5hs
-    PaymentInstructions:
-      type: object
-      required:
-        - reference
-        - bankAccountInfo
-      properties:
-        reference:
-          type: string
-          description: Unique reference code that must be included with the payment to properly credit it
-          example: UMA-Q12345-REF
-        instructionsNotes:
-          type: string
-          description: Additional human-readable instructions for making the payment
-          example: Please ensure the reference code is included in the payment memo/description field
-        bankAccountInfo:
-          oneOf:
-            - title: CLABE Account
-              $ref: '#/components/schemas/PaymentClabeAccountInfo'
-            - title: US Bank Account
-              $ref: '#/components/schemas/PaymentUsAccountInfo'
-            - title: PIX Account
-              $ref: '#/components/schemas/PaymentPixAccountInfo'
-            - title: IBAN Account
-              $ref: '#/components/schemas/PaymentIbanAccountInfo'
-            - title: FBO Account
-              $ref: '#/components/schemas/PaymentFboAccountInfo'
-            - title: UPI Account
-              $ref: '#/components/schemas/PaymentUpiAccountInfo'
-            - title: Spark Wallet
-              $ref: '#/components/schemas/PaymentSparkWalletInfo'
-          discriminator:
-            propertyName: accountType
-            mapping:
-              CLABE: '#/components/schemas/PaymentClabeAccountInfo'
-              US_ACCOUNT: '#/components/schemas/PaymentUsAccountInfo'
-              PIX: '#/components/schemas/PaymentPixAccountInfo'
-              IBAN: '#/components/schemas/PaymentIbanAccountInfo'
-              FBO: '#/components/schemas/PaymentFboAccountInfo'
-              UPI: '#/components/schemas/PaymentUpiAccountInfo'
-              SPARK_WALLET: '#/components/schemas/PaymentSparkWalletInfo'
     OutgoingRateDetails:
       description: Details about the rate and fees for an outgoing transaction or quote.
       type: object
@@ -5506,19 +5607,6 @@ components:
         mapping:
           INCOMING: '#/components/schemas/IncomingTransaction'
           OUTGOING: '#/components/schemas/OutgoingTransaction'
-    CurrencyAmount:
-      type: object
-      required:
-        - amount
-        - currency
-      properties:
-        amount:
-          type: integer
-          format: int64
-          description: Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)
-          example: 12550
-        currency:
-          $ref: '#/components/schemas/Currency'
     ReconciliationInstructions:
       type: object
       required:
