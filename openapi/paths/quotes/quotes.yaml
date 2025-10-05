@@ -1,18 +1,154 @@
+post:
+  summary: Create a transfer quote
+  description: |
+    Generate a quote for a cross-currency transfer between any combination of accounts
+    and UMA addresses. This endpoint handles currency exchange and provides the necessary
+    instructions to execute the transfer.
+
+    **Transfer Types Supported:**
+    - **Account to Account**: Transfer between internal/external accounts with currency exchange.
+    - **Account to UMA**: Transfer from an internal account to an UMA address.
+    - **UMA to Account or UMA to UMA**: This transfer type will only be funded by payment instructions, not from an internal account.
+
+    **Key Features:**
+    - **Flexible Amount Locking**: Always specify whether you want to lock the sending amount or receiving amount
+    - **Currency Exchange**: Handles all cross-currency transfers with real-time exchange rates
+    - **Payment Instructions**: For UMA or user ID sources, provides banking details needed for execution
+
+    **Important:** If you are transferring funds in the same currency (no exchange required), 
+    use the `/transfer-in` or `/transfer-out` endpoints instead.
+  operationId: createQuote
+  tags:
+    - Cross-Currency Payments
+  security:
+    - BasicAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/schemas/quotes/QuoteRequest.yaml
+        examples:
+          accountToAccount:
+            summary: Account to Account Transfer
+            value:
+              source:
+                accountId: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+              destination:
+                accountId: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                currency: EUR
+              lockedCurrencySide: SENDING
+              lockedCurrencyAmount: 10000
+              description: 'Transfer between accounts, either internal or external.'
+          accountToUma:
+            summary: Account to UMA Address Transfer
+            value:
+              lookupId: LookupRequest:019542f5-b3e7-1d02-0000-000000000009
+              source:
+                accountId: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+              destination:
+                umaAddress: $receiver@uma.domain.com
+                currency: EUR
+              lockedCurrencySide: SENDING
+              lockedCurrencyAmount: 1000
+              description: 'Payment for invoice #1234'
+          umaToAccount:
+            summary: UMA Address to Account Transfer
+            value:
+              source:
+                umaAddress: $sender@uma.domain.com
+                currency: USD
+              destination:
+                accountId: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                currency: EUR
+              lockedCurrencySide: RECEIVING
+              lockedCurrencyAmount: 9200
+              description: 'Receiving specific amount'
+  responses:
+    '201':
+      description: |
+        Transfer quote created successfully. The response includes exchange rates, 
+        fees, and transfer details. For transfers involving UMA addresses, payment 
+        instructions are also included for execution through banking systems.
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/quotes/Quote.yaml
+    '400':
+      description: Bad request - Missing or invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error400.yaml
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error401.yaml
+    '412':
+      description: Counterparty doesn't support UMA version
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error412.yaml
+    '424':
+      description: Counterparty issue
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error424.yaml
+    '500':
+      description: Internal service error
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error500.yaml
+    '501':
+      description: Not implemented
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error501.yaml
 get:
-  summary: List quotes
-  description: >
-    Retrieve a list of quotes with optional filtering parameters. Returns all
+  summary: List transfer quotes
+  description: |
+    Retrieve a list of transfer quotes with optional filtering parameters. Returns all
     quotes that match the specified filters. If no filters are provided, returns all quotes
     (paginated).
-  operationId: listGridQuotes
+  operationId: listQuotes
   tags:
-    - Sending Payments
+    - Cross-Currency Payments
   security:
     - BasicAuth: []
   parameters:
     - name: userId
       in: query
-      description: Filter by user ID
+      description: Filter by sending user ID
+      required: false
+      schema:
+        type: string
+    - name: sendingAccountId
+      in: query
+      description: Filter by sending account ID
+      required: false
+      schema:
+        type: string
+    - name: receivingAccountId
+      in: query
+      description: Filter by receiving account ID
+      required: false
+      schema:
+        type: string
+    - name: sendingUmaAddress
+      in: query
+      description: Filter by sending UMA address
+      required: false
+      schema:
+        type: string
+    - name: receivingUmaAddress
+      in: query
+      description: Filter by receiving UMA address
       required: false
       schema:
         type: string
@@ -24,9 +160,10 @@ get:
         type: string
         enum:
           - PENDING
-          - CONFIRMED
-          - EXPIRED
+          - PROCESSING
+          - COMPLETED
           - FAILED
+          - EXPIRED
     - name: createdAfter
       in: query
       description: Filter quotes created after this timestamp (inclusive)
@@ -56,16 +193,6 @@ get:
       required: false
       schema:
         type: string
-    - name: sortOrder
-      in: query
-      description: Order to sort results in
-      required: false
-      schema:
-        type: string
-        enum:
-          - asc
-          - desc
-        default: desc
   responses:
     '200':
       description: Successful operation
@@ -81,7 +208,7 @@ get:
                 type: array
                 description: List of quotes matching the criteria
                 items:
-                  $ref: ../../components/schemas/quotes/GridQuote.yaml
+                  $ref: ../../components/schemas/quotes/Quote.yaml
               hasMore:
                 type: boolean
                 description: Indicates if more results are available beyond this page
@@ -113,126 +240,3 @@ get:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error500.yaml
-post:
-  summary: Create a quote
-  description: >
-    Lock in a quote for transferring funds between a source account and destination account
-    with currency exchange. This endpoint is specifically for cross-currency transfers where
-    the source and destination accounts have different currencies.
-    
-
-    **Important:** If you are transferring funds in the same currency (no exchange required), use the `/transfer-in`
-    or `/transfer-out` endpoints instead.
-    
-  operationId: createGridQuote
-  tags:
-    - Sending Payments
-  security:
-    - BasicAuth: []
-  requestBody:
-    required: true
-    content:
-      application/json:
-        schema:
-          type: object
-          required:
-            - userId
-            - source
-            - destination
-            - amount
-          properties:
-            userId:
-              type: string
-              description: The ID of the user initiating the transfer
-              example: User:019542f5-b3e7-1d02-0000-000000000001
-            source:
-              type: object
-              required:
-                - account_id
-                - currency
-              properties:
-                account_id:
-                  type: string
-                  description: Source account identifier
-                  example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-                currency:
-                  type: string
-                  description: Currency code for the source account
-                  example: USD
-              description: Source account details
-            destination:
-              type: object
-              required:
-                - account_id
-                - currency
-              properties:
-                account_id:
-                  type: string
-                  description: Destination account identifier
-                  example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-                currency:
-                  type: string
-                  description: Currency code for the destination account
-                  example: EUR
-              description: Destination account details
-            amount:
-              type: integer
-              format: int64
-              description: >-
-                The amount to transfer in the smallest unit of the source currency (eg. cents)
-              exclusiveMinimum: 0
-              maximum: 9000000000000000
-              example: 10000
-        examples:
-          usdToEur:
-            summary: USD to EUR transfer
-            value:
-              userId: User:019542f5-b3e7-1d02-0000-000000000001
-              source:
-                account_id: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-                currency: USD
-              destination:
-                account_id: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-                currency: EUR
-              amount: 10000
-  responses:
-    '201':
-      description: >
-        Quote created successfully. The response includes all input details along with
-        
-        rate_details containing the exchange rate and fee breakdown.
-      content:
-        application/json:
-          schema:
-            $ref: ../../components/schemas/quotes/GridQuote.yaml
-    '400':
-      description: Bad request - Missing or invalid parameters
-      content:
-        application/json:
-          schema:
-            $ref: ../../components/schemas/errors/Error400.yaml
-    '401':
-      description: Unauthorized
-      content:
-        application/json:
-          schema:
-            $ref: ../../components/schemas/errors/Error401.yaml
-    '404':
-      description: User or account not found
-      content:
-        application/json:
-          schema:
-            $ref: ../../components/schemas/errors/Error404.yaml
-    '500':
-      description: Internal service error
-      content:
-        application/json:
-          schema:
-            $ref: ../../components/schemas/errors/Error500.yaml
-    '501':
-      description: Not implemented
-      content:
-        application/json:
-          schema:
-            $ref: ../../components/schemas/errors/Error501.yaml
-

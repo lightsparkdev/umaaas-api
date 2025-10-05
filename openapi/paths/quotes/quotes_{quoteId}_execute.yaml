@@ -1,24 +1,26 @@
 post:
-  summary: Confirm a quote
-  description: >
-    Confirm and execute a quote by its ID. This endpoint locks in the quote
+  summary: Execute a quote
+  description: |
+    Execute a quote by its ID. This endpoint initiates the transfer between
+    the source and destination accounts.
+
+    This endpoint can only be used for quotes with a `source` which is either an internal account,
+    or has direct pull functionality (e.g. ACH pull with an external account).
     
-    and initiates the transfer between the source and destination accounts.
-    
-    Once confirmed, the quote cannot be cancelled and the transfer will be processed.
-  operationId: confirmGridQuote
+    Once executed, the quote cannot be cancelled and the transfer will be processed.
+  operationId: executeQuote
   tags:
-    - Sending Payments
+    - Cross-Currency Payments
   security:
     - BasicAuth: []
   parameters:
-    - name: id
+    - name: quoteId
       in: path
       required: true
-      description: The unique identifier of the quote to confirm
+      description: The unique identifier of the quote to execute
       schema:
         type: string
-      example: GridQuote:019542f5-b3e7-1d02-0000-000000000001
+      example: Quote:019542f5-b3e7-1d02-0000-000000000001
   responses:
     '200':
       description: >
@@ -28,7 +30,7 @@ post:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/quotes/GridQuote.yaml
+            $ref: ../../components/schemas/quotes/Quote.yaml
     '400':
       description: Bad request - Invalid quote ID or quote cannot be confirmed
       content:

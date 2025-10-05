@@ -29,6 +29,8 @@ properties:
         $ref: ../common/PaymentFboAccountInfo.yaml
       - title: UPI Account
         $ref: ../common/PaymentUpiAccountInfo.yaml
+      - title: Spark Wallet
+        $ref: ../common/PaymentSparkWalletInfo.yaml
     discriminator:
       propertyName: accountType
       mapping:
@@ -38,3 +40,4 @@ properties:
         IBAN: ../common/PaymentIbanAccountInfo.yaml
         FBO: ../common/PaymentFboAccountInfo.yaml
         UPI: ../common/PaymentUpiAccountInfo.yaml
+        SPARK_WALLET: ../common/PaymentSparkWalletInfo.yaml
