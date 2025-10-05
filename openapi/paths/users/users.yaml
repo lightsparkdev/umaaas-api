@@ -33,7 +33,7 @@ post:
                     kycUrl:
                       type: string 
                       description: A kyc url to be shared with your individual user if kyc needs to be completed 
-                      example: http%3A%2F%2Fexample.com%2Fkyc
+                      example: "https://example.com/kyc"
             - title: Business User
               allOf:
                 - $ref: ../../components/schemas/users/BusinessUserUpdate.yaml
@@ -53,7 +53,7 @@ post:
                     kycUrl:
                       type: string 
                       description: A kyc url to be shared with your business user if kyc needs to be completed 
-                      example: http%3A%2F%2Fexample.com%2Fkyc
+                      example: "https://example.com/kyc"
           discriminator:
             propertyName: userType
             mapping:
