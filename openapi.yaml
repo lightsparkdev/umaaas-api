@@ -853,7 +853,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExternalAccount'
+              $ref: '#/components/schemas/ExternalAccountCreateRequest'
             examples:
               usBankAccount:
                 summary: Create external US bank account
@@ -861,7 +861,6 @@ paths:
                   currency: USD
                   platformAccountId: ext_acc_123456
                   userId: User:019542f5-b3e7-1d02-0000-000000000001
-                  status: ACTIVE
                   beneficiary:
                     counterpartyType: INDIVIDUAL_COUNTERPARTY
                     fullName: John Doe
@@ -878,7 +877,6 @@ paths:
                   currency: BTC
                   platformAccountId: spark_wallet_001
                   userId: User:019542f5-b3e7-1d02-0000-000000000001
-                  status: ACTIVE
                   beneficiary:
                     counterpartyType: INDIVIDUAL_COUNTERPARTY
                     fullName: Jane Smith
@@ -940,13 +938,7 @@ paths:
           description: Filter by transfer status
           required: false
           schema:
-            type: string
-            enum:
-              - PENDING
-              - PROCESSING
-              - COMPLETED
-              - FAILED
-              - CANCELLED
+            $ref: '#/components/schemas/TransferStatus'
         - name: sourceAccountId
           in: query
           description: Filter by source external account ID
@@ -989,44 +981,24 @@ paths:
                     type: array
                     description: List of transfer-in requests matching the filter criteria
                     items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          description: The transfer request ID
-                          example: transfer_019542f5-b3e7-1d02-0000-000000000001
-                        userId:
-                          type: string
-                          description: The ID of the user
-                          example: User:019542f5-b3e7-1d02-0000-000000000001
-                        source:
-                          type: object
+                      allOf:
+                        - $ref: '#/components/schemas/Transfer'
+                        - type: object
                           properties:
-                            accountId:
-                              type: string
-                              description: External account ID
-                              example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-                        destination:
-                          type: object
-                          properties:
-                            accountId:
-                              type: string
-                              description: Internal account ID
-                              example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-                        status:
-                          type: string
-                          description: Status of the transfer
-                          example: PENDING
-                        createdAt:
-                          type: string
-                          format: date-time
-                          description: Timestamp when the transfer was created
-                          example: '2025-10-03T12:00:00Z'
-                        updatedAt:
-                          type: string
-                          format: date-time
-                          description: Timestamp when the transfer was last updated
-                          example: '2025-10-03T12:30:00Z'
+                            source:
+                              type: object
+                              properties:
+                                accountId:
+                                  type: string
+                                  description: External account ID
+                                  example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                            destination:
+                              type: object
+                              properties:
+                                accountId:
+                                  type: string
+                                  description: Internal account ID
+                                  example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
                   hasMore:
                     type: boolean
                     description: Indicates if more results are available beyond this page
@@ -1113,39 +1085,24 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    description: The transfer request ID
-                    example: transfer_019542f5-b3e7-1d02-0000-000000000001
-                  userId:
-                    type: string
-                    description: The ID of the user
-                    example: User:019542f5-b3e7-1d02-0000-000000000001
-                  source:
-                    type: object
+                allOf:
+                  - $ref: '#/components/schemas/Transfer'
+                  - type: object
                     properties:
-                      accountId:
-                        type: string
-                        description: External account ID
-                        example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-                  destination:
-                    type: object
-                    properties:
-                      accountId:
-                        type: string
-                        description: Internal account ID
-                        example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-                  status:
-                    type: string
-                    description: Status of the transfer
-                    example: PENDING
-                  createdAt:
-                    type: string
-                    format: date-time
-                    description: Timestamp when the transfer was created
-                    example: '2025-10-03T12:00:00Z'
+                      source:
+                        type: object
+                        properties:
+                          accountId:
+                            type: string
+                            description: External account ID
+                            example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                      destination:
+                        type: object
+                        properties:
+                          accountId:
+                            type: string
+                            description: Internal account ID
+                            example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
         '400':
           description: Bad request - Invalid parameters
           content:
@@ -1192,13 +1149,7 @@ paths:
           description: Filter by transfer status
           required: false
           schema:
-            type: string
-            enum:
-              - PENDING
-              - PROCESSING
-              - COMPLETED
-              - FAILED
-              - CANCELLED
+            $ref: '#/components/schemas/TransferStatus'
         - name: sourceAccountId
           in: query
           description: Filter by source internal account ID
@@ -1241,44 +1192,24 @@ paths:
                     type: array
                     description: List of transfer-out requests matching the filter criteria
                     items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          description: The transfer request ID
-                          example: transfer_019542f5-b3e7-1d02-0000-000000000002
-                        userId:
-                          type: string
-                          description: The ID of the user
-                          example: User:019542f5-b3e7-1d02-0000-000000000001
-                        source:
-                          type: object
+                      allOf:
+                        - $ref: '#/components/schemas/Transfer'
+                        - type: object
                           properties:
-                            accountId:
-                              type: string
-                              description: Internal account ID
-                              example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-                        destination:
-                          type: object
-                          properties:
-                            accountId:
-                              type: string
-                              description: External account ID
-                              example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-                        status:
-                          type: string
-                          description: Status of the transfer
-                          example: PENDING
-                        createdAt:
-                          type: string
-                          format: date-time
-                          description: Timestamp when the transfer was created
-                          example: '2025-10-03T12:00:00Z'
-                        updatedAt:
-                          type: string
-                          format: date-time
-                          description: Timestamp when the transfer was last updated
-                          example: '2025-10-03T12:30:00Z'
+                            source:
+                              type: object
+                              properties:
+                                accountId:
+                                  type: string
+                                  description: Internal account ID
+                                  example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                            destination:
+                              type: object
+                              properties:
+                                accountId:
+                                  type: string
+                                  description: External account ID
+                                  example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
                   hasMore:
                     type: boolean
                     description: Indicates if more results are available beyond this page
@@ -1365,39 +1296,24 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    description: The transfer request ID
-                    example: transfer_019542f5-b3e7-1d02-0000-000000000002
-                  userId:
-                    type: string
-                    description: The ID of the user
-                    example: User:019542f5-b3e7-1d02-0000-000000000001
-                  source:
-                    type: object
+                allOf:
+                  - $ref: '#/components/schemas/Transfer'
+                  - type: object
                     properties:
-                      accountId:
-                        type: string
-                        description: Internal account ID
-                        example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-                  destination:
-                    type: object
-                    properties:
-                      accountId:
-                        type: string
-                        description: External account ID
-                        example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-                  status:
-                    type: string
-                    description: Status of the transfer
-                    example: PENDING
-                  createdAt:
-                    type: string
-                    format: date-time
-                    description: Timestamp when the transfer was created
-                    example: '2025-10-03T12:00:00Z'
+                      source:
+                        type: object
+                        properties:
+                          accountId:
+                            type: string
+                            description: Internal account ID
+                            example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                      destination:
+                        type: object
+                        properties:
+                          accountId:
+                            type: string
+                            description: External account ID
+                            example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
         '400':
           description: Bad request - Invalid parameters
           content:
@@ -2940,9 +2856,9 @@ paths:
                 $ref: '#/components/schemas/Error500'
   /uma-providers:
     get:
-      summary: This endpoint provides a list of counterparties that are available.
+      summary: This endpoint provides a list of Counterparty Providers that are available.
       description: |
-        This endpoint provides a list of counterparties that are available.
+        This endpoint provides a list of Counterparty Providers that are available.
 
         The response includes basic information about each provider, such as its UMA address, name, and supported currencies.
         This can be used to determine which providers are available for sending or receiving payments.
@@ -4503,9 +4419,9 @@ components:
           type: string
           description: The ISO 4217 currency code or ISO 24165 code
           example: USD
-        ownerId:
+        customerId:
           type: string
-          description: The user this account is tied to
+          description: The customer this account is tied to
           example: da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7
         platformAccountId:
           type: string
@@ -4975,9 +4891,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/CounterParty'
         - type: object
-          required:
-            - fullName
-            - nationality
           properties:
             fullName:
               type: string
@@ -4998,8 +4911,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/CounterParty'
         - type: object
-          required:
-            - address
           properties:
             address:
               $ref: '#/components/schemas/Address'
@@ -5025,9 +4936,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/BankAccountBase'
         - properties:
-            userId:
-              type: string
-              example: User:019542f5-b3e7-1d02-0000-000000000001
             status:
               type: string
               description: Status of the external account
@@ -5043,6 +4951,68 @@ components:
                 mapping:
                   INDIVIDUAL_COUNTERPARTY: '#/components/schemas/BusinessCounterParty'
                   BUSINESS_COUNTERPARTY: '#/components/schemas/IndividualCounterParty'
+    ExternalAccountCreateRequest:
+      allOf:
+        - $ref: '#/components/schemas/BankAccountBase'
+        - type: object
+          required:
+            - beneficiary
+          properties:
+            beneficiary:
+              description: Beneficiary of the account
+              oneOf:
+                - title: Business Counterparty
+                  $ref: '#/components/schemas/BusinessCounterParty'
+                - title: Individual Counterparty
+                  $ref: '#/components/schemas/IndividualCounterParty'
+              discriminator:
+                propertyName: counterpartyType
+                mapping:
+                  INDIVIDUAL_COUNTERPARTY: '#/components/schemas/BusinessCounterParty'
+                  BUSINESS_COUNTERPARTY: '#/components/schemas/IndividualCounterParty'
+    TransferStatus:
+      type: string
+      enum:
+        - PENDING
+        - COMPLETED
+        - FAILED
+        - CANCELED
+      description: Status of a transfer
+    Transfer:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The transfer request ID
+          example: transfer_019542f5-b3e7-1d02-0000-000000000001
+        userId:
+          type: string
+          description: The ID of the user
+          example: User:019542f5-b3e7-1d02-0000-000000000001
+        source:
+          type: object
+          properties:
+            accountId:
+              type: string
+              description: Source account ID
+        destination:
+          type: object
+          properties:
+            accountId:
+              type: string
+              description: Destination account ID
+        status:
+          $ref: '#/components/schemas/TransferStatus'
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the transfer was created
+          example: '2025-10-03T12:00:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the transfer was last updated
+          example: '2025-10-03T12:30:00Z'
     CurrencyPreference:
       type: object
       required:
