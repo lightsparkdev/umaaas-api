@@ -4,10 +4,6 @@ properties:
     type: string
     description: The ISO 4217 currency code or ISO 24165 code
     example: USD
-  customerId:
-    type: string
-    description: The customer this account is tied to
-    example: Customer:da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7
   platformAccountId:
     type: string
     description: >
@@ -30,30 +26,13 @@ properties:
       - Maintaining consistency between UMAaaS and your platform's account
       records
     example: acc_123456789
-  accountInfo:
-    oneOf:
-      - title: CLABE Account
-        $ref: ../common/ClabeAccountInfo.yaml
-      - title: US Bank Account
-        $ref: ../common/UsAccountInfo.yaml
-      - title: PIX Account
-        $ref: ../common/PixAccountInfo.yaml
-      - title: IBAN Account
-        $ref: ../common/IbanAccountInfo.yaml
-      - title: FBO Account
-        $ref: ../common/FboAccountInfo.yaml
-      - title: UPI Account
-        $ref: ../common/UpiAccountInfo.yaml
-      - title: Spark Wallet
-        $ref: ../common/SparkWalletInfo.yaml
     discriminator:
       propertyName: accountType
       mapping:
-        CLABE: ../common/ClabeAccountInfo.yaml
-        US_ACCOUNT: ../common/UsAccountInfo.yaml
-        PIX: ../common/PixAccountInfo.yaml
-        IBAN: ../common/IbanAccountInfo.yaml
-        FBO: ../common/FboAccountInfo.yaml
-        UPI: ../common/UpiAccountInfo.yaml
-        SPARK_WALLET: ../common/SparkWalletInfo.yaml
-    description: Details of the external bank account
+        CLABE: ./UserClabeAccountInfo.yaml
+        US_ACCOUNT: ./UserUsAccountInfo.yaml
+        PIX: ./UserPixAccountInfo.yaml
+        IBAN: ./UserIbanAccountInfo.yaml
+        FBO: ./UserFboAccountInfo.yaml
+        UPI: ./UserUpiAccountInfo.yaml
+        SPARK_WALLET: ./UserSparkWalletInfo.yaml

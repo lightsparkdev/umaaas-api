@@ -27,3 +27,7 @@ properties:
     $ref: ../common/Address.yaml
   bankAccountInfo:
     $ref: ./UserBankAccountInfo.yaml
+    description: |
+      Optional bank account information for a default receiving account where incoming payments will be deposited.
+      This field should only be used by platforms that are regulated financial institutions and can directly
+      receive incoming funds. Other platforms should add external accounts instead.

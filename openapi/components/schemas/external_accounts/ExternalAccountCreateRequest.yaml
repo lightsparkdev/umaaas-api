@@ -1,18 +1,19 @@
-allOf:
-  - $ref: ../users/BankAccountBase.yaml
-  - type: object
-    required:
-      - beneficiary
-    properties:
-      beneficiary:
-        description: Beneficiary of the account
-        oneOf:
-          - title: Business Counterparty
-            $ref: ../counterparty/BusinessCounterParty.yaml
-          - title: Individual Counterparty
-            $ref: ../counterparty/IndividualCounterParty.yaml
-        discriminator:
-          propertyName: counterpartyType
-          mapping:
-            INDIVIDUAL_COUNTERPARTY: ../counterparty/BusinessCounterParty.yaml
-            BUSINESS_COUNTERPARTY: ../counterparty/IndividualCounterParty.yaml
+type: object
+required:
+  - beneficiary
+  - accountInfo
+properties:
+  beneficiary:
+    description: Beneficiary of the account
+    oneOf:
+      - title: Business Counterparty
+        $ref: ../counterparty/BusinessCounterParty.yaml
+      - title: Individual Counterparty
+        $ref: ../counterparty/IndividualCounterParty.yaml
+    discriminator:
+      propertyName: counterpartyType
+      mapping:
+        INDIVIDUAL_COUNTERPARTY: ../counterparty/BusinessCounterParty.yaml
+        BUSINESS_COUNTERPARTY: ../counterparty/IndividualCounterParty.yaml
+  accountInfo:
+    $ref: ../users/UserBankAccountInfo.yaml
