@@ -1,7 +1,7 @@
 get:
-  summary: This endpoint provides a list of counterparties that are available.
+  summary: This endpoint provides a list of Counterparty Providers that are available.
   description: |
-    This endpoint provides a list of counterparties that are available.
+    This endpoint provides a list of Counterparty Providers that are available.
     
     The response includes basic information about each provider, such as its UMA address, name, and supported currencies.
     This can be used to determine which providers are available for sending or receiving payments.

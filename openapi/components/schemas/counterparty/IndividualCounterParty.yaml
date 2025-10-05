@@ -1,9 +1,6 @@
 allOf:
   - $ref: ./CounterParty.yaml
   - type: object
-    required:
-      - fullName
-      - nationality
     properties:
       fullName:
         type: string
