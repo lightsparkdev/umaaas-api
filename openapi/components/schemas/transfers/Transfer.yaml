@@ -1,0 +1,34 @@
+type: object
+properties:
+  id:
+    type: string
+    description: The transfer request ID
+    example: transfer_019542f5-b3e7-1d02-0000-000000000001
+  userId:
+    type: string
+    description: The ID of the user
+    example: User:019542f5-b3e7-1d02-0000-000000000001
+  source:
+    type: object
+    properties:
+      accountId:
+        type: string
+        description: Source account ID
+  destination:
+    type: object
+    properties:
+      accountId:
+        type: string
+        description: Destination account ID
+  status:
+    $ref: ./TransferStatus.yaml
+  createdAt:
+    type: string
+    format: date-time
+    description: Timestamp when the transfer was created
+    example: 2025-10-03T12:00:00Z
+  updatedAt:
+    type: string
+    format: date-time
+    description: Timestamp when the transfer was last updated
+    example: 2025-10-03T12:30:00Z
