@@ -24,7 +24,7 @@ get:
               kycUrl:
                 type: string 
                 description: A hosted kyc link for your customer to complete kyc
-                example: http%3A%2F%2Fexample.com%2Fredirect
+                example: "https://example.com/redirect"
     '401':
       description: Unauthorized
       content:
