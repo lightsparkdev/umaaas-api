@@ -1,10 +1,9 @@
 openapi: 3.1.0
 info:
-  title: UMA as a Service (UMAaaS) API
+  title: Lightspark Grid API
   description: |
-    API for managing global payments to and from UMA addresses. 
-    This service facilitates cross-currency financial transactions using simple human-readable UMA addresses.
-  version: '2025-05-15'
+    API for managing global payments on the Money Grid. 
+  version: '2025-10-13'
   contact:
     name: Lightspark Support
     email: support@lightspark.com
@@ -12,13 +11,13 @@ info:
     name: Proprietary
     url: https://lightspark.com/terms
 servers:
-  - url: https://api.uma.money/umaaas/2025-05-15
+  - url: https://api.lightspark.com/grid/2025-10-13
     description: Production server
 security:
   - BasicAuth: []
 tags:
   - name: Platform Configuration
-    description: Platform configuration endpoints for managing global settings. You can also configure these settings in the UMAaas dashboard.
+    description: Platform configuration endpoints for managing global settings. You can also configure these settings in the Grid dashboard.
   - name: Users
     description: User management endpoints for creating and updating user information
   - name: Internal Accounts
@@ -2741,7 +2740,7 @@ paths:
                 senderUmaAddress:
                   type: string
                   description: UMA address of the sender from the sandbox
-                  example: $success.usd@sandbox.umaaas.uma.money
+                  example: $success.usd@sandbox.grid.uma.money
                 receiverUmaAddress:
                   type: string
                   description: UMA address of the receiver (optional if userId is provided)
@@ -2864,7 +2863,7 @@ paths:
               schema:
                 properties:
                   data:
-                    description: List of available Uma Providers using Umaaas
+                    description: List of available Uma Providers using Grid
                     type: array
                     items:
                       $ref: '#/components/schemas/UmaProvider'
@@ -2892,7 +2891,7 @@ paths:
   /tokens:
     post:
       summary: Create a new API token
-      description: Create a new API token to access the UMAaaS APIs.
+      description: Create a new API token to access the Grid APIs.
       operationId: createToken
       tags:
         - API Tokens
@@ -3128,12 +3127,12 @@ webhooks:
       summary: Incoming payment webhook and approval mechanism
       description: |
         Webhook that is called when an incoming payment is received by a user's UMA address.
-        This endpoint should be implemented by clients of the UMAaas API.
+        This endpoint should be implemented by clients of the Grid API.
 
         ### Authentication
-        The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas.
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by Grid.
         To verify the signature:
-        1. Get the UMAaas public key provided to you during integration
+        1. Get the Grid public key provided to you during integration
         2. Decode the base64 signature from the header
         3. Create a SHA-256 hash of the request body
         4. Verify the signature using the public key and the hash
@@ -3149,7 +3148,7 @@ webhooks:
         4. To request more information, return a 422 Unprocessable Entity with specific missing fields
         5. To process the payment asynchronously, return a 202 Accepted response and then call the `/transactions/{transactionId}/approve` or `/transactions/{transactionId}/reject` endpoint within 5 seconds. Note that synchronous approval/rejection is preferred where possible.
 
-        The UMAaas system will proceed or cancel the payment based on your response.
+        The Grid system will proceed or cancel the payment based on your response.
 
         For transactions with other statuses (COMPLETED, FAILED, REFUNDED), this webhook is purely informational.
       operationId: incomingPaymentWebhook
@@ -3276,12 +3275,12 @@ webhooks:
       summary: Outgoing payment status webhook
       description: |
         Webhook that is called when an outgoing payment's status changes.
-        This endpoint should be implemented by clients of the UMAaas API.
+        This endpoint should be implemented by clients of the Grid API.
 
         ### Authentication
-        The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas.
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by Grid.
         To verify the signature:
-        1. Get the UMAaas public key provided to you during integration
+        1. Get the Grid public key provided to you during integration
         2. Decode the base64 signature from the header
         3. Create a SHA-256 hash of the request body
         4. Verify the signature using the public key and the hash
@@ -3402,9 +3401,9 @@ webhooks:
         This is sent when you configure or update your platform settings with a webhook URL.
 
         ### Authentication
-        The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas.
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by the Grid API.
         To verify the signature:
-        1. Get the UMAaas public key provided to you during integration
+        1. Get the Grid public key provided to you during integration
         2. Decode the base64 signature from the header
         3. Create a SHA-256 hash of the request body
         4. Verify the signature using the public key and the hash
@@ -3456,12 +3455,12 @@ webhooks:
       summary: Bulk upload status webhook
       description: |
         Webhook that is called when a bulk user upload job completes or fails.
-        This endpoint should be implemented by clients of the UMAaas API.
+        This endpoint should be implemented by clients of the Grid API.
 
         ### Authentication
-        The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas.
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by Grid.
         To verify the signature:
-        1. Get the UMAaas public key provided to you during integration
+        1. Get the Grid public key provided to you during integration
         2. Decode the base64 signature from the header
         3. Create a SHA-256 hash of the request body
         4. Verify the signature using the public key and the hash
@@ -3544,7 +3543,7 @@ webhooks:
       summary: Invitation claimed webhook
       description: |
         Webhook that is called when an invitation is claimed by a user.
-        This endpoint should be implemented by platform clients of the UMAaaS API.
+        This endpoint should be implemented by platform clients of the Grid API.
 
         When a user claims an invitation, this webhook is triggered to notify the platform that:
         1. The invitation has been successfully claimed
@@ -3558,9 +3557,9 @@ webhooks:
         - Update their UI to reflect the claimed status
 
         ### Authentication
-        The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas.
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by Grid.
         To verify the signature:
-        1. Get the UMAaas public key provided to you during integration
+        1. Get the Grid public key provided to you during integration
         2. Decode the base64 signature from the header
         3. Create a SHA-256 hash of the request body
         4. Verify the signature using the public key and the hash
@@ -3693,12 +3692,12 @@ components:
     WebhookSignature:
       type: apiKey
       in: header
-      name: X-UMAaas-Signature
+      name: X-Grid-Signature
       description: |
-        Secp256r1 (P-256) asymmetric signature of the webhook payload, which can be used to verify that the webhook was sent by UMAaas.
+        Secp256r1 (P-256) asymmetric signature of the webhook payload, which can be used to verify that the webhook was sent by Grid.
 
         To verify the signature:
-        1. Get the UMAaas public key provided to you during integration
+        1. Get the Grid public key provided to you during integration
         2. Decode the base64 signature from the header
         3. Create a SHA-256 hash of the request body
         4. Verify the signature using the public key and the hash
@@ -3827,7 +3826,7 @@ components:
           type: string
           description: UMA domain for this platform
           example: platform.uma.domain
-        proxyUmaaasSubdomain:
+        proxyUmaSubdomain:
           type: string
           description: The subdomain that incoming requests will be proxied to
           example: platform
@@ -4329,7 +4328,7 @@ components:
             This field is particularly useful when:
             - Tracking multiple bank accounts for the same user
             - Linking accounts to internal accounting systems
-            - Maintaining consistency between UMAaaS and your platform's account records
+            - Maintaining consistency between Grid and your platform's account records
           example: acc_123456789
           discriminator:
             propertyName: accountType
@@ -4734,7 +4733,7 @@ components:
               type: string
               format: uri
               description: The url to make request to in order to confirm payment
-              example: https://api.umaaas.uma.money/confirm
+              example: https://api.lightspark.com/grid/2025-10-13/confirm
             paymentMethod:
               type: string
               enum:
@@ -5105,10 +5104,10 @@ components:
       required:
         - counterpartyMultiplier
         - counterpartyFixedFee
-        - umaaasMultiplier
-        - umaaasFixedFee
-        - umaaasVariableFeeRate
-        - umaaasVariableFeeAmount
+        - gridApiMultiplier
+        - gridApiFixedFee
+        - gridApiVariableFeeRate
+        - gridApiVariableFeeAmount
       properties:
         counterpartyMultiplier:
           type: number
@@ -5122,28 +5121,28 @@ components:
           description: The fixed fee charged by the counterparty institution to execute the quote in the smallest unit of the receiving currency (eg. cents).
           minimum: 0
           example: 10
-        umaaasMultiplier:
+        gridApiMultiplier:
           type: number
           format: double
           description: The underlying multiplier from the sending currency to mSATS, including variable fees.
           exclusiveMinimum: 0
           example: 0.925
-        umaaasFixedFee:
+        gridApiFixedFee:
           type: integer
           format: int64
-          description: The fixed fee charged by the UMAaaS product to execute the quote in the smallest unit of the sending currency (eg. cents).
+          description: The fixed fee charged by the Grid product to execute the quote in the smallest unit of the sending currency (eg. cents).
           minimum: 0
           example: 10
-        umaaasVariableFeeRate:
+        gridApiVariableFeeRate:
           type: number
           format: double
-          description: The variable fee rate charged by the UMAaaS product to execute the quote as a percentage of the sending currency amount.
+          description: The variable fee rate charged by the Grid product to execute the quote as a percentage of the sending currency amount.
           exclusiveMinimum: 0
           example: 0.003
-        umaaasVariableFeeAmount:
+        gridApiVariableFeeAmount:
           type: number
           format: int64
-          description: The variable fee amount charged by the UMAaaS product to execute the quote in the smallest unit of the sending currency (eg. cents). This is the sending amount times umaaasVariableFeeRate.
+          description: The variable fee amount charged by the Grid product to execute the quote in the smallest unit of the sending currency (eg. cents). This is the sending amount times gridApiVariableFeeRate.
           minimum: 0
           example: 30
     Quote:
@@ -5529,33 +5528,33 @@ components:
       description: Details about the rate and fees for an incoming transaction.
       type: object
       required:
-        - umaaasMultiplier
-        - umaaasFixedFee
-        - umaaasVariableFeeRate
-        - umaaasVariableFeeAmount
+        - gridApiMultiplier
+        - gridApiFixedFee
+        - gridApiVariableFeeRate
+        - gridApiVariableFeeAmount
       properties:
-        umaaasMultiplier:
+        gridApiMultiplier:
           type: number
           format: double
           description: The underlying multiplier from the mSATS to the receiving currency, including variable fees.
           exclusiveMinimum: 0
           example: 0.925
-        umaaasFixedFee:
+        gridApiFixedFee:
           type: integer
           format: int64
-          description: The fixed fee charged by the UMAaaS product to execute the quote in the smallest unit of the receiving currency (eg. cents).
+          description: The fixed fee charged by the Grid product to execute the quote in the smallest unit of the receiving currency (eg. cents).
           minimum: 0
           example: 10
-        umaaasVariableFeeRate:
+        gridApiVariableFeeRate:
           type: number
           format: double
-          description: The variable fee rate charged by the UMAaaS product to execute the quote as a percentage of the receiving currency amount.
+          description: The variable fee rate charged by the Grid product to execute the quote as a percentage of the receiving currency amount.
           exclusiveMinimum: 0
           example: 0.003
-        umaaasVariableFeeAmount:
+        gridApiVariableFeeAmount:
           type: number
           format: int64
-          description: The variable fee amount charged by the UMAaaS product to execute the quote in the smallest unit of the receiving currency (eg. cents). This is the receiving amount times umaaasVariableFeeRate.
+          description: The variable fee amount charged by the Grid product to execute the quote in the smallest unit of the receiving currency (eg. cents). This is the receiving amount times gridApiVariableFeeRate.
           minimum: 0
           example: 30
     IncomingTransactionFailureReason:
@@ -5908,11 +5907,11 @@ components:
             $ref: '#/components/schemas/Permission'
         clientId:
           type: string
-          description: An opaque identifier that should be used as a client_id (or username)  in the HTTP Basic Authentication scheme when issuing http requests to UMAaaS.
+          description: An opaque identifier that should be used as a client_id (or username)  in the HTTP Basic Authentication scheme when issuing http requests to Grid.
           example: 01947d2284054f890000e63bca4810df
         clientSecret:
           type: string
-          description: The secret that should be used to authenticate against UMAaaS API. This secret is not stored and will never be available again after creation.  Platform must keep this secret secure as it grants access to the account.
+          description: The secret that should be used to authenticate against Grid API. This secret is not stored and will never be available again after creation.  Platform must keep this secret secure as it grants access to the account.
           example: ed0ad25881e234cc28fb2dec0a4fe64e4172
         createdAt:
           type: string
@@ -5941,7 +5940,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/CounterpartyFieldDefinition'
-              description: Information required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which UMAaaS does not already have from initial user registration.
+              description: Information required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which Grid does not already have from initial user registration.
     BaseWebhook:
       type: object
       required:

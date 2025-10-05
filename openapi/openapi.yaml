@@ -1,12 +1,9 @@
 openapi: 3.1.0
 info:
-  title: UMA as a Service (UMAaaS) API
+  title: Lightspark Grid API
   description: >
-    API for managing global payments to and from UMA addresses. 
-
-    This service facilitates cross-currency financial transactions using simple
-    human-readable UMA addresses.
-  version: '2025-05-15'
+    API for managing global payments on the Money Grid. 
+  version: '2025-10-13'
   contact:
     name: Lightspark Support
     email: support@lightspark.com
@@ -17,7 +14,7 @@ tags:
   - name: Platform Configuration
     description: >-
       Platform configuration endpoints for managing global settings. You can
-      also configure these settings in the UMAaas dashboard.
+      also configure these settings in the Grid dashboard.
   - name: Users
     description: User management endpoints for creating and updating user information
   - name: Internal Accounts
@@ -41,7 +38,7 @@ tags:
   - name: API Tokens
     description: Endpoints to programatically manage API tokens
 servers:
-  - url: https://api.uma.money/umaaas/2025-05-15
+  - url: https://api.lightspark.com/grid/2025-10-13
     description: Production server
 components:
   securitySchemes:
@@ -54,15 +51,15 @@ components:
     WebhookSignature:
       type: apiKey
       in: header
-      name: X-UMAaas-Signature
+      name: X-Grid-Signature
       description: >
         Secp256r1 (P-256) asymmetric signature of the webhook payload, which can
-        be used to verify that the webhook was sent by UMAaas.
+        be used to verify that the webhook was sent by Grid.
 
 
         To verify the signature:
 
-        1. Get the UMAaas public key provided to you during integration
+        1. Get the Grid public key provided to you during integration
 
         2. Decode the base64 signature from the header
 
