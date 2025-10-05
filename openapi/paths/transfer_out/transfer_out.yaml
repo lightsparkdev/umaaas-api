@@ -64,24 +64,7 @@ get:
                 type: array
                 description: List of transfer-out requests matching the filter criteria
                 items:
-                  allOf:
-                    - $ref: ../../components/schemas/transfers/Transfer.yaml
-                    - type: object
-                      properties:
-                        source:
-                          type: object
-                          properties:
-                            accountId:
-                              type: string
-                              description: Internal account ID
-                              example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-                        destination:
-                          type: object
-                          properties:
-                            accountId:
-                              type: string
-                              description: External account ID
-                              example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                  $ref: ../../components/schemas/transfers/Transfer.yaml
               hasMore:
                 type: boolean
                 description: Indicates if more results are available beyond this page
@@ -130,14 +113,9 @@ post:
         schema:
           type: object
           required:
-            - userId
             - source
             - destination
           properties:
-            userId:
-              type: string
-              description: The ID of the user initiating the transfer
-              example: User:019542f5-b3e7-1d02-0000-000000000001
             source:
               type: object
               required:
@@ -162,7 +140,6 @@ post:
           transferOut:
             summary: Transfer from internal to external account
             value:
-              userId: User:019542f5-b3e7-1d02-0000-000000000001
               source:
                 accountId: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
               destination:
