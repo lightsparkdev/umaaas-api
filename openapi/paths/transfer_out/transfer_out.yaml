@@ -124,7 +124,7 @@ post:
                 accountId:
                   type: string
                   description: Reference to an internal account ID
-                  example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                  example: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
               description: Source internal account details
             destination:
               type: object
@@ -134,40 +134,23 @@ post:
                 accountId:
                   type: string
                   description: Reference to an external account ID
-                  example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                  example: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
               description: Destination external account details
         examples:
           transferOut:
             summary: Transfer from internal to external account
             value:
               source:
-                accountId: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                accountId: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
               destination:
-                accountId: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                accountId: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
   responses:
     "201":
       description: Transfer-out request created successfully
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: ../../components/schemas/transfers/Transfer.yaml
-              - type: object
-                properties:
-                  source:
-                    type: object
-                    properties:
-                      accountId:
-                        type: string
-                        description: Internal account ID
-                        example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-                  destination:
-                    type: object
-                    properties:
-                      accountId:
-                        type: string
-                        description: External account ID
-                        example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+            $ref: ../../components/schemas/transfers/Transfer.yaml
     "400":
       description: Bad request - Invalid parameters
       content:
