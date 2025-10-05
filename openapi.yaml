@@ -673,7 +673,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
-  /internal-account:
+  /internal-accounts:
     get:
       summary: Get all internal accounts
       description: |
@@ -740,6 +740,47 @@ paths:
                   totalCount:
                     type: integer
                     description: Total number of users matching the criteria (excluding pagination)
+        '400':
+          description: Bad request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /internal-accounts/{internalAccountId}:
+    parameters:
+      - name: internalAccountId
+        in: path
+        description: System-generated unique internal account identifier
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Get an internal account by ID
+      description: Retrieve an internal account by its system-generated ID
+      operationId: getInternalAccountById
+      tags:
+        - Internal Accounts
+      security:
+        - BasicAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalAccount'
         '400':
           description: Bad request - Invalid parameters
           content:

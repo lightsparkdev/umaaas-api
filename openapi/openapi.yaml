@@ -92,8 +92,10 @@ paths:
     $ref: paths/users/users_{userId}.yaml
   /users/kyc-link:
     $ref: paths/users/users_kyc_link.yaml
-  /internal-account: 
-    $ref: paths/internal-account/account.yaml
+  /internal-accounts: 
+    $ref: paths/internal-accounts/internal_accounts.yaml
+  /internal-accounts/{internalAccountId}:
+    $ref: paths/internal-accounts/internal_accounts_{internalAccountId}.yaml
   /external-accounts:
     $ref: paths/external_accounts/external_accounts.yaml
   /transfer-in:
