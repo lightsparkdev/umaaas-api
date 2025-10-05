@@ -13,3 +13,4 @@ discriminator:
     IBAN: ./PaymentIbanAccountInfo.yaml
     FBO: ./PaymentFboAccountInfo.yaml
     UPI: ./PaymentUpiAccountInfo.yaml
+    SPARK_WALLET: ./PaymentSparkWalletInfo.yaml

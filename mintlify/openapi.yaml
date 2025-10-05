@@ -27,8 +27,8 @@ tags:
     description: Endpoints for transferring funds from external accounts to internal accounts
   - name: Transfer Out
     description: Endpoints for transferring funds from internal accounts to external accounts
-  - name: Sending Payments
-    description: Endpoints for creating and confirming quotes for transfers between accounts
+  - name: Cross-Currency Payments
+    description: Endpoints for creating and confirming quotes for cross-currency transfers.
   - name: Transactions
     description: Endpoints for retrieving transaction information
   - name: Webhooks
@@ -1657,7 +1657,7 @@ paths:
         This endpoint helps platforms determine what currencies they can send to a given UMA address.
       operationId: lookupUma
       tags:
-        - Sending Payments
+        - Cross-Currency Payments
       security:
         - BasicAuth: []
       parameters:
@@ -1739,7 +1739,7 @@ paths:
         This endpoint helps platforms determine what currencies they can send to a given external account, along with the current estimated exchange rates and minimum and maximum amounts that can be sent.
       operationId: lookupExternalAccount
       tags:
-        - Sending Payments
+        - Cross-Currency Payments
       security:
         - BasicAuth: []
       parameters:
@@ -1814,31 +1814,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
-  /quotes/{id}:
+  /quotes/{quoteId}:
     get:
       summary: Get quote by ID
       description: |
-        Retrieve a quote by its ID. If the quote has been confirmed, it will include  the current status and all transfer details.
+        Retrieve a quote by its ID. If the quote has been settled, it will include 
+        the transaction ID. This allows clients to track the full lifecycle of a payment
+        from quote creation to settlement.
       operationId: getQuoteById
       tags:
-        - Sending Payments
+        - Cross-Currency Payments
       security:
         - BasicAuth: []
       parameters:
-        - name: id
+        - name: quoteId
           in: path
           description: ID of the quote to retrieve
           required: true
           schema:
             type: string
-          example: GridQuote:019542f5-b3e7-1d02-0000-000000000001
       responses:
         '200':
           description: Quote retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GridQuote'
+                $ref: '#/components/schemas/Quote'
         '401':
           description: Unauthorized
           content:
@@ -1858,19 +1859,157 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error500'
   /quotes:
-    get:
-      summary: List quotes
+    post:
+      summary: Create a transfer quote
       description: |
-        Retrieve a list of quotes with optional filtering parameters. Returns all quotes that match the specified filters. If no filters are provided, returns all quotes (paginated).
-      operationId: listGridQuotes
+        Generate a quote for a cross-currency transfer between any combination of accounts
+        and UMA addresses. This endpoint handles currency exchange and provides the necessary
+        instructions to execute the transfer.
+
+        **Transfer Types Supported:**
+        - **Account to Account**: Transfer between internal/external accounts with currency exchange.
+        - **Account to UMA**: Transfer from an internal account to an UMA address.
+        - **UMA to Account or UMA to UMA**: This transfer type will only be funded by payment instructions, not from an internal account.
+
+        **Key Features:**
+        - **Flexible Amount Locking**: Always specify whether you want to lock the sending amount or receiving amount
+        - **Currency Exchange**: Handles all cross-currency transfers with real-time exchange rates
+        - **Payment Instructions**: For UMA or user ID sources, provides banking details needed for execution
+
+        **Important:** If you are transferring funds in the same currency (no exchange required), 
+        use the `/transfer-in` or `/transfer-out` endpoints instead.
+      operationId: createQuote
       tags:
-        - Sending Payments
+        - Cross-Currency Payments
+      security:
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuoteRequest'
+            examples:
+              accountToAccount:
+                summary: Account to Account Transfer
+                value:
+                  source:
+                    accountId: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                  destination:
+                    accountId: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                    currency: EUR
+                  lockedCurrencySide: SENDING
+                  lockedCurrencyAmount: 10000
+                  description: Transfer between accounts, either internal or external.
+              accountToUma:
+                summary: Account to UMA Address Transfer
+                value:
+                  lookupId: LookupRequest:019542f5-b3e7-1d02-0000-000000000009
+                  source:
+                    accountId: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                  destination:
+                    umaAddress: $receiver@uma.domain.com
+                    currency: EUR
+                  lockedCurrencySide: SENDING
+                  lockedCurrencyAmount: 1000
+                  description: 'Payment for invoice #1234'
+              umaToAccount:
+                summary: UMA Address to Account Transfer
+                value:
+                  source:
+                    umaAddress: $sender@uma.domain.com
+                    currency: USD
+                  destination:
+                    accountId: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                    currency: EUR
+                  lockedCurrencySide: RECEIVING
+                  lockedCurrencyAmount: 9200
+                  description: Receiving specific amount
+      responses:
+        '201':
+          description: |
+            Transfer quote created successfully. The response includes exchange rates, 
+            fees, and transfer details. For transfers involving UMA addresses, payment 
+            instructions are also included for execution through banking systems.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+        '400':
+          description: Bad request - Missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '412':
+          description: Counterparty doesn't support UMA version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error412'
+        '424':
+          description: Counterparty issue
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error424'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+        '501':
+          description: Not implemented
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error501'
+    get:
+      summary: List transfer quotes
+      description: |
+        Retrieve a list of transfer quotes with optional filtering parameters. Returns all
+        quotes that match the specified filters. If no filters are provided, returns all quotes
+        (paginated).
+      operationId: listQuotes
+      tags:
+        - Cross-Currency Payments
       security:
         - BasicAuth: []
       parameters:
         - name: userId
           in: query
-          description: Filter by user ID
+          description: Filter by sending user ID
+          required: false
+          schema:
+            type: string
+        - name: sendingAccountId
+          in: query
+          description: Filter by sending account ID
+          required: false
+          schema:
+            type: string
+        - name: receivingAccountId
+          in: query
+          description: Filter by receiving account ID
+          required: false
+          schema:
+            type: string
+        - name: sendingUmaAddress
+          in: query
+          description: Filter by sending UMA address
+          required: false
+          schema:
+            type: string
+        - name: receivingUmaAddress
+          in: query
+          description: Filter by receiving UMA address
           required: false
           schema:
             type: string
@@ -1882,9 +2021,10 @@ paths:
             type: string
             enum:
               - PENDING
-              - CONFIRMED
-              - EXPIRED
+              - PROCESSING
+              - COMPLETED
               - FAILED
+              - EXPIRED
         - name: createdAfter
           in: query
           description: Filter quotes created after this timestamp (inclusive)
@@ -1914,16 +2054,6 @@ paths:
           required: false
           schema:
             type: string
-        - name: sortOrder
-          in: query
-          description: Order to sort results in
-          required: false
-          schema:
-            type: string
-            enum:
-              - asc
-              - desc
-            default: desc
       responses:
         '200':
           description: Successful operation
@@ -1939,7 +2069,7 @@ paths:
                     type: array
                     description: List of quotes matching the criteria
                     items:
-                      $ref: '#/components/schemas/GridQuote'
+                      $ref: '#/components/schemas/Quote'
                   hasMore:
                     type: boolean
                     description: Indicates if more results are available beyond this page
@@ -1967,180 +2097,91 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
+  /quotes/{quoteId}/retry:
     post:
-      summary: Create a quote
+      summary: Retry an incomplete payment
       description: |
-        Lock in a quote for transferring funds between a source account and destination account with currency exchange. This endpoint is specifically for cross-currency transfers where the source and destination accounts have different currencies.
+        In the case where a customer is debited but the Lightning payment fails to complete, integrators can retry the payment using this endpoint.  
 
-        **Important:** If you are transferring funds in the same currency (no exchange required), use the `/transfer-in` or `/transfer-out` endpoints instead.
-      operationId: createGridQuote
+        Payments retried with this endpoint will debit from the sender and deliver to the recipient the same amount as the original quote.
+        As UMA as a service does not persist customer PII, retries need to start with a lookup request to retrieve the original quote's recipient counter party data requirements then pass that sender information in the request body.
+        Before calling this endpoint, you should reach out to the UMA as a service team to investigate the underlying issue.  As part of resolution, they'll update the transaction to the appropriate state.  The quote / transaction to retry must be in a `FAILED` or `REFUNDED` state.
+      operationId: retryQuote
       tags:
-        - Sending Payments
+        - Cross-Currency Payments
       security:
         - BasicAuth: []
+      parameters:
+        - name: quoteId
+          in: path
+          description: ID of the quote to retry
+          required: true
+          schema:
+            type: string
       requestBody:
-        required: true
         content:
           application/json:
             schema:
               type: object
               required:
-                - userId
-                - source
-                - destination
-                - amount
+                - lookupId
               properties:
-                userId:
+                lookupId:
                   type: string
-                  description: The ID of the user initiating the transfer
-                  example: User:019542f5-b3e7-1d02-0000-000000000001
-                source:
+                  description: Unique identifier for the prior receiver uma address lookup request.
+                  example: Lookup:019542f5-b3e7-1d02-0000-000000000009
+                senderUserInfo:
                   type: object
-                  required:
-                    - account_id
-                    - currency
-                  properties:
-                    account_id:
-                      type: string
-                      description: Source account identifier
-                      example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-                    currency:
-                      type: string
-                      description: Currency code for the source account
-                      example: USD
-                  description: Source account details
-                destination:
-                  type: object
-                  required:
-                    - account_id
-                    - currency
-                  properties:
-                    account_id:
-                      type: string
-                      description: Destination account identifier
-                      example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-                    currency:
-                      type: string
-                      description: Currency code for the destination account
-                      example: EUR
-                  description: Destination account details
-                amount:
-                  type: integer
-                  format: int64
-                  description: The amount to transfer in the smallest unit of the source currency (eg. cents)
-                  exclusiveMinimum: 0
-                  maximum: 9000000000000000
-                  example: 10000
-            examples:
-              usdToEur:
-                summary: USD to EUR transfer
-                value:
-                  userId: User:019542f5-b3e7-1d02-0000-000000000001
-                  source:
-                    account_id: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-                    currency: USD
-                  destination:
-                    account_id: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-                    currency: EUR
-                  amount: 10000
+                  additionalProperties: true
+                  description: |
+                    Key-value pairs of information about the sender which was requested by the counterparty (recipient) institution.
+                    Any fields specified in `requiredPayerDataFields` from the response of the `/receiver/{receiverUmaAddress}` (lookupUma) endpoint
+                    MUST be provided here if they were requested. If the counterparty (recipient) institution did not request any information,
+                    this field can be omitted.
+                  example:
+                    FULL_NAME: Jane Receiver
+                    NATIONALITY: FR
       responses:
         '201':
           description: |
-            Quote created successfully. The response includes all input details along with
-            rate_details containing the exchange rate and fee breakdown.
+            Quote created successfully. The response includes payment instructions
+            that the client can use to execute the payment through their banking provider.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GridQuote'
+                $ref: '#/components/schemas/Quote'
         '400':
           description: Bad request - Missing or invalid parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
+                $ref: '#/components/schemas/Error'
         '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
-          description: User or account not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
-          description: Internal service error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-        '501':
-          description: Not implemented
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error501'
-  /quotes/{id}/confirm:
-    post:
-      summary: Confirm a quote
-      description: |
-        Confirm and execute a quote by its ID. This endpoint locks in the quote
-        and initiates the transfer between the source and destination accounts.
-        Once confirmed, the quote cannot be cancelled and the transfer will be processed.
-      operationId: confirmGridQuote
-      tags:
-        - Sending Payments
-      security:
-        - BasicAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: The unique identifier of the quote to confirm
-          schema:
-            type: string
-          example: GridQuote:019542f5-b3e7-1d02-0000-000000000001
-      responses:
-        '200':
+                $ref: '#/components/schemas/Error'
+        '422':
           description: |
-            Quote confirmed successfully. The transfer has been initiated and
-            the quote status has been updated.
+            Unprocessable Entity - Additional counterparty information required,
+            or the payment cannot be completed for another reason.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GridQuote'
-        '400':
-          description: Bad request - Invalid quote ID or quote cannot be confirmed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
-          description: Quote not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
-        '409':
-          description: Conflict - Quote already confirmed, expired, or in invalid state
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error409'
-        '500':
-          description: Internal service error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
+                allOf:
+                  - $ref: '#/components/schemas/Error'
+                  - type: object
+                    properties:
+                      code:
+                        example: MISSING_MANDATORY_USER_INFO
+                      message:
+                        example: Additional counterparty information required
+                      details:
+                        example:
+                          requiredFields:
+                            - TAX_ID
+                            - REGISTRATION_NUMBER
   /transactions:
     get:
       summary: List transactions
@@ -4469,7 +4510,7 @@ components:
         address:
           type: string
           description: Spark wallet address
-          example: '0x1234567890abcdef1234567890abcdef12345678'
+          example: sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
     BankAccountBase:
       type: object
       properties:
@@ -4942,127 +4983,180 @@ components:
         details:
           type: object
           description: Additional error details
-    GridQuoteRateDetails:
-      description: Details about the exchange rate and fees for a grid quote.
+    PaymentClabeAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: '#/components/schemas/ClabeAccountInfo'
+    PaymentBankAccountInfo:
       type: object
       required:
-        - exchangeRate
-        - fees
+        - accountType
       properties:
-        exchangeRate:
+        accountType:
+          $ref: '#/components/schemas/BankAccountType'
+      discriminator:
+        propertyName: accountType
+        mapping:
+          CLABE: '#/components/schemas/PaymentClabeAccountInfo'
+          US_ACCOUNT: '#/components/schemas/PaymentUsAccountInfo'
+          PIX: '#/components/schemas/PaymentPixAccountInfo'
+          IBAN: '#/components/schemas/PaymentIbanAccountInfo'
+          FBO: '#/components/schemas/PaymentFboAccountInfo'
+          UPI: '#/components/schemas/PaymentUpiAccountInfo'
+          SPARK_WALLET: '#/components/schemas/PaymentSparkWalletInfo'
+    PaymentUsAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: '#/components/schemas/UsAccountInfo'
+    PaymentPixAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: '#/components/schemas/PixAccountInfo'
+    PaymentIbanAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: '#/components/schemas/IbanAccountInfo'
+    PaymentFboAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - type: object
+          required:
+            - paymentUrl
+            - paymentMethod
+          properties:
+            paymentUrl:
+              type: string
+              format: uri
+              description: The url to make request to in order to confirm payment
+              example: https://api.umaaas.uma.money/confirm
+            paymentMethod:
+              type: string
+              enum:
+                - POST
+                - GET
+              description: The HTTP method to use for confirming the payment
+              example: POST
+    PaymentUpiAccountInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: '#/components/schemas/UpiAccountInfo'
+    PaymentSparkWalletInfo:
+      allOf:
+        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: '#/components/schemas/SparkWalletInfo'
+      properties:
+        invoice:
+          type: string
+          description: Invoice for the payment
+          example: lnbc15u1p3xnhl2pp5jptserfk3zk4qy42tlucycrfwxhydvlemu9pqr93tuzlv9cc7g3sdqsvfhkcap3xyhx7un8cqzpgxqzjcsp5f8c52y2stc300gl6s4xswtjpc37hrnnr3c9wvtgjfuvqmpm35evq9qyyssqy4lgd8tj637qcjp05rdpxxykjenthxftej7a2zzmwrmrl70fyj9hvj0rewhzj7jfyuwkwcg9g2jpwtk3wkjtwnkdks84hsnu8xps5vsq4gj5hs
+    PaymentInstructions:
+      type: object
+      required:
+        - reference
+        - bankAccountInfo
+      properties:
+        reference:
+          type: string
+          description: Unique reference code that must be included with the payment to properly credit it
+          example: UMA-Q12345-REF
+        instructionsNotes:
+          type: string
+          description: Additional human-readable instructions for making the payment
+          example: Please ensure the reference code is included in the payment memo/description field
+        bankAccountInfo:
+          oneOf:
+            - title: CLABE Account
+              $ref: '#/components/schemas/PaymentClabeAccountInfo'
+            - title: US Bank Account
+              $ref: '#/components/schemas/PaymentUsAccountInfo'
+            - title: PIX Account
+              $ref: '#/components/schemas/PaymentPixAccountInfo'
+            - title: IBAN Account
+              $ref: '#/components/schemas/PaymentIbanAccountInfo'
+            - title: FBO Account
+              $ref: '#/components/schemas/PaymentFboAccountInfo'
+            - title: UPI Account
+              $ref: '#/components/schemas/PaymentUpiAccountInfo'
+            - title: Spark Wallet
+              $ref: '#/components/schemas/PaymentSparkWalletInfo'
+          discriminator:
+            propertyName: accountType
+            mapping:
+              CLABE: '#/components/schemas/PaymentClabeAccountInfo'
+              US_ACCOUNT: '#/components/schemas/PaymentUsAccountInfo'
+              PIX: '#/components/schemas/PaymentPixAccountInfo'
+              IBAN: '#/components/schemas/PaymentIbanAccountInfo'
+              FBO: '#/components/schemas/PaymentFboAccountInfo'
+              UPI: '#/components/schemas/PaymentUpiAccountInfo'
+              SPARK_WALLET: '#/components/schemas/PaymentSparkWalletInfo'
+    OutgoingRateDetails:
+      description: Details about the rate and fees for an outgoing transaction or quote.
+      type: object
+      required:
+        - counterpartyMultiplier
+        - counterpartyFixedFee
+        - umaaasMultiplier
+        - umaaasFixedFee
+        - umaaasVariableFeeRate
+        - umaaasVariableFeeAmount
+      properties:
+        counterpartyMultiplier:
           type: number
           format: double
-          description: The exchange rate from source currency to destination currency. Represents how much of the destination currency you receive per unit of source currency.
+          description: The underlying multiplier from mSATs to the receiving currency as returned by the counterparty institution.
           exclusiveMinimum: 0
-          example: 0.92
-        fees:
-          type: object
-          required:
-            - totalFees
-            - fixedFee
-            - variableFeeRate
-            - variableFeeAmount
-          properties:
-            totalFees:
-              type: integer
-              format: int64
-              description: The total fees for this quote in the smallest unit of the source currency (eg. cents). This is the sum of fixedFee and variableFeeAmount.
-              minimum: 0
-              example: 40
-            fixedFee:
-              type: integer
-              format: int64
-              description: The fixed fee charged to execute the quote in the smallest unit of the source currency (eg. cents).
-              minimum: 0
-              example: 10
-            variableFeeRate:
-              type: number
-              format: double
-              description: The variable fee rate as a percentage of the source currency amount. For example, 0.003 represents 0.3%.
-              minimum: 0
-              example: 0.003
-            variableFeeAmount:
-              type: integer
-              format: int64
-              description: The variable fee amount in the smallest unit of the source currency (eg. cents). This is the source amount times variableFeeRate.
-              minimum: 0
-              example: 30
-          description: Breakdown of all fees applicable to this quote
-    GridQuote:
+          example: 1.08
+        counterpartyFixedFee:
+          type: integer
+          format: int64
+          description: The fixed fee charged by the counterparty institution to execute the quote in the smallest unit of the receiving currency (eg. cents).
+          minimum: 0
+          example: 10
+        umaaasMultiplier:
+          type: number
+          format: double
+          description: The underlying multiplier from the sending currency to mSATS, including variable fees.
+          exclusiveMinimum: 0
+          example: 0.925
+        umaaasFixedFee:
+          type: integer
+          format: int64
+          description: The fixed fee charged by the UMAaaS product to execute the quote in the smallest unit of the sending currency (eg. cents).
+          minimum: 0
+          example: 10
+        umaaasVariableFeeRate:
+          type: number
+          format: double
+          description: The variable fee rate charged by the UMAaaS product to execute the quote as a percentage of the sending currency amount.
+          exclusiveMinimum: 0
+          example: 0.003
+        umaaasVariableFeeAmount:
+          type: number
+          format: int64
+          description: The variable fee amount charged by the UMAaaS product to execute the quote in the smallest unit of the sending currency (eg. cents). This is the sending amount times umaaasVariableFeeRate.
+          minimum: 0
+          example: 30
+    Quote:
       type: object
       required:
         - quoteId
-        - userId
+        - status
+        - expiresAt
+        - createdAt
         - source
         - destination
-        - amount
-        - receivingAmount
-        - rateDetails
-        - createdAt
-        - expiresAt
+        - sendingCurrency
+        - receivingCurrency
+        - totalSendingAmount
+        - totalReceivingAmount
+        - exchangeRate
+        - feesIncluded
+        - transactionId
       properties:
         quoteId:
           type: string
-          description: Unique identifier for this grid quote
-          example: GridQuote:019542f5-b3e7-1d02-0000-000000000001
-        userId:
-          type: string
-          description: The ID of the user initiating the transfer
-          example: User:019542f5-b3e7-1d02-0000-000000000001
-        source:
-          type: object
-          required:
-            - accountId
-            - currency
-          properties:
-            accountId:
-              type: string
-              description: Source account identifier
-              example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-            currency:
-              type: string
-              description: Currency code for the source account
-              example: USD
-          description: Source account details
-        destination:
-          type: object
-          required:
-            - accountId
-            - currency
-          properties:
-            accountId:
-              type: string
-              description: Destination account identifier
-              example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-            currency:
-              type: string
-              description: Currency code for the destination account
-              example: EUR
-          description: Destination account details
-        amount:
-          type: integer
-          format: int64
-          description: The amount to transfer in the smallest unit of the source currency (eg. cents)
-          exclusiveMinimum: 0
-          example: 10000
-        receivingAmount:
-          type: integer
-          format: int64
-          description: The amount that will be received in the smallest unit of the destination currency (eg. cents) after currency exchange and fees are applied.
-          exclusiveMinimum: 0
-          example: 9168
-        rateDetails:
-          $ref: '#/components/schemas/GridQuoteRateDetails'
-        createdAt:
-          type: string
-          format: date-time
-          description: When this quote was created
-          example: '2025-10-03T12:00:00Z'
-        expiresAt:
-          type: string
-          format: date-time
-          description: When this quote expires (typically 1-5 minutes after creation)
-          example: '2025-10-03T12:05:00Z'
+          description: Unique identifier for this quote
+          example: Quote:019542f5-b3e7-1d02-0000-000000000006
         status:
           type: string
           enum:
@@ -5073,6 +5167,271 @@ components:
             - EXPIRED
           description: Current status of the quote
           example: PENDING
+        createdAt:
+          type: string
+          format: date-time
+          description: When this quote was created
+          example: '2025-10-03T12:00:00Z'
+        expiresAt:
+          type: string
+          format: date-time
+          description: When this quote expires (typically 1-5 minutes after creation)
+          example: '2025-10-03T12:05:00Z'
+        source:
+          oneOf:
+            - title: Account Source
+              type: object
+              required:
+                - accountId
+              properties:
+                accountId:
+                  type: string
+                  description: Source account identifier
+                  example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                currency:
+                  type: string
+                  description: Currency code for the source account
+                  example: USD
+              description: Source account details
+            - title: User ID Source
+              type: object
+              required:
+                - userId
+                - currency
+              properties:
+                userId:
+                  type: string
+                  description: Source user ID
+                  example: User:019542f5-b3e7-1d02-0000-000000000009
+                currency:
+                  type: string
+                  description: Currency code for the source
+                  example: USD
+              description: Source user ID details. This will require just-in-time funding using payment instructions.
+            - title: UMA Address Source
+              type: object
+              required:
+                - umaAddress
+                - currency
+              properties:
+                umaAddress:
+                  type: string
+                  description: UMA address of the sender
+                  example: $sender@uma.domain.com
+                currency:
+                  type: string
+                  description: Currency code for the source
+                  example: USD
+              description: UMA address source details. This will require just-in-time funding using payment instructions.
+        destination:
+          oneOf:
+            - title: Account Destination
+              type: object
+              required:
+                - accountId
+              properties:
+                accountId:
+                  type: string
+                  description: Destination account identifier
+                  example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                currency:
+                  type: string
+                  description: Currency code for the destination account
+                  example: EUR
+              description: Destination account details
+            - title: UMA Address Destination
+              type: object
+              required:
+                - umaAddress
+              properties:
+                umaAddress:
+                  type: string
+                  description: UMA address of the recipient
+                  example: $receiver@uma.domain.com
+                currency:
+                  type: string
+                  description: Currency code for the destination
+                  example: EUR
+                counterpartyInformation:
+                  type: object
+                  description: Information about the recipient, as required by the platform in their configuration.
+                  additionalProperties: true
+                  example:
+                    FULL_NAME: Jane Receiver
+                    BIRTH_DATE: '1990-01-01'
+                    NATIONALITY: FR
+              description: UMA address destination details
+        sendingCurrency:
+          $ref: '#/components/schemas/Currency'
+          description: Currency for the sending amount
+        receivingCurrency:
+          $ref: '#/components/schemas/Currency'
+          description: Currency for the receiving amount
+        totalSendingAmount:
+          type: integer
+          format: int64
+          description: The total amount that will be sent in the smallest unit of the sending currency (eg. cents).
+          exclusiveMinimum: 0
+          example: 123010
+        totalReceivingAmount:
+          type: integer
+          format: int64
+          description: The total amount that will be received in the smallest unit of the receiving currency (eg. cents).
+          exclusiveMinimum: 0
+          example: 1000
+        exchangeRate:
+          type: number
+          description: Number of sending currency units per receiving currency unit.
+          exclusiveMinimum: 0
+        feesIncluded:
+          type: integer
+          format: int64
+          description: The fees associated with the quote in the smallest unit of the sending currency (eg. cents).
+          minimum: 0
+          example: 10
+        paymentInstructions:
+          type: array
+          description: Payment instructions for executing the payment. This is not required when using an internal account source.
+          items:
+            $ref: '#/components/schemas/PaymentInstructions'
+          example:
+            - accountType: US_ACCOUNT
+              accountNumber: '1234567890'
+              routingNumber: '021000021'
+              accountHolderName: John Doe
+              bankName: Chase Bank
+              referenceCode: REF123456
+            - accountType: SPARK_WALLET
+              address: sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
+              invoice: lnbc15u1p3xnhl2pp5jptserfk3zk4qy42tlucycrfwxhydvlemu9pqr93tuzlv9cc7g3sdqsvfhkcap3xyhx7un8cqzpgxqzjcsp5f8c52y2stc300gl6s4xswtjpc37hrnnr3c9wvtgjfuvqmpm35evq9qyyssqy4lgd8tj637qcjp05rdpxxykjenthxftej7a2zzmwrmrl70fyj9hvj0rewhzj7jfyuwkwcg9g2jpwtk3wkjtwnkdks84hsnu8xps5vsq4gj5hs
+        transactionId:
+          type: string
+          description: The ID of the transaction created from this quote.
+          example: Transaction:019542f5-b3e7-1d02-0000-000000000005
+        originalQuoteId:
+          description: ID of the quote that is being retried
+          type: string
+          example: Quote:019542f5-b3e7-1d02-0000-000000000001
+        rateDetails:
+          $ref: '#/components/schemas/OutgoingRateDetails'
+          description: Details about the rate and fees for the transaction.
+    QuoteLockSide:
+      type: string
+      enum:
+        - SENDING
+        - RECEIVING
+      description: The side of the quote which should be locked and specified in the `lockedCurrencyAmount`. For example, if I want to send exactly $5 MXN from my wallet, I would set this to "sending", and the `lockedCurrencyAmount` to 500 (in cents). If I want the receiver to receive exactly $10 USD, I would set this to "receiving" and the `lockedCurrencyAmount` to 10000 (in cents).
+    QuoteRequest:
+      type: object
+      required:
+        - source
+        - destination
+        - lockedCurrencySide
+        - lockedCurrencyAmount
+      properties:
+        lookupId:
+          type: string
+          description: |-
+            Lookup ID from a previous receiver lookup request. If provided, this can make the quote creation more efficient by reusing cached lookup data.
+            NOTE: This is required for UMA destinations due to counterparty institution requirements. See `senderUserInfo` for more information.
+          example: Lookup:019542f5-b3e7-1d02-0000-000000000009
+        source:
+          oneOf:
+            - title: Account Source
+              type: object
+              required:
+                - accountId
+              properties:
+                accountId:
+                  type: string
+                  description: Source account identifier
+                  example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+              description: Source account details
+            - title: User ID Source
+              type: object
+              required:
+                - userId
+                - currency
+              properties:
+                userId:
+                  type: string
+                  description: Source user ID
+                  example: User:019542f5-b3e7-1d02-0000-000000000009
+                currency:
+                  type: string
+                  description: Currency code for the source
+                  example: USD
+              description: Source user ID details. This will require just-in-time funding using payment instructions.
+            - title: UMA Address Source
+              type: object
+              required:
+                - umaAddress
+                - currency
+              properties:
+                umaAddress:
+                  type: string
+                  description: UMA address of the sender
+                  example: $sender@uma.domain.com
+                currency:
+                  type: string
+                  description: Currency code for the source
+                  example: USD
+              description: UMA address source details. This will require just-in-time funding using payment instructions.
+        destination:
+          oneOf:
+            - title: Account Destination
+              type: object
+              required:
+                - accountId
+                - currency
+              properties:
+                accountId:
+                  type: string
+                  description: Destination account identifier
+                  example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                currency:
+                  type: string
+                  description: Currency code for the destination account
+                  example: EUR
+              description: Destination account details
+            - title: UMA Address Destination
+              type: object
+              required:
+                - umaAddress
+                - currency
+              properties:
+                umaAddress:
+                  type: string
+                  description: UMA address of the recipient
+                  example: $receiver@uma.domain.com
+                currency:
+                  type: string
+                  description: Currency code for the destination
+                  example: EUR
+              description: UMA address destination details
+        lockedCurrencySide:
+          $ref: '#/components/schemas/QuoteLockSide'
+        lockedCurrencyAmount:
+          type: integer
+          format: int64
+          description: The amount to send/receive in the smallest unit of the locked currency (eg. cents). See `lockedCurrencySide` for more information.
+          exclusiveMinimum: 0
+          maximum: 9000000000000000
+          example: 1000
+        description:
+          type: string
+          description: Optional description/memo for the transfer
+          example: 'Invoice #1234 payment'
+        senderUserInfo:
+          type: object
+          additionalProperties: true
+          description: |
+            Key-value pairs of information about the sender which was requested by the counterparty (recipient) institution.
+            Any fields specified in `requiredPayerDataFields` from the response of the `/receiver/{receiverUmaAddress}` (lookupUma) endpoint
+            MUST be provided here if they were requested. If the counterparty (recipient) institution did not request any information, this field can be omitted.
+          example:
+            FULL_NAME: Jane Receiver
+            NATIONALITY: FR
     TransactionStatus:
       type: string
       enum:
@@ -5233,99 +5592,6 @@ components:
             failureReason:
               $ref: '#/components/schemas/IncomingTransactionFailureReason'
               description: If the transaction failed, this field provides the reason for failure.
-    PaymentClabeAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - $ref: '#/components/schemas/ClabeAccountInfo'
-    PaymentBankAccountInfo:
-      type: object
-      required:
-        - accountType
-      properties:
-        accountType:
-          $ref: '#/components/schemas/BankAccountType'
-      discriminator:
-        propertyName: accountType
-        mapping:
-          CLABE: '#/components/schemas/PaymentClabeAccountInfo'
-          US_ACCOUNT: '#/components/schemas/PaymentUsAccountInfo'
-          PIX: '#/components/schemas/PaymentPixAccountInfo'
-          IBAN: '#/components/schemas/PaymentIbanAccountInfo'
-          FBO: '#/components/schemas/PaymentFboAccountInfo'
-          UPI: '#/components/schemas/PaymentUpiAccountInfo'
-    PaymentUsAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - $ref: '#/components/schemas/UsAccountInfo'
-    PaymentPixAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - $ref: '#/components/schemas/PixAccountInfo'
-    PaymentIbanAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - $ref: '#/components/schemas/IbanAccountInfo'
-    PaymentFboAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - type: object
-          required:
-            - paymentUrl
-            - paymentMethod
-          properties:
-            paymentUrl:
-              type: string
-              format: uri
-              description: The url to make request to in order to confirm payment
-              example: https://api.umaaas.uma.money/confirm
-            paymentMethod:
-              type: string
-              enum:
-                - POST
-                - GET
-              description: The HTTP method to use for confirming the payment
-              example: POST
-    PaymentUpiAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - $ref: '#/components/schemas/UpiAccountInfo'
-    PaymentInstructions:
-      type: object
-      required:
-        - reference
-        - bankAccountInfo
-      properties:
-        reference:
-          type: string
-          description: Unique reference code that must be included with the payment to properly credit it
-          example: UMA-Q12345-REF
-        instructionsNotes:
-          type: string
-          description: Additional human-readable instructions for making the payment
-          example: Please ensure the reference code is included in the payment memo/description field
-        bankAccountInfo:
-          oneOf:
-            - title: CLABE Account
-              $ref: '#/components/schemas/PaymentClabeAccountInfo'
-            - title: US Bank Account
-              $ref: '#/components/schemas/PaymentUsAccountInfo'
-            - title: PIX Account
-              $ref: '#/components/schemas/PaymentPixAccountInfo'
-            - title: IBAN Account
-              $ref: '#/components/schemas/PaymentIbanAccountInfo'
-            - title: FBO Account
-              $ref: '#/components/schemas/PaymentFboAccountInfo'
-            - title: UPI Account
-              $ref: '#/components/schemas/PaymentUpiAccountInfo'
-          discriminator:
-            propertyName: accountType
-            mapping:
-              CLABE: '#/components/schemas/PaymentClabeAccountInfo'
-              US_ACCOUNT: '#/components/schemas/PaymentUsAccountInfo'
-              PIX: '#/components/schemas/PaymentPixAccountInfo'
-              IBAN: '#/components/schemas/PaymentIbanAccountInfo'
-              FBO: '#/components/schemas/PaymentFboAccountInfo'
-              UPI: '#/components/schemas/PaymentUpiAccountInfo'
     Refund:
       type: object
       required:
@@ -5346,53 +5612,6 @@ components:
           format: date-time
           description: When the refund was or will be settled
           example: '2023-08-15T14:30:00Z'
-    OutgoingRateDetails:
-      description: Details about the rate and fees for an outgoing transaction or quote.
-      type: object
-      required:
-        - counterpartyMultiplier
-        - counterpartyFixedFee
-        - umaaasMultiplier
-        - umaaasFixedFee
-        - umaaasVariableFeeRate
-        - umaaasVariableFeeAmount
-      properties:
-        counterpartyMultiplier:
-          type: number
-          format: double
-          description: The underlying multiplier from mSATs to the receiving currency as returned by the counterparty institution.
-          exclusiveMinimum: 0
-          example: 1.08
-        counterpartyFixedFee:
-          type: integer
-          format: int64
-          description: The fixed fee charged by the counterparty institution to execute the quote in the smallest unit of the receiving currency (eg. cents).
-          minimum: 0
-          example: 10
-        umaaasMultiplier:
-          type: number
-          format: double
-          description: The underlying multiplier from the sending currency to mSATS, including variable fees.
-          exclusiveMinimum: 0
-          example: 0.925
-        umaaasFixedFee:
-          type: integer
-          format: int64
-          description: The fixed fee charged by the UMAaaS product to execute the quote in the smallest unit of the sending currency (eg. cents).
-          minimum: 0
-          example: 10
-        umaaasVariableFeeRate:
-          type: number
-          format: double
-          description: The variable fee rate charged by the UMAaaS product to execute the quote as a percentage of the sending currency amount.
-          exclusiveMinimum: 0
-          example: 0.003
-        umaaasVariableFeeAmount:
-          type: number
-          format: int64
-          description: The variable fee amount charged by the UMAaaS product to execute the quote in the smallest unit of the sending currency (eg. cents). This is the sending amount times umaaasVariableFeeRate.
-          minimum: 0
-          example: 30
     OutgoingTransactionFailureReason:
       type: string
       enum:
