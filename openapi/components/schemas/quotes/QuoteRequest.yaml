@@ -1,0 +1,123 @@
+type: object
+required:
+  - source
+  - destination
+  - lockedCurrencySide
+  - lockedCurrencyAmount
+properties:
+  lookupId:
+    type: string
+    description: >-
+      Lookup ID from a previous receiver lookup request. If provided,
+      this can make the quote creation more efficient by reusing cached lookup data.
+
+      NOTE: This is required for UMA destinations due to counterparty institution requirements.
+      See `senderUserInfo` for more information.
+    example: Lookup:019542f5-b3e7-1d02-0000-000000000009
+  source:
+    oneOf:
+      - title: Account Source
+        type: object
+        required:
+          - accountId
+        properties:
+          accountId:
+            type: string
+            description: Source account identifier
+            example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+        description: Source account details
+      - title: User ID Source
+        type: object
+        required:
+          - userId
+          - currency
+        properties:
+          userId:
+            type: string
+            description: Source user ID
+            example: User:019542f5-b3e7-1d02-0000-000000000009
+          currency:
+            type: string
+            description: Currency code for the source
+            example: USD
+        description: Source user ID details. This will require just-in-time funding using payment instructions.
+      - title: UMA Address Source
+        type: object
+        required:
+          - umaAddress
+          - currency
+        properties:
+          umaAddress:
+            type: string
+            description: UMA address of the sender
+            example: $sender@uma.domain.com
+          currency:
+            type: string
+            description: Currency code for the source
+            example: USD
+        description: UMA address source details. This will require just-in-time funding using payment instructions.
+  destination:
+    oneOf:
+      - title: Account Destination
+        type: object
+        required:
+          - accountId
+          - currency
+        properties:
+          accountId:
+            type: string
+            description: Destination account identifier
+            example: a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+          currency:
+            type: string
+            description: Currency code for the destination account
+            example: EUR
+        description: Destination account details
+      - title: UMA Address Destination
+        type: object
+        required:
+          - umaAddress
+          - currency
+        properties:
+          umaAddress:
+            type: string
+            description: UMA address of the recipient
+            example: $receiver@uma.domain.com
+          currency:
+            type: string
+            description: Currency code for the destination
+            example: EUR
+        description: UMA address destination details
+  lockedCurrencySide:
+    $ref: ./QuoteLockSide.yaml
+  lockedCurrencyAmount:
+    type: integer
+    format: int64
+    description: >-
+      The amount to send/receive in the smallest unit of the locked
+      currency (eg. cents). See `lockedCurrencySide` for more
+      information.
+    exclusiveMinimum: 0
+    maximum: 9000000000000000
+    example: 1000
+  description:
+    type: string
+    description: Optional description/memo for the transfer
+    example: 'Invoice #1234 payment'
+  senderUserInfo:
+    type: object
+    additionalProperties: true
+    description: >
+      Key-value pairs of information about the sender which was
+      requested by the counterparty (recipient) institution.
+
+      Any fields specified in `requiredPayerDataFields` from the
+      response of the `/receiver/{receiverUmaAddress}` (lookupUma)
+      endpoint
+
+      MUST be provided here if they were requested. If the
+      counterparty (recipient) institution did not request any
+      information, this field can be omitted.
+    example:
+      FULL_NAME: Jane Receiver
+      NATIONALITY: FR
