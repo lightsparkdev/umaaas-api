@@ -1,9 +1,19 @@
 allOf:
-  - $ref: ./BankAccountBase.yaml
-  - properties:
-      status:
+  - $ref: ../users/BankAccountBase.yaml
+  - type: object
+    required:
+      - id
+      - status
+      - beneficiary
+    properties:
+      id:
         type: string
+        description: The system generated identifier of this account
+        example: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+      status:
+        $ref: ../external_accounts/ExternalAccountStatus.yaml
         description: Status of the external account
+        example: ACTIVE
       beneficiary:
         description: Beneficiary of the account
         oneOf:

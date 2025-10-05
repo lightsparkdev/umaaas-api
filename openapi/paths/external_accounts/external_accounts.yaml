@@ -52,7 +52,7 @@ get:
                 type: array
                 description: List of external accounts matching the filter criteria
                 items:
-                  $ref: ../../components/schemas/users/ExternalAccount.yaml
+                  $ref: ../../components/schemas/external_accounts/ExternalAccount.yaml
               hasMore:
                 type: boolean
                 description: Indicates if more results are available beyond this page
@@ -137,7 +137,7 @@ post:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/users/ExternalAccount.yaml
+            $ref: ../../components/schemas/external_accounts/ExternalAccount.yaml
     "400":
       description: Bad request
       content:
