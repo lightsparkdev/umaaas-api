@@ -1,8 +1,6 @@
 allOf:
   - $ref: ./CounterParty.yaml
   - type: object
-    required:
-      - address 
     properties:
       address:
         $ref: ../common/Address.yaml
