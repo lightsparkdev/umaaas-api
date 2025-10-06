@@ -3,7 +3,7 @@ post:
   description: >-
     Register a new customer in the system with an account identifier and bank account
     information
-  operationId: createUser
+  operationId: createCustomer
   tags:
     - Customers
   security:
@@ -16,56 +16,56 @@ post:
           oneOf:
             - title: Individual Customer
               allOf:
-                - $ref: ../../components/schemas/users/IndividualUserUpdate.yaml
+                - $ref: ../../components/schemas/customers/IndividualCustomerUpdate.yaml
                 - type: object
                   required:
-                    - platformUserId
-                    - userType
+                    - platformCustomerId
+                    - customerType
                   properties:
-                    platformUserId:
+                    platformCustomerId:
                       type: string
-                      description: Platform-specific user identifier
+                      description: Platform-specific customer identifier
                       example: 9f84e0c2a72c4fa
-                    userType:
+                    customerType:
                       type: string
                       enum: [INDIVIDUAL]
-                      description: User type 
+                      description: Customer type 
                     kycUrl:
                       type: string 
                       description: A kyc url to be shared with your individual customer if kyc needs to be completed 
                       example: "https://example.com/kyc"
             - title: Business Customer
               allOf:
-                - $ref: ../../components/schemas/users/BusinessUserUpdate.yaml
+                - $ref: ../../components/schemas/customers/BusinessCustomerUpdate.yaml
                 - type: object
                   required:
-                    - platformUserId
-                    - userType
+                    - platformCustomerId
+                    - customerType
                   properties:
-                    platformUserId:
+                    platformCustomerId:
                       type: string
-                      description: Platform-specific user identifier
+                      description: Platform-specific customer identifier
                       example: 9f84e0c2a72c4fa
-                    userType:
+                    customerType:
                       type: string
                       enum: [BUSINESS]
-                      description: User type
+                      description: Customer type
                     kycUrl:
                       type: string 
                       description: A kyc url to be shared with your business customer if kyc needs to be completed 
                       example: "https://example.com/kyc"
           discriminator:
-            propertyName: userType
+            propertyName: customerType
             mapping:
-              INDIVIDUAL: ../../components/schemas/users/IndividualUserUpdate.yaml
-              BUSINESS: ../../components/schemas/users/BusinessUserUpdate.yaml
+              INDIVIDUAL: ../../components/schemas/customers/IndividualCustomerUpdate.yaml
+              BUSINESS: ../../components/schemas/customers/BusinessCustomerUpdate.yaml
         examples:
-          individualUserWithUmaAddress:
+          individualCustomerWithUmaAddress:
             summary: Create individual customer with UMA address, including deposit bank account information.
             value:
               umaAddress: $jane.doe@uma.domain.com
-              platformUserId: 7b3c5a89d2f1e0
-              userType: INDIVIDUAL
+              platformCustomerId: 7b3c5a89d2f1e0
+              customerType: INDIVIDUAL
               fullName: Jane Doe
               birthDate: '1992-03-25'
               address:
@@ -82,11 +82,11 @@ post:
                 accountCategory: CHECKING
                 bankName: Chase Bank
                 platformAccountId: chase_primary_1234
-          individualUserWithoutUmaAddress:
+          individualCustomerWithoutUmaAddress:
             summary: Create individual customer without UMA address (will be generated)
             value:
-              platformUserId: 7b3c5a89d2f1e0
-              userType: INDIVIDUAL
+              platformCustomerId: 7b3c5a89d2f1e0
+              customerType: INDIVIDUAL
               fullName: John Smith
               birthDate: '1985-06-10'
               address:
@@ -95,11 +95,11 @@ post:
                 state: OR
                 postalCode: '97201'
                 country: US
-          businessUser:
+          businessCustomer:
             summary: Create business customer example
             value:
-              platformUserId: 6e4d2c0b8a9f3
-              userType: BUSINESS
+              platformCustomerId: 6e4d2c0b8a9f3
+              customerType: BUSINESS
               businessInfo:
                 legalName: Acme Corporation
                 registrationNumber: BRN-456789123
@@ -118,14 +118,14 @@ post:
           schema:
             oneOf:
               - title: Individual Customer
-                $ref: ../../components/schemas/users/IndividualUser.yaml
+                $ref: ../../components/schemas/customers/IndividualCustomer.yaml
               - title: Business Customer
-                $ref: ../../components/schemas/users/BusinessUser.yaml
+                $ref: ../../components/schemas/customers/BusinessCustomer.yaml
             discriminator:
-              propertyName: userType
+              propertyName: customerType
               mapping:
-                INDIVIDUAL: ../../components/schemas/users/IndividualUser.yaml
-                BUSINESS: ../../components/schemas/users/BusinessUser.yaml
+                INDIVIDUAL: ../../components/schemas/customers/IndividualCustomer.yaml
+                BUSINESS: ../../components/schemas/customers/BusinessCustomer.yaml
     '400':
       description: Bad request
       content:
@@ -164,15 +164,15 @@ get:
 
     the specified filters. If no filters are provided, returns all customers
     (paginated).
-  operationId: listUsers
+  operationId: listCustomers
   tags:
     - Customers
   security:
     - BasicAuth: []
   parameters:
-    - name: platformUserId
+    - name: platformCustomerId
       in: query
-      description: Filter by platform-specific user identifier
+      description: Filter by platform-specific customer identifier
       required: false
       schema:
         type: string
@@ -182,12 +182,12 @@ get:
       required: false
       schema:
         type: string
-    - name: userType
+    - name: customerType
       in: query
-      description: Filter by user type
+      description: Filter by customer type
       required: false
       schema:
-        $ref: ../../components/schemas/users/UserType.yaml
+        $ref: ../../components/schemas/customers/CustomerType.yaml
     - name: createdAfter
       in: query
       description: Filter customers created after this timestamp (inclusive)
@@ -254,14 +254,14 @@ get:
                 items:
                   oneOf:
                     - title: Individual Customer
-                      $ref: ../../components/schemas/users/IndividualUser.yaml
+                      $ref: ../../components/schemas/customers/IndividualCustomer.yaml
                     - title: Business Customer
-                      $ref: ../../components/schemas/users/BusinessUser.yaml
+                      $ref: ../../components/schemas/customers/BusinessCustomer.yaml
                   discriminator:
-                    propertyName: userType
+                    propertyName: customerType
                     mapping:
-                      INDIVIDUAL: ../../components/schemas/users/IndividualUser.yaml
-                      BUSINESS: ../../components/schemas/users/BusinessUser.yaml
+                      INDIVIDUAL: ../../components/schemas/customers/IndividualCustomer.yaml
+                      BUSINESS: ../../components/schemas/customers/BusinessCustomer.yaml
               hasMore:
                 type: boolean
                 description: Indicates if more results are available beyond this page

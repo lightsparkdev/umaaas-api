@@ -26,6 +26,6 @@ discriminator:
     INCOMING_PAYMENT: ./IncomingPaymentWebhook.yaml
     OUTGOING_PAYMENT: ./OutgoingPaymentWebhook.yaml
     TEST: ./TestWebhookRequest.yaml
-    BULK_UPLOAD: ../users/BulkUploadWebhookRequest.yaml
+    BULK_UPLOAD: ../customers/BulkUploadWebhookRequest.yaml
     INVITATION_CLAIMED: ./InvitationClaimedWebhook.yaml
     KYC_STATUS: ./KycStatusWebhook.yaml

@@ -7,7 +7,7 @@ properties:
   customerId:
     type: string
     description: The ID of the customer
-    example: User:019542f5-b3e7-1d02-0000-000000000001
+    example: Customer:019542f5-b3e7-1d02-0000-000000000001
   source:
     type: object
     properties:

@@ -8,7 +8,7 @@ parameters:
 get:
   summary: Get a kyc link for onboarding a customer
   description: Generate a hosted kyc link to onboard a customer
-  operationId: getKycLinkForUser
+  operationId: getKycLinkForCustomer
   tags:
     - Customers
   security:

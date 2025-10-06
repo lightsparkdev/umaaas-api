@@ -25,13 +25,13 @@ post:
         schema:
           type: object
           properties:
-            receiverUserInfo:
+            receiverCustomerInfo:
               type: object
               additionalProperties: true
               description: >-
                 Information about the recipient, provided by the platform if
                 requested in the original webhook via
-                `requestedReceiverUserInfoFields`.
+                `requestedReceiverCustomerInfoFields`.
   responses:
     '200':
       description: Payment approved successfully
