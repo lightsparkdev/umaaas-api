@@ -27,19 +27,19 @@ properties:
     properties:
       total:
         type: integer
-        description: Total number of users to process
+        description: Total number of customers to process
         example: 5000
       processed:
         type: integer
-        description: Number of users processed so far
+        description: Number of customers processed so far
         example: 2500
       successful:
         type: integer
-        description: Number of users successfully created
+        description: Number of customers successfully created
         example: 2450
       failed:
         type: integer
-        description: Number of users that failed to create
+        description: Number of customers that failed to create
         example: 50
   errors:
     type: array

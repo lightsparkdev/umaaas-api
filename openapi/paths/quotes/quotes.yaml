@@ -13,7 +13,7 @@ post:
     **Key Features:**
     - **Flexible Amount Locking**: Always specify whether you want to lock the sending amount or receiving amount
     - **Currency Exchange**: Handles all cross-currency transfers with real-time exchange rates
-    - **Payment Instructions**: For UMA or user ID sources, provides banking details needed for execution
+    - **Payment Instructions**: For UMA or customer ID sources, provides banking details needed for execution
 
     **Important:** If you are transferring funds in the same currency (no exchange required), 
     use the `/transfer-in` or `/transfer-out` endpoints instead.
@@ -122,9 +122,9 @@ get:
   security:
     - BasicAuth: []
   parameters:
-    - name: userId
+    - name: customerId
       in: query
-      description: Filter by sending user ID
+      description: Filter by sending customer ID
       required: false
       schema:
         type: string

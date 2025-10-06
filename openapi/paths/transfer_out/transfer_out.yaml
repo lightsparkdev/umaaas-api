@@ -10,9 +10,9 @@ get:
   security:
     - BasicAuth: []
   parameters:
-    - name: userId
+    - name: customerId
       in: query
-      description: Filter by user ID
+      description: Filter by customer ID
       required: false
       schema:
         type: string
@@ -100,7 +100,7 @@ get:
 post:
   summary: Create a transfer-out request
   description: >
-    Transfer funds from an internal account to an external account for a specific user
+    Transfer funds from an internal account to an external account for a specific customer
   operationId: createTransferOut
   tags:
     - Transfer Out
@@ -164,7 +164,7 @@ post:
           schema:
             $ref: ../../components/schemas/errors/Error401.yaml
     "404":
-      description: User or account not found
+      description: Customer or account not found
       content:
         application/json:
           schema:

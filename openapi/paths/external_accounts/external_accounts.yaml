@@ -16,9 +16,9 @@ get:
       required: false
       schema:
         type: string
-    - name: userId
+    - name: customerId
       in: query
-      description: Filter by external accounts associated with a specific user
+      description: Filter by external accounts associated with a specific customer
       required: false
       schema:
         type: string
@@ -88,7 +88,7 @@ get:
 post:
   summary: Add a new external account
   description: >-
-    Register a new external bank account for a user
+    Register a new external bank account for a customer
   operationId: createExternalAccount
   tags:
     - External Accounts
@@ -106,7 +106,7 @@ post:
             value:
               currency: USD
               platformAccountId: ext_acc_123456
-              userId: User:019542f5-b3e7-1d02-0000-000000000001
+              customerId: User:019542f5-b3e7-1d02-0000-000000000001
               beneficiary:
                 counterPartyType: INDIVIDUAL
                 fullName: John Doe
@@ -123,7 +123,7 @@ post:
             value:
               currency: BTC
               platformAccountId: spark_wallet_001
-              userId: User:019542f5-b3e7-1d02-0000-000000000001
+              customerId: User:019542f5-b3e7-1d02-0000-000000000001
               beneficiary:
                 counterPartyType: INDIVIDUAL
                 fullName: Jane Smith

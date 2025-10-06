@@ -16,9 +16,9 @@ get:
       required: false
       schema:
         type: string
-    - name: userId
+    - name: customerId
       in: query
-      description: Filter by internal accounts associated with a specific user
+      description: Filter by internal accounts associated with a specific customer
       required: false
       schema:
         type: string
@@ -64,7 +64,7 @@ get:
               totalCount:
                 type: integer
                 description: >-
-                  Total number of users matching the criteria (excluding
+                  Total number of customers matching the criteria (excluding
                   pagination)
     '400':
       description: Bad request - Invalid parameters
