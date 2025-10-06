@@ -5,7 +5,7 @@ get:
     internal accounts that match the specified filters. If no filters are provided, returns all internal accounts
     (paginated).
 
-    Internal accounts are created automatically when a user is created based on the platform configuration.
+    Internal accounts are created automatically when a customer is created based on the platform configuration.
   operationId: listInternalAccounts
   tags:
     - Internal Accounts
@@ -18,9 +18,9 @@ get:
       required: false
       schema:
         type: string
-    - name: userId
+    - name: customerId
       in: query
-      description: Filter by internal accounts associated with a specific user
+      description: Filter by internal accounts associated with a specific customer
       required: false
       schema:
         type: string
@@ -66,7 +66,7 @@ get:
               totalCount:
                 type: integer
                 description: >-
-                  Total number of users matching the criteria (excluding
+                  Total number of customers matching the criteria (excluding
                   pagination)
     '400':
       description: Bad request - Invalid parameters

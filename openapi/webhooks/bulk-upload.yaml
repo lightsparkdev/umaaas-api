@@ -1,7 +1,7 @@
 post:
   summary: Bulk upload status webhook
   description: >
-    Webhook that is called when a bulk user upload job completes or fails.
+    Webhook that is called when a bulk customer upload job completes or fails.
 
     This endpoint should be implemented by clients of the Grid API.
 

@@ -35,7 +35,7 @@ properties:
     example: '2023-07-21T17:32:28Z'
   isDeleted:
     type: boolean
-    description: Whether the user is marked as deleted
+    description: Whether the customer is marked as deleted
     example: false
     readOnly: true
 discriminator:
