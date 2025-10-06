@@ -675,7 +675,7 @@ paths:
                 $ref: '#/components/schemas/Error500'
   /internal-account:
     get:
-      summary: Get all internal accounts
+      summary: List internal accounts
       description: |
         Retrieve a list of internal accounts with optional filtering parameters. Returns all
         internal accounts that match the specified filters. If no filters are provided, returns all internal accounts
@@ -760,7 +760,7 @@ paths:
                 $ref: '#/components/schemas/Error500'
   /external-accounts:
     get:
-      summary: Get all external accounts
+      summary: List external accounts
       description: |
         Retrieve a list of external accounts with optional filtering parameters. Returns all external accounts that match the specified filters. If no filters are provided, returns all  external accounts (paginated).
       operationId: listExternalAccounts
@@ -917,7 +917,7 @@ paths:
                 $ref: '#/components/schemas/Error500'
   /transfer-in:
     get:
-      summary: List all transfer-in requests
+      summary: List transfer-in requests
       description: |
         Retrieve a list of transfer-in requests with optional filtering parameters. Returns all transfer-in requests that match the specified filters. If no filters are provided, returns all  transfer-in requests (paginated).
       operationId: listTransferIn
@@ -937,7 +937,7 @@ paths:
           description: Filter by transfer status
           required: false
           schema:
-            $ref: '#/components/schemas/TransferStatus'
+            $ref: '#/components/schemas/TransactionStatus'
         - name: sourceAccountId
           in: query
           description: Filter by source external account ID
@@ -980,24 +980,7 @@ paths:
                     type: array
                     description: List of transfer-in requests matching the filter criteria
                     items:
-                      allOf:
-                        - $ref: '#/components/schemas/Transfer'
-                        - type: object
-                          properties:
-                            source:
-                              type: object
-                              properties:
-                                accountId:
-                                  type: string
-                                  description: External account ID
-                                  example: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-                            destination:
-                              type: object
-                              properties:
-                                accountId:
-                                  type: string
-                                  description: Internal account ID
-                                  example: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                      $ref: '#/components/schemas/Transaction'
                   hasMore:
                     type: boolean
                     description: Indicates if more results are available beyond this page
@@ -1084,7 +1067,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Transfer'
+                $ref: '#/components/schemas/Transaction'
         '400':
           description: Bad request - Invalid parameters
           content:
@@ -1111,7 +1094,7 @@ paths:
                 $ref: '#/components/schemas/Error500'
   /transfer-out:
     get:
-      summary: List all transfer-out requests
+      summary: List transfer-out requests
       description: |
         Retrieve a list of transfer-out requests with optional filtering parameters. Returns all transfer-out requests that match the specified filters. If no filters are provided, returns all  transfer-out requests (paginated).
       operationId: listTransferOut
@@ -1131,7 +1114,7 @@ paths:
           description: Filter by transfer status
           required: false
           schema:
-            $ref: '#/components/schemas/TransferStatus'
+            $ref: '#/components/schemas/TransactionStatus'
         - name: sourceAccountId
           in: query
           description: Filter by source internal account ID
@@ -1174,7 +1157,7 @@ paths:
                     type: array
                     description: List of transfer-out requests matching the filter criteria
                     items:
-                      $ref: '#/components/schemas/Transfer'
+                      $ref: '#/components/schemas/Transaction'
                   hasMore:
                     type: boolean
                     description: Indicates if more results are available beyond this page
@@ -1255,7 +1238,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Transfer'
+                $ref: '#/components/schemas/Transaction'
         '400':
           description: Bad request - Invalid parameters
           content:
@@ -4924,51 +4907,332 @@ components:
               BUSINESS_COUNTERPARTY: '#/components/schemas/IndividualCounterParty'
         accountInfo:
           $ref: '#/components/schemas/CustomerBankAccountInfo'
-    TransferStatus:
+    TransactionStatus:
       type: string
       enum:
+        - CREATED
         - PENDING
+        - PROCESSING
         - COMPLETED
+        - REJECTED
         - FAILED
-        - CANCELED
-      description: Status of a transfer
-    Transfer:
+        - REFUNDED
+        - EXPIRED
+      description: Status of a payment transaction
+    Transaction:
       type: object
+      required:
+        - id
+        - status
+        - type
+        - source
+        - destination
+        - customerId
+        - platformCustomerId
       properties:
         id:
           type: string
-          description: The transfer request ID
-          example: Transfer:019542f5-b3e7-1d02-0000-000000000001
+          description: Unique identifier for the transaction
+          example: Transaction:019542f5-b3e7-1d02-0000-000000000004
+        status:
+          $ref: '#/components/schemas/TransactionStatus'
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        source:
+          oneOf:
+            - title: Account Source
+              type: object
+              required:
+                - accountId
+              properties:
+                accountId:
+                  type: string
+                  description: Source account identifier
+                  example: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                currency:
+                  type: string
+                  description: Currency code for the source account
+                  example: USD
+              description: Source account details
+            - title: UMA Address Source
+              type: object
+              required:
+                - umaAddress
+                - currency
+              properties:
+                umaAddress:
+                  type: string
+                  description: UMA address of the sender
+                  example: $sender@uma.domain.com
+                currency:
+                  type: string
+                  description: Currency code for the source
+                  example: USD
+              description: UMA address source details
+        destination:
+          oneOf:
+            - title: Account Destination
+              type: object
+              required:
+                - accountId
+              properties:
+                accountId:
+                  type: string
+                  description: Destination account identifier
+                  example: ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                currency:
+                  type: string
+                  description: Currency code for the destination account
+                  example: EUR
+              description: Destination account details
+            - title: UMA Address Destination
+              type: object
+              required:
+                - umaAddress
+              properties:
+                umaAddress:
+                  type: string
+                  description: UMA address of the recipient
+                  example: $receiver@uma.domain.com
+                currency:
+                  type: string
+                  description: Currency code for the destination
+                  example: EUR
         customerId:
           type: string
-          description: The ID of the customer
+          description: System ID of the customer (sender for outgoing, recipient for incoming)
           example: Customer:019542f5-b3e7-1d02-0000-000000000001
-        source:
-          type: object
-          properties:
-            accountId:
-              type: string
-              description: Source account ID
-              example: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-        destination:
-          type: object
-          properties:
-            accountId:
-              type: string
-              description: Destination account ID
-              example: ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-        status:
-          $ref: '#/components/schemas/TransferStatus'
+        platformCustomerId:
+          type: string
+          description: Platform-specific ID of the customer (sender for outgoing, recipient for incoming)
+          example: 18d3e5f7b4a9c2
+        settledAt:
+          type: string
+          format: date-time
+          description: When the payment was or will be settled
+          example: '2023-08-15T14:30:00Z'
         createdAt:
           type: string
           format: date-time
-          description: Timestamp when the transfer was created
-          example: '2025-10-03T12:00:00Z'
+          description: When the transaction was created
+          example: '2023-08-15T14:25:18Z'
         updatedAt:
           type: string
           format: date-time
-          description: Timestamp when the transfer was last updated
-          example: '2025-10-03T12:30:00Z'
+          description: When the transaction was last updated
+          example: '2023-08-15T14:30:00Z'
+        description:
+          type: string
+          description: Optional memo or description for the payment
+          example: 'Payment for invoice #1234'
+        counterpartyInformation:
+          type: object
+          description: Additional information about the counterparty, if available and relevant to the transaction and platform. Only applicable for transactions to/from UMA addresses.
+          additionalProperties: true
+          example:
+            FULL_NAME: John Sender
+            BIRTH_DATE: '1985-06-15'
+            NATIONALITY: DE
+      discriminator:
+        propertyName: type
+        mapping:
+          INCOMING: '#/components/schemas/IncomingTransaction'
+          OUTGOING: '#/components/schemas/OutgoingTransaction'
+    ReconciliationInstructions:
+      type: object
+      required:
+        - reference
+      properties:
+        reference:
+          type: string
+          description: Unique reference code that must be included with the payment to match it with the correct incoming transaction
+          example: UMA-Q12345-REF
+    IncomingRateDetails:
+      description: Details about the rate and fees for an incoming transaction.
+      type: object
+      required:
+        - gridApiMultiplier
+        - gridApiFixedFee
+        - gridApiVariableFeeRate
+        - gridApiVariableFeeAmount
+      properties:
+        gridApiMultiplier:
+          type: number
+          format: double
+          description: The underlying multiplier from the mSATS to the receiving currency, including variable fees.
+          exclusiveMinimum: 0
+          example: 0.925
+        gridApiFixedFee:
+          type: integer
+          format: int64
+          description: The fixed fee charged by the Grid product to execute the quote in the smallest unit of the receiving currency (eg. cents).
+          minimum: 0
+          example: 10
+        gridApiVariableFeeRate:
+          type: number
+          format: double
+          description: The variable fee rate charged by the Grid product to execute the quote as a percentage of the receiving currency amount.
+          exclusiveMinimum: 0
+          example: 0.003
+        gridApiVariableFeeAmount:
+          type: number
+          format: int64
+          description: The variable fee amount charged by the Grid product to execute the quote in the smallest unit of the receiving currency (eg. cents). This is the receiving amount times gridApiVariableFeeRate.
+          minimum: 0
+          example: 30
+    IncomingTransactionFailureReason:
+      type: string
+      enum:
+        - LNURLP_FAILED
+        - PAY_REQUEST_FAILED
+        - PAYMENT_APPROVAL_WEBHOOK_ERROR
+        - PAYMENT_APPROVAL_TIMED_OUT
+        - OFFRAMP_FAILED
+        - MISSING_MANDATORY_PAYEE_DATA
+        - QUOTE_EXPIRED
+        - QUOTE_EXECUTION_FAILED
+      description: Reason for failure of an incoming transaction. This is used to provide more context on why a transaction failed. If the transaction is not in a failed state, this field is omitted.
+    IncomingTransaction:
+      allOf:
+        - $ref: '#/components/schemas/Transaction'
+        - type: object
+          required:
+            - receivedAmount
+          properties:
+            receivedAmount:
+              $ref: '#/components/schemas/CurrencyAmount'
+              description: Amount received in the recipient's currency
+            reconciliationInstructions:
+              $ref: '#/components/schemas/ReconciliationInstructions'
+              description: Included for all transactions except those with "CREATED" status
+            rateDetails:
+              $ref: '#/components/schemas/IncomingRateDetails'
+              description: Details about the rate and fees for the transaction.
+            failureReason:
+              $ref: '#/components/schemas/IncomingTransactionFailureReason'
+              description: If the transaction failed, this field provides the reason for failure.
+    Refund:
+      type: object
+      required:
+        - reference
+        - initiatedAt
+      properties:
+        reference:
+          type: string
+          description: The unique reference code of the refund
+          example: UMA-Q12345-REFUND
+        initiatedAt:
+          type: string
+          format: date-time
+          description: When the refund was initiated
+          example: '2023-08-15T14:30:00Z'
+        settledAt:
+          type: string
+          format: date-time
+          description: When the refund was or will be settled
+          example: '2023-08-15T14:30:00Z'
+    OutgoingRateDetails:
+      description: Details about the rate and fees for an outgoing transaction or quote.
+      type: object
+      required:
+        - counterpartyMultiplier
+        - counterpartyFixedFee
+        - gridApiMultiplier
+        - gridApiFixedFee
+        - gridApiVariableFeeRate
+        - gridApiVariableFeeAmount
+      properties:
+        counterpartyMultiplier:
+          type: number
+          format: double
+          description: The underlying multiplier from mSATs to the receiving currency as returned by the counterparty institution.
+          exclusiveMinimum: 0
+          example: 1.08
+        counterpartyFixedFee:
+          type: integer
+          format: int64
+          description: The fixed fee charged by the counterparty institution to execute the quote in the smallest unit of the receiving currency (eg. cents).
+          minimum: 0
+          example: 10
+        gridApiMultiplier:
+          type: number
+          format: double
+          description: The underlying multiplier from the sending currency to mSATS, including variable fees.
+          exclusiveMinimum: 0
+          example: 0.925
+        gridApiFixedFee:
+          type: integer
+          format: int64
+          description: The fixed fee charged by the Grid product to execute the quote in the smallest unit of the sending currency (eg. cents).
+          minimum: 0
+          example: 10
+        gridApiVariableFeeRate:
+          type: number
+          format: double
+          description: The variable fee rate charged by the Grid product to execute the quote as a percentage of the sending currency amount.
+          exclusiveMinimum: 0
+          example: 0.003
+        gridApiVariableFeeAmount:
+          type: number
+          format: int64
+          description: The variable fee amount charged by the Grid product to execute the quote in the smallest unit of the sending currency (eg. cents). This is the sending amount times gridApiVariableFeeRate.
+          minimum: 0
+          example: 30
+    OutgoingTransactionFailureReason:
+      type: string
+      enum:
+        - QUOTE_EXPIRED
+        - QUOTE_EXECUTION_FAILED
+        - LIGHTNING_PAYMENT_FAILED
+        - FUNDING_AMOUNT_MISMATCH
+        - COUNTERPARTY_POST_TX_FAILED
+        - TIMEOUT
+      description: Reason for failure of an outgoing transaction. This is used to provide more context on why a transaction failed. If the transaction is not in a failed state, this field is omitted.
+    OutgoingTransaction:
+      allOf:
+        - $ref: '#/components/schemas/Transaction'
+        - type: object
+          required:
+            - sentAmount
+            - paymentInstructions
+          properties:
+            sentAmount:
+              $ref: '#/components/schemas/CurrencyAmount'
+              description: Amount sent in the sender's currency
+            receivedAmount:
+              $ref: '#/components/schemas/CurrencyAmount'
+              description: Amount to be received by recipient in the recipient's currency
+            exchangeRate:
+              type: number
+              description: Number of sending currency units per receiving currency unit.
+              exclusiveMinimum: 0
+              example: 1.08
+            fees:
+              type: integer
+              format: int64
+              description: The fees associated with the quote in the smallest unit of the sending currency (eg. cents).
+              minimum: 0
+              example: 10
+            quoteId:
+              type: string
+              description: The ID of the quote that was used to trigger this payment
+              example: Quote:019542f5-b3e7-1d02-0000-000000000006
+            originalTransactionId:
+              type: string
+              description: ID of the original transaction that this transaction is retrying, if applicable
+              example: Transaction:019542f5-b3e7-1d02-0000-000000000003
+            paymentInstructions:
+              $ref: '#/components/schemas/PaymentInstructions'
+              description: Contains the reference code, banking details, and instructions needed to complete the payment
+            refund:
+              $ref: '#/components/schemas/Refund'
+              description: The refund if transaction was refunded.
+            rateDetails:
+              $ref: '#/components/schemas/OutgoingRateDetails'
+              description: Details about the rate and fees for the transaction.
+            failureReason:
+              $ref: '#/components/schemas/OutgoingTransactionFailureReason'
+              description: If the transaction failed, this field provides the reason for failure.
     CurrencyPreference:
       type: object
       required:
@@ -5074,53 +5338,6 @@ components:
         details:
           type: object
           description: Additional error details
-    OutgoingRateDetails:
-      description: Details about the rate and fees for an outgoing transaction or quote.
-      type: object
-      required:
-        - counterpartyMultiplier
-        - counterpartyFixedFee
-        - gridApiMultiplier
-        - gridApiFixedFee
-        - gridApiVariableFeeRate
-        - gridApiVariableFeeAmount
-      properties:
-        counterpartyMultiplier:
-          type: number
-          format: double
-          description: The underlying multiplier from mSATs to the receiving currency as returned by the counterparty institution.
-          exclusiveMinimum: 0
-          example: 1.08
-        counterpartyFixedFee:
-          type: integer
-          format: int64
-          description: The fixed fee charged by the counterparty institution to execute the quote in the smallest unit of the receiving currency (eg. cents).
-          minimum: 0
-          example: 10
-        gridApiMultiplier:
-          type: number
-          format: double
-          description: The underlying multiplier from the sending currency to mSATS, including variable fees.
-          exclusiveMinimum: 0
-          example: 0.925
-        gridApiFixedFee:
-          type: integer
-          format: int64
-          description: The fixed fee charged by the Grid product to execute the quote in the smallest unit of the sending currency (eg. cents).
-          minimum: 0
-          example: 10
-        gridApiVariableFeeRate:
-          type: number
-          format: double
-          description: The variable fee rate charged by the Grid product to execute the quote as a percentage of the sending currency amount.
-          exclusiveMinimum: 0
-          example: 0.003
-        gridApiVariableFeeAmount:
-          type: number
-          format: int64
-          description: The variable fee amount charged by the Grid product to execute the quote in the smallest unit of the sending currency (eg. cents). This is the sending amount times gridApiVariableFeeRate.
-          minimum: 0
-          example: 30
     Quote:
       type: object
       required:
@@ -5417,228 +5634,6 @@ components:
           example:
             FULL_NAME: Jane Receiver
             NATIONALITY: FR
-    TransactionStatus:
-      type: string
-      enum:
-        - CREATED
-        - PENDING
-        - PROCESSING
-        - COMPLETED
-        - REJECTED
-        - FAILED
-        - REFUNDED
-        - EXPIRED
-      description: Status of a payment transaction
-    Transaction:
-      type: object
-      required:
-        - id
-        - status
-        - type
-        - senderUmaAddress
-        - receiverUmaAddress
-        - customerId
-        - platformCustomerId
-      properties:
-        id:
-          type: string
-          description: Unique identifier for the transaction
-          example: Transaction:019542f5-b3e7-1d02-0000-000000000004
-        status:
-          $ref: '#/components/schemas/TransactionStatus'
-        type:
-          $ref: '#/components/schemas/TransactionType'
-        senderUmaAddress:
-          type: string
-          description: UMA address of the payment sender
-          example: $sender@external.domain
-        receiverUmaAddress:
-          type: string
-          description: UMA address of the payment recipient
-          example: $recipient@uma.domain
-        customerId:
-          type: string
-          description: System ID of the customer (sender for outgoing, recipient for incoming)
-          example: Customer:019542f5-b3e7-1d02-0000-000000000001
-        platformCustomerId:
-          type: string
-          description: Platform-specific ID of the customer (sender for outgoing, recipient for incoming)
-          example: 18d3e5f7b4a9c2
-        settledAt:
-          type: string
-          format: date-time
-          description: When the payment was or will be settled
-          example: '2023-08-15T14:30:00Z'
-        createdAt:
-          type: string
-          format: date-time
-          description: When the transaction was created
-          example: '2023-08-15T14:25:18Z'
-        description:
-          type: string
-          description: Optional memo or description for the payment
-          example: 'Payment for invoice #1234'
-        counterpartyInformation:
-          type: object
-          description: Additional information about the counterparty, if available
-          additionalProperties: true
-          example:
-            FULL_NAME: John Sender
-            BIRTH_DATE: '1985-06-15'
-            NATIONALITY: DE
-      discriminator:
-        propertyName: type
-        mapping:
-          INCOMING: '#/components/schemas/IncomingTransaction'
-          OUTGOING: '#/components/schemas/OutgoingTransaction'
-    ReconciliationInstructions:
-      type: object
-      required:
-        - reference
-      properties:
-        reference:
-          type: string
-          description: Unique reference code that must be included with the payment to match it with the correct incoming transaction
-          example: UMA-Q12345-REF
-    IncomingRateDetails:
-      description: Details about the rate and fees for an incoming transaction.
-      type: object
-      required:
-        - gridApiMultiplier
-        - gridApiFixedFee
-        - gridApiVariableFeeRate
-        - gridApiVariableFeeAmount
-      properties:
-        gridApiMultiplier:
-          type: number
-          format: double
-          description: The underlying multiplier from the mSATS to the receiving currency, including variable fees.
-          exclusiveMinimum: 0
-          example: 0.925
-        gridApiFixedFee:
-          type: integer
-          format: int64
-          description: The fixed fee charged by the Grid product to execute the quote in the smallest unit of the receiving currency (eg. cents).
-          minimum: 0
-          example: 10
-        gridApiVariableFeeRate:
-          type: number
-          format: double
-          description: The variable fee rate charged by the Grid product to execute the quote as a percentage of the receiving currency amount.
-          exclusiveMinimum: 0
-          example: 0.003
-        gridApiVariableFeeAmount:
-          type: number
-          format: int64
-          description: The variable fee amount charged by the Grid product to execute the quote in the smallest unit of the receiving currency (eg. cents). This is the receiving amount times gridApiVariableFeeRate.
-          minimum: 0
-          example: 30
-    IncomingTransactionFailureReason:
-      type: string
-      enum:
-        - LNURLP_FAILED
-        - PAY_REQUEST_FAILED
-        - PAYMENT_APPROVAL_WEBHOOK_ERROR
-        - PAYMENT_APPROVAL_TIMED_OUT
-        - OFFRAMP_FAILED
-        - MISSING_MANDATORY_PAYEE_DATA
-        - QUOTE_EXPIRED
-        - QUOTE_EXECUTION_FAILED
-      description: Reason for failure of an incoming transaction. This is used to provide more context on why a transaction failed. If the transaction is not in a failed state, this field is omitted.
-    IncomingTransaction:
-      allOf:
-        - $ref: '#/components/schemas/Transaction'
-        - type: object
-          required:
-            - receivedAmount
-          properties:
-            receivedAmount:
-              $ref: '#/components/schemas/CurrencyAmount'
-              description: Amount received in the recipient's currency
-            reconciliationInstructions:
-              $ref: '#/components/schemas/ReconciliationInstructions'
-              description: Included for all transactions except those with "CREATED" status
-            rateDetails:
-              $ref: '#/components/schemas/IncomingRateDetails'
-              description: Details about the rate and fees for the transaction.
-            failureReason:
-              $ref: '#/components/schemas/IncomingTransactionFailureReason'
-              description: If the transaction failed, this field provides the reason for failure.
-    Refund:
-      type: object
-      required:
-        - reference
-        - initiatedAt
-      properties:
-        reference:
-          type: string
-          description: The unique reference code of the refund
-          example: UMA-Q12345-REFUND
-        initiatedAt:
-          type: string
-          format: date-time
-          description: When the refund was initiated
-          example: '2023-08-15T14:30:00Z'
-        settledAt:
-          type: string
-          format: date-time
-          description: When the refund was or will be settled
-          example: '2023-08-15T14:30:00Z'
-    OutgoingTransactionFailureReason:
-      type: string
-      enum:
-        - QUOTE_EXPIRED
-        - QUOTE_EXECUTION_FAILED
-        - LIGHTNING_PAYMENT_FAILED
-        - FUNDING_AMOUNT_MISMATCH
-        - COUNTERPARTY_POST_TX_FAILED
-        - TIMEOUT
-      description: Reason for failure of an outgoing transaction. This is used to provide more context on why a transaction failed. If the transaction is not in a failed state, this field is omitted.
-    OutgoingTransaction:
-      allOf:
-        - $ref: '#/components/schemas/Transaction'
-        - type: object
-          required:
-            - sentAmount
-            - paymentInstructions
-          properties:
-            sentAmount:
-              $ref: '#/components/schemas/CurrencyAmount'
-              description: Amount sent in the sender's currency
-            receivedAmount:
-              $ref: '#/components/schemas/CurrencyAmount'
-              description: Amount to be received by recipient in the recipient's currency
-            exchangeRate:
-              type: number
-              description: Number of sending currency units per receiving currency unit.
-              exclusiveMinimum: 0
-              example: 1.08
-            fees:
-              type: integer
-              format: int64
-              description: The fees associated with the quote in the smallest unit of the sending currency (eg. cents).
-              minimum: 0
-              example: 10
-            quoteId:
-              type: string
-              description: The ID of the quote that was used to trigger this payment
-              example: Quote:019542f5-b3e7-1d02-0000-000000000006
-            originalTransactionId:
-              type: string
-              description: ID of the original transaction that this transaction is retrying, if applicable
-              example: Transaction:019542f5-b3e7-1d02-0000-000000000003
-            paymentInstructions:
-              $ref: '#/components/schemas/PaymentInstructions'
-              description: Contains the reference code, banking details, and instructions needed to complete the payment
-            refund:
-              $ref: '#/components/schemas/Refund'
-              description: The refund if transaction was refunded.
-            rateDetails:
-              $ref: '#/components/schemas/OutgoingRateDetails'
-              description: Details about the rate and fees for the transaction.
-            failureReason:
-              $ref: '#/components/schemas/OutgoingTransactionFailureReason'
-              description: If the transaction failed, this field provides the reason for failure.
     TestWebhookResponse:
       type: object
       required:

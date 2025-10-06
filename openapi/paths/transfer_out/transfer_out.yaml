@@ -21,7 +21,7 @@ get:
       description: Filter by transfer status
       required: false
       schema:
-        $ref: ../../components/schemas/transfers/TransferStatus.yaml
+        $ref: ../../components/schemas/transactions/TransactionStatus.yaml
     - name: sourceAccountId
       in: query
       description: Filter by source internal account ID
@@ -64,7 +64,7 @@ get:
                 type: array
                 description: List of transfer-out requests matching the filter criteria
                 items:
-                  $ref: ../../components/schemas/transfers/Transfer.yaml
+                  $ref: ../../components/schemas/transactions/Transaction.yaml
               hasMore:
                 type: boolean
                 description: Indicates if more results are available beyond this page
@@ -150,7 +150,7 @@ post:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/transfers/Transfer.yaml
+            $ref: ../../components/schemas/transactions/Transaction.yaml
     "400":
       description: Bad request - Invalid parameters
       content:
