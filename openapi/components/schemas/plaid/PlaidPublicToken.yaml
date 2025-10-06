@@ -5,14 +5,14 @@ properties:
   publicToken:
     type: string
     description: |
-      The public token returned by Plaid Link after the user successfully
+      The public token returned by Plaid Link after the customer successfully
       authenticates and selects an account. This token will be exchanged
       for an access token by Lightspark.
     example: public-sandbox-12345678-1234-1234-1234-123456789012
   accountId:
     type: string
     description: |
-      Optional Plaid account ID if the user selected a specific account.
+      Optional Plaid account ID if the customer selected a specific account.
       If not provided, the default account will be used.
     example: plaid_account_id_123
   metadata:

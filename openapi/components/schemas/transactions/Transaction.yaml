@@ -5,7 +5,7 @@ required:
   - type
   - senderUmaAddress
   - receiverUmaAddress
-  - userId
+  - customerId
   - platformUserId
 properties:
   id:
@@ -24,14 +24,14 @@ properties:
     type: string
     description: UMA address of the payment recipient
     example: $recipient@uma.domain
-  userId:
+  customerId:
     type: string
-    description: System ID of the user (sender for outgoing, recipient for incoming)
+    description: System ID of the customer (sender for outgoing, recipient for incoming)
     example: User:019542f5-b3e7-1d02-0000-000000000001
   platformUserId:
     type: string
     description: >-
-      Platform-specific ID of the user (sender for outgoing, recipient for
+      Platform-specific ID of the customer (sender for outgoing, recipient for
       incoming)
     example: 18d3e5f7b4a9c2
   settledAt:

@@ -26,21 +26,21 @@ properties:
             description: Source account identifier
             example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
         description: Source account details
-      - title: User ID Source
+      - title: Customer ID Source
         type: object
         required:
-          - userId
+          - customerId
           - currency
         properties:
-          userId:
+          customerId:
             type: string
-            description: Source user ID
+            description: Source customer ID
             example: User:019542f5-b3e7-1d02-0000-000000000009
           currency:
             type: string
             description: Currency code for the source
             example: USD
-        description: Source user ID details. This will require just-in-time funding using payment instructions.
+        description: Source customer ID details. This will require just-in-time funding using payment instructions.
       - title: UMA Address Source
         type: object
         required:

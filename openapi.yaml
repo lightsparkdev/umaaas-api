@@ -2,8 +2,9 @@ openapi: 3.1.0
 info:
   title: Lightspark Grid API
   description: |
-    API for managing global payments on the Money Grid. 
-  version: '2025-10-13'
+    API for managing global payments to and from UMA addresses. 
+    This service facilitates cross-currency financial transactions using simple human-readable UMA addresses.
+  version: '2025-05-15'
   contact:
     name: Lightspark Support
     email: support@lightspark.com
@@ -18,8 +19,8 @@ security:
 tags:
   - name: Platform Configuration
     description: Platform configuration endpoints for managing global settings. You can also configure these settings in the Grid dashboard.
-  - name: Users
-    description: User management endpoints for creating and updating user information
+  - name: Customers
+    description: Customer management endpoints for creating and updating customer information
   - name: Internal Accounts
     description: Internal account management endpoints for creating and managing internal accounts.
   - name: External Accounts
@@ -144,13 +145,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error501'
-  /users:
+  /customers:
     post:
-      summary: Add a new user
-      description: Register a new user in the system with an account identifier and bank account information
+      summary: Add a new customer
+      description: Register a new customer in the system with an account identifier and bank account information
       operationId: createUser
       tags:
-        - Users
+        - Customers
       security:
         - BasicAuth: []
       requestBody:
@@ -159,7 +160,7 @@ paths:
           application/json:
             schema:
               oneOf:
-                - title: Individual User
+                - title: Individual Customer
                   allOf:
                     - $ref: '#/components/schemas/IndividualUserUpdate'
                     - type: object
@@ -178,9 +179,9 @@ paths:
                           description: User type
                         kycUrl:
                           type: string
-                          description: A kyc url to be shared with your individual user if kyc needs to be completed
+                          description: A kyc url to be shared with your individual customer if kyc needs to be completed
                           example: https://example.com/kyc
-                - title: Business User
+                - title: Business Customer
                   allOf:
                     - $ref: '#/components/schemas/BusinessUserUpdate'
                     - type: object
@@ -199,7 +200,7 @@ paths:
                           description: User type
                         kycUrl:
                           type: string
-                          description: A kyc url to be shared with your business user if kyc needs to be completed
+                          description: A kyc url to be shared with your business customer if kyc needs to be completed
                           example: https://example.com/kyc
               discriminator:
                 propertyName: userType
@@ -208,7 +209,7 @@ paths:
                   BUSINESS: '#/components/schemas/BusinessUserUpdate'
             examples:
               individualUserWithUmaAddress:
-                summary: Create individual user with UMA address, including deposit bank account information.
+                summary: Create individual customer with UMA address, including deposit bank account information.
                 value:
                   umaAddress: $jane.doe@uma.domain.com
                   platformUserId: 7b3c5a89d2f1e0
@@ -230,7 +231,7 @@ paths:
                     bankName: Chase Bank
                     platformAccountId: chase_primary_1234
               individualUserWithoutUmaAddress:
-                summary: Create individual user without UMA address (will be generated)
+                summary: Create individual customer without UMA address (will be generated)
                 value:
                   platformUserId: 7b3c5a89d2f1e0
                   userType: INDIVIDUAL
@@ -243,7 +244,7 @@ paths:
                     postalCode: '97201'
                     country: US
               businessUser:
-                summary: Create business user example
+                summary: Create business customer example
                 value:
                   platformUserId: 6e4d2c0b8a9f3
                   userType: BUSINESS
@@ -259,14 +260,14 @@ paths:
                     country: US
       responses:
         '201':
-          description: User created successfully
+          description: Customer created successfully
           content:
             application/json:
               schema:
                 oneOf:
-                  - title: Individual User
+                  - title: Individual Customer
                     $ref: '#/components/schemas/IndividualUser'
-                  - title: Business User
+                  - title: Business Customer
                     $ref: '#/components/schemas/BusinessUser'
                 discriminator:
                   propertyName: userType
@@ -286,7 +287,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error401'
         '409':
-          description: Conflict - User with the UMA address already exists
+          description: Conflict - Customer with the UMA address already exists
           content:
             application/json:
               schema:
@@ -304,13 +305,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error501'
     get:
-      summary: List users
+      summary: List customers
       description: |
-        Retrieve a list of users with optional filtering parameters. Returns all users that match
-        the specified filters. If no filters are provided, returns all users (paginated).
+        Retrieve a list of customers with optional filtering parameters. Returns all customers that match
+        the specified filters. If no filters are provided, returns all customers (paginated).
       operationId: listUsers
       tags:
-        - Users
+        - Customers
       security:
         - BasicAuth: []
       parameters:
@@ -334,28 +335,28 @@ paths:
             $ref: '#/components/schemas/UserType'
         - name: createdAfter
           in: query
-          description: Filter users created after this timestamp (inclusive)
+          description: Filter customers created after this timestamp (inclusive)
           required: false
           schema:
             type: string
             format: date-time
         - name: createdBefore
           in: query
-          description: Filter users created before this timestamp (inclusive)
+          description: Filter customers created before this timestamp (inclusive)
           required: false
           schema:
             type: string
             format: date-time
         - name: updatedAfter
           in: query
-          description: Filter users updated after this timestamp (inclusive)
+          description: Filter customers updated after this timestamp (inclusive)
           required: false
           schema:
             type: string
             format: date-time
         - name: updatedBefore
           in: query
-          description: Filter users updated before this timestamp (inclusive)
+          description: Filter customers updated before this timestamp (inclusive)
           required: false
           schema:
             type: string
@@ -377,7 +378,7 @@ paths:
             type: string
         - name: isIncludingDeleted
           in: query
-          description: Whether to include deleted users in the results. Default is false.
+          description: Whether to include deleted customers in the results. Default is false.
           required: false
           schema:
             type: boolean
@@ -394,12 +395,12 @@ paths:
                 properties:
                   data:
                     type: array
-                    description: List of users matching the filter criteria
+                    description: List of customers matching the filter criteria
                     items:
                       oneOf:
-                        - title: Individual User
+                        - title: Individual Customer
                           $ref: '#/components/schemas/IndividualUser'
-                        - title: Business User
+                        - title: Business Customer
                           $ref: '#/components/schemas/BusinessUser'
                       discriminator:
                         propertyName: userType
@@ -414,7 +415,7 @@ paths:
                     description: Cursor to retrieve the next page of results (only present if hasMore is true)
                   totalCount:
                     type: integer
-                    description: Total number of users matching the criteria (excluding pagination)
+                    description: Total number of customers matching the criteria (excluding pagination)
         '400':
           description: Bad request - Invalid parameters
           content:
@@ -433,20 +434,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
-  /users/{userId}:
+  /customer/{customerId}:
     parameters:
-      - name: userId
+      - name: customerId
         in: path
-        description: System-generated unique user identifier
+        description: System-generated unique customer identifier
         required: true
         schema:
           type: string
     get:
-      summary: Get user by ID
-      description: Retrieve a user by their system-generated ID
+      summary: Get customer by ID
+      description: Retrieve a customer by their system-generated ID
       operationId: getUserById
       tags:
-        - Users
+        - Customers
       security:
         - BasicAuth: []
       responses:
@@ -456,9 +457,9 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - title: Individual User
+                  - title: Individual Customer
                     $ref: '#/components/schemas/IndividualUser'
-                  - title: Business User
+                  - title: Business Customer
                     $ref: '#/components/schemas/BusinessUser'
                 discriminator:
                   propertyName: userType
@@ -472,7 +473,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error401'
         '404':
-          description: User not found
+          description: Customer not found
           content:
             application/json:
               schema:
@@ -484,11 +485,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error500'
     patch:
-      summary: Update user by ID
-      description: Update a user's metadata by their system-generated ID
+      summary: Update customer by ID
+      description: Update a customer's metadata by their system-generated ID
       operationId: updateUserById
       tags:
-        - Users
+        - Customers
       security:
         - BasicAuth: []
       requestBody:
@@ -497,9 +498,9 @@ paths:
           application/json:
             schema:
               oneOf:
-                - title: Individual User Update
+                - title: Individual cCstomer Update
                   $ref: '#/components/schemas/IndividualUserUpdate'
-                - title: Business User Update
+                - title: Business Customer Update
                   $ref: '#/components/schemas/BusinessUserUpdate'
               discriminator:
                 propertyName: userType
@@ -508,7 +509,7 @@ paths:
                   BUSINESS: '#/components/schemas/BusinessUserUpdate'
             examples:
               individualUpdate:
-                summary: Update individual user example
+                summary: Update individual customer example
                 value:
                   userType: INDIVIDUAL
                   fullName: John Smith
@@ -527,7 +528,7 @@ paths:
                     bankName: Wells Fargo
                     platformAccountId: wf_checking_9012
               businessUpdate:
-                summary: Update business user example
+                summary: Update business customer example
                 value:
                   userType: BUSINESS
                   businessInfo:
@@ -549,14 +550,14 @@ paths:
                     platformAccountId: chase_business_3456
       responses:
         '200':
-          description: User updated successfully
+          description: Customer updated successfully
           content:
             application/json:
               schema:
                 oneOf:
-                  - title: Individual User
+                  - title: Individual Customer
                     $ref: '#/components/schemas/IndividualUser'
-                  - title: Business User
+                  - title: Business Customer
                     $ref: '#/components/schemas/BusinessUser'
                 discriminator:
                   propertyName: userType
@@ -576,7 +577,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error401'
         '404':
-          description: User not found
+          description: Customer not found
           content:
             application/json:
               schema:
@@ -588,23 +589,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error500'
     delete:
-      summary: Delete user by ID
-      description: Delete a user by their system-generated ID
+      summary: Delete customer by ID
+      description: Delete a customer by their system-generated ID
       operationId: deleteUserById
       tags:
-        - Users
+        - Customers
       security:
         - BasicAuth: []
       responses:
         '200':
-          description: User deleted successfully
+          description: Customer deleted successfully
           content:
             application/json:
               schema:
                 oneOf:
-                  - title: Individual User
+                  - title: Individual Customer
                     $ref: '#/components/schemas/IndividualUser'
-                  - title: Business User
+                  - title: Business Customer
                     $ref: '#/components/schemas/BusinessUser'
                 discriminator:
                   propertyName: userType
@@ -618,13 +619,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error401'
         '404':
-          description: User not found
+          description: Customer not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
         '410':
-          description: User deleted already
+          description: Customer deleted already
           content:
             application/json:
               schema:
@@ -635,7 +636,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
-  /users/kyc-link:
+  /customer/kyc-link:
     parameters:
       - name: redirect_uri
         in: query
@@ -648,7 +649,7 @@ paths:
       description: Generate a hosted kyc link to onboard a customer
       operationId: getKycLinkForUser
       tags:
-        - Users
+        - Customers
       security:
         - BasicAuth: []
       responses:
@@ -683,7 +684,7 @@ paths:
         internal accounts that match the specified filters. If no filters are provided, returns all internal accounts
         (paginated).
 
-        Internal accounts are created automatically when a user is created based on the platform configuration.
+        Internal accounts are created automatically when a customer is created based on the platform configuration.
       operationId: listInternalAccounts
       tags:
         - Internal Accounts
@@ -696,9 +697,9 @@ paths:
           required: false
           schema:
             type: string
-        - name: userId
+        - name: customerId
           in: query
-          description: Filter by internal accounts associated with a specific user
+          description: Filter by internal accounts associated with a specific customer
           required: false
           schema:
             type: string
@@ -741,7 +742,7 @@ paths:
                     description: Cursor to retrieve the next page of results (only present if hasMore is true)
                   totalCount:
                     type: integer
-                    description: Total number of users matching the criteria (excluding pagination)
+                    description: Total number of customers matching the criteria (excluding pagination)
         '400':
           description: Bad request - Invalid parameters
           content:
@@ -818,9 +819,9 @@ paths:
           required: false
           schema:
             type: string
-        - name: userId
+        - name: customerId
           in: query
-          description: Filter by external accounts associated with a specific user
+          description: Filter by external accounts associated with a specific customer
           required: false
           schema:
             type: string
@@ -884,7 +885,7 @@ paths:
                 $ref: '#/components/schemas/Error500'
     post:
       summary: Add a new external account
-      description: Register a new external bank account for a user
+      description: Register a new external bank account for a customer
       operationId: createExternalAccount
       tags:
         - External Accounts
@@ -902,7 +903,7 @@ paths:
                 value:
                   currency: USD
                   platformAccountId: ext_acc_123456
-                  userId: User:019542f5-b3e7-1d02-0000-000000000001
+                  customerId: User:019542f5-b3e7-1d02-0000-000000000001
                   beneficiary:
                     counterPartyType: INDIVIDUAL
                     fullName: John Doe
@@ -919,7 +920,7 @@ paths:
                 value:
                   currency: BTC
                   platformAccountId: spark_wallet_001
-                  userId: User:019542f5-b3e7-1d02-0000-000000000001
+                  customerId: User:019542f5-b3e7-1d02-0000-000000000001
                   beneficiary:
                     counterPartyType: INDIVIDUAL
                     fullName: Jane Smith
@@ -963,12 +964,12 @@ paths:
       summary: Request Plaid Link token
       description: |
         Creates a Plaid Link token that can be used to initialize Plaid Link in your application.
-        The Link token is used to authenticate the user and allow them to select their bank account.
+        The Link token is used to authenticate the customer and allow them to select their bank account.
 
         **Async Flow:**
         1. Platform calls this endpoint to get a link_token and callbackUrl
-        2. Platform displays Plaid Link UI to the end user using the link_token
-        3. End user authenticates with their bank and selects an account
+        2. Platform displays Plaid Link UI to the end customer using the link_token
+        3. End customer authenticates with their bank and selects an account
         4. Plaid returns a public_token to the platform
         5. Platform POSTs the public_token to the callbackUrl
         6. Lightspark exchanges the public_token with Plaid and creates the external account asynchronously
@@ -1024,7 +1025,7 @@ paths:
     post:
       summary: Submit Plaid public token
       description: |
-        After the user completes Plaid Link authentication, the platform should POST
+        After the customer completes Plaid Link authentication, the platform should POST
         the public_token to this callback URL (provided in the link token response).
 
         This will trigger asynchronous processing:
@@ -1096,9 +1097,9 @@ paths:
       security:
         - BasicAuth: []
       parameters:
-        - name: userId
+        - name: customerId
           in: query
-          description: Filter by user ID
+          description: Filter by customer ID
           required: false
           schema:
             type: string
@@ -1198,7 +1199,7 @@ paths:
     post:
       summary: Create a transfer-in request
       description: |
-        Transfer funds from an external account to an internal account for a specific user
+        Transfer funds from an external account to an internal account for a specific customer
       operationId: createTransferIn
       tags:
         - Transfer In
@@ -1211,13 +1212,13 @@ paths:
             schema:
               type: object
               required:
-                - userId
+                - customerId
                 - source
                 - destination
               properties:
-                userId:
+                customerId:
                   type: string
-                  description: The ID of the user initiating the transfer
+                  description: The ID of the customer initiating the transfer
                   example: User:019542f5-b3e7-1d02-0000-000000000001
                 source:
                   type: object
@@ -1243,7 +1244,7 @@ paths:
               transferIn:
                 summary: Transfer from external to internal account
                 value:
-                  userId: User:019542f5-b3e7-1d02-0000-000000000001
+                  customerId: User:019542f5-b3e7-1d02-0000-000000000001
                   source:
                     accountId: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
                   destination:
@@ -1268,7 +1269,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error401'
         '404':
-          description: User or account not found
+          description: Customer or account not found
           content:
             application/json:
               schema:
@@ -1290,9 +1291,9 @@ paths:
       security:
         - BasicAuth: []
       parameters:
-        - name: userId
+        - name: customerId
           in: query
-          description: Filter by user ID
+          description: Filter by customer ID
           required: false
           schema:
             type: string
@@ -1375,7 +1376,7 @@ paths:
     post:
       summary: Create a transfer-out request
       description: |
-        Transfer funds from an internal account to an external account for a specific user
+        Transfer funds from an internal account to an external account for a specific customer
       operationId: createTransferOut
       tags:
         - Transfer Out
@@ -1439,7 +1440,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error401'
         '404':
-          description: User or account not found
+          description: Customer or account not found
           content:
             application/json:
               schema:
@@ -1470,11 +1471,11 @@ paths:
             type: string
         - name: senderUmaAddress
           in: query
-          description: UMA address of the sender (optional if userId is provided)
+          description: UMA address of the sender (optional if customerId is provided)
           required: false
           schema:
             type: string
-        - name: userId
+        - name: customerId
           in: query
           description: System ID of the sender (optional if senderUmaAddress is provided)
           required: false
@@ -1553,11 +1554,11 @@ paths:
             example: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
         - name: senderUmaAddress
           in: query
-          description: UMA address of the sender (optional if userId is provided)
+          description: UMA address of the sender (optional if customerId is provided)
           required: false
           schema:
             type: string
-        - name: userId
+        - name: customerId
           in: query
           description: System ID of the sender (optional if senderUmaAddress is provided)
           required: false
@@ -1675,7 +1676,7 @@ paths:
         **Key Features:**
         - **Flexible Amount Locking**: Always specify whether you want to lock the sending amount or receiving amount
         - **Currency Exchange**: Handles all cross-currency transfers with real-time exchange rates
-        - **Payment Instructions**: For UMA or user ID sources, provides banking details needed for execution
+        - **Payment Instructions**: For UMA or customer ID sources, provides banking details needed for execution
 
         **Important:** If you are transferring funds in the same currency (no exchange required), 
         use the `/transfer-in` or `/transfer-out` endpoints instead.
@@ -1784,9 +1785,9 @@ paths:
       security:
         - BasicAuth: []
       parameters:
-        - name: userId
+        - name: customerId
           in: query
-          description: Filter by sending user ID
+          description: Filter by sending customer ID
           required: false
           schema:
             type: string
@@ -2051,7 +2052,7 @@ paths:
       summary: List transactions
       description: |
         Retrieve a paginated list of transactions with optional filtering.
-        The transactions can be filtered by user ID, platform user ID, UMA address, 
+        The transactions can be filtered by customer ID, platform user ID, UMA address, 
         date range, status, and transaction type.
       operationId: listTransactions
       tags:
@@ -2059,9 +2060,9 @@ paths:
       security:
         - BasicAuth: []
       parameters:
-        - name: userId
+        - name: customerId
           in: query
-          description: Filter by system user ID
+          description: Filter by system customer ID
           required: false
           schema:
             type: string
@@ -2396,22 +2397,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
-  /users/bulk/csv:
+  /customers/bulk/csv:
     post:
-      summary: Upload users via CSV file
+      summary: Upload customers via CSV file
       description: |
-        Upload a CSV file containing user information for bulk creation. The CSV file should follow
+        Upload a CSV file containing customer information for bulk creation. The CSV file should follow
         a specific format with required and optional columns based on user type.
 
         ### CSV Format
         The CSV file should have the following columns:
 
-        Required columns for all users:
-        - umaAddress: The user's UMA address (e.g., $john.doe@uma.domain.com)
-        - platformUserId: Your platform's unique identifier for the user
+        Required columns for all customers:
+        - umaAddress: The customer's UMA address (e.g., $john.doe@uma.domain.com)
+        - platformUserId: Your platform's unique identifier for the customer
         - userType: Either "INDIVIDUAL" or "BUSINESS"
 
-        Required columns for individual users:
+        Required columns for individual customers:
         - fullName: Individual's full name
         - birthDate: Date of birth in YYYY-MM-DD format
         - addressLine1: Street address line 1
@@ -2423,7 +2424,7 @@ paths:
         - accountNumber: Bank account number
         - bankName: Name of the bank
 
-        Required columns for business users:
+        Required columns for business customers:
         - businessLegalName: Legal name of the business
         - addressLine1: Street address line 1
         - city: City
@@ -2434,15 +2435,15 @@ paths:
         - accountNumber: Bank account number
         - bankName: Name of the bank
 
-        Optional columns for all users:
+        Optional columns for all customers:
         - addressLine2: Street address line 2
         - platformAccountId: Your platform's identifier for the bank account
-        - description: Optional description for the user
+        - description: Optional description for the customer
 
-        Optional columns for individual users:
-        - email: User's email address
+        Optional columns for individual customers:
+        - email: Customer's email address
 
-        Optional columns for business users:
+        Optional columns for business customers:
         - businessRegistrationNumber: Business registration number
         - businessTaxId: Tax identification number
 
@@ -2476,7 +2477,7 @@ paths:
         You can monitor the job status using the `/users/bulk/jobs/{jobId}` endpoint.
       operationId: uploadUsersCsv
       tags:
-        - Users
+        - Customers
       security:
         - BasicAuth: []
       requestBody:
@@ -2491,7 +2492,7 @@ paths:
                 file:
                   type: string
                   format: binary
-                  description: CSV file containing user information
+                  description: CSV file containing customer information
       responses:
         '202':
           description: CSV upload accepted for processing
@@ -2524,11 +2525,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
-  /users/bulk/jobs/{jobId}:
+  /customers/bulk/jobs/{jobId}:
     get:
       summary: Get bulk import job status
       description: |
-        Retrieve the current status and results of a bulk user import job. This endpoint can be used
+        Retrieve the current status and results of a bulk customer import job. This endpoint can be used
         to track the progress of both CSV uploads.
 
         The response includes:
@@ -2538,7 +2539,7 @@ paths:
         - Completion timestamp when finished
       operationId: getBulkUserImportJob
       tags:
-        - Users
+        - Customers
       security:
         - BasicAuth: []
       parameters:
@@ -2575,9 +2576,9 @@ paths:
                 $ref: '#/components/schemas/Error500'
   /invitations:
     post:
-      summary: Create an UMA invitation from a given platform user.
+      summary: Create an UMA invitation from a given platform customer.
       description: |
-        Create an UMA invitation from a given platform user.
+        Create an UMA invitation from a given platform customer.
       operationId: createInvitation
       tags:
         - Invitations
@@ -2594,7 +2595,7 @@ paths:
               properties:
                 inviterUma:
                   type: string
-                  description: The UMA address of the user creating the invitation
+                  description: The UMA address of the customer creating the invitation
                   example: $inviter@uma.domain
                 firstName:
                   type: string
@@ -2602,7 +2603,7 @@ paths:
                   example: Alice
                 amountToSend:
                   description: |
-                    An amount to send (in the smallest unit of the user's currency) to the invitee when the invitation is claimed.
+                    An amount to send (in the smallest unit of the customer's currency) to the invitee when the invitation is claimed.
                     This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of
                     the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter
                     platform either does not send the payment or the payment fails, the invitee will not receive this amount. This
@@ -2693,7 +2694,7 @@ paths:
         2. The invitee UMA address is associated with the invitation
         3. An INVITATION_CLAIMED webhook is triggered to notify the platform that created the invitation
 
-        This endpoint allows users to accept invitations sent to them by other UMA users.
+        This endpoint allows customers to accept invitations sent to them by other UMA customers.
       operationId: claimInvitation
       tags:
         - Invitations
@@ -2717,7 +2718,7 @@ paths:
               properties:
                 inviteeUma:
                   type: string
-                  description: The UMA address of the user claiming the invitation
+                  description: The UMA address of the customer claiming the invitation
                   example: $invitee@uma.domain
       responses:
         '200':
@@ -2889,7 +2890,7 @@ paths:
     post:
       summary: Simulate payment send to test receiving a payment
       description: |
-        Simulate sending payment from an sandbox uma address to a platform user to test payment receive.
+        Simulate sending payment from an sandbox uma address to a platform customer to test payment receive.
         This endpoint is only for the sandbox environment and will fail for production platforms/keys.
       operationId: sandboxReceive
       tags:
@@ -2913,9 +2914,9 @@ paths:
                   example: $success.usd@sandbox.grid.uma.money
                 receiverUmaAddress:
                   type: string
-                  description: UMA address of the receiver (optional if userId is provided)
+                  description: UMA address of the receiver (optional if customerId is provided)
                   example: $receiver@uma.domain
-                userId:
+                customerId:
                   type: string
                   description: System ID of the receiver (optional if receiverUmaAddress is provided)
                   example: User:019542f5-b3e7-1d02-0000-000000000001
@@ -3131,28 +3132,28 @@ paths:
             type: string
         - name: createdAfter
           in: query
-          description: Filter users created after this timestamp (inclusive)
+          description: Filter customers created after this timestamp (inclusive)
           required: false
           schema:
             type: string
             format: date-time
         - name: createdBefore
           in: query
-          description: Filter users created before this timestamp (inclusive)
+          description: Filter customers created before this timestamp (inclusive)
           required: false
           schema:
             type: string
             format: date-time
         - name: updatedAfter
           in: query
-          description: Filter users updated after this timestamp (inclusive)
+          description: Filter customers updated after this timestamp (inclusive)
           required: false
           schema:
             type: string
             format: date-time
         - name: updatedBefore
           in: query
-          description: Filter users updated before this timestamp (inclusive)
+          description: Filter customers updated before this timestamp (inclusive)
           required: false
           schema:
             type: string
@@ -3296,7 +3297,7 @@ webhooks:
     post:
       summary: Incoming payment webhook and approval mechanism
       description: |
-        Webhook that is called when an incoming payment is received by a user's UMA address.
+        Webhook that is called when an incoming payment is received by a customer's UMA address.
         This endpoint should be implemented by clients of the Grid API.
 
         ### Authentication
@@ -3349,7 +3350,7 @@ webhooks:
                         name: United States Dollar
                         symbol: $
                         decimals: 2
-                    userId: User:019542f5-b3e7-1d02-0000-000000000001
+                    customerId: User:019542f5-b3e7-1d02-0000-000000000001
                     platformUserId: 18d3e5f7b4a9c2
                     reconciliationInstructions:
                       reference: REF-123456789
@@ -3381,7 +3382,7 @@ webhooks:
                         name: United States Dollar
                         symbol: $
                         decimals: 2
-                    userId: User:019542f5-b3e7-1d02-0000-000000000001
+                    customerId: User:019542f5-b3e7-1d02-0000-000000000001
                     platformUserId: 18d3e5f7b4a9c2
                     settledAt: '2023-08-15T14:30:00Z'
                     createdAt: '2023-08-15T14:25:18Z'
@@ -3493,7 +3494,7 @@ webhooks:
                         name: Euro
                         symbol: €
                         decimals: 2
-                    userId: User:019542f5-b3e7-1d02-0000-000000000001
+                    customerId: User:019542f5-b3e7-1d02-0000-000000000001
                     platformUserId: 18d3e5f7b4a9c2
                     settlementTime: '2023-08-15T14:30:00Z'
                     createdAt: '2023-08-15T14:25:18Z'
@@ -3527,7 +3528,7 @@ webhooks:
                         name: United States Dollar
                         symbol: $
                         decimals: 2
-                    userId: User:019542f5-b3e7-1d02-0000-000000000001
+                    customerId: User:019542f5-b3e7-1d02-0000-000000000001
                     platformUserId: 18d3e5f7b4a9c2
                     createdAt: '2023-08-15T14:25:18Z'
                     quoteId: Quote:019542f5-b3e7-1d02-0000-000000000006
@@ -3624,7 +3625,7 @@ webhooks:
     post:
       summary: Bulk upload status webhook
       description: |
-        Webhook that is called when a bulk user upload job completes or fails.
+        Webhook that is called when a bulk customer upload job completes or fails.
         This endpoint should be implemented by clients of the Grid API.
 
         ### Authentication
@@ -3712,17 +3713,17 @@ webhooks:
     post:
       summary: Invitation claimed webhook
       description: |
-        Webhook that is called when an invitation is claimed by a user.
+        Webhook that is called when an invitation is claimed by a customer.
         This endpoint should be implemented by platform clients of the Grid API.
 
-        When a user claims an invitation, this webhook is triggered to notify the platform that:
+        When a customer claims an invitation, this webhook is triggered to notify the platform that:
         1. The invitation has been successfully claimed
         2. The invitee UMA address is now associated with the invitation
         3. The invitation status has changed from PENDING to CLAIMED
 
         This allows platforms to:
         - Track invitation usage and conversion rates
-        - Trigger onboarding flows for new users who joined via invitation
+        - Trigger onboarding flows for new customers who joined via invitation
         - Apply referral bonuses or rewards to the inviter
         - Update their UI to reflect the claimed status
 
@@ -3901,7 +3902,7 @@ components:
         - ACCOUNT_IDENTIFIER
         - FI_LEGAL_ENTITY_NAME
         - FI_ADDRESS
-      description: Name of a type of field containing info about a platform's user or counterparty user.
+      description: Name of a type of field containing info about a platform's customer or counterparty customer.
       example: FULL_NAME
     CounterpartyFieldDefinition:
       type: object
@@ -3944,7 +3945,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CounterpartyFieldDefinition'
-          description: List of fields which the platform requires from the counterparty institutions about counterparty users. Platforms can set mandatory to false if the platform does not require the field, but would like to have it available. Some fields may be required by the underlying UMA provider.
+          description: List of fields which the platform requires from the counterparty institutions about counterparty customers. Platforms can set mandatory to false if the platform does not require the field, but would like to have it available. Some fields may be required by the underlying UMA provider.
           example:
             - name: FULL_NAME
               mandatory: true
@@ -3956,7 +3957,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/UserInfoFieldName'
-          description: List of user info field names that are required by the underlying UMA provider when creating a user for this currency. These fields must be supplied when creating or updating a user if this currency is intended to be used by that user. If no fields are required, this field is omitted.
+          description: List of customer info field names that are required by the underlying UMA provider when creating a customer for this currency. These fields must be supplied when creating or updating a customer if this currency is intended to be used by that customer. If no fields are required, this field is omitted.
           readOnly: true
           example:
             - NATIONALITY
@@ -4105,7 +4106,7 @@ components:
             | Error Code | Description |
             |------------|-------------|
             | INVALID_INPUT | Invalid input provided |
-            | MISSING_MANDATORY_USER_INFO | Required user information is missing |
+            | MISSING_MANDATORY_USER_INFO | Required customer information is missing |
             | INVITATION_ALREADY_CLAIMED | Invitation has already been claimed |
             | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
             | INVALID_UMA_ADDRESS | UMA address format is invalid |
@@ -4198,7 +4199,7 @@ components:
       enum:
         - INDIVIDUAL
         - BUSINESS
-      description: Whether the user is an individual or a business entity
+      description: Whether the customer is an individual or a business entity
       example: INDIVIDUAL
     IndividualUser:
       allOf:
@@ -4258,7 +4259,7 @@ components:
           example: '2023-07-21T17:32:28Z'
         isDeleted:
           type: boolean
-          description: Whether the user is marked as deleted
+          description: Whether the customer is marked as deleted
           example: false
           readOnly: true
       discriminator:
@@ -4361,7 +4362,7 @@ components:
               example: '2023-07-21T17:32:28Z'
             isDeleted:
               type: boolean
-              description: Whether the user is marked as deleted
+              description: Whether the customer is marked as deleted
               example: false
               readOnly: true
     BusinessUser:
@@ -4404,7 +4405,7 @@ components:
         - MANUALLY_APPROVED
         - MANUALLY_REJECTED
         - NOT_STARTED
-      description: The current kyc status of a user
+      description: The current kyc status of a customer
       example: ACCEPTED
     BankAccountType:
       type: string
@@ -4496,7 +4497,7 @@ components:
             that helps identify the account in your system (e.g. database IDs, custom references, etc.).
 
             This field is particularly useful when:
-            - Tracking multiple bank accounts for the same user
+            - Tracking multiple bank accounts for the same customer
             - Linking accounts to internal accounting systems
             - Maintaining consistency between Grid and your platform's account records
           example: acc_123456789
@@ -4686,8 +4687,8 @@ components:
         umaAddress:
           type: string
           description: |
-            Optional UMA address identifier. If not provided during user creation, one will be generated by the system.
-            If provided during user update, the UMA address will be updated to the provided value.
+            Optional UMA address identifier. If not provided during customer creation, one will be generated by the system.
+            If provided during customer update, the UMA address will be updated to the provided value.
           example: $john.doe@uma.domain.com
         fullName:
           type: string
@@ -4792,7 +4793,7 @@ components:
             |------------|-------------|
             | TRANSACTION_NOT_FOUND | Transaction not found |
             | INVITATION_NOT_FOUND | Invitation not found |
-            | USER_NOT_FOUND | User not found |
+            | USER_NOT_FOUND | Customer not found |
             | QUOTE_NOT_FOUND | Quote not found |
             | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
             | TOKEN_NOT_FOUND | Token not found |
@@ -4977,9 +4978,9 @@ components:
           type: string
           description: The ID of the internal account
           example: InternalAccount:12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-        userId:
+        customerId:
           type: string
-          description: The ID of the user associated with the internal account
+          description: The ID of the customer associated with the internal account
           example: User:019542f5-b3e7-1d02-0000-000000000001
         balance:
           $ref: '#/components/schemas/CurrencyAmount'
@@ -5140,7 +5141,7 @@ components:
         redirectUri:
           type: string
           description: |
-            Optional redirect URI for OAuth flows. Required for some institutions. This is where the user will be redirected after completing authentication.
+            Optional redirect URI for OAuth flows. Required for some institutions. This is where the customer will be redirected after completing authentication.
           example: https://yourapp.com/plaid/oauth-redirect
         webhookUrl:
           type: string
@@ -5168,7 +5169,7 @@ components:
         callbackUrl:
           type: string
           description: |
-            The URL where the platform should POST the public_token after the user completes Plaid Link authentication. This will trigger asynchronous external account creation.
+            The URL where the platform should POST the public_token after the customer completes Plaid Link authentication. This will trigger asynchronous external account creation.
           example: https://api.uma.money/umaaas/2025-05-15/plaid/callback/session_abc123xyz
         requestId:
           type: string
@@ -5182,13 +5183,13 @@ components:
         publicToken:
           type: string
           description: |
-            The public token returned by Plaid Link after the user successfully
+            The public token returned by Plaid Link after the customer successfully
             authenticates and selects an account.
           example: public-sandbox-12345678-1234-1234-1234-123456789012
         accountId:
           type: string
           description: |
-            Optional Plaid account ID if the user selected a specific account.
+            Optional Plaid account ID if the customer selected a specific account.
             If not provided, the default account will be used.
           example: plaid_account_id_123
     PlaidCallbackResponse:
@@ -5226,9 +5227,9 @@ components:
           type: string
           description: The transfer request ID
           example: Transfer:019542f5-b3e7-1d02-0000-000000000001
-        userId:
+        customerId:
           type: string
-          description: The ID of the user
+          description: The ID of the customer
           example: User:019542f5-b3e7-1d02-0000-000000000001
         source:
           type: object
@@ -5465,21 +5466,21 @@ components:
                   description: Currency code for the source account
                   example: USD
               description: Source account details
-            - title: User ID Source
+            - title: Customer ID Source
               type: object
               required:
-                - userId
+                - customerId
                 - currency
               properties:
-                userId:
+                customerId:
                   type: string
-                  description: Source user ID
+                  description: Source customer ID
                   example: User:019542f5-b3e7-1d02-0000-000000000009
                 currency:
                   type: string
                   description: Currency code for the source
                   example: USD
-              description: Source user ID details. This will require just-in-time funding using payment instructions.
+              description: Source customer ID details. This will require just-in-time funding using payment instructions.
             - title: UMA Address Source
               type: object
               required:
@@ -5619,21 +5620,21 @@ components:
                   description: Source account identifier
                   example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
               description: Source account details
-            - title: User ID Source
+            - title: Customer ID Source
               type: object
               required:
-                - userId
+                - customerId
                 - currency
               properties:
-                userId:
+                customerId:
                   type: string
-                  description: Source user ID
+                  description: Source customer ID
                   example: User:019542f5-b3e7-1d02-0000-000000000009
                 currency:
                   type: string
                   description: Currency code for the source
                   example: USD
-              description: Source user ID details. This will require just-in-time funding using payment instructions.
+              description: Source customer ID details. This will require just-in-time funding using payment instructions.
             - title: UMA Address Source
               type: object
               required:
@@ -5724,7 +5725,7 @@ components:
         - type
         - senderUmaAddress
         - receiverUmaAddress
-        - userId
+        - customerId
         - platformUserId
       properties:
         id:
@@ -5743,13 +5744,13 @@ components:
           type: string
           description: UMA address of the payment recipient
           example: $recipient@uma.domain
-        userId:
+        customerId:
           type: string
-          description: System ID of the user (sender for outgoing, recipient for incoming)
+          description: System ID of the customer (sender for outgoing, recipient for incoming)
           example: User:019542f5-b3e7-1d02-0000-000000000001
         platformUserId:
           type: string
-          description: Platform-specific ID of the user (sender for outgoing, recipient for incoming)
+          description: Platform-specific ID of the customer (sender for outgoing, recipient for incoming)
           example: 18d3e5f7b4a9c2
         settledAt:
           type: string
@@ -5973,19 +5974,19 @@ components:
           properties:
             total:
               type: integer
-              description: Total number of users to process
+              description: Total number of customers to process
               example: 5000
             processed:
               type: integer
-              description: Number of users processed so far
+              description: Number of customers processed so far
               example: 2500
             successful:
               type: integer
-              description: Number of users successfully created
+              description: Number of customers successfully created
               example: 2450
             failed:
               type: integer
-              description: Number of users that failed to create
+              description: Number of customers that failed to create
               example: 50
         errors:
           type: array
@@ -6064,7 +6065,7 @@ components:
           $ref: '#/components/schemas/CurrencyAmount'
           description: |-
             The amount to send to the invitee when the invitation is claimed. This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter platform either does not send the payment or the payment fails, the invitee will not receive this amount. This field is primarily used for display purposes on the claiming side of the invitation.
-            This field is useful for "send-by-link" style user flows where an inviter can send a payment simply by sharing a link without knowing the receiver's UMA address. Note that these sends can only be sender-locked, meaning that the sender will not know ahead of time how much the receiver will receive in the receiving currency.
+            This field is useful for "send-by-link" style customer flows where an inviter can send a payment simply by sharing a link without knowing the receiver's UMA address. Note that these sends can only be sender-locked, meaning that the sender will not know ahead of time how much the receiver will receive in the receiving currency.
     Error403:
       type: object
       required:
@@ -6083,7 +6084,7 @@ components:
             | Error Code | Description |
             |------------|-------------|
             | FORBIDDEN | Insufficient permissions |
-            | USER_NOT_READY | User exists but is not ready for operation |
+            | USER_NOT_READY | Customer exists but is not ready for operation |
             | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account | 
             | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits | 
           enum:
@@ -6144,7 +6145,7 @@ components:
         - VIEW
         - TRANSACT
         - MANAGE
-      description: 'Permission of an API token that determines what actions the token can perform: VIEW: Can view all data, including platform config, users and transactions TRANSACT: Can send payments MANAGE: Can manage platform config, api tokens and users'
+      description: 'Permission of an API token that determines what actions the token can perform: VIEW: Can view all data, including platform config, customers and transactions TRANSACT: Can send payments MANAGE: Can manage platform config, api tokens and customers'
     ApiToken:
       type: object
       required:

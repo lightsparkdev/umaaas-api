@@ -1,11 +1,11 @@
 post:
-  summary: Add a new user
+  summary: Add a new customer
   description: >-
-    Register a new user in the system with an account identifier and bank account
+    Register a new customer in the system with an account identifier and bank account
     information
   operationId: createUser
   tags:
-    - Users
+    - Customers
   security:
     - BasicAuth: []
   requestBody:
@@ -14,7 +14,7 @@ post:
       application/json:
         schema:
           oneOf:
-            - title: Individual User
+            - title: Individual Customer
               allOf:
                 - $ref: ../../components/schemas/users/IndividualUserUpdate.yaml
                 - type: object
@@ -32,9 +32,9 @@ post:
                       description: User type 
                     kycUrl:
                       type: string 
-                      description: A kyc url to be shared with your individual user if kyc needs to be completed 
+                      description: A kyc url to be shared with your individual customer if kyc needs to be completed 
                       example: "https://example.com/kyc"
-            - title: Business User
+            - title: Business Customer
               allOf:
                 - $ref: ../../components/schemas/users/BusinessUserUpdate.yaml
                 - type: object
@@ -52,7 +52,7 @@ post:
                       description: User type
                     kycUrl:
                       type: string 
-                      description: A kyc url to be shared with your business user if kyc needs to be completed 
+                      description: A kyc url to be shared with your business customer if kyc needs to be completed 
                       example: "https://example.com/kyc"
           discriminator:
             propertyName: userType
@@ -61,7 +61,7 @@ post:
               BUSINESS: ../../components/schemas/users/BusinessUserUpdate.yaml
         examples:
           individualUserWithUmaAddress:
-            summary: Create individual user with UMA address, including deposit bank account information.
+            summary: Create individual customer with UMA address, including deposit bank account information.
             value:
               umaAddress: $jane.doe@uma.domain.com
               platformUserId: 7b3c5a89d2f1e0
@@ -83,7 +83,7 @@ post:
                 bankName: Chase Bank
                 platformAccountId: chase_primary_1234
           individualUserWithoutUmaAddress:
-            summary: Create individual user without UMA address (will be generated)
+            summary: Create individual customer without UMA address (will be generated)
             value:
               platformUserId: 7b3c5a89d2f1e0
               userType: INDIVIDUAL
@@ -96,7 +96,7 @@ post:
                 postalCode: '97201'
                 country: US
           businessUser:
-            summary: Create business user example
+            summary: Create business customer example
             value:
               platformUserId: 6e4d2c0b8a9f3
               userType: BUSINESS
@@ -112,14 +112,14 @@ post:
                 country: US
   responses:
     '201':
-      description: User created successfully
+      description: Customer created successfully
       content:
         application/json:
           schema:
             oneOf:
-              - title: Individual User
+              - title: Individual Customer
                 $ref: ../../components/schemas/users/IndividualUser.yaml
-              - title: Business User
+              - title: Business Customer
                 $ref: ../../components/schemas/users/BusinessUser.yaml
             discriminator:
               propertyName: userType
@@ -139,7 +139,7 @@ post:
           schema:
             $ref: ../../components/schemas/errors/Error401.yaml
     '409':
-      description: Conflict - User with the UMA address already exists
+      description: Conflict - Customer with the UMA address already exists
       content:
         application/json:
           schema:
@@ -157,16 +157,16 @@ post:
           schema:
             $ref: ../../components/schemas/errors/Error501.yaml
 get:
-  summary: List users
+  summary: List customers
   description: >
-    Retrieve a list of users with optional filtering parameters. Returns all
-    users that match
+    Retrieve a list of customers with optional filtering parameters. Returns all
+    customers that match
 
-    the specified filters. If no filters are provided, returns all users
+    the specified filters. If no filters are provided, returns all customers
     (paginated).
   operationId: listUsers
   tags:
-    - Users
+    - Customers
   security:
     - BasicAuth: []
   parameters:
@@ -190,28 +190,28 @@ get:
         $ref: ../../components/schemas/users/UserType.yaml
     - name: createdAfter
       in: query
-      description: Filter users created after this timestamp (inclusive)
+      description: Filter customers created after this timestamp (inclusive)
       required: false
       schema:
         type: string
         format: date-time
     - name: createdBefore
       in: query
-      description: Filter users created before this timestamp (inclusive)
+      description: Filter customers created before this timestamp (inclusive)
       required: false
       schema:
         type: string
         format: date-time
     - name: updatedAfter
       in: query
-      description: Filter users updated after this timestamp (inclusive)
+      description: Filter customers updated after this timestamp (inclusive)
       required: false
       schema:
         type: string
         format: date-time
     - name: updatedBefore
       in: query
-      description: Filter users updated before this timestamp (inclusive)
+      description: Filter customers updated before this timestamp (inclusive)
       required: false
       schema:
         type: string
@@ -233,7 +233,7 @@ get:
         type: string
     - name: isIncludingDeleted
       in: query
-      description: Whether to include deleted users in the results. Default is false.
+      description: Whether to include deleted customers in the results. Default is false.
       required: false
       schema:
         type: boolean
@@ -250,12 +250,12 @@ get:
             properties:
               data:
                 type: array
-                description: List of users matching the filter criteria
+                description: List of customers matching the filter criteria
                 items:
                   oneOf:
-                    - title: Individual User
+                    - title: Individual Customer
                       $ref: ../../components/schemas/users/IndividualUser.yaml
-                    - title: Business User
+                    - title: Business Customer
                       $ref: ../../components/schemas/users/BusinessUser.yaml
                   discriminator:
                     propertyName: userType
@@ -273,7 +273,7 @@ get:
               totalCount:
                 type: integer
                 description: >-
-                  Total number of users matching the criteria (excluding
+                  Total number of customers matching the criteria (excluding
                   pagination)
     '400':
       description: Bad request - Invalid parameters

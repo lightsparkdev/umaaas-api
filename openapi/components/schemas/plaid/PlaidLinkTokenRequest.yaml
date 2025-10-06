@@ -21,7 +21,7 @@ properties:
     type: string
     description: >
       Optional redirect URI for OAuth flows. Required for some institutions.
-      This is where the user will be redirected after completing authentication.
+      This is where the customer will be redirected after completing authentication.
     example: https://yourapp.com/plaid/oauth-redirect
   webhookUrl:
     type: string

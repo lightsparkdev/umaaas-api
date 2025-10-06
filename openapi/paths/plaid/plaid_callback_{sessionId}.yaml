@@ -1,7 +1,7 @@
 post:
   summary: Submit Plaid public token
   description: |
-    After the user completes Plaid Link authentication, the platform should POST
+    After the customer completes Plaid Link authentication, the platform should POST
     the public_token to this callback URL (provided in the link token response).
 
     This will trigger asynchronous processing:

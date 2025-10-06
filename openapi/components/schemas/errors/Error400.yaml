@@ -15,7 +15,7 @@ properties:
       | Error Code | Description |
       |------------|-------------|
       | INVALID_INPUT | Invalid input provided |
-      | MISSING_MANDATORY_USER_INFO | Required user information is missing |
+      | MISSING_MANDATORY_USER_INFO | Required customer information is missing |
       | INVITATION_ALREADY_CLAIMED | Invitation has already been claimed |
       | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
       | INVALID_UMA_ADDRESS | UMA address format is invalid |

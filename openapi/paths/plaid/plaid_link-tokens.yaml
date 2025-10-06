@@ -2,12 +2,12 @@ post:
   summary: Request Plaid Link token
   description: |
     Creates a Plaid Link token that can be used to initialize Plaid Link in your application.
-    The Link token is used to authenticate the user and allow them to select their bank account.
+    The Link token is used to authenticate the customer and allow them to select their bank account.
 
     **Async Flow:**
     1. Platform calls this endpoint to get a link_token and callbackUrl
-    2. Platform displays Plaid Link UI to the end user using the link_token
-    3. End user authenticates with their bank and selects an account
+    2. Platform displays Plaid Link UI to the end customer using the link_token
+    3. End customer authenticates with their bank and selects an account
     4. Plaid returns a public_token to the platform
     5. Platform POSTs the public_token to the callbackUrl
     6. Lightspark exchanges the public_token with Plaid and creates the external account asynchronously

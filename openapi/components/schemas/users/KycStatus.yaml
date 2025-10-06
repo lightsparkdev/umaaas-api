@@ -8,5 +8,5 @@ enum:
   - MANUALLY_APPROVED
   - MANUALLY_REJECTED
   - NOT_STARTED
-description: The current kyc status of a user
+description: The current kyc status of a customer
 example: ACCEPTED

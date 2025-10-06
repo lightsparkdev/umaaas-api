@@ -20,7 +20,7 @@ properties:
   callbackUrl:
     type: string
     description: >
-      The URL where the platform should POST the public_token after the user
+      The URL where the platform should POST the public_token after the customer
       completes Plaid Link authentication. This will trigger asynchronous
       external account creation.
     example: https://api.uma.money/umaaas/2025-05-15/plaid/callback/session_abc123xyz

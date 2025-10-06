@@ -18,8 +18,8 @@ tags:
     description: >-
       Platform configuration endpoints for managing global settings. You can
       also configure these settings in the Grid dashboard.
-  - name: Users
-    description: User management endpoints for creating and updating user information
+  - name: Customers
+    description: Customer management endpoints for creating and updating customer information
   - name: Internal Accounts
     description: Internal account management endpoints for creating and managing internal accounts.
   - name: External Accounts
@@ -93,11 +93,11 @@ components:
 paths:
   /config:
     $ref: paths/config/config.yaml
-  /users:
+  /customers:
     $ref: paths/users/users.yaml
-  /users/{userId}:
-    $ref: paths/users/users_{userId}.yaml
-  /users/kyc-link:
+  /customer/{customerId}:
+    $ref: paths/users/users_{customerId}.yaml
+  /customer/kyc-link:
     $ref: paths/users/users_kyc_link.yaml
   /internal-accounts:
     $ref: paths/internal-accounts/internal_accounts.yaml
@@ -135,9 +135,9 @@ paths:
     $ref: paths/transactions/transactions_{transactionId}_reject.yaml
   /webhooks/test:
     $ref: paths/webhooks/webhooks_test.yaml
-  /users/bulk/csv:
+  /customers/bulk/csv:
     $ref: paths/users/users_bulk_csv.yaml
-  /users/bulk/jobs/{jobId}:
+  /customers/bulk/jobs/{jobId}:
     $ref: paths/users/users_bulk_jobs_{jobId}.yaml
   /invitations:
     $ref: paths/invitations/invitations.yaml
