@@ -16,7 +16,7 @@ properties:
       |------------|-------------|
       | TRANSACTION_NOT_FOUND | Transaction not found |
       | INVITATION_NOT_FOUND | Invitation not found |
-      | USER_NOT_FOUND | User not found |
+      | USER_NOT_FOUND | Customer not found |
       | QUOTE_NOT_FOUND | Quote not found |
       | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
       | TOKEN_NOT_FOUND | Token not found |
