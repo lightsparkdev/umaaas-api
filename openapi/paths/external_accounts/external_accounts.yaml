@@ -1,5 +1,5 @@
 get:
-  summary: Get all external accounts
+  summary: List external accounts
   description: >
     Retrieve a list of external accounts with optional filtering parameters. Returns all
     external accounts that match the specified filters. If no filters are provided, returns all 

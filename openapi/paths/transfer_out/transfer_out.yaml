@@ -1,5 +1,5 @@
 get:
-  summary: List all transfer-out requests
+  summary: List transfer-out requests
   description: >
     Retrieve a list of transfer-out requests with optional filtering parameters. Returns all
     transfer-out requests that match the specified filters. If no filters are provided, returns all 
