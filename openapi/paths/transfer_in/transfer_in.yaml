@@ -1,5 +1,5 @@
 get:
-  summary: List all transfer-in requests
+  summary: List transfer-in requests
   description: >
     Retrieve a list of transfer-in requests with optional filtering parameters. Returns all
     transfer-in requests that match the specified filters. If no filters are provided, returns all 

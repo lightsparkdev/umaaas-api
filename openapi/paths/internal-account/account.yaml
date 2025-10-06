@@ -1,5 +1,5 @@
 get:
-  summary: Get all internal accounts
+  summary: List internal accounts
   description: |
     Retrieve a list of internal accounts with optional filtering parameters. Returns all
     internal accounts that match the specified filters. If no filters are provided, returns all internal accounts
