@@ -8,7 +8,7 @@ get:
     given UMA address.
   operationId: lookupUma
   tags:
-    - Cross-Currency Payments
+    - Cross-Currency Transfers
   security:
     - BasicAuth: []
   parameters:
