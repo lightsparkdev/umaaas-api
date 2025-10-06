@@ -10,7 +10,7 @@ allOf:
         $ref: ./WebhookType.yaml
         description: Type of webhook event
         example: INCOMING_PAYMENT
-      requestedReceiverUserInfoFields:
+      requestedReceiverCustomerInfoFields:
         type: array
         items:
           $ref: ../common/CounterpartyFieldDefinition.yaml
@@ -18,4 +18,4 @@ allOf:
           Information required by the sender's VASP about the recipient.
           Platform must provide these in the 200 OK response if approving.
           Note that this only includes fields which Grid does not
-          already have from initial user registration.
+          already have from initial customer registration.

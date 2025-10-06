@@ -1,5 +1,5 @@
 allOf:
-  - $ref: ./User.yaml
+  - $ref: ./Customer.yaml
   - type: object
     properties:
       address:

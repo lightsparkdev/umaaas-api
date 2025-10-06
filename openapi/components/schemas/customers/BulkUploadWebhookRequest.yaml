@@ -2,10 +2,10 @@ allOf:
   - $ref: ../webhooks/BaseWebhook.yaml
   - type: object
     required:
-      - bulkUserImportJob
+      - bulkCustomerImportJob
     properties:
-      bulkUserImportJob:
-        $ref: ./BulkUserImportJob.yaml
+      bulkCustomerImportJob:
+        $ref: ./BulkCustomerImportJob.yaml
       type:
         $ref: ../webhooks/WebhookType.yaml
         description: Type of webhook event

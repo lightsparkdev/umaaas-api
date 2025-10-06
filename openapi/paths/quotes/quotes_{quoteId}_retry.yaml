@@ -35,7 +35,7 @@ post:
                 Unique identifier for the prior receiver uma address lookup
                 request.
               example: Lookup:019542f5-b3e7-1d02-0000-000000000009
-            senderUserInfo:
+            senderCustomerInfo:
               type: object
               additionalProperties: true
               description: >

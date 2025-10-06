@@ -56,7 +56,7 @@ post:
           kycApprovedWebhook:
             summary: When a customer kyc has been approved
             value:
-              customerId: User:019542f5-b3e7-1d02-0000-000000000001
+              customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
               kycStatus: APPROVED 
               type: KYC_STATUS
               timestamp: '2023-08-15T14:32:00Z'
