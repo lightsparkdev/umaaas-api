@@ -1,0 +1,91 @@
+type: object
+required:
+  - sourceCurrency
+  - destinationCurrency
+  - sourceAmount
+  - destination
+  - sourceAccountId
+properties:
+  orderType:
+    type: string
+    enum:
+      - MARKET
+    description: >
+      Type of order to execute. V1 supports market orders only.
+      Market orders execute immediately at the current market rate.
+
+      Future versions will support LIMIT, STOP_LIMIT, etc.
+    default: MARKET
+    example: MARKET
+  sourceCurrency:
+    type: string
+    description: >
+      Source fiat currency code. V1 supports USD only.
+    example: USD
+  destinationCurrency:
+    type: string
+    description: >
+      Destination cryptocurrency code (e.g., BTC, ETH).
+      Use the `/cryptos/assets` endpoint to retrieve supported cryptocurrencies.
+    example: BTC
+  sourceAmount:
+    type: integer
+    format: int64
+    description: >
+      Amount of fiat to spend in the smallest unit (e.g., cents for USD).
+      The amount of cryptocurrency received will be determined by the market rate at execution.
+    exclusiveMinimum: 0
+    maximum: 9000000000000000
+    example: 100000
+  destination:
+    oneOf:
+      - title: External Wallet
+        type: object
+        required:
+          - address
+          - network
+        properties:
+          address:
+            type: string
+            description: >
+              Blockchain address where the cryptocurrency will be sent.
+              Must be a valid address for the specified cryptocurrency and network.
+            example: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+          network:
+            $ref: ./CryptoNetwork.yaml
+            description: Blockchain network for the destination address
+        description: >
+          Send crypto to an external wallet address (self-custody).
+          User must provide a valid blockchain address.
+      - title: Internal Account
+        type: object
+        required:
+          - accountId
+        properties:
+          accountId:
+            type: string
+            description: >
+              Internal account ID where the cryptocurrency will be stored.
+              This provides Lightspark-managed custody of the purchased crypto.
+            example: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+        description: >
+          Store crypto in a Lightspark-managed internal account (custodial).
+          Useful for users who want Lightspark to custody their crypto.
+    description: >
+      Destination for the purchased cryptocurrency. Either an external wallet address
+      for self-custody, or an internal account for Lightspark-managed custody.
+  sourceAccountId:
+    type: string
+    description: >
+      Internal account ID to use as the source of USD funds.
+      This account will be debited for the purchase amount plus fees.
+    example: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+  metadata:
+    type: object
+    additionalProperties: true
+    description: >
+      Optional key-value pairs for storing custom metadata about this order.
+      Maximum 50 keys, each key max 40 characters, each value max 500 characters.
+    example:
+      customerId: "cust_123"
+      orderId: "order_456"

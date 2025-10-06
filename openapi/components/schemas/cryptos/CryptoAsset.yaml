@@ -1,0 +1,53 @@
+type: object
+required:
+  - currency
+  - name
+  - networks
+  - precision
+  - minPurchaseAmount
+  - maxPurchaseAmount
+properties:
+  currency:
+    type: string
+    description: Cryptocurrency code (e.g., BTC, ETH)
+    example: BTC
+  name:
+    type: string
+    description: Full name of the cryptocurrency
+    example: Bitcoin
+  networks:
+    type: array
+    description: Blockchain networks on which this cryptocurrency is available
+    items:
+      $ref: ./CryptoNetwork.yaml
+    example:
+      - BITCOIN
+  precision:
+    type: integer
+    description: Number of decimal places supported for this cryptocurrency
+    example: 8
+  minPurchaseAmount:
+    type: string
+    description: >
+      Minimum amount that can be purchased in this cryptocurrency.
+      Provided as a string to maintain precision.
+    example: "0.0001"
+  maxPurchaseAmount:
+    type: string
+    description: >
+      Maximum amount that can be purchased in this cryptocurrency per order.
+      Provided as a string to maintain precision.
+    example: "10.0"
+  iconUrl:
+    type: string
+    format: uri
+    description: URL to an icon image for this cryptocurrency
+    example: "https://static.lightspark.com/icons/btc.svg"
+  addressRegex:
+    type: string
+    description: Regular expression for validating addresses for this cryptocurrency
+    example: "^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,62}$"
+  description:
+    type: string
+    description: Brief description of the cryptocurrency
+    example: "Bitcoin is a decentralized digital currency, without a central bank or single administrator."

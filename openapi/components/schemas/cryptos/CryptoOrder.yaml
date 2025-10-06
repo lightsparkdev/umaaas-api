@@ -1,0 +1,141 @@
+type: object
+required:
+  - orderId
+  - orderType
+  - status
+  - createdAt
+  - sourceCurrency
+  - destinationCurrency
+  - destination
+  - pricing
+  - sourceAccountId
+properties:
+  orderId:
+    type: string
+    description: Unique identifier for this crypto order
+    example: CryptoOrder:019542f5-b3e7-1d02-0000-000000000001
+  orderType:
+    type: string
+    enum:
+      - MARKET
+      - LIMIT
+      - STOP_LIMIT
+    description: Type of order (MARKET, LIMIT, etc.)
+    example: MARKET
+  status:
+    $ref: ./CryptoOrderStatus.yaml
+  createdAt:
+    type: string
+    format: date-time
+    description: When this order was created and execution began
+    example: "2025-10-06T10:30:00Z"
+  executedAt:
+    type: string
+    format: date-time
+    description: >
+      When this order execution was confirmed (typically same as createdAt for market orders,
+      only differs if there was a processing delay)
+    example: "2025-10-06T10:30:00Z"
+  completedAt:
+    type: string
+    format: date-time
+    description: When this order was completed (only present if status is COMPLETED)
+    example: "2025-10-06T10:45:22Z"
+  sourceCurrency:
+    type: string
+    description: Source fiat currency code
+    example: USD
+  destinationCurrency:
+    type: string
+    description: Destination cryptocurrency code
+    example: BTC
+  sourceAmount:
+    type: integer
+    format: int64
+    description: >
+      Amount spent in the smallest unit of the source currency (e.g., cents for USD).
+      May differ slightly from requested amount due to market conditions at execution.
+    example: 100000
+  destinationAmount:
+    type: string
+    description: >
+      Amount of cryptocurrency to be received (or received if completed).
+      Provided as a string to maintain precision.
+      This is the actual amount based on execution price.
+    example: "0.0245"
+  destination:
+    oneOf:
+      - title: External Wallet
+        type: object
+        required:
+          - address
+          - network
+        properties:
+          address:
+            type: string
+            description: Blockchain address where the cryptocurrency was/will be sent
+            example: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+          network:
+            $ref: ./CryptoNetwork.yaml
+        description: External wallet address (self-custody)
+      - title: Internal Account
+        type: object
+        required:
+          - accountId
+        properties:
+          accountId:
+            type: string
+            description: Internal account ID where the cryptocurrency was/will be stored
+            example: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+        description: Lightspark-managed internal account (custodial)
+    description: Destination for the purchased cryptocurrency
+  pricing:
+    $ref: ./CryptoPricing.yaml
+  sourceAccountId:
+    type: string
+    description: Internal account ID used as source of USD funds
+    example: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+  blockchainTransaction:
+    type: object
+    description: >
+      Details about the blockchain transaction (only present if status is PENDING_SETTLEMENT or COMPLETED)
+    properties:
+      hash:
+        type: string
+        description: Transaction hash on the blockchain
+        example: "3ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a"
+      confirmations:
+        type: integer
+        description: Number of blockchain confirmations
+        example: 6
+      explorerUrl:
+        type: string
+        format: uri
+        description: URL to view the transaction on a blockchain explorer
+        example: "https://blockstream.info/tx/3ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a"
+  failureReason:
+    type: string
+    description: Reason for failure (only present if status is FAILED)
+    example: "Insufficient balance in source account"
+  timeline:
+    type: array
+    description: History of status transitions for this order
+    items:
+      type: object
+      required:
+        - status
+        - timestamp
+      properties:
+        status:
+          $ref: ./CryptoOrderStatus.yaml
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-10-06T10:30:00Z"
+  metadata:
+    type: object
+    additionalProperties: true
+    description: Custom metadata provided when creating the order
+    example:
+      customerId: "cust_123"
+      orderId: "order_456"

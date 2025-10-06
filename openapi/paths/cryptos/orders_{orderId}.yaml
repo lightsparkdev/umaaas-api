@@ -1,0 +1,80 @@
+get:
+  summary: Get a crypto order
+  description: |
+    Retrieve details of a specific crypto order by its ID. Includes current status,
+    pricing information, blockchain transaction details (if available), and complete
+    status transition history.
+  operationId: getCryptoOrder
+  tags:
+    - Crypto Purchase
+  security:
+    - BasicAuth: []
+  parameters:
+    - name: orderId
+      in: path
+      required: true
+      description: The unique identifier of the crypto order
+      schema:
+        type: string
+      example: CryptoOrder:019542f5-b3e7-1d02-0000-000000000001
+  responses:
+    "200":
+      description: Crypto order retrieved successfully
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/cryptos/CryptoOrder.yaml
+          example:
+            orderId: CryptoOrder:019542f5-b3e7-1d02-0000-000000000001
+            orderType: MARKET
+            status: COMPLETED
+            createdAt: "2025-10-06T10:30:00.123Z"
+            executedAt: "2025-10-06T10:30:00.123Z"
+            completedAt: "2025-10-06T10:45:22.456Z"
+            sourceCurrency: USD
+            destinationCurrency: BTC
+            sourceAmount: 100000
+            destinationAmount: "0.0245"
+            destination:
+              address: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+              network: BITCOIN
+            pricing:
+              exchangeRate: "0.0000245"
+              baseCost: 100000
+              platformFee: 1200
+              platformFeeBps: 120
+              networkFee: 500
+              networkFeeCrypto: "0.00012"
+              totalFees: 1700
+              totalCost: 101700
+              feeCurrency: USD
+            sourceAccountId: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+            blockchainTransaction:
+              hash: "3ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a"
+              confirmations: 6
+              explorerUrl: "https://blockstream.info/tx/3ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a"
+            timeline:
+              - status: EXECUTING
+                timestamp: "2025-10-06T10:30:00.123Z"
+              - status: PENDING_SETTLEMENT
+                timestamp: "2025-10-06T10:30:02.789Z"
+              - status: COMPLETED
+                timestamp: "2025-10-06T10:45:22.456Z"
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error401.yaml
+    "404":
+      description: Crypto order not found
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error404.yaml
+    "500":
+      description: Internal service error
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error500.yaml

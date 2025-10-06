@@ -1,0 +1,72 @@
+get:
+  summary: List supported cryptocurrencies
+  description: |
+    Retrieve a list of all cryptocurrencies available for purchase through the Grid API.
+
+    Returns detailed information about each cryptocurrency including:
+    - Available blockchain networks
+    - Purchase limits (minimum and maximum amounts)
+    - Precision (number of decimal places)
+    - Address validation patterns
+
+    Use this endpoint to:
+    - Populate cryptocurrency selection dropdowns in your UI
+    - Validate purchase amounts before creating orders
+    - Validate destination addresses
+    - Display cryptocurrency information to users
+
+    **V1 Support:** Bitcoin (BTC) and Ethereum (ETH) only
+  operationId: listCryptoAssets
+  tags:
+    - Crypto Purchase
+  security:
+    - BasicAuth: []
+  responses:
+    "200":
+      description: List of supported cryptocurrencies
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - assets
+            properties:
+              assets:
+                type: array
+                description: Array of supported cryptocurrency assets
+                items:
+                  $ref: ../../components/schemas/cryptos/CryptoAsset.yaml
+          example:
+            assets:
+              - currency: BTC
+                name: Bitcoin
+                networks:
+                  - BITCOIN
+                precision: 8
+                minPurchaseAmount: "0.0001"
+                maxPurchaseAmount: "10.0"
+                iconUrl: "https://static.lightspark.com/icons/btc.svg"
+                addressRegex: "^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,62}$"
+                description: "Bitcoin is a decentralized digital currency, without a central bank or single administrator."
+              - currency: ETH
+                name: Ethereum
+                networks:
+                  - ETHEREUM
+                precision: 18
+                minPurchaseAmount: "0.001"
+                maxPurchaseAmount: "100.0"
+                iconUrl: "https://static.lightspark.com/icons/eth.svg"
+                addressRegex: "^0x[a-fA-F0-9]{40}$"
+                description: "Ethereum is a decentralized, open-source blockchain with smart contract functionality."
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error401.yaml
+    "500":
+      description: Internal service error
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error500.yaml

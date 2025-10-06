@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Lightspark Grid API
   description: |
-    API for managing global payments on the Money Grid. 
+    API for managing global payments on the Money Grid.
   version: '2025-10-13'
   contact:
     name: Lightspark Support
@@ -28,6 +28,8 @@ tags:
     description: Endpoints for transferring funds between internal and external accounts with the same currency.
   - name: Cross-Currency Transfers
     description: Endpoints for creating and confirming quotes for cross-currency transfers.
+  - name: Crypto Purchase
+    description: Endpoints for purchasing cryptocurrencies with fiat currency using a quote-then-execute flow.
   - name: Transactions
     description: Endpoints for retrieving transaction information.
   - name: Webhooks
@@ -1679,6 +1681,546 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
+  /cryptos/rates:
+    get:
+      summary: Get estimated crypto purchase rates
+      description: |
+        Retrieve non-binding rate estimates for crypto purchases. This endpoint provides
+        approximate pricing to display to users before they commit to a purchase.
+
+        **Important Notes:**
+        - **Rates are estimates only** - actual pricing is determined at order execution
+        - Rates may change between preview and execution due to market volatility
+        - No price lock or guarantee is provided
+        - Use this for displaying approximate costs in your UI
+
+        **Amount Specification:**
+        Provide either `sourceAmount` (fiat to spend) OR `destinationAmount` (crypto to receive).
+
+        **Use Cases:**
+        - Show users estimated costs before checkout
+        - Display current exchange rates in your UI
+        - Calculate approximate fees for budgeting
+        - Help users decide purchase amounts
+
+        **Rate Freshness:**
+        Rates are calculated in real-time based on current market conditions and liquidity
+        provider pricing. Rates may be cached briefly (typically < 5 seconds) for performance.
+      operationId: getCryptoRates
+      tags:
+        - Crypto Purchase
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: sourceCurrency
+          in: query
+          required: true
+          description: Source fiat currency code (V1 supports USD only)
+          schema:
+            type: string
+            example: USD
+        - name: destinationCurrency
+          in: query
+          required: true
+          description: Destination cryptocurrency code (e.g., BTC, ETH)
+          schema:
+            type: string
+            example: BTC
+        - name: sourceAmount
+          in: query
+          required: false
+          description: |
+            Amount to spend in smallest unit of source currency (e.g., cents for USD). Either sourceAmount or destinationAmount must be provided, but not both.
+          schema:
+            type: integer
+            format: int64
+            exclusiveMinimum: 0
+            example: 100000
+        - name: destinationAmount
+          in: query
+          required: false
+          description: |
+            Amount to receive in destination cryptocurrency. Either sourceAmount or destinationAmount must be provided, but not both.
+          schema:
+            type: string
+            example: '0.025'
+        - name: destinationNetwork
+          in: query
+          required: false
+          description: |
+            Blockchain network for the cryptocurrency. If omitted, uses the default network for the specified currency (e.g., BITCOIN for BTC).
+          schema:
+            $ref: '#/components/schemas/CryptoNetwork'
+      responses:
+        '200':
+          description: |
+            Rate estimate retrieved successfully. Use these estimates to display approximate costs to users. Actual pricing at execution may differ.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CryptoRateEstimate'
+              examples:
+                estimateBySourceAmount:
+                  summary: Estimate by spending $1,000
+                  description: Query by specifying how much fiat to spend
+                  value:
+                    sourceCurrency: USD
+                    destinationCurrency: BTC
+                    sourceAmount: 100000
+                    estimatedRate: '0.0000245'
+                    estimatedDestinationAmount: '0.0245'
+                    estimatedFees:
+                      platformFee: 1200
+                      platformFeeBps: 120
+                      networkFee: 500
+                      networkFeeCrypto: '0.00012'
+                      totalFees: 1700
+                      totalCost: 101700
+                      feeCurrency: USD
+                    timestamp: '2025-10-06T10:30:00.123Z'
+                    disclaimer: Rates and fees are estimates only. Final pricing will be determined at order execution and may differ based on market conditions.
+                estimateByDestinationAmount:
+                  summary: Estimate by receiving 0.025 BTC
+                  description: Query by specifying how much crypto to receive
+                  value:
+                    sourceCurrency: USD
+                    destinationCurrency: BTC
+                    destinationAmount: '0.025'
+                    estimatedRate: '0.0000245'
+                    estimatedSourceAmount: 102050
+                    estimatedFees:
+                      platformFee: 1224
+                      platformFeeBps: 120
+                      networkFee: 500
+                      networkFeeCrypto: '0.00012'
+                      totalFees: 1724
+                      totalCost: 103774
+                      feeCurrency: USD
+                    timestamp: '2025-10-06T10:30:00.123Z'
+                    disclaimer: Rates and fees are estimates only. Final pricing will be determined at order execution and may differ based on market conditions.
+        '400':
+          description: Bad request - Invalid parameters (e.g., both amounts provided, neither amount provided, unsupported currency)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cryptos/orders:
+    post:
+      summary: Create and execute a crypto purchase order
+      description: |
+        Create and immediately execute a crypto purchase order at the current market rate.
+        This endpoint supports buying Bitcoin (BTC) and Ethereum (ETH) with USD in V1.
+
+        **Market Execution:**
+        - Orders execute immediately at current market rates
+        - No price lock or quote expiration - you get the actual market price
+        - Response includes the actual execution price and fees charged
+
+        **Preview Rates First (Optional):**
+        - Use `GET /cryptos/rates` to show users estimated pricing before purchase
+        - Rates are non-binding estimates; actual pricing determined at execution
+
+        **Amount Specification:**
+        - Specify `sourceAmount` - how much fiat to spend (e.g., $1,000)
+        - The amount of cryptocurrency received is determined by the market rate at execution
+        - Response includes the actual `destinationAmount` of crypto purchased
+
+        **Payment & Destination:**
+        - **Payment**: Funded from USD internal account (specified by `sourceAccountId`)
+        - **Destination**: Either external wallet (self-custody) or internal account (Lightspark-managed custody)
+
+        **Destination Options:**
+        1. **External Wallet** - Send crypto to user's blockchain address (self-custody)
+           - Requires valid blockchain address and network
+           - Crypto leaves Lightspark custody
+        2. **Internal Account** - Store crypto in Lightspark-managed account (custodial)
+           - Crypto remains in Lightspark custody
+           - Can be used for future transactions, swaps, or withdrawals
+
+        **Order Lifecycle:**
+        1. Order created and executed immediately (status: EXECUTING)
+        2. Blockchain transaction submitted (status: PENDING_SETTLEMENT)
+        3. Confirmations received (status: COMPLETED)
+      operationId: createCryptoOrder
+      tags:
+        - Crypto Purchase
+      security:
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CryptoOrderRequest'
+            examples:
+              buyToExternalWallet:
+                summary: Buy Bitcoin to External Wallet (Self-Custody)
+                description: Purchase Bitcoin and send to user's own wallet address
+                value:
+                  orderType: MARKET
+                  sourceCurrency: USD
+                  destinationCurrency: BTC
+                  sourceAmount: 100000
+                  destination:
+                    address: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                    network: BITCOIN
+                  sourceAccountId: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+              buyToInternalAccount:
+                summary: Buy Ethereum to Internal Account (Custodial)
+                description: Purchase Ethereum and store in Lightspark-managed account
+                value:
+                  orderType: MARKET
+                  sourceCurrency: USD
+                  destinationCurrency: ETH
+                  sourceAmount: 150000
+                  destination:
+                    accountId: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                  sourceAccountId: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+              withMetadata:
+                summary: Buy with Custom Metadata
+                description: Include custom metadata for tracking
+                value:
+                  orderType: MARKET
+                  sourceCurrency: USD
+                  destinationCurrency: BTC
+                  sourceAmount: 50000
+                  destination:
+                    address: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                    network: BITCOIN
+                  sourceAccountId: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                  metadata:
+                    customerId: cust_123
+                    orderId: order_456
+      responses:
+        '201':
+          description: |
+            Crypto order created and execution initiated successfully. The response includes the actual
+            execution price, itemized fees, and the amount of cryptocurrency being purchased. 
+
+            Monitor the order status via webhooks or by polling `GET /cryptos/orders/{orderId}` to track
+            completion. The order will transition from EXECUTING → PENDING_SETTLEMENT → COMPLETED.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CryptoOrder'
+              example:
+                orderId: CryptoOrder:019542f5-b3e7-1d02-0000-000000000001
+                orderType: MARKET
+                status: EXECUTING
+                createdAt: '2025-10-06T10:30:00.123Z'
+                executedAt: '2025-10-06T10:30:00.123Z'
+                sourceCurrency: USD
+                destinationCurrency: BTC
+                sourceAmount: 100000
+                destinationAmount: '0.0245'
+                destination:
+                  address: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                  network: BITCOIN
+                pricing:
+                  exchangeRate: '0.0000245'
+                  baseCost: 100000
+                  platformFee: 1200
+                  platformFeeBps: 120
+                  networkFee: 500
+                  networkFeeCrypto: '0.00012'
+                  totalFees: 1700
+                  totalCost: 101700
+                  feeCurrency: USD
+                sourceAccountId: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                timeline:
+                  - status: EXECUTING
+                    timestamp: '2025-10-06T10:30:00.123Z'
+        '400':
+          description: |
+            Bad request - Invalid parameters or validation errors. Common errors: invalid address format, both amounts provided, neither amount provided, insufficient balance, amount below minimum, amount above maximum.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+    get:
+      summary: List crypto purchase orders
+      description: |
+        Retrieve a list of crypto purchase orders with optional filtering parameters. 
+        Returns all orders that match the specified filters. If no filters are provided, 
+        returns all orders (paginated).
+      operationId: listCryptoOrders
+      tags:
+        - Crypto Purchase
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: status
+          in: query
+          description: Filter by order status
+          required: false
+          schema:
+            $ref: '#/components/schemas/CryptoOrderStatus'
+        - name: destinationCurrency
+          in: query
+          description: Filter by destination cryptocurrency (e.g., BTC, ETH)
+          required: false
+          schema:
+            type: string
+            example: BTC
+        - name: sourceAccountId
+          in: query
+          description: Filter by source account ID
+          required: false
+          schema:
+            type: string
+            example: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+        - name: createdAfter
+          in: query
+          description: Filter orders created after this timestamp (inclusive)
+          required: false
+          schema:
+            type: string
+            format: date-time
+            example: '2025-10-01T00:00:00Z'
+        - name: createdBefore
+          in: query
+          description: Filter orders created before this timestamp (inclusive)
+          required: false
+          schema:
+            type: string
+            format: date-time
+            example: '2025-10-31T23:59:59Z'
+        - name: limit
+          in: query
+          description: Maximum number of results to return (default 20, max 100)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: cursor
+          in: query
+          description: Cursor for pagination (returned from previous request)
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - hasMore
+                properties:
+                  data:
+                    type: array
+                    description: List of crypto orders matching the criteria
+                    items:
+                      $ref: '#/components/schemas/CryptoOrder'
+                  hasMore:
+                    type: boolean
+                    description: Indicates if more results are available beyond this page
+                  nextCursor:
+                    type: string
+                    description: Cursor to retrieve the next page of results (only present if hasMore is true)
+                  totalCount:
+                    type: integer
+                    description: Total number of orders matching the criteria (excluding pagination)
+        '400':
+          description: Bad request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cryptos/orders/{orderId}:
+    get:
+      summary: Get a crypto order
+      description: |
+        Retrieve details of a specific crypto order by its ID. Includes current status,
+        pricing information, blockchain transaction details (if available), and complete
+        status transition history.
+      operationId: getCryptoOrder
+      tags:
+        - Crypto Purchase
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: The unique identifier of the crypto order
+          schema:
+            type: string
+          example: CryptoOrder:019542f5-b3e7-1d02-0000-000000000001
+      responses:
+        '200':
+          description: Crypto order retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CryptoOrder'
+              example:
+                orderId: CryptoOrder:019542f5-b3e7-1d02-0000-000000000001
+                orderType: MARKET
+                status: COMPLETED
+                createdAt: '2025-10-06T10:30:00.123Z'
+                executedAt: '2025-10-06T10:30:00.123Z'
+                completedAt: '2025-10-06T10:45:22.456Z'
+                sourceCurrency: USD
+                destinationCurrency: BTC
+                sourceAmount: 100000
+                destinationAmount: '0.0245'
+                destination:
+                  address: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                  network: BITCOIN
+                pricing:
+                  exchangeRate: '0.0000245'
+                  baseCost: 100000
+                  platformFee: 1200
+                  platformFeeBps: 120
+                  networkFee: 500
+                  networkFeeCrypto: '0.00012'
+                  totalFees: 1700
+                  totalCost: 101700
+                  feeCurrency: USD
+                sourceAccountId: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                blockchainTransaction:
+                  hash: 3ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a
+                  confirmations: 6
+                  explorerUrl: https://blockstream.info/tx/3ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a
+                timeline:
+                  - status: EXECUTING
+                    timestamp: '2025-10-06T10:30:00.123Z'
+                  - status: PENDING_SETTLEMENT
+                    timestamp: '2025-10-06T10:30:02.789Z'
+                  - status: COMPLETED
+                    timestamp: '2025-10-06T10:45:22.456Z'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Crypto order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cryptos/assets:
+    get:
+      summary: List supported cryptocurrencies
+      description: |
+        Retrieve a list of all cryptocurrencies available for purchase through the Grid API.
+
+        Returns detailed information about each cryptocurrency including:
+        - Available blockchain networks
+        - Purchase limits (minimum and maximum amounts)
+        - Precision (number of decimal places)
+        - Address validation patterns
+
+        Use this endpoint to:
+        - Populate cryptocurrency selection dropdowns in your UI
+        - Validate purchase amounts before creating orders
+        - Validate destination addresses
+        - Display cryptocurrency information to users
+
+        **V1 Support:** Bitcoin (BTC) and Ethereum (ETH) only
+      operationId: listCryptoAssets
+      tags:
+        - Crypto Purchase
+      security:
+        - BasicAuth: []
+      responses:
+        '200':
+          description: List of supported cryptocurrencies
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - assets
+                properties:
+                  assets:
+                    type: array
+                    description: Array of supported cryptocurrency assets
+                    items:
+                      $ref: '#/components/schemas/CryptoAsset'
+              example:
+                assets:
+                  - currency: BTC
+                    name: Bitcoin
+                    networks:
+                      - BITCOIN
+                    precision: 8
+                    minPurchaseAmount: '0.0001'
+                    maxPurchaseAmount: '10.0'
+                    iconUrl: https://static.lightspark.com/icons/btc.svg
+                    addressRegex: ^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,62}$
+                    description: Bitcoin is a decentralized digital currency, without a central bank or single administrator.
+                  - currency: ETH
+                    name: Ethereum
+                    networks:
+                      - ETHEREUM
+                    precision: 18
+                    minPurchaseAmount: '0.001'
+                    maxPurchaseAmount: '100.0'
+                    iconUrl: https://static.lightspark.com/icons/eth.svg
+                    addressRegex: ^0x[a-fA-F0-9]{40}$
+                    description: Ethereum is a decentralized, open-source blockchain with smart contract functionality.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /transactions:
     get:
       summary: List transactions
@@ -3196,6 +3738,138 @@ webhooks:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error409'
+  crypto-order:
+    post:
+      summary: Crypto Order Status Changed
+      description: |
+        This webhook is triggered when a crypto order's status changes. You will receive this webhook
+        for the following status transitions:
+
+        - **PENDING** → **EXECUTING**: Order execution has been initiated
+        - **EXECUTING** → **PENDING_SETTLEMENT**: Blockchain transaction has been submitted
+        - **PENDING_SETTLEMENT** → **COMPLETED**: Cryptocurrency delivered successfully
+        - **EXECUTING** → **FAILED**: Order execution or settlement failed
+        - **PENDING** → **CANCELED**: Order was canceled by user
+
+        **Use Cases:**
+        - Update your UI to reflect the current order status
+        - Notify customers when their crypto purchase is complete
+        - Handle failed orders and provide customer support
+        - Track order completion for accounting and reconciliation
+
+        **Webhook Verification:**
+        Verify the webhook signature using the `X-Grid-Signature` header to ensure authenticity.
+      operationId: cryptoOrderWebhook
+      tags:
+        - Webhooks
+      security:
+        - WebhookSignature: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/BaseWebhook'
+                - type: object
+                  required:
+                    - type
+                    - data
+                  properties:
+                    type:
+                      type: string
+                      enum:
+                        - crypto_order.status_changed
+                      description: The type of webhook event
+                    data:
+                      $ref: '#/components/schemas/CryptoOrder'
+                      description: The crypto order object with updated status
+            examples:
+              orderCompleted:
+                summary: Order Completed
+                description: Webhook sent when crypto is successfully delivered
+                value:
+                  webhookId: webhook_019542f5-b3e7-1d02-0000-000000000001
+                  type: crypto_order.status_changed
+                  timestamp: '2025-10-06T10:45:22Z'
+                  data:
+                    orderId: CryptoOrder:019542f5-b3e7-1d02-0000-000000000001
+                    orderType: MARKET
+                    status: COMPLETED
+                    createdAt: '2025-10-06T10:30:00Z'
+                    executedAt: '2025-10-06T10:30:00Z'
+                    completedAt: '2025-10-06T10:45:22Z'
+                    sourceCurrency: USD
+                    destinationCurrency: BTC
+                    sourceAmount: 100000
+                    destinationAmount: '0.0245'
+                    destination:
+                      address: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                      network: BITCOIN
+                    pricing:
+                      exchangeRate: '0.0000245'
+                      baseCost: 100000
+                      platformFee: 1200
+                      platformFeeBps: 120
+                      networkFee: 500
+                      networkFeeCrypto: '0.00012'
+                      totalFees: 1700
+                      totalCost: 101700
+                      feeCurrency: USD
+                    sourceAccountId: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                    blockchainTransaction:
+                      hash: 3ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a
+                      confirmations: 6
+                      explorerUrl: https://blockstream.info/tx/3ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a
+                    timeline:
+                      - status: EXECUTING
+                        timestamp: '2025-10-06T10:30:00Z'
+                      - status: PENDING_SETTLEMENT
+                        timestamp: '2025-10-06T10:30:02Z'
+                      - status: COMPLETED
+                        timestamp: '2025-10-06T10:45:22Z'
+              orderFailed:
+                summary: Order Failed
+                description: Webhook sent when an order execution or settlement fails
+                value:
+                  webhookId: webhook_019542f5-b3e7-1d02-0000-000000000002
+                  type: crypto_order.status_changed
+                  timestamp: '2025-10-06T10:32:00Z'
+                  data:
+                    orderId: CryptoOrder:019542f5-b3e7-1d02-0000-000000000002
+                    orderType: MARKET
+                    status: FAILED
+                    createdAt: '2025-10-06T10:30:00Z'
+                    executedAt: '2025-10-06T10:30:00Z'
+                    sourceCurrency: USD
+                    destinationCurrency: BTC
+                    sourceAmount: 100000
+                    destinationAmount: '0.0245'
+                    destination:
+                      address: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                      network: BITCOIN
+                    pricing:
+                      exchangeRate: '0.0000245'
+                      baseCost: 100000
+                      platformFee: 1200
+                      platformFeeBps: 120
+                      networkFee: 500
+                      networkFeeCrypto: '0.00012'
+                      totalFees: 1700
+                      totalCost: 101700
+                      feeCurrency: USD
+                    sourceAccountId: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                    failureReason: Blockchain transaction failed - insufficient network fees
+                    timeline:
+                      - status: EXECUTING
+                        timestamp: '2025-10-06T10:30:00Z'
+                      - status: FAILED
+                        timestamp: '2025-10-06T10:32:00Z'
+      responses:
+        '200':
+          description: Webhook received successfully
+        '422':
+          description: Unprocessable entity - webhook validation failed
   test-webhook:
     post:
       summary: Test webhook for integration verification
@@ -5529,6 +6203,460 @@ components:
           example:
             FULL_NAME: Jane Receiver
             NATIONALITY: FR
+    CryptoNetwork:
+      type: string
+      enum:
+        - BITCOIN
+        - ETHEREUM
+        - POLYGON
+        - SOLANA
+        - ARBITRUM
+        - OPTIMISM
+        - BASE
+      description: Blockchain network for the cryptocurrency
+      example: BITCOIN
+    CryptoRateEstimate:
+      type: object
+      required:
+        - sourceCurrency
+        - destinationCurrency
+        - estimatedRate
+        - estimatedDestinationAmount
+        - estimatedFees
+        - timestamp
+      properties:
+        sourceCurrency:
+          type: string
+          description: Source fiat currency code
+          example: USD
+        destinationCurrency:
+          type: string
+          description: Destination cryptocurrency code
+          example: BTC
+        sourceAmount:
+          type: integer
+          format: int64
+          description: |
+            Amount in source currency (smallest unit, e.g., cents). Either sourceAmount or destinationAmount will be present based on the query.
+          example: 100000
+        destinationAmount:
+          type: string
+          description: |
+            Amount in destination cryptocurrency. Either sourceAmount or destinationAmount will be present based on the query.
+          example: '0.0245'
+        estimatedRate:
+          type: string
+          description: |
+            Estimated exchange rate from source to destination currency. This is an estimate and may change when order is executed.
+          example: '0.0000245'
+        estimatedDestinationAmount:
+          type: string
+          description: |
+            Estimated amount of cryptocurrency to be received. Actual amount may vary based on market conditions at execution time.
+          example: '0.0245'
+        estimatedSourceAmount:
+          type: integer
+          format: int64
+          description: |
+            Estimated amount of fiat currency to be spent (smallest unit, e.g., cents). Only present when querying by destination amount.
+          example: 100000
+        estimatedFees:
+          type: object
+          required:
+            - platformFee
+            - platformFeeBps
+            - networkFee
+            - totalFees
+            - totalCost
+            - feeCurrency
+          properties:
+            platformFee:
+              type: integer
+              format: int64
+              description: Estimated Lightspark platform fee
+              example: 1200
+            platformFeeBps:
+              type: integer
+              description: Platform fee in basis points
+              example: 120
+            networkFee:
+              type: integer
+              format: int64
+              description: Estimated blockchain network fee
+              example: 500
+            networkFeeCrypto:
+              type: string
+              description: Estimated network fee in cryptocurrency
+              example: '0.00012'
+            totalFees:
+              type: integer
+              format: int64
+              description: Sum of all estimated fees
+              example: 1700
+            totalCost:
+              type: integer
+              format: int64
+              description: Estimated total cost including fees
+              example: 101700
+            feeCurrency:
+              type: string
+              description: Currency in which fees are denominated
+              example: USD
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp when this rate estimate was generated
+          example: '2025-10-06T10:30:00.123Z'
+        disclaimer:
+          type: string
+          description: Legal disclaimer about rate estimates
+          example: Rates and fees are estimates only. Final pricing will be determined at order execution and may differ based on market conditions.
+    CryptoOrderStatus:
+      type: string
+      enum:
+        - PENDING
+        - EXECUTING
+        - PENDING_SETTLEMENT
+        - COMPLETED
+        - FAILED
+        - CANCELED
+      description: |
+        Status of the crypto order:
+        - **PENDING**: Order created, pending initial processing
+        - **EXECUTING**: Execution initiated, awaiting blockchain confirmation
+        - **PENDING_SETTLEMENT**: Blockchain transaction submitted, awaiting confirmations
+        - **COMPLETED**: Crypto delivered to destination address
+        - **FAILED**: Execution or settlement failed
+        - **CANCELED**: Order canceled by user (only possible in PENDING state)
+      example: EXECUTING
+    CryptoPricing:
+      type: object
+      required:
+        - exchangeRate
+        - baseCost
+        - totalCost
+        - feeCurrency
+      properties:
+        exchangeRate:
+          type: string
+          description: |
+            Exchange rate from source to destination currency (destination currency per source currency unit). Provided as a string to maintain precision.
+          example: '0.0000245'
+        baseCost:
+          type: integer
+          format: int64
+          description: |
+            Base cost of the crypto asset before fees, in the smallest unit of the source currency (e.g., cents for USD).
+          example: 100000
+        platformFee:
+          type: integer
+          format: int64
+          description: |
+            Lightspark's platform fee in the smallest unit of the fee currency (e.g., cents for USD).
+          example: 1200
+        platformFeeBps:
+          type: integer
+          description: |
+            Platform fee expressed in basis points (1 basis point = 0.01%).
+          example: 120
+        networkFee:
+          type: integer
+          format: int64
+          description: |
+            Blockchain network fee in the smallest unit of the fee currency (e.g., cents for USD).
+          example: 500
+        networkFeeCrypto:
+          type: string
+          description: |
+            Network fee denominated in the destination cryptocurrency. Provided as a string to maintain precision.
+          example: '0.00012'
+        totalFees:
+          type: integer
+          format: int64
+          description: |
+            Sum of all fees in the smallest unit of the fee currency (e.g., cents for USD).
+          example: 1700
+        totalCost:
+          type: integer
+          format: int64
+          description: |
+            Total all-in cost including base cost and all fees, in the smallest unit of the source currency (e.g., cents for USD).
+          example: 101700
+        feeCurrency:
+          type: string
+          description: Currency code in which fees are denominated
+          example: USD
+    CryptoOrder:
+      type: object
+      required:
+        - orderId
+        - orderType
+        - status
+        - createdAt
+        - sourceCurrency
+        - destinationCurrency
+        - destination
+        - pricing
+        - sourceAccountId
+      properties:
+        orderId:
+          type: string
+          description: Unique identifier for this crypto order
+          example: CryptoOrder:019542f5-b3e7-1d02-0000-000000000001
+        orderType:
+          type: string
+          enum:
+            - MARKET
+            - LIMIT
+            - STOP_LIMIT
+          description: Type of order (MARKET, LIMIT, etc.)
+          example: MARKET
+        status:
+          $ref: '#/components/schemas/CryptoOrderStatus'
+        createdAt:
+          type: string
+          format: date-time
+          description: When this order was created and execution began
+          example: '2025-10-06T10:30:00Z'
+        executedAt:
+          type: string
+          format: date-time
+          description: |
+            When this order execution was confirmed (typically same as createdAt for market orders, only differs if there was a processing delay)
+          example: '2025-10-06T10:30:00Z'
+        completedAt:
+          type: string
+          format: date-time
+          description: When this order was completed (only present if status is COMPLETED)
+          example: '2025-10-06T10:45:22Z'
+        sourceCurrency:
+          type: string
+          description: Source fiat currency code
+          example: USD
+        destinationCurrency:
+          type: string
+          description: Destination cryptocurrency code
+          example: BTC
+        sourceAmount:
+          type: integer
+          format: int64
+          description: |
+            Amount spent in the smallest unit of the source currency (e.g., cents for USD). May differ slightly from requested amount due to market conditions at execution.
+          example: 100000
+        destinationAmount:
+          type: string
+          description: |
+            Amount of cryptocurrency to be received (or received if completed). Provided as a string to maintain precision. This is the actual amount based on execution price.
+          example: '0.0245'
+        destination:
+          oneOf:
+            - title: External Wallet
+              type: object
+              required:
+                - address
+                - network
+              properties:
+                address:
+                  type: string
+                  description: Blockchain address where the cryptocurrency was/will be sent
+                  example: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                network:
+                  $ref: '#/components/schemas/CryptoNetwork'
+              description: External wallet address (self-custody)
+            - title: Internal Account
+              type: object
+              required:
+                - accountId
+              properties:
+                accountId:
+                  type: string
+                  description: Internal account ID where the cryptocurrency was/will be stored
+                  example: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+              description: Lightspark-managed internal account (custodial)
+          description: Destination for the purchased cryptocurrency
+        pricing:
+          $ref: '#/components/schemas/CryptoPricing'
+        sourceAccountId:
+          type: string
+          description: Internal account ID used as source of USD funds
+          example: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+        blockchainTransaction:
+          type: object
+          description: |
+            Details about the blockchain transaction (only present if status is PENDING_SETTLEMENT or COMPLETED)
+          properties:
+            hash:
+              type: string
+              description: Transaction hash on the blockchain
+              example: 3ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a
+            confirmations:
+              type: integer
+              description: Number of blockchain confirmations
+              example: 6
+            explorerUrl:
+              type: string
+              format: uri
+              description: URL to view the transaction on a blockchain explorer
+              example: https://blockstream.info/tx/3ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a
+        failureReason:
+          type: string
+          description: Reason for failure (only present if status is FAILED)
+          example: Insufficient balance in source account
+        timeline:
+          type: array
+          description: History of status transitions for this order
+          items:
+            type: object
+            required:
+              - status
+              - timestamp
+            properties:
+              status:
+                $ref: '#/components/schemas/CryptoOrderStatus'
+              timestamp:
+                type: string
+                format: date-time
+                example: '2025-10-06T10:30:00Z'
+        metadata:
+          type: object
+          additionalProperties: true
+          description: Custom metadata provided when creating the order
+          example:
+            customerId: cust_123
+            orderId: order_456
+    CryptoOrderRequest:
+      type: object
+      required:
+        - sourceCurrency
+        - destinationCurrency
+        - sourceAmount
+        - destination
+        - sourceAccountId
+      properties:
+        orderType:
+          type: string
+          enum:
+            - MARKET
+          description: |
+            Type of order to execute. V1 supports market orders only. Market orders execute immediately at the current market rate.
+            Future versions will support LIMIT, STOP_LIMIT, etc.
+          default: MARKET
+          example: MARKET
+        sourceCurrency:
+          type: string
+          description: |
+            Source fiat currency code. V1 supports USD only.
+          example: USD
+        destinationCurrency:
+          type: string
+          description: |
+            Destination cryptocurrency code (e.g., BTC, ETH). Use the `/cryptos/assets` endpoint to retrieve supported cryptocurrencies.
+          example: BTC
+        sourceAmount:
+          type: integer
+          format: int64
+          description: |
+            Amount of fiat to spend in the smallest unit (e.g., cents for USD). The amount of cryptocurrency received will be determined by the market rate at execution.
+          exclusiveMinimum: 0
+          maximum: 9000000000000000
+          example: 100000
+        destination:
+          oneOf:
+            - title: External Wallet
+              type: object
+              required:
+                - address
+                - network
+              properties:
+                address:
+                  type: string
+                  description: |
+                    Blockchain address where the cryptocurrency will be sent. Must be a valid address for the specified cryptocurrency and network.
+                  example: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                network:
+                  $ref: '#/components/schemas/CryptoNetwork'
+                  description: Blockchain network for the destination address
+              description: |
+                Send crypto to an external wallet address (self-custody). User must provide a valid blockchain address.
+            - title: Internal Account
+              type: object
+              required:
+                - accountId
+              properties:
+                accountId:
+                  type: string
+                  description: |
+                    Internal account ID where the cryptocurrency will be stored. This provides Lightspark-managed custody of the purchased crypto.
+                  example: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+              description: |
+                Store crypto in a Lightspark-managed internal account (custodial). Useful for users who want Lightspark to custody their crypto.
+          description: |
+            Destination for the purchased cryptocurrency. Either an external wallet address for self-custody, or an internal account for Lightspark-managed custody.
+        sourceAccountId:
+          type: string
+          description: |
+            Internal account ID to use as the source of USD funds. This account will be debited for the purchase amount plus fees.
+          example: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+        metadata:
+          type: object
+          additionalProperties: true
+          description: |
+            Optional key-value pairs for storing custom metadata about this order. Maximum 50 keys, each key max 40 characters, each value max 500 characters.
+          example:
+            customerId: cust_123
+            orderId: order_456
+    CryptoAsset:
+      type: object
+      required:
+        - currency
+        - name
+        - networks
+        - precision
+        - minPurchaseAmount
+        - maxPurchaseAmount
+      properties:
+        currency:
+          type: string
+          description: Cryptocurrency code (e.g., BTC, ETH)
+          example: BTC
+        name:
+          type: string
+          description: Full name of the cryptocurrency
+          example: Bitcoin
+        networks:
+          type: array
+          description: Blockchain networks on which this cryptocurrency is available
+          items:
+            $ref: '#/components/schemas/CryptoNetwork'
+          example:
+            - BITCOIN
+        precision:
+          type: integer
+          description: Number of decimal places supported for this cryptocurrency
+          example: 8
+        minPurchaseAmount:
+          type: string
+          description: |
+            Minimum amount that can be purchased in this cryptocurrency. Provided as a string to maintain precision.
+          example: '0.0001'
+        maxPurchaseAmount:
+          type: string
+          description: |
+            Maximum amount that can be purchased in this cryptocurrency per order. Provided as a string to maintain precision.
+          example: '10.0'
+        iconUrl:
+          type: string
+          format: uri
+          description: URL to an icon image for this cryptocurrency
+          example: https://static.lightspark.com/icons/btc.svg
+        addressRegex:
+          type: string
+          description: Regular expression for validating addresses for this cryptocurrency
+          example: ^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,62}$
+        description:
+          type: string
+          description: Brief description of the cryptocurrency
+          example: Bitcoin is a decentralized digital currency, without a central bank or single administrator.
     TestWebhookResponse:
       type: object
       required:

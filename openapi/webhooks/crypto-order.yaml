@@ -1,0 +1,131 @@
+post:
+  summary: Crypto Order Status Changed
+  description: |
+    This webhook is triggered when a crypto order's status changes. You will receive this webhook
+    for the following status transitions:
+
+    - **PENDING** → **EXECUTING**: Order execution has been initiated
+    - **EXECUTING** → **PENDING_SETTLEMENT**: Blockchain transaction has been submitted
+    - **PENDING_SETTLEMENT** → **COMPLETED**: Cryptocurrency delivered successfully
+    - **EXECUTING** → **FAILED**: Order execution or settlement failed
+    - **PENDING** → **CANCELED**: Order was canceled by user
+
+    **Use Cases:**
+    - Update your UI to reflect the current order status
+    - Notify customers when their crypto purchase is complete
+    - Handle failed orders and provide customer support
+    - Track order completion for accounting and reconciliation
+
+    **Webhook Verification:**
+    Verify the webhook signature using the `X-Grid-Signature` header to ensure authenticity.
+  operationId: cryptoOrderWebhook
+  tags:
+    - Webhooks
+  security:
+    - WebhookSignature: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          allOf:
+            - $ref: ../components/schemas/webhooks/BaseWebhook.yaml
+            - type: object
+              required:
+                - type
+                - data
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - crypto_order.status_changed
+                  description: The type of webhook event
+                data:
+                  $ref: ../components/schemas/cryptos/CryptoOrder.yaml
+                  description: The crypto order object with updated status
+        examples:
+          orderCompleted:
+            summary: Order Completed
+            description: Webhook sent when crypto is successfully delivered
+            value:
+              webhookId: webhook_019542f5-b3e7-1d02-0000-000000000001
+              type: crypto_order.status_changed
+              timestamp: "2025-10-06T10:45:22Z"
+              data:
+                orderId: CryptoOrder:019542f5-b3e7-1d02-0000-000000000001
+                orderType: MARKET
+                status: COMPLETED
+                createdAt: "2025-10-06T10:30:00Z"
+                executedAt: "2025-10-06T10:30:00Z"
+                completedAt: "2025-10-06T10:45:22Z"
+                sourceCurrency: USD
+                destinationCurrency: BTC
+                sourceAmount: 100000
+                destinationAmount: "0.0245"
+                destination:
+                  address: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                  network: BITCOIN
+                pricing:
+                  exchangeRate: "0.0000245"
+                  baseCost: 100000
+                  platformFee: 1200
+                  platformFeeBps: 120
+                  networkFee: 500
+                  networkFeeCrypto: "0.00012"
+                  totalFees: 1700
+                  totalCost: 101700
+                  feeCurrency: USD
+                sourceAccountId: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                blockchainTransaction:
+                  hash: "3ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a"
+                  confirmations: 6
+                  explorerUrl: "https://blockstream.info/tx/3ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a"
+                timeline:
+                  - status: EXECUTING
+                    timestamp: "2025-10-06T10:30:00Z"
+                  - status: PENDING_SETTLEMENT
+                    timestamp: "2025-10-06T10:30:02Z"
+                  - status: COMPLETED
+                    timestamp: "2025-10-06T10:45:22Z"
+          orderFailed:
+            summary: Order Failed
+            description: Webhook sent when an order execution or settlement fails
+            value:
+              webhookId: webhook_019542f5-b3e7-1d02-0000-000000000002
+              type: crypto_order.status_changed
+              timestamp: "2025-10-06T10:32:00Z"
+              data:
+                orderId: CryptoOrder:019542f5-b3e7-1d02-0000-000000000002
+                orderType: MARKET
+                status: FAILED
+                createdAt: "2025-10-06T10:30:00Z"
+                executedAt: "2025-10-06T10:30:00Z"
+                sourceCurrency: USD
+                destinationCurrency: BTC
+                sourceAmount: 100000
+                destinationAmount: "0.0245"
+                destination:
+                  address: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                  network: BITCOIN
+                pricing:
+                  exchangeRate: "0.0000245"
+                  baseCost: 100000
+                  platformFee: 1200
+                  platformFeeBps: 120
+                  networkFee: 500
+                  networkFeeCrypto: "0.00012"
+                  totalFees: 1700
+                  totalCost: 101700
+                  feeCurrency: USD
+                sourceAccountId: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                failureReason: "Blockchain transaction failed - insufficient network fees"
+                timeline:
+                  - status: EXECUTING
+                    timestamp: "2025-10-06T10:30:00Z"
+                  - status: FAILED
+                    timestamp: "2025-10-06T10:32:00Z"
+  responses:
+    "200":
+      description: Webhook received successfully
+    "422":
+      description: Unprocessable entity - webhook validation failed

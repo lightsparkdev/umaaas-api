@@ -1,0 +1,101 @@
+type: object
+required:
+  - sourceCurrency
+  - destinationCurrency
+  - estimatedRate
+  - estimatedDestinationAmount
+  - estimatedFees
+  - timestamp
+properties:
+  sourceCurrency:
+    type: string
+    description: Source fiat currency code
+    example: USD
+  destinationCurrency:
+    type: string
+    description: Destination cryptocurrency code
+    example: BTC
+  sourceAmount:
+    type: integer
+    format: int64
+    description: >
+      Amount in source currency (smallest unit, e.g., cents).
+      Either sourceAmount or destinationAmount will be present based on the query.
+    example: 100000
+  destinationAmount:
+    type: string
+    description: >
+      Amount in destination cryptocurrency.
+      Either sourceAmount or destinationAmount will be present based on the query.
+    example: "0.0245"
+  estimatedRate:
+    type: string
+    description: >
+      Estimated exchange rate from source to destination currency.
+      This is an estimate and may change when order is executed.
+    example: "0.0000245"
+  estimatedDestinationAmount:
+    type: string
+    description: >
+      Estimated amount of cryptocurrency to be received.
+      Actual amount may vary based on market conditions at execution time.
+    example: "0.0245"
+  estimatedSourceAmount:
+    type: integer
+    format: int64
+    description: >
+      Estimated amount of fiat currency to be spent (smallest unit, e.g., cents).
+      Only present when querying by destination amount.
+    example: 100000
+  estimatedFees:
+    type: object
+    required:
+      - platformFee
+      - platformFeeBps
+      - networkFee
+      - totalFees
+      - totalCost
+      - feeCurrency
+    properties:
+      platformFee:
+        type: integer
+        format: int64
+        description: Estimated Lightspark platform fee
+        example: 1200
+      platformFeeBps:
+        type: integer
+        description: Platform fee in basis points
+        example: 120
+      networkFee:
+        type: integer
+        format: int64
+        description: Estimated blockchain network fee
+        example: 500
+      networkFeeCrypto:
+        type: string
+        description: Estimated network fee in cryptocurrency
+        example: "0.00012"
+      totalFees:
+        type: integer
+        format: int64
+        description: Sum of all estimated fees
+        example: 1700
+      totalCost:
+        type: integer
+        format: int64
+        description: Estimated total cost including fees
+        example: 101700
+      feeCurrency:
+        type: string
+        description: Currency in which fees are denominated
+        example: USD
+  timestamp:
+    type: string
+    format: date-time
+    description: Timestamp when this rate estimate was generated
+    example: "2025-10-06T10:30:00.123Z"
+  disclaimer:
+    type: string
+    description: Legal disclaimer about rate estimates
+    example: "Rates and fees are estimates only. Final pricing will be determined at order execution and may differ based on market conditions."
+

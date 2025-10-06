@@ -1,0 +1,255 @@
+post:
+  summary: Create and execute a crypto purchase order
+  description: |
+    Create and immediately execute a crypto purchase order at the current market rate.
+    This endpoint supports buying Bitcoin (BTC) and Ethereum (ETH) with USD in V1.
+
+    **Market Execution:**
+    - Orders execute immediately at current market rates
+    - No price lock or quote expiration - you get the actual market price
+    - Response includes the actual execution price and fees charged
+
+    **Preview Rates First (Optional):**
+    - Use `GET /cryptos/rates` to show users estimated pricing before purchase
+    - Rates are non-binding estimates; actual pricing determined at execution
+
+    **Amount Specification:**
+    - Specify `sourceAmount` - how much fiat to spend (e.g., $1,000)
+    - The amount of cryptocurrency received is determined by the market rate at execution
+    - Response includes the actual `destinationAmount` of crypto purchased
+
+    **Payment & Destination:**
+    - **Payment**: Funded from USD internal account (specified by `sourceAccountId`)
+    - **Destination**: Either external wallet (self-custody) or internal account (Lightspark-managed custody)
+
+    **Destination Options:**
+    1. **External Wallet** - Send crypto to user's blockchain address (self-custody)
+       - Requires valid blockchain address and network
+       - Crypto leaves Lightspark custody
+    2. **Internal Account** - Store crypto in Lightspark-managed account (custodial)
+       - Crypto remains in Lightspark custody
+       - Can be used for future transactions, swaps, or withdrawals
+
+    **Order Lifecycle:**
+    1. Order created and executed immediately (status: EXECUTING)
+    2. Blockchain transaction submitted (status: PENDING_SETTLEMENT)
+    3. Confirmations received (status: COMPLETED)
+  operationId: createCryptoOrder
+  tags:
+    - Crypto Purchase
+  security:
+    - BasicAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: ../../components/schemas/cryptos/CryptoOrderRequest.yaml
+        examples:
+          buyToExternalWallet:
+            summary: Buy Bitcoin to External Wallet (Self-Custody)
+            description: Purchase Bitcoin and send to user's own wallet address
+            value:
+              orderType: MARKET
+              sourceCurrency: USD
+              destinationCurrency: BTC
+              sourceAmount: 100000
+              destination:
+                address: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                network: BITCOIN
+              sourceAccountId: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+          buyToInternalAccount:
+            summary: Buy Ethereum to Internal Account (Custodial)
+            description: Purchase Ethereum and store in Lightspark-managed account
+            value:
+              orderType: MARKET
+              sourceCurrency: USD
+              destinationCurrency: ETH
+              sourceAmount: 150000
+              destination:
+                accountId: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+              sourceAccountId: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+          withMetadata:
+            summary: Buy with Custom Metadata
+            description: Include custom metadata for tracking
+            value:
+              orderType: MARKET
+              sourceCurrency: USD
+              destinationCurrency: BTC
+              sourceAmount: 50000
+              destination:
+                address: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                network: BITCOIN
+              sourceAccountId: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+              metadata:
+                customerId: "cust_123"
+                orderId: "order_456"
+  responses:
+    "201":
+      description: |
+        Crypto order created and execution initiated successfully. The response includes the actual
+        execution price, itemized fees, and the amount of cryptocurrency being purchased. 
+
+        Monitor the order status via webhooks or by polling `GET /cryptos/orders/{orderId}` to track
+        completion. The order will transition from EXECUTING → PENDING_SETTLEMENT → COMPLETED.
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/cryptos/CryptoOrder.yaml
+          example:
+            orderId: CryptoOrder:019542f5-b3e7-1d02-0000-000000000001
+            orderType: MARKET
+            status: EXECUTING
+            createdAt: "2025-10-06T10:30:00.123Z"
+            executedAt: "2025-10-06T10:30:00.123Z"
+            sourceCurrency: USD
+            destinationCurrency: BTC
+            sourceAmount: 100000
+            destinationAmount: "0.0245"
+            destination:
+              address: bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+              network: BITCOIN
+            pricing:
+              exchangeRate: "0.0000245"
+              baseCost: 100000
+              platformFee: 1200
+              platformFeeBps: 120
+              networkFee: 500
+              networkFeeCrypto: "0.00012"
+              totalFees: 1700
+              totalCost: 101700
+              feeCurrency: USD
+            sourceAccountId: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+            timeline:
+              - status: EXECUTING
+                timestamp: "2025-10-06T10:30:00.123Z"
+    "400":
+      description: >
+        Bad request - Invalid parameters or validation errors.
+        Common errors: invalid address format, both amounts provided, neither amount provided,
+        insufficient balance, amount below minimum, amount above maximum.
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error400.yaml
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error401.yaml
+    "500":
+      description: Internal service error
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error500.yaml
+
+get:
+  summary: List crypto purchase orders
+  description: |
+    Retrieve a list of crypto purchase orders with optional filtering parameters. 
+    Returns all orders that match the specified filters. If no filters are provided, 
+    returns all orders (paginated).
+  operationId: listCryptoOrders
+  tags:
+    - Crypto Purchase
+  security:
+    - BasicAuth: []
+  parameters:
+    - name: status
+      in: query
+      description: Filter by order status
+      required: false
+      schema:
+        $ref: ../../components/schemas/cryptos/CryptoOrderStatus.yaml
+    - name: destinationCurrency
+      in: query
+      description: Filter by destination cryptocurrency (e.g., BTC, ETH)
+      required: false
+      schema:
+        type: string
+        example: BTC
+    - name: sourceAccountId
+      in: query
+      description: Filter by source account ID
+      required: false
+      schema:
+        type: string
+        example: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+    - name: createdAfter
+      in: query
+      description: Filter orders created after this timestamp (inclusive)
+      required: false
+      schema:
+        type: string
+        format: date-time
+        example: "2025-10-01T00:00:00Z"
+    - name: createdBefore
+      in: query
+      description: Filter orders created before this timestamp (inclusive)
+      required: false
+      schema:
+        type: string
+        format: date-time
+        example: "2025-10-31T23:59:59Z"
+    - name: limit
+      in: query
+      description: Maximum number of results to return (default 20, max 100)
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    - name: cursor
+      in: query
+      description: Cursor for pagination (returned from previous request)
+      required: false
+      schema:
+        type: string
+  responses:
+    "200":
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - data
+              - hasMore
+            properties:
+              data:
+                type: array
+                description: List of crypto orders matching the criteria
+                items:
+                  $ref: ../../components/schemas/cryptos/CryptoOrder.yaml
+              hasMore:
+                type: boolean
+                description: Indicates if more results are available beyond this page
+              nextCursor:
+                type: string
+                description: >-
+                  Cursor to retrieve the next page of results (only present if hasMore is true)
+              totalCount:
+                type: integer
+                description: >-
+                  Total number of orders matching the criteria (excluding pagination)
+    "400":
+      description: Bad request - Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error400.yaml
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error401.yaml
+    "500":
+      description: Internal service error
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error500.yaml

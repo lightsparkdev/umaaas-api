@@ -1,0 +1,58 @@
+type: object
+required:
+  - exchangeRate
+  - baseCost
+  - totalCost
+  - feeCurrency
+properties:
+  exchangeRate:
+    type: string
+    description: >
+      Exchange rate from source to destination currency (destination currency per source currency unit).
+      Provided as a string to maintain precision.
+    example: "0.0000245"
+  baseCost:
+    type: integer
+    format: int64
+    description: >
+      Base cost of the crypto asset before fees, in the smallest unit of the source currency (e.g., cents for USD).
+    example: 100000
+  platformFee:
+    type: integer
+    format: int64
+    description: >
+      Lightspark's platform fee in the smallest unit of the fee currency (e.g., cents for USD).
+    example: 1200
+  platformFeeBps:
+    type: integer
+    description: >
+      Platform fee expressed in basis points (1 basis point = 0.01%).
+    example: 120
+  networkFee:
+    type: integer
+    format: int64
+    description: >
+      Blockchain network fee in the smallest unit of the fee currency (e.g., cents for USD).
+    example: 500
+  networkFeeCrypto:
+    type: string
+    description: >
+      Network fee denominated in the destination cryptocurrency.
+      Provided as a string to maintain precision.
+    example: "0.00012"
+  totalFees:
+    type: integer
+    format: int64
+    description: >
+      Sum of all fees in the smallest unit of the fee currency (e.g., cents for USD).
+    example: 1700
+  totalCost:
+    type: integer
+    format: int64
+    description: >
+      Total all-in cost including base cost and all fees, in the smallest unit of the source currency (e.g., cents for USD).
+    example: 101700
+  feeCurrency:
+    type: string
+    description: Currency code in which fees are denominated
+    example: USD

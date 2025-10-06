@@ -1,0 +1,11 @@
+type: string
+enum:
+  - BITCOIN
+  - ETHEREUM
+  - POLYGON
+  - SOLANA
+  - ARBITRUM
+  - OPTIMISM
+  - BASE
+description: Blockchain network for the cryptocurrency
+example: BITCOIN

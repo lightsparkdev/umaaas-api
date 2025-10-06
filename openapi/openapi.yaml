@@ -2,8 +2,8 @@ openapi: 3.1.0
 info:
   title: Lightspark Grid API
   description: >
-    API for managing global payments on the Money Grid. 
-  version: '2025-10-13'
+    API for managing global payments on the Money Grid.
+  version: "2025-10-13"
   contact:
     name: Lightspark Support
     email: support@lightspark.com
@@ -25,6 +25,8 @@ tags:
     description: Endpoints for transferring funds between internal and external accounts with the same currency.
   - name: Cross-Currency Transfers
     description: Endpoints for creating and confirming quotes for cross-currency transfers.
+  - name: Crypto Purchase
+    description: Endpoints for purchasing cryptocurrencies with fiat currency using a quote-then-execute flow.
   - name: Transactions
     description: Endpoints for retrieving transaction information.
   - name: Webhooks
@@ -90,7 +92,7 @@ paths:
     $ref: paths/customers/customers_{customerId}.yaml
   /customers/kyc-link:
     $ref: paths/customers/customers_kyc_link.yaml
-  /internal-account: 
+  /internal-account:
     $ref: paths/internal-account/account.yaml
   /external-accounts:
     $ref: paths/external_accounts/external_accounts.yaml
@@ -110,6 +112,14 @@ paths:
     $ref: paths/quotes/quotes_{quoteId}_retry.yaml
   /quotes/{quoteId}/execute:
     $ref: paths/quotes/quotes_{quoteId}_execute.yaml
+  /cryptos/rates:
+    $ref: paths/cryptos/rates.yaml
+  /cryptos/orders:
+    $ref: paths/cryptos/orders.yaml
+  /cryptos/orders/{orderId}:
+    $ref: paths/cryptos/orders_{orderId}.yaml
+  /cryptos/assets:
+    $ref: paths/cryptos/assets.yaml
   /transactions:
     $ref: paths/transactions/transactions.yaml
   /transactions/{transactionId}:
@@ -147,6 +157,8 @@ webhooks:
     $ref: webhooks/incoming-payment.yaml
   outgoing-payment:
     $ref: webhooks/outgoing-payment.yaml
+  crypto-order:
+    $ref: webhooks/crypto-order.yaml
   test-webhook:
     $ref: webhooks/test-webhook.yaml
   bulk-upload:

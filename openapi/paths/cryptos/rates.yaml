@@ -1,0 +1,139 @@
+get:
+  summary: Get estimated crypto purchase rates
+  description: |
+    Retrieve non-binding rate estimates for crypto purchases. This endpoint provides
+    approximate pricing to display to users before they commit to a purchase.
+
+    **Important Notes:**
+    - **Rates are estimates only** - actual pricing is determined at order execution
+    - Rates may change between preview and execution due to market volatility
+    - No price lock or guarantee is provided
+    - Use this for displaying approximate costs in your UI
+
+    **Amount Specification:**
+    Provide either `sourceAmount` (fiat to spend) OR `destinationAmount` (crypto to receive).
+    
+    **Use Cases:**
+    - Show users estimated costs before checkout
+    - Display current exchange rates in your UI
+    - Calculate approximate fees for budgeting
+    - Help users decide purchase amounts
+
+    **Rate Freshness:**
+    Rates are calculated in real-time based on current market conditions and liquidity
+    provider pricing. Rates may be cached briefly (typically < 5 seconds) for performance.
+  operationId: getCryptoRates
+  tags:
+    - Crypto Purchase
+  security:
+    - BasicAuth: []
+  parameters:
+    - name: sourceCurrency
+      in: query
+      required: true
+      description: Source fiat currency code (V1 supports USD only)
+      schema:
+        type: string
+        example: USD
+    - name: destinationCurrency
+      in: query
+      required: true
+      description: Destination cryptocurrency code (e.g., BTC, ETH)
+      schema:
+        type: string
+        example: BTC
+    - name: sourceAmount
+      in: query
+      required: false
+      description: >
+        Amount to spend in smallest unit of source currency (e.g., cents for USD).
+        Either sourceAmount or destinationAmount must be provided, but not both.
+      schema:
+        type: integer
+        format: int64
+        exclusiveMinimum: 0
+        example: 100000
+    - name: destinationAmount
+      in: query
+      required: false
+      description: >
+        Amount to receive in destination cryptocurrency.
+        Either sourceAmount or destinationAmount must be provided, but not both.
+      schema:
+        type: string
+        example: "0.025"
+    - name: destinationNetwork
+      in: query
+      required: false
+      description: >
+        Blockchain network for the cryptocurrency. If omitted, uses the default network
+        for the specified currency (e.g., BITCOIN for BTC).
+      schema:
+        $ref: ../../components/schemas/cryptos/CryptoNetwork.yaml
+  responses:
+    "200":
+      description: >
+        Rate estimate retrieved successfully. Use these estimates to display approximate
+        costs to users. Actual pricing at execution may differ.
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/cryptos/CryptoRateEstimate.yaml
+          examples:
+            estimateBySourceAmount:
+              summary: Estimate by spending $1,000
+              description: Query by specifying how much fiat to spend
+              value:
+                sourceCurrency: USD
+                destinationCurrency: BTC
+                sourceAmount: 100000
+                estimatedRate: "0.0000245"
+                estimatedDestinationAmount: "0.0245"
+                estimatedFees:
+                  platformFee: 1200
+                  platformFeeBps: 120
+                  networkFee: 500
+                  networkFeeCrypto: "0.00012"
+                  totalFees: 1700
+                  totalCost: 101700
+                  feeCurrency: USD
+                timestamp: "2025-10-06T10:30:00.123Z"
+                disclaimer: "Rates and fees are estimates only. Final pricing will be determined at order execution and may differ based on market conditions."
+            estimateByDestinationAmount:
+              summary: Estimate by receiving 0.025 BTC
+              description: Query by specifying how much crypto to receive
+              value:
+                sourceCurrency: USD
+                destinationCurrency: BTC
+                destinationAmount: "0.025"
+                estimatedRate: "0.0000245"
+                estimatedSourceAmount: 102050
+                estimatedFees:
+                  platformFee: 1224
+                  platformFeeBps: 120
+                  networkFee: 500
+                  networkFeeCrypto: "0.00012"
+                  totalFees: 1724
+                  totalCost: 103774
+                  feeCurrency: USD
+                timestamp: "2025-10-06T10:30:00.123Z"
+                disclaimer: "Rates and fees are estimates only. Final pricing will be determined at order execution and may differ based on market conditions."
+    "400":
+      description: Bad request - Invalid parameters (e.g., both amounts provided, neither amount provided, unsupported currency)
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error400.yaml
+    "401":
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error401.yaml
+    "500":
+      description: Internal service error
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error500.yaml
+

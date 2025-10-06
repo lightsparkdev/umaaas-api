@@ -1,0 +1,23 @@
+type: string
+enum:
+  - PENDING
+  - EXECUTING
+  - PENDING_SETTLEMENT
+  - COMPLETED
+  - FAILED
+  - CANCELED
+description: >
+  Status of the crypto order:
+  
+  - **PENDING**: Order created, pending initial processing
+  
+  - **EXECUTING**: Execution initiated, awaiting blockchain confirmation
+  
+  - **PENDING_SETTLEMENT**: Blockchain transaction submitted, awaiting confirmations
+  
+  - **COMPLETED**: Crypto delivered to destination address
+  
+  - **FAILED**: Execution or settlement failed
+  
+  - **CANCELED**: Order canceled by user (only possible in PENDING state)
+example: EXECUTING
