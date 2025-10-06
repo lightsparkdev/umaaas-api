@@ -87,11 +87,11 @@ paths:
   /config:
     $ref: paths/config/config.yaml
   /customers:
-    $ref: paths/users/users.yaml
+    $ref: paths/customers/customers.yaml
   /customer/{customerId}:
-    $ref: paths/users/users_{customerId}.yaml
+    $ref: paths/customers/customers_{customerId}.yaml
   /customer/kyc-link:
-    $ref: paths/users/users_kyc_link.yaml
+    $ref: paths/customers/customers_kyc_link.yaml
   /internal-account: 
     $ref: paths/internal-account/account.yaml
   /external-accounts:
@@ -123,9 +123,9 @@ paths:
   /webhooks/test:
     $ref: paths/webhooks/webhooks_test.yaml
   /customers/bulk/csv:
-    $ref: paths/users/users_bulk_csv.yaml
+    $ref: paths/customers/customers_bulk_csv.yaml
   /customers/bulk/jobs/{jobId}:
-    $ref: paths/users/users_bulk_jobs_{jobId}.yaml
+    $ref: paths/customers/customers_bulk_jobs_{jobId}.yaml
   /invitations:
     $ref: paths/invitations/invitations.yaml
   /invitations/{invitationCode}:

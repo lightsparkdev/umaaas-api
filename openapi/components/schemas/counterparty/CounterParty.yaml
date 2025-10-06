@@ -3,7 +3,7 @@ required:
   - counterPartyType
 properties:
   counterPartyType:
-    $ref: ../users/UserType.yaml
+    $ref: ../customers/CustomerType.yaml
 discriminator:
   propertyName: counterPartyType
   mapping:

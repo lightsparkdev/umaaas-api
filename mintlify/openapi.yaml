@@ -146,7 +146,7 @@ paths:
     post:
       summary: Add a new customer
       description: Register a new customer in the system with an account identifier and bank account information
-      operationId: createUser
+      operationId: createCustomer
       tags:
         - Customers
       security:
@@ -159,58 +159,58 @@ paths:
               oneOf:
                 - title: Individual Customer
                   allOf:
-                    - $ref: '#/components/schemas/IndividualUserUpdate'
+                    - $ref: '#/components/schemas/IndividualCustomerUpdate'
                     - type: object
                       required:
-                        - platformUserId
-                        - userType
+                        - platformCustomerId
+                        - customerType
                       properties:
-                        platformUserId:
+                        platformCustomerId:
                           type: string
-                          description: Platform-specific user identifier
+                          description: Platform-specific customer identifier
                           example: 9f84e0c2a72c4fa
-                        userType:
+                        customerType:
                           type: string
                           enum:
                             - INDIVIDUAL
-                          description: User type
+                          description: Customer type
                         kycUrl:
                           type: string
                           description: A kyc url to be shared with your individual customer if kyc needs to be completed
                           example: https://example.com/kyc
                 - title: Business Customer
                   allOf:
-                    - $ref: '#/components/schemas/BusinessUserUpdate'
+                    - $ref: '#/components/schemas/BusinessCustomerUpdate'
                     - type: object
                       required:
-                        - platformUserId
-                        - userType
+                        - platformCustomerId
+                        - customerType
                       properties:
-                        platformUserId:
+                        platformCustomerId:
                           type: string
-                          description: Platform-specific user identifier
+                          description: Platform-specific customer identifier
                           example: 9f84e0c2a72c4fa
-                        userType:
+                        customerType:
                           type: string
                           enum:
                             - BUSINESS
-                          description: User type
+                          description: Customer type
                         kycUrl:
                           type: string
                           description: A kyc url to be shared with your business customer if kyc needs to be completed
                           example: https://example.com/kyc
               discriminator:
-                propertyName: userType
+                propertyName: customerType
                 mapping:
-                  INDIVIDUAL: '#/components/schemas/IndividualUserUpdate'
-                  BUSINESS: '#/components/schemas/BusinessUserUpdate'
+                  INDIVIDUAL: '#/components/schemas/IndividualCustomerUpdate'
+                  BUSINESS: '#/components/schemas/BusinessCustomerUpdate'
             examples:
-              individualUserWithUmaAddress:
+              individualCustomerWithUmaAddress:
                 summary: Create individual customer with UMA address, including deposit bank account information.
                 value:
                   umaAddress: $jane.doe@uma.domain.com
-                  platformUserId: 7b3c5a89d2f1e0
-                  userType: INDIVIDUAL
+                  platformCustomerId: 7b3c5a89d2f1e0
+                  customerType: INDIVIDUAL
                   fullName: Jane Doe
                   birthDate: '1992-03-25'
                   address:
@@ -227,11 +227,11 @@ paths:
                     accountCategory: CHECKING
                     bankName: Chase Bank
                     platformAccountId: chase_primary_1234
-              individualUserWithoutUmaAddress:
+              individualCustomerWithoutUmaAddress:
                 summary: Create individual customer without UMA address (will be generated)
                 value:
-                  platformUserId: 7b3c5a89d2f1e0
-                  userType: INDIVIDUAL
+                  platformCustomerId: 7b3c5a89d2f1e0
+                  customerType: INDIVIDUAL
                   fullName: John Smith
                   birthDate: '1985-06-10'
                   address:
@@ -240,11 +240,11 @@ paths:
                     state: OR
                     postalCode: '97201'
                     country: US
-              businessUser:
+              businessCustomer:
                 summary: Create business customer example
                 value:
-                  platformUserId: 6e4d2c0b8a9f3
-                  userType: BUSINESS
+                  platformCustomerId: 6e4d2c0b8a9f3
+                  customerType: BUSINESS
                   businessInfo:
                     legalName: Acme Corporation
                     registrationNumber: BRN-456789123
@@ -263,14 +263,14 @@ paths:
               schema:
                 oneOf:
                   - title: Individual Customer
-                    $ref: '#/components/schemas/IndividualUser'
+                    $ref: '#/components/schemas/IndividualCustomer'
                   - title: Business Customer
-                    $ref: '#/components/schemas/BusinessUser'
+                    $ref: '#/components/schemas/BusinessCustomer'
                 discriminator:
-                  propertyName: userType
+                  propertyName: customerType
                   mapping:
-                    INDIVIDUAL: '#/components/schemas/IndividualUser'
-                    BUSINESS: '#/components/schemas/BusinessUser'
+                    INDIVIDUAL: '#/components/schemas/IndividualCustomer'
+                    BUSINESS: '#/components/schemas/BusinessCustomer'
         '400':
           description: Bad request
           content:
@@ -306,15 +306,15 @@ paths:
       description: |
         Retrieve a list of customers with optional filtering parameters. Returns all customers that match
         the specified filters. If no filters are provided, returns all customers (paginated).
-      operationId: listUsers
+      operationId: listCustomers
       tags:
         - Customers
       security:
         - BasicAuth: []
       parameters:
-        - name: platformUserId
+        - name: platformCustomerId
           in: query
-          description: Filter by platform-specific user identifier
+          description: Filter by platform-specific customer identifier
           required: false
           schema:
             type: string
@@ -324,12 +324,12 @@ paths:
           required: false
           schema:
             type: string
-        - name: userType
+        - name: customerType
           in: query
-          description: Filter by user type
+          description: Filter by customer type
           required: false
           schema:
-            $ref: '#/components/schemas/UserType'
+            $ref: '#/components/schemas/CustomerType'
         - name: createdAfter
           in: query
           description: Filter customers created after this timestamp (inclusive)
@@ -396,14 +396,14 @@ paths:
                     items:
                       oneOf:
                         - title: Individual Customer
-                          $ref: '#/components/schemas/IndividualUser'
+                          $ref: '#/components/schemas/IndividualCustomer'
                         - title: Business Customer
-                          $ref: '#/components/schemas/BusinessUser'
+                          $ref: '#/components/schemas/BusinessCustomer'
                       discriminator:
-                        propertyName: userType
+                        propertyName: customerType
                         mapping:
-                          INDIVIDUAL: '#/components/schemas/IndividualUser'
-                          BUSINESS: '#/components/schemas/BusinessUser'
+                          INDIVIDUAL: '#/components/schemas/IndividualCustomer'
+                          BUSINESS: '#/components/schemas/BusinessCustomer'
                   hasMore:
                     type: boolean
                     description: Indicates if more results are available beyond this page
@@ -442,7 +442,7 @@ paths:
     get:
       summary: Get customer by ID
       description: Retrieve a customer by their system-generated ID
-      operationId: getUserById
+      operationId: getCustomerById
       tags:
         - Customers
       security:
@@ -455,14 +455,14 @@ paths:
               schema:
                 oneOf:
                   - title: Individual Customer
-                    $ref: '#/components/schemas/IndividualUser'
+                    $ref: '#/components/schemas/IndividualCustomer'
                   - title: Business Customer
-                    $ref: '#/components/schemas/BusinessUser'
+                    $ref: '#/components/schemas/BusinessCustomer'
                 discriminator:
-                  propertyName: userType
+                  propertyName: customerType
                   mapping:
-                    INDIVIDUAL: '#/components/schemas/IndividualUser'
-                    BUSINESS: '#/components/schemas/BusinessUser'
+                    INDIVIDUAL: '#/components/schemas/IndividualCustomer'
+                    BUSINESS: '#/components/schemas/BusinessCustomer'
         '401':
           description: Unauthorized
           content:
@@ -484,7 +484,7 @@ paths:
     patch:
       summary: Update customer by ID
       description: Update a customer's metadata by their system-generated ID
-      operationId: updateUserById
+      operationId: updateCustomerById
       tags:
         - Customers
       security:
@@ -496,19 +496,19 @@ paths:
             schema:
               oneOf:
                 - title: Individual cCstomer Update
-                  $ref: '#/components/schemas/IndividualUserUpdate'
+                  $ref: '#/components/schemas/IndividualCustomerUpdate'
                 - title: Business Customer Update
-                  $ref: '#/components/schemas/BusinessUserUpdate'
+                  $ref: '#/components/schemas/BusinessCustomerUpdate'
               discriminator:
-                propertyName: userType
+                propertyName: customerType
                 mapping:
-                  INDIVIDUAL: '#/components/schemas/IndividualUserUpdate'
-                  BUSINESS: '#/components/schemas/BusinessUserUpdate'
+                  INDIVIDUAL: '#/components/schemas/IndividualCustomerUpdate'
+                  BUSINESS: '#/components/schemas/BusinessCustomerUpdate'
             examples:
               individualUpdate:
                 summary: Update individual customer example
                 value:
-                  userType: INDIVIDUAL
+                  customerType: INDIVIDUAL
                   fullName: John Smith
                   birthDate: '1985-06-15'
                   address:
@@ -527,7 +527,7 @@ paths:
               businessUpdate:
                 summary: Update business customer example
                 value:
-                  userType: BUSINESS
+                  customerType: BUSINESS
                   businessInfo:
                     legalName: New Tech Solutions LLC
                     registrationNumber: BRN-987654321
@@ -553,14 +553,14 @@ paths:
               schema:
                 oneOf:
                   - title: Individual Customer
-                    $ref: '#/components/schemas/IndividualUser'
+                    $ref: '#/components/schemas/IndividualCustomer'
                   - title: Business Customer
-                    $ref: '#/components/schemas/BusinessUser'
+                    $ref: '#/components/schemas/BusinessCustomer'
                 discriminator:
-                  propertyName: userType
+                  propertyName: customerType
                   mapping:
-                    INDIVIDUAL: '#/components/schemas/IndividualUser'
-                    BUSINESS: '#/components/schemas/BusinessUser'
+                    INDIVIDUAL: '#/components/schemas/IndividualCustomer'
+                    BUSINESS: '#/components/schemas/BusinessCustomer'
         '400':
           description: Bad request
           content:
@@ -588,7 +588,7 @@ paths:
     delete:
       summary: Delete customer by ID
       description: Delete a customer by their system-generated ID
-      operationId: deleteUserById
+      operationId: deleteCustomerById
       tags:
         - Customers
       security:
@@ -601,14 +601,14 @@ paths:
               schema:
                 oneOf:
                   - title: Individual Customer
-                    $ref: '#/components/schemas/IndividualUser'
+                    $ref: '#/components/schemas/IndividualCustomer'
                   - title: Business Customer
-                    $ref: '#/components/schemas/BusinessUser'
+                    $ref: '#/components/schemas/BusinessCustomer'
                 discriminator:
-                  propertyName: userType
+                  propertyName: customerType
                   mapping:
-                    INDIVIDUAL: '#/components/schemas/IndividualUser'
-                    BUSINESS: '#/components/schemas/BusinessUser'
+                    INDIVIDUAL: '#/components/schemas/IndividualCustomer'
+                    BUSINESS: '#/components/schemas/BusinessCustomer'
         '401':
           description: Unauthorized
           content:
@@ -644,7 +644,7 @@ paths:
     get:
       summary: Get a kyc link for onboarding a customer
       description: Generate a hosted kyc link to onboard a customer
-      operationId: getKycLinkForUser
+      operationId: getKycLinkForCustomer
       tags:
         - Customers
       security:
@@ -859,7 +859,7 @@ paths:
                 value:
                   currency: USD
                   platformAccountId: ext_acc_123456
-                  customerId: User:019542f5-b3e7-1d02-0000-000000000001
+                  customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
                   beneficiary:
                     counterPartyType: INDIVIDUAL
                     fullName: John Doe
@@ -876,7 +876,7 @@ paths:
                 value:
                   currency: BTC
                   platformAccountId: spark_wallet_001
-                  customerId: User:019542f5-b3e7-1d02-0000-000000000001
+                  customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
                   beneficiary:
                     counterPartyType: INDIVIDUAL
                     fullName: Jane Smith
@@ -1048,7 +1048,7 @@ paths:
                 customerId:
                   type: string
                   description: The ID of the customer initiating the transfer
-                  example: User:019542f5-b3e7-1d02-0000-000000000001
+                  example: Customer:019542f5-b3e7-1d02-0000-000000000001
                 source:
                   type: object
                   required:
@@ -1073,7 +1073,7 @@ paths:
               transferIn:
                 summary: Transfer from external to internal account
                 value:
-                  customerId: User:019542f5-b3e7-1d02-0000-000000000001
+                  customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
                   source:
                     accountId: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
                   destination:
@@ -1761,7 +1761,7 @@ paths:
                   type: string
                   description: Unique identifier for the prior receiver uma address lookup request.
                   example: Lookup:019542f5-b3e7-1d02-0000-000000000009
-                senderUserInfo:
+                senderCustomerInfo:
                   type: object
                   additionalProperties: true
                   description: |
@@ -1881,7 +1881,7 @@ paths:
       summary: List transactions
       description: |
         Retrieve a paginated list of transactions with optional filtering.
-        The transactions can be filtered by customer ID, platform user ID, UMA address, 
+        The transactions can be filtered by customer ID, platform customer ID, UMA address, 
         date range, status, and transaction type.
       operationId: listTransactions
       tags:
@@ -1895,9 +1895,9 @@ paths:
           required: false
           schema:
             type: string
-        - name: platformUserId
+        - name: platformCustomerId
           in: query
-          description: Filter by platform-specific user ID
+          description: Filter by platform-specific customer ID
           required: false
           schema:
             type: string
@@ -2085,10 +2085,10 @@ paths:
             schema:
               type: object
               properties:
-                receiverUserInfo:
+                receiverCustomerInfo:
                   type: object
                   additionalProperties: true
-                  description: Information about the recipient, provided by the platform if requested in the original webhook via `requestedReceiverUserInfoFields`.
+                  description: Information about the recipient, provided by the platform if requested in the original webhook via `requestedReceiverCustomerInfoFields`.
       responses:
         '200':
           description: Payment approved successfully
@@ -2231,15 +2231,15 @@ paths:
       summary: Upload customers via CSV file
       description: |
         Upload a CSV file containing customer information for bulk creation. The CSV file should follow
-        a specific format with required and optional columns based on user type.
+        a specific format with required and optional columns based on customer type.
 
         ### CSV Format
         The CSV file should have the following columns:
 
         Required columns for all customers:
         - umaAddress: The customer's UMA address (e.g., $john.doe@uma.domain.com)
-        - platformUserId: Your platform's unique identifier for the customer
-        - userType: Either "INDIVIDUAL" or "BUSINESS"
+        - platformCustomerId: Your platform's unique identifier for the customer
+        - customerType: Either "INDIVIDUAL" or "BUSINESS"
 
         Required columns for individual customers:
         - fullName: Individual's full name
@@ -2293,18 +2293,18 @@ paths:
         - iban: International Bank Account Number
         - swiftBic: SWIFT/BIC code (8 or 11 characters)
 
-        See the UserBankAccountInfo and UserInfo schemas for more details on the required and optional fields.
+        See the CustomerBankAccountInfo and CustomerInfo schemas for more details on the required and optional fields.
 
         ### Example CSV
         ```csv
-        umaAddress,platformUserId,userType,fullName,birthDate,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId,businessLegalName,routingNumber,accountCategory
-        john.doe@uma.domain.com,user123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,Chase Bank,chase_primary_1234,,222888888,SAVINGS
+        umaAddress,platformCustomerId,customerType,fullName,birthDate,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId,businessLegalName,routingNumber,accountCategory
+        john.doe@uma.domain.com,customer123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,Chase Bank,chase_primary_1234,,222888888,SAVINGS
         acme@uma.domain.com,biz456,BUSINESS,,,400 Commerce Way,Austin,TX,78701,US,US_ACCOUNT,987654321,Bank of America,boa_business_5678,Acme Corp,121212121,CHECKING
         ```
 
         The upload process is asynchronous and will return a job ID that can be used to track progress.
-        You can monitor the job status using the `/users/bulk/jobs/{jobId}` endpoint.
-      operationId: uploadUsersCsv
+        You can monitor the job status using the `/customers/bulk/jobs/{jobId}` endpoint.
+      operationId: uploadCustomersCsv
       tags:
         - Customers
       security:
@@ -2366,7 +2366,7 @@ paths:
         - Progress statistics
         - Detailed error information for failed entries
         - Completion timestamp when finished
-      operationId: getBulkUserImportJob
+      operationId: getBulkCustomerImportJob
       tags:
         - Customers
       security:
@@ -2384,7 +2384,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BulkUserImportJob'
+                $ref: '#/components/schemas/BulkCustomerImportJob'
         '401':
           description: Unauthorized
           content:
@@ -2748,7 +2748,7 @@ paths:
                 customerId:
                   type: string
                   description: System ID of the receiver (optional if receiverUmaAddress is provided)
-                  example: User:019542f5-b3e7-1d02-0000-000000000001
+                  example: Customer:019542f5-b3e7-1d02-0000-000000000001
                 receivingCurrencyCode:
                   type: string
                   description: The currency code for the receiving amount
@@ -3179,15 +3179,15 @@ webhooks:
                         name: United States Dollar
                         symbol: $
                         decimals: 2
-                    customerId: User:019542f5-b3e7-1d02-0000-000000000001
-                    platformUserId: 18d3e5f7b4a9c2
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    platformCustomerId: 18d3e5f7b4a9c2
                     reconciliationInstructions:
                       reference: REF-123456789
                     counterpartyInformation:
                       FULL_NAME: John Sender
                       BIRTH_DATE: '1985-06-15'
                       NATIONALITY: US
-                  requestedReceiverUserInfoFields:
+                  requestedReceiverCustomerInfoFields:
                     - name: NATIONALITY
                       mandatory: true
                     - name: ADDRESS
@@ -3211,8 +3211,8 @@ webhooks:
                         name: United States Dollar
                         symbol: $
                         decimals: 2
-                    customerId: User:019542f5-b3e7-1d02-0000-000000000001
-                    platformUserId: 18d3e5f7b4a9c2
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    platformCustomerId: 18d3e5f7b4a9c2
                     settledAt: '2023-08-15T14:30:00Z'
                     createdAt: '2023-08-15T14:25:18Z'
                     description: Payment for services
@@ -3226,7 +3226,7 @@ webhooks:
           description: |
             Webhook received successfully. 
             For PENDING transactions, this indicates approval to proceed with the payment.
-            If `requestedReceiverUserInfoFields` were present in the webhook request, the corresponding fields for the recipient must be included in this response in the `receiverUserInfo` object.
+            If `requestedReceiverCustomerInfoFields` were present in the webhook request, the corresponding fields for the recipient must be included in this response in the `receiverCustomerInfo` object.
           content:
             application/json:
               schema:
@@ -3323,8 +3323,8 @@ webhooks:
                         name: Euro
                         symbol: €
                         decimals: 2
-                    customerId: User:019542f5-b3e7-1d02-0000-000000000001
-                    platformUserId: 18d3e5f7b4a9c2
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    platformCustomerId: 18d3e5f7b4a9c2
                     settlementTime: '2023-08-15T14:30:00Z'
                     createdAt: '2023-08-15T14:25:18Z'
                     description: 'Payment for invoice #1234'
@@ -3357,8 +3357,8 @@ webhooks:
                         name: United States Dollar
                         symbol: $
                         decimals: 2
-                    customerId: User:019542f5-b3e7-1d02-0000-000000000001
-                    platformUserId: 18d3e5f7b4a9c2
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    platformCustomerId: 18d3e5f7b4a9c2
                     createdAt: '2023-08-15T14:25:18Z'
                     quoteId: Quote:019542f5-b3e7-1d02-0000-000000000006
                     paymentInstructions:
@@ -3483,7 +3483,7 @@ webhooks:
               completedUpload:
                 summary: Successful bulk upload completion
                 value:
-                  bulkUserImportJob:
+                  bulkCustomerImportJob:
                     jobId: Job:019542f5-b3e7-1d02-0000-000000000006
                     status: COMPLETED
                     progress:
@@ -3498,7 +3498,7 @@ webhooks:
               failedUpload:
                 summary: Failed bulk upload
                 value:
-                  bulkUserImportJob:
+                  bulkCustomerImportJob:
                     jobId: Job:019542f5-b3e7-1d02-0000-000000000006
                     status: FAILED
                     progress:
@@ -3656,7 +3656,7 @@ webhooks:
               kycApprovedWebhook:
                 summary: When a customer kyc has been approved
                 value:
-                  customerId: User:019542f5-b3e7-1d02-0000-000000000001
+                  customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
                   kycStatus: APPROVED
                   type: KYC_STATUS
                   timestamp: '2023-08-15T14:32:00Z'
@@ -3715,7 +3715,7 @@ components:
         - $ref: '#/components/schemas/Error424'
         - $ref: '#/components/schemas/Error500'
         - $ref: '#/components/schemas/Error501'
-    UserInfoFieldName:
+    CustomerInfoFieldName:
       type: string
       enum:
         - FULL_NAME
@@ -3737,7 +3737,7 @@ components:
       type: object
       properties:
         name:
-          $ref: '#/components/schemas/UserInfoFieldName'
+          $ref: '#/components/schemas/CustomerInfoFieldName'
         mandatory:
           type: boolean
           description: Whether the field is mandatory
@@ -3782,19 +3782,19 @@ components:
               mandatory: true
             - name: NATIONALITY
               mandatory: true
-        umaProviderRequiredUserFields:
+        umaProviderRequiredCustomerFields:
           type: array
           items:
-            $ref: '#/components/schemas/UserInfoFieldName'
+            $ref: '#/components/schemas/CustomerInfoFieldName'
           description: List of customer info field names that are required by the underlying UMA provider when creating a customer for this currency. These fields must be supplied when creating or updating a customer if this currency is intended to be used by that customer. If no fields are required, this field is omitted.
           readOnly: true
           example:
             - NATIONALITY
             - BIRTH_DATE
-        umaProviderRequiredCounterpartyUserFields:
+        umaProviderRequiredCounterpartyCustomerFields:
           type: array
           items:
-            $ref: '#/components/schemas/UserInfoFieldName'
+            $ref: '#/components/schemas/CustomerInfoFieldName'
           description: List of fields that are required by the underlying UMA provider for this currency. If the counterparty does not provide these fields, quote requests will fail.
           readOnly: true
           example:
@@ -4023,16 +4023,16 @@ components:
         details:
           type: object
           description: Additional error details
-    UserType:
+    CustomerType:
       type: string
       enum:
         - INDIVIDUAL
         - BUSINESS
       description: Whether the customer is an individual or a business entity
       example: INDIVIDUAL
-    IndividualUser:
+    IndividualCustomer:
       allOf:
-        - $ref: '#/components/schemas/User'
+        - $ref: '#/components/schemas/Customer'
         - type: object
           properties:
             fullName:
@@ -4050,28 +4050,28 @@ components:
               example: US
             address:
               $ref: '#/components/schemas/Address'
-    User:
+    Customer:
       type: object
       required:
         - umaAddress
-        - platformUserId
-        - userType
+        - platformCustomerId
+        - customerType
       properties:
         id:
           type: string
           description: System-generated unique identifier
           readOnly: true
-          example: User:019542f5-b3e7-1d02-0000-000000000001
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
         umaAddress:
           type: string
           description: Full UMA address (always present in responses, even if system-generated).
           example: $john.doe@uma.domain.com
-        platformUserId:
+        platformCustomerId:
           type: string
-          description: Platform-specific user identifier
+          description: Platform-specific customer identifier
           example: 9f84e0c2a72c4fa
-        userType:
-          $ref: '#/components/schemas/UserType'
+        customerType:
+          $ref: '#/components/schemas/CustomerType'
         kycStatus:
           $ref: '#/components/schemas/KycStatus'
         createdAt:
@@ -4092,10 +4092,10 @@ components:
           example: false
           readOnly: true
       discriminator:
-        propertyName: userType
+        propertyName: customerType
         mapping:
-          INDIVIDUAL: '#/components/schemas/IndividualUser'
-          BUSINESS: '#/components/schemas/BusinessUser'
+          INDIVIDUAL: '#/components/schemas/IndividualCustomer'
+          BUSINESS: '#/components/schemas/BusinessCustomer'
     Address:
       type: object
       required:
@@ -4128,75 +4128,51 @@ components:
           description: Country code (ISO 3166-1 alpha-2)
           example: US
     UltimateBeneficialOwner:
+      type: object
+      required:
+        - fullName
+        - individualType
+      properties:
+        fullName:
+          type: string
+          description: Individual's full name
+          example: John Michael Doe
+        emailAddress:
+          type: string
+          format: email
+          description: Email address of the individual
+          example: example@test.com
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+          example: '1990-01-15'
+        nationality:
+          type: string
+          description: Country code (ISO 3166-1 alpha-2)
+          example: US
+        address:
+          $ref: '#/components/schemas/Address'
+        individualType:
+          type: string
+          enum:
+            - OFFICER
+            - BENEFICIAL_OWNER
+            - CONTROL_PERSON
+            - AUTHORIZED_PERSON
+          description: Type of individual in the corporation
+          example: BENEFICIAL_OWNER
+        percentageOwnership:
+          type: number
+          description: Percent of ownership when individual type is benificial owner
+          example: 10
+        title:
+          type: string
+          description: Title at company
+          example: CEO, COO, President
+    BusinessCustomer:
       allOf:
-        - $ref: '#/components/schemas/User'
-        - type: object
-          required:
-            - fullName
-            - individualType
-          properties:
-            id:
-              type: string
-              description: System-generated unique identifier
-              readOnly: true
-              example: UBOUser:019542f5-b3e7-1d02-0000-000000000001
-            fullName:
-              type: string
-              description: Individual's full name
-              example: John Michael Doe
-            emailAddress:
-              type: string
-              format: email
-              description: Email address of the individual
-              example: example@test.com
-            birthDate:
-              type: string
-              format: date
-              description: Date of birth in ISO 8601 format (YYYY-MM-DD)
-              example: '1990-01-15'
-            nationality:
-              type: string
-              description: Country code (ISO 3166-1 alpha-2)
-              example: US
-            address:
-              $ref: '#/components/schemas/Address'
-            individualType:
-              type: string
-              enum:
-                - OFFICER
-                - BENEFICIAL_OWNER
-                - CONTROL_PERSON
-                - AUTHORIZED_PERSON
-              description: Type of individual in the corporation
-              example: BENEFICIAL_OWNER
-            percentageOwnership:
-              type: number
-              description: Percent of ownership when individual type is benificial owner
-              example: 10
-            title:
-              type: string
-              description: Title at company
-              example: CEO, COO, President
-            createdAt:
-              type: string
-              format: date-time
-              description: Creation timestamp
-              readOnly: true
-              example: '2023-07-21T17:32:28Z'
-            updatedAt:
-              type: string
-              format: date-time
-              description: Last update timestamp
-              readOnly: true
-              example: '2023-07-21T17:32:28Z'
-            isDeleted:
-              type: boolean
-              description: Whether the customer is marked as deleted
-              example: false
-              readOnly: true
-    BusinessUser:
-      allOf:
-        - $ref: '#/components/schemas/User'
+        - $ref: '#/components/schemas/Customer'
         - type: object
           properties:
             address:
@@ -4333,18 +4309,18 @@ components:
           discriminator:
             propertyName: accountType
             mapping:
-              CLABE: '#/components/schemas/UserClabeAccountInfo'
-              US_ACCOUNT: '#/components/schemas/UserUsAccountInfo'
-              PIX: '#/components/schemas/UserPixAccountInfo'
-              IBAN: '#/components/schemas/UserIbanAccountInfo'
-              FBO: '#/components/schemas/UserFboAccountInfo'
-              UPI: '#/components/schemas/UserUpiAccountInfo'
-              SPARK_WALLET: '#/components/schemas/UserSparkWalletInfo'
-    UserClabeAccountInfo:
+              CLABE: '#/components/schemas/CustomerClabeAccountInfo'
+              US_ACCOUNT: '#/components/schemas/CustomerUsAccountInfo'
+              PIX: '#/components/schemas/CustomerPixAccountInfo'
+              IBAN: '#/components/schemas/CustomerIbanAccountInfo'
+              FBO: '#/components/schemas/CustomerFboAccountInfo'
+              UPI: '#/components/schemas/CustomerUpiAccountInfo'
+              SPARK_WALLET: '#/components/schemas/CustomerSparkWalletInfo'
+    CustomerClabeAccountInfo:
       allOf:
         - $ref: '#/components/schemas/ClabeAccountInfo'
         - $ref: '#/components/schemas/BankAccountBase'
-    UserUsAccountInfo:
+    CustomerUsAccountInfo:
       allOf:
         - $ref: '#/components/schemas/UsAccountInfo'
         - $ref: '#/components/schemas/BankAccountBase'
@@ -4389,7 +4365,7 @@ components:
           type: string
           description: Name of the account holder
           example: John Doe
-    UserPixAccountInfo:
+    CustomerPixAccountInfo:
       allOf:
         - $ref: '#/components/schemas/PixAccountInfo'
         - $ref: '#/components/schemas/BankAccountBase'
@@ -4424,11 +4400,11 @@ components:
           type: string
           description: Name of the account holder
           example: John Doe
-    UserIbanAccountInfo:
+    CustomerIbanAccountInfo:
       allOf:
         - $ref: '#/components/schemas/IbanAccountInfo'
         - $ref: '#/components/schemas/BankAccountBase'
-    UserFboAccountInfo:
+    CustomerFboAccountInfo:
       allOf:
         - $ref: '#/components/schemas/BankAccountBase'
         - type: object
@@ -4452,12 +4428,12 @@ components:
         vpa:
           type: string
           description: Virtual Payment Address for UPI payments
-          example: someuser@okbank
+          example: somecustomers@okbank
         accountHolderName:
           type: string
           description: Name of the account holder
           example: John Doe
-    UserUpiAccountInfo:
+    CustomerUpiAccountInfo:
       allOf:
         - $ref: '#/components/schemas/UpiAccountInfo'
         - $ref: '#/components/schemas/BankAccountBase'
@@ -4475,44 +4451,44 @@ components:
           type: string
           description: Spark wallet address
           example: sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
-    UserSparkWalletInfo:
+    CustomerSparkWalletInfo:
       allOf:
         - $ref: '#/components/schemas/SparkWalletInfo'
         - $ref: '#/components/schemas/BankAccountBase'
-    UserBankAccountInfo:
+    CustomerBankAccountInfo:
       oneOf:
         - title: US Bank Account
-          $ref: '#/components/schemas/UserUsAccountInfo'
+          $ref: '#/components/schemas/CustomerUsAccountInfo'
         - title: CLABE Account
-          $ref: '#/components/schemas/UserClabeAccountInfo'
+          $ref: '#/components/schemas/CustomerClabeAccountInfo'
         - title: PIX Account
-          $ref: '#/components/schemas/UserPixAccountInfo'
+          $ref: '#/components/schemas/CustomerPixAccountInfo'
         - title: IBAN Account
-          $ref: '#/components/schemas/UserIbanAccountInfo'
+          $ref: '#/components/schemas/CustomerIbanAccountInfo'
         - title: FBO Account
-          $ref: '#/components/schemas/UserFboAccountInfo'
+          $ref: '#/components/schemas/CustomerFboAccountInfo'
         - title: UPI Account
-          $ref: '#/components/schemas/UserUpiAccountInfo'
+          $ref: '#/components/schemas/CustomerUpiAccountInfo'
         - title: Spark Wallet
-          $ref: '#/components/schemas/UserSparkWalletInfo'
+          $ref: '#/components/schemas/CustomerSparkWalletInfo'
       discriminator:
         propertyName: accountType
         mapping:
-          US_ACCOUNT: '#/components/schemas/UserUsAccountInfo'
-          CLABE: '#/components/schemas/UserClabeAccountInfo'
-          PIX: '#/components/schemas/UserPixAccountInfo'
-          IBAN: '#/components/schemas/UserIbanAccountInfo'
-          FBO: '#/components/schemas/UserFboAccountInfo'
-          UPI: '#/components/schemas/UserUpiAccountInfo'
-          SPARK_WALLET: '#/components/schemas/UserSparkWalletInfo'
-    IndividualUserUpdate:
+          US_ACCOUNT: '#/components/schemas/CustomerUsAccountInfo'
+          CLABE: '#/components/schemas/CustomerClabeAccountInfo'
+          PIX: '#/components/schemas/CustomerPixAccountInfo'
+          IBAN: '#/components/schemas/CustomerIbanAccountInfo'
+          FBO: '#/components/schemas/CustomerFboAccountInfo'
+          UPI: '#/components/schemas/CustomerUpiAccountInfo'
+          SPARK_WALLET: '#/components/schemas/CustomerSparkWalletInfo'
+    IndividualCustomerUpdate:
       type: object
       properties:
-        userType:
+        customerType:
           type: string
           enum:
             - INDIVIDUAL
-          description: User type
+          description: Customer type
         umaAddress:
           type: string
           description: |
@@ -4535,19 +4511,19 @@ components:
         address:
           $ref: '#/components/schemas/Address'
         bankAccountInfo:
-          $ref: '#/components/schemas/UserBankAccountInfo'
+          $ref: '#/components/schemas/CustomerBankAccountInfo'
           description: |
             Optional bank account information for a default receiving account where incoming payments will be deposited.
             This field should only be used by platforms that are regulated financial institutions and can directly
             receive incoming funds. Other platforms should add external accounts instead.
-    BusinessUserUpdate:
+    BusinessCustomerUpdate:
       type: object
       properties:
-        userType:
+        customerType:
           type: string
           enum:
             - BUSINESS
-          description: User type
+          description: Customer type
         umaAddress:
           type: string
           description: Optional UMA address identifier. If not provided, will be generated by the system.
@@ -4570,7 +4546,7 @@ components:
         address:
           $ref: '#/components/schemas/Address'
         bankAccountInfo:
-          $ref: '#/components/schemas/UserBankAccountInfo'
+          $ref: '#/components/schemas/CustomerBankAccountInfo'
         beneficialOwners:
           type: array
           items:
@@ -4810,7 +4786,7 @@ components:
         customerId:
           type: string
           description: The ID of the customer associated with the internal account
-          example: User:019542f5-b3e7-1d02-0000-000000000001
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
         balance:
           $ref: '#/components/schemas/CurrencyAmount'
         fundingPaymentInstructions:
@@ -4842,7 +4818,7 @@ components:
         - counterPartyType
       properties:
         counterPartyType:
-          $ref: '#/components/schemas/UserType'
+          $ref: '#/components/schemas/CustomerType'
       discriminator:
         propertyName: counterPartyType
         mapping:
@@ -4927,7 +4903,7 @@ components:
               INDIVIDUAL_COUNTERPARTY: '#/components/schemas/BusinessCounterParty'
               BUSINESS_COUNTERPARTY: '#/components/schemas/IndividualCounterParty'
         accountInfo:
-          $ref: '#/components/schemas/UserBankAccountInfo'
+          $ref: '#/components/schemas/CustomerBankAccountInfo'
     ExternalAccountCreateRequest:
       type: object
       required:
@@ -4947,7 +4923,7 @@ components:
               INDIVIDUAL_COUNTERPARTY: '#/components/schemas/BusinessCounterParty'
               BUSINESS_COUNTERPARTY: '#/components/schemas/IndividualCounterParty'
         accountInfo:
-          $ref: '#/components/schemas/UserBankAccountInfo'
+          $ref: '#/components/schemas/CustomerBankAccountInfo'
     TransferStatus:
       type: string
       enum:
@@ -4966,7 +4942,7 @@ components:
         customerId:
           type: string
           description: The ID of the customer
-          example: User:019542f5-b3e7-1d02-0000-000000000001
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
         source:
           type: object
           properties:
@@ -5211,7 +5187,7 @@ components:
                 customerId:
                   type: string
                   description: Source customer ID
-                  example: User:019542f5-b3e7-1d02-0000-000000000009
+                  example: Customer:019542f5-b3e7-1d02-0000-000000000009
                 currency:
                   type: string
                   description: Currency code for the source
@@ -5342,7 +5318,7 @@ components:
           type: string
           description: |-
             Lookup ID from a previous receiver lookup request. If provided, this can make the quote creation more efficient by reusing cached lookup data.
-            NOTE: This is required for UMA destinations due to counterparty institution requirements. See `senderUserInfo` for more information.
+            NOTE: This is required for UMA destinations due to counterparty institution requirements. See `senderCustomerInfo` for more information.
           example: Lookup:019542f5-b3e7-1d02-0000-000000000009
         source:
           oneOf:
@@ -5365,7 +5341,7 @@ components:
                 customerId:
                   type: string
                   description: Source customer ID
-                  example: User:019542f5-b3e7-1d02-0000-000000000009
+                  example: Customer:019542f5-b3e7-1d02-0000-000000000009
                 currency:
                   type: string
                   description: Currency code for the source
@@ -5431,7 +5407,7 @@ components:
           type: string
           description: Optional description/memo for the transfer
           example: 'Invoice #1234 payment'
-        senderUserInfo:
+        senderCustomerInfo:
           type: object
           additionalProperties: true
           description: |
@@ -5462,7 +5438,7 @@ components:
         - senderUmaAddress
         - receiverUmaAddress
         - customerId
-        - platformUserId
+        - platformCustomerId
       properties:
         id:
           type: string
@@ -5483,8 +5459,8 @@ components:
         customerId:
           type: string
           description: System ID of the customer (sender for outgoing, recipient for incoming)
-          example: User:019542f5-b3e7-1d02-0000-000000000001
-        platformUserId:
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        platformCustomerId:
           type: string
           description: Platform-specific ID of the customer (sender for outgoing, recipient for incoming)
           example: 18d3e5f7b4a9c2
@@ -5680,7 +5656,7 @@ components:
         response_body:
           type: string
           description: The raw body content returned by the webhook endpoint in response to the request
-    BulkUserImportJob:
+    BulkCustomerImportJob:
       type: object
       required:
         - jobId
@@ -5735,7 +5711,7 @@ components:
             properties:
               correlationId:
                 type: string
-                description: Platform user ID or row number for the failed entry
+                description: Platform customer ID or row number for the failed entry
                 example: biz456
               error:
                 $ref: '#/components/schemas/Error'
@@ -5936,11 +5912,11 @@ components:
               $ref: '#/components/schemas/WebhookType'
               description: Type of webhook event
               example: INCOMING_PAYMENT
-            requestedReceiverUserInfoFields:
+            requestedReceiverCustomerInfoFields:
               type: array
               items:
                 $ref: '#/components/schemas/CounterpartyFieldDefinition'
-              description: Information required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which Grid does not already have from initial user registration.
+              description: Information required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which Grid does not already have from initial customer registration.
     BaseWebhook:
       type: object
       required:
@@ -6006,10 +5982,10 @@ components:
         - $ref: '#/components/schemas/BaseWebhook'
         - type: object
           required:
-            - bulkUserImportJob
+            - bulkCustomerImportJob
           properties:
-            bulkUserImportJob:
-              $ref: '#/components/schemas/BulkUserImportJob'
+            bulkCustomerImportJob:
+              $ref: '#/components/schemas/BulkCustomerImportJob'
             type:
               $ref: '#/components/schemas/WebhookType'
               description: Type of webhook event
@@ -6040,16 +6016,16 @@ components:
             customerId:
               type: string
               description: System generated id of the customer
-              example: User:019542f5-b3e7-1d02-0000-000000000001
+              example: Customer:019542f5-b3e7-1d02-0000-000000000001
             kycStatus:
               $ref: '#/components/schemas/KycStatus'
     IncomingPaymentWebhookResponse:
       type: object
       properties:
-        receiverUserInfo:
+        receiverCustomerInfo:
           type: object
           additionalProperties: true
-          description: Information about the recipient, provided by the platform if requested in the webhook via `requestedReceiverUserInfoFields` and the payment is approved.
+          description: Information about the recipient, provided by the platform if requested in the webhook via `requestedReceiverCustomerInfoFields` and the payment is approved.
     IncomingPaymentWebhookForbiddenResponse:
       allOf:
         - $ref: '#/components/schemas/Error'

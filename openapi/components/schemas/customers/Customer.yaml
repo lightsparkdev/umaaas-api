@@ -1,24 +1,24 @@
 type: object
 required:
   - umaAddress
-  - platformUserId
-  - userType
+  - platformCustomerId
+  - customerType
 properties:
   id:
     type: string
     description: System-generated unique identifier
     readOnly: true
-    example: User:019542f5-b3e7-1d02-0000-000000000001
+    example: Customer:019542f5-b3e7-1d02-0000-000000000001
   umaAddress:
     type: string
     description: Full UMA address (always present in responses, even if system-generated).
     example: $john.doe@uma.domain.com
-  platformUserId:
+  platformCustomerId:
     type: string
-    description: Platform-specific user identifier
+    description: Platform-specific customer identifier
     example: 9f84e0c2a72c4fa
-  userType:
-    $ref: ./UserType.yaml
+  customerType:
+    $ref: ./CustomerType.yaml
   kycStatus:
     $ref: ./KycStatus.yaml
   createdAt:
@@ -39,7 +39,7 @@ properties:
     example: false
     readOnly: true
 discriminator:
-  propertyName: userType
+  propertyName: customerType
   mapping:
-    INDIVIDUAL: ./IndividualUser.yaml
-    BUSINESS: ./BusinessUser.yaml
+    INDIVIDUAL: ./IndividualCustomer.yaml
+    BUSINESS: ./BusinessCustomer.yaml

@@ -32,10 +32,10 @@ properties:
         mandatory: true
       - name: NATIONALITY
         mandatory: true
-  umaProviderRequiredUserFields:
+  umaProviderRequiredCustomerFields:
     type: array
     items:
-      $ref: ../users/UserInfoFieldName.yaml
+      $ref: ../customers/CustomerInfoFieldName.yaml
     description: >-
       List of customer info field names that are required by the underlying UMA
       provider when creating a customer for this currency. These fields must be
@@ -45,10 +45,10 @@ properties:
     example:
       - NATIONALITY
       - BIRTH_DATE
-  umaProviderRequiredCounterpartyUserFields:
+  umaProviderRequiredCounterpartyCustomerFields:
     type: array
     items:
-      $ref: ../users/UserInfoFieldName.yaml
+      $ref: ../customers/CustomerInfoFieldName.yaml
     description: >-
       List of fields that are required by the underlying UMA provider for this
       currency. If the counterparty does not provide these fields, quote

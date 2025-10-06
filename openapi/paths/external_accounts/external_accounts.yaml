@@ -106,7 +106,7 @@ post:
             value:
               currency: USD
               platformAccountId: ext_acc_123456
-              customerId: User:019542f5-b3e7-1d02-0000-000000000001
+              customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
               beneficiary:
                 counterPartyType: INDIVIDUAL
                 fullName: John Doe
@@ -123,7 +123,7 @@ post:
             value:
               currency: BTC
               platformAccountId: spark_wallet_001
-              customerId: User:019542f5-b3e7-1d02-0000-000000000001
+              customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
               beneficiary:
                 counterPartyType: INDIVIDUAL
                 fullName: Jane Smith

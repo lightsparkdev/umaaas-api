@@ -10,7 +10,7 @@ properties:
   vpa:
     type: string
     description: Virtual Payment Address for UPI payments
-    example: someuser@okbank
+    example: somecustomers@okbank
   accountHolderName:
     type: string
     description: Name of the account holder

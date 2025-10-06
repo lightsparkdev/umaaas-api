@@ -29,10 +29,10 @@ properties:
     discriminator:
       propertyName: accountType
       mapping:
-        CLABE: ./UserClabeAccountInfo.yaml
-        US_ACCOUNT: ./UserUsAccountInfo.yaml
-        PIX: ./UserPixAccountInfo.yaml
-        IBAN: ./UserIbanAccountInfo.yaml
-        FBO: ./UserFboAccountInfo.yaml
-        UPI: ./UserUpiAccountInfo.yaml
-        SPARK_WALLET: ./UserSparkWalletInfo.yaml
+        CLABE: ./CustomerClabeAccountInfo.yaml
+        US_ACCOUNT: ./CustomerUsAccountInfo.yaml
+        PIX: ./CustomerPixAccountInfo.yaml
+        IBAN: ./CustomerIbanAccountInfo.yaml
+        FBO: ./CustomerFboAccountInfo.yaml
+        UPI: ./CustomerUpiAccountInfo.yaml
+        SPARK_WALLET: ./CustomerSparkWalletInfo.yaml
