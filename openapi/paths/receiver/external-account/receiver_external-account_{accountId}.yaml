@@ -9,7 +9,7 @@ get:
     minimum and maximum amounts that can be sent.
   operationId: lookupExternalAccount
   tags:
-    - Cross-Currency Payments
+    - Cross-Currency Transfers
   security:
     - BasicAuth: []
   parameters:

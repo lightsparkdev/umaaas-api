@@ -21,14 +21,12 @@ tags:
     description: Internal account management endpoints for creating and managing internal accounts.
   - name: External Accounts
     description: External account management endpoints for creating and managing external bank accounts
-  - name: Transfer In
-    description: Endpoints for transferring funds from external accounts to internal accounts
-  - name: Transfer Out
-    description: Endpoints for transferring funds from internal accounts to external accounts
-  - name: Cross-Currency Payments
+  - name: Same-Currency Transfers
+    description: Endpoints for transferring funds between internal and external accounts with the same currency.
+  - name: Cross-Currency Transfers
     description: Endpoints for creating and confirming quotes for cross-currency transfers.
   - name: Transactions
-    description: Endpoints for retrieving transaction information
+    description: Endpoints for retrieving transaction information.
   - name: Webhooks
     description: Webhook endpoints and configuration for receiving notifications
   - name: Invitations
@@ -97,9 +95,9 @@ paths:
   /external-accounts:
     $ref: paths/external_accounts/external_accounts.yaml
   /transfer-in:
-    $ref: paths/transfer_in/transfer_in.yaml
+    $ref: paths/transfers/transfer_in.yaml
   /transfer-out:
-    $ref: paths/transfer_out/transfer_out.yaml
+    $ref: paths/transfers/transfer_out.yaml
   /receiver/uma/{receiverUmaAddress}:
     $ref: paths/receiver/uma/receiver_uma_{receiverUmaAddress}.yaml
   /receiver/external-account/{accountId}:
