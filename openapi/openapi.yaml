@@ -155,5 +155,7 @@ webhooks:
     $ref: webhooks/invitation-claimed.yaml
   kyc-status:
     $ref: webhooks/kyc-status.yaml
+  account-status:
+    $ref: webhooks/account.yaml
 security:
   - BasicAuth: []

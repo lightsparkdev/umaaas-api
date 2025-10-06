@@ -3423,7 +3423,7 @@ webhooks:
         This endpoint should be implemented by clients of the Grid API.
 
         ### Authentication
-        The webhook includes a signature in the `X-UMAaas-Signature` header that allows you to verify that the webhook was sent by UMAaas.
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by Grid.
         To verify the signature:
         1. Get the UMAaas public key provided to you during integration
         2. Decode the base64 signature from the header
@@ -3464,6 +3464,82 @@ webhooks:
                   type: KYC_STATUS
                   timestamp: '2023-08-15T14:32:00Z'
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000007
+      responses:
+        '200':
+          description: |
+            Webhook received successfully. 
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized - Signature validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '409':
+          description: Conflict - Webhook has already been processed (duplicate webhookId)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+  account-status:
+    post:
+      summary: Account status notification webhook
+      description: |
+        Webhook that is called when the balance of an account changes 
+        This endpoint should be implemented by clients of the Grid API.
+
+        ### Authentication
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by Grid.
+        To verify the signature:
+        1. Get the Grid public key provided to you during integration
+        2. Decode the base64 signature from the header
+        3. Create a SHA-256 hash of the request body
+        4. Verify the signature using the public key and the hash
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+        ### Account status 
+        When the balance of an internal account changes, we will push a notification with information on the account, the new balance, and who the account belongs to.
+      operationId: accountStatusWebhook
+      tags:
+        - Webhooks
+      security:
+        - WebhookSignature: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountStatusWebhook'
+            examples:
+              balanceDecrease:
+                summary: A transaction just cleared a customer account and the balance has decreased
+                value:
+                  account:
+                    accountId: Account:019542f5-b3e7-1d02-0000-000000000005
+                    oldBalance:
+                      amount: 50000
+                      currency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                      newBalance:
+                        amount: 10000
+                        currency:
+                          code: USD
+                          name: United States Dollar
+                          symbol: $
+                          decimals: 2
+                  customerId: User:019542f5-b3e7-1d02-0000-000000000001
+                  timestamp: '2023-08-15T14:32:00Z'
+                  webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000007
+                  type: ACCOUNT_STATUS
       responses:
         '200':
           description: |
@@ -4012,7 +4088,6 @@ components:
         - CANCELED
         - MANUALLY_APPROVED
         - MANUALLY_REJECTED
-        - NOT_STARTED
       description: The current kyc status of a customer
       example: ACCEPTED
     BankAccountType:
@@ -5769,6 +5844,7 @@ components:
         - BULK_UPLOAD
         - INVITATION_CLAIMED
         - KYC_STATUS
+        - ACCOUNT_STATUS
       description: Type of webhook event, used by the receiver to identify which webhook is being received
     OutgoingPaymentWebhook:
       allOf:
@@ -5863,3 +5939,25 @@ components:
               example:
                 - TAX_ID
                 - REGISTRATION_NUMBER
+    AccountStatusWebhook:
+      allOf:
+        - $ref: '#/components/schemas/BaseWebhook'
+        - type: object
+          required:
+            - accountId
+          properties:
+            accountId:
+              type: string
+              description: The id of the account whose balance has changed
+            oldBalance:
+              $ref: '#/components/schemas/CurrencyAmount'
+            newBalance:
+              $ref: '#/components/schemas/CurrencyAmount'
+            customerId:
+              type: string
+              description: The ID of the customer associated with the internal account
+              example: User:019542f5-b3e7-1d02-0000-000000000001
+            type:
+              $ref: '#/components/schemas/WebhookType'
+              description: Type of webhook event
+              example: ACCOUNT_STATUS
