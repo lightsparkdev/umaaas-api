@@ -70,7 +70,10 @@
         "groups": [
           {
             "group": "Getting Started",
-            "pages": ["pay-to-bank/getting-started/introduction"]
+            "pages": [
+              "pay-to-bank/getting-started/introduction",
+              "pay-to-bank/getting-started/send-to-bank-account"
+            ]
           },
           {
             "group": "Developer Guides",

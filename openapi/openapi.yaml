@@ -86,9 +86,9 @@ paths:
     $ref: paths/config/config.yaml
   /customers:
     $ref: paths/customers/customers.yaml
-  /customer/{customerId}:
+  /customers/{customerId}:
     $ref: paths/customers/customers_{customerId}.yaml
-  /customer/kyc-link:
+  /customers/kyc-link:
     $ref: paths/customers/customers_kyc_link.yaml
   /internal-account: 
     $ref: paths/internal-account/account.yaml
