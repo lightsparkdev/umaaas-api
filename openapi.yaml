@@ -429,7 +429,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
-  /customer/{customerId}:
+  /customers/{customerId}:
     parameters:
       - name: customerId
         in: path
@@ -631,7 +631,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
-  /customer/kyc-link:
+  /customers/kyc-link:
     parameters:
       - name: redirect_uri
         in: query
