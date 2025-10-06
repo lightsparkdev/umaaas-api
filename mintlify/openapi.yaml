@@ -24,14 +24,12 @@ tags:
     description: Internal account management endpoints for creating and managing internal accounts.
   - name: External Accounts
     description: External account management endpoints for creating and managing external bank accounts
-  - name: Transfer In
-    description: Endpoints for transferring funds from external accounts to internal accounts
-  - name: Transfer Out
-    description: Endpoints for transferring funds from internal accounts to external accounts
-  - name: Cross-Currency Payments
+  - name: Same-Currency Transfers
+    description: Endpoints for transferring funds between internal and external accounts with the same currency.
+  - name: Cross-Currency Transfers
     description: Endpoints for creating and confirming quotes for cross-currency transfers.
   - name: Transactions
-    description: Endpoints for retrieving transaction information
+    description: Endpoints for retrieving transaction information.
   - name: Webhooks
     description: Webhook endpoints and configuration for receiving notifications
   - name: Invitations
@@ -916,105 +914,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error500'
   /transfer-in:
-    get:
-      summary: List transfer-in requests
-      description: |
-        Retrieve a list of transfer-in requests with optional filtering parameters. Returns all transfer-in requests that match the specified filters. If no filters are provided, returns all  transfer-in requests (paginated).
-      operationId: listTransferIn
-      tags:
-        - Transfer In
-      security:
-        - BasicAuth: []
-      parameters:
-        - name: customerId
-          in: query
-          description: Filter by customer ID
-          required: false
-          schema:
-            type: string
-        - name: status
-          in: query
-          description: Filter by transfer status
-          required: false
-          schema:
-            $ref: '#/components/schemas/TransactionStatus'
-        - name: sourceAccountId
-          in: query
-          description: Filter by source external account ID
-          required: false
-          schema:
-            type: string
-        - name: destinationAccountId
-          in: query
-          description: Filter by destination internal account ID
-          required: false
-          schema:
-            type: string
-        - name: limit
-          in: query
-          description: Maximum number of results to return (default 20, max 100)
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 20
-        - name: cursor
-          in: query
-          description: Cursor for pagination (returned from previous request)
-          required: false
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - data
-                  - hasMore
-                properties:
-                  data:
-                    type: array
-                    description: List of transfer-in requests matching the filter criteria
-                    items:
-                      $ref: '#/components/schemas/Transaction'
-                  hasMore:
-                    type: boolean
-                    description: Indicates if more results are available beyond this page
-                  nextCursor:
-                    type: string
-                    description: Cursor to retrieve the next page of results (only present if hasMore is true)
-                  totalCount:
-                    type: integer
-                    description: Total number of transfer-in requests matching the criteria (excluding pagination)
-        '400':
-          description: Bad request - Invalid parameters
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
-          description: Internal service error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
     post:
       summary: Create a transfer-in request
       description: |
-        Transfer funds from an external account to an internal account for a specific customer
+        Transfer funds from an external account to an internal account for a specific customer. This endpoint should only be used for external account sources with pull functionality (e.g. ACH Pull). Otherwise, use the paymentInstructions on the internal account to deposit funds.
       operationId: createTransferIn
       tags:
-        - Transfer In
+        - Same-Currency Transfers
       security:
         - BasicAuth: []
       requestBody:
@@ -1024,14 +930,9 @@ paths:
             schema:
               type: object
               required:
-                - customerId
                 - source
                 - destination
               properties:
-                customerId:
-                  type: string
-                  description: The ID of the customer initiating the transfer
-                  example: Customer:019542f5-b3e7-1d02-0000-000000000001
                 source:
                   type: object
                   required:
@@ -1052,15 +953,20 @@ paths:
                       description: Reference to an internal account ID
                       example: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
                   description: Destination internal account details
+                amount:
+                  type: integer
+                  format: int64
+                  description: Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)
+                  example: 12550
             examples:
               transferIn:
                 summary: Transfer from external to internal account
                 value:
-                  customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
                   source:
                     accountId: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
                   destination:
                     accountId: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                  amount: 12550
       responses:
         '201':
           description: Transfer-in request created successfully
@@ -1093,105 +999,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error500'
   /transfer-out:
-    get:
-      summary: List transfer-out requests
-      description: |
-        Retrieve a list of transfer-out requests with optional filtering parameters. Returns all transfer-out requests that match the specified filters. If no filters are provided, returns all  transfer-out requests (paginated).
-      operationId: listTransferOut
-      tags:
-        - Transfer Out
-      security:
-        - BasicAuth: []
-      parameters:
-        - name: customerId
-          in: query
-          description: Filter by customer ID
-          required: false
-          schema:
-            type: string
-        - name: status
-          in: query
-          description: Filter by transfer status
-          required: false
-          schema:
-            $ref: '#/components/schemas/TransactionStatus'
-        - name: sourceAccountId
-          in: query
-          description: Filter by source internal account ID
-          required: false
-          schema:
-            type: string
-        - name: destinationAccountId
-          in: query
-          description: Filter by destination external account ID
-          required: false
-          schema:
-            type: string
-        - name: limit
-          in: query
-          description: Maximum number of results to return (default 20, max 100)
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 20
-        - name: cursor
-          in: query
-          description: Cursor for pagination (returned from previous request)
-          required: false
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - data
-                  - hasMore
-                properties:
-                  data:
-                    type: array
-                    description: List of transfer-out requests matching the filter criteria
-                    items:
-                      $ref: '#/components/schemas/Transaction'
-                  hasMore:
-                    type: boolean
-                    description: Indicates if more results are available beyond this page
-                  nextCursor:
-                    type: string
-                    description: Cursor to retrieve the next page of results (only present if hasMore is true)
-                  totalCount:
-                    type: integer
-                    description: Total number of transfer-out requests matching the criteria (excluding pagination)
-        '400':
-          description: Bad request - Invalid parameters
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
-          description: Internal service error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
     post:
       summary: Create a transfer-out request
       description: |
-        Transfer funds from an internal account to an external account for a specific customer
+        Transfer funds from an internal account to an external account for a specific customer.
       operationId: createTransferOut
       tags:
-        - Transfer Out
+        - Same-Currency Transfers
       security:
         - BasicAuth: []
       requestBody:
@@ -1224,6 +1038,11 @@ paths:
                       description: Reference to an external account ID
                       example: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
                   description: Destination external account details
+                amount:
+                  type: integer
+                  format: int64
+                  description: Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)
+                  example: 12550
             examples:
               transferOut:
                 summary: Transfer from internal to external account
@@ -1232,6 +1051,7 @@ paths:
                     accountId: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
                   destination:
                     accountId: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                  amount: 12550
       responses:
         '201':
           description: Transfer-out request created successfully
@@ -1271,7 +1091,7 @@ paths:
         This endpoint helps platforms determine what currencies they can send to a given UMA address.
       operationId: lookupUma
       tags:
-        - Cross-Currency Payments
+        - Cross-Currency Transfers
       security:
         - BasicAuth: []
       parameters:
@@ -1353,7 +1173,7 @@ paths:
         This endpoint helps platforms determine what currencies they can send to a given external account, along with the current estimated exchange rates and minimum and maximum amounts that can be sent.
       operationId: lookupExternalAccount
       tags:
-        - Cross-Currency Payments
+        - Cross-Currency Transfers
       security:
         - BasicAuth: []
       parameters:
@@ -1437,7 +1257,7 @@ paths:
         from quote creation to settlement.
       operationId: getQuoteById
       tags:
-        - Cross-Currency Payments
+        - Cross-Currency Transfers
       security:
         - BasicAuth: []
       parameters:
@@ -1494,7 +1314,7 @@ paths:
         use the `/transfer-in` or `/transfer-out` endpoints instead.
       operationId: createQuote
       tags:
-        - Cross-Currency Payments
+        - Cross-Currency Transfers
       security:
         - BasicAuth: []
       requestBody:
@@ -1593,7 +1413,7 @@ paths:
         (paginated).
       operationId: listQuotes
       tags:
-        - Cross-Currency Payments
+        - Cross-Currency Transfers
       security:
         - BasicAuth: []
       parameters:
@@ -1722,7 +1542,7 @@ paths:
         Before calling this endpoint, you should reach out to the UMA as a service team to investigate the underlying issue.  As part of resolution, they'll update the transaction to the appropriate state.  The quote / transaction to retry must be in a `FAILED` or `REFUNDED` state.
       operationId: retryQuote
       tags:
-        - Cross-Currency Payments
+        - Cross-Currency Transfers
       security:
         - BasicAuth: []
       parameters:
@@ -1809,7 +1629,7 @@ paths:
         Once executed, the quote cannot be cancelled and the transfer will be processed.
       operationId: executeQuote
       tags:
-        - Cross-Currency Payments
+        - Cross-Currency Transfers
       security:
         - BasicAuth: []
       parameters:
@@ -4907,18 +4727,6 @@ components:
               BUSINESS_COUNTERPARTY: '#/components/schemas/IndividualCounterParty'
         accountInfo:
           $ref: '#/components/schemas/CustomerBankAccountInfo'
-    TransactionStatus:
-      type: string
-      enum:
-        - CREATED
-        - PENDING
-        - PROCESSING
-        - COMPLETED
-        - REJECTED
-        - FAILED
-        - REFUNDED
-        - EXPIRED
-      description: Status of a payment transaction
     Transaction:
       type: object
       required:
@@ -5233,6 +5041,18 @@ components:
             failureReason:
               $ref: '#/components/schemas/OutgoingTransactionFailureReason'
               description: If the transaction failed, this field provides the reason for failure.
+    TransactionStatus:
+      type: string
+      enum:
+        - CREATED
+        - PENDING
+        - PROCESSING
+        - COMPLETED
+        - REJECTED
+        - FAILED
+        - REFUNDED
+        - EXPIRED
+      description: Status of a payment transaction
     CurrencyPreference:
       type: object
       required:
