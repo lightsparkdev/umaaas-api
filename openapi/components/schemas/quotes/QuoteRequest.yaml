@@ -12,7 +12,7 @@ properties:
       this can make the quote creation more efficient by reusing cached lookup data.
 
       NOTE: This is required for UMA destinations due to counterparty institution requirements.
-      See `senderUserInfo` for more information.
+      See `senderCustomerInfo` for more information.
     example: Lookup:019542f5-b3e7-1d02-0000-000000000009
   source:
     oneOf:
@@ -35,7 +35,7 @@ properties:
           customerId:
             type: string
             description: Source customer ID
-            example: User:019542f5-b3e7-1d02-0000-000000000009
+            example: Customer:019542f5-b3e7-1d02-0000-000000000009
           currency:
             type: string
             description: Currency code for the source
@@ -104,7 +104,7 @@ properties:
     type: string
     description: Optional description/memo for the transfer
     example: 'Invoice #1234 payment'
-  senderUserInfo:
+  senderCustomerInfo:
     type: object
     additionalProperties: true
     description: >

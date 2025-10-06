@@ -52,7 +52,7 @@ properties:
       properties:
         correlationId:
           type: string
-          description: Platform user ID or row number for the failed entry
+          description: Platform customer ID or row number for the failed entry
           example: biz456
         error:
           $ref: ../common/Error.yaml

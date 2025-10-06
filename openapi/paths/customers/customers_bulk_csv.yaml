@@ -4,7 +4,7 @@ post:
     Upload a CSV file containing customer information for bulk creation. The CSV
     file should follow
 
-    a specific format with required and optional columns based on user type.
+    a specific format with required and optional columns based on customer type.
 
 
     ### CSV Format
@@ -16,9 +16,9 @@ post:
 
     - umaAddress: The customer's UMA address (e.g., $john.doe@uma.domain.com)
 
-    - platformUserId: Your platform's unique identifier for the customer
+    - platformCustomerId: Your platform's unique identifier for the customer
 
-    - userType: Either "INDIVIDUAL" or "BUSINESS"
+    - customerType: Either "INDIVIDUAL" or "BUSINESS"
 
 
     Required columns for individual customers:
@@ -115,7 +115,7 @@ post:
     - swiftBic: SWIFT/BIC code (8 or 11 characters)
 
 
-    See the UserBankAccountInfo and UserInfo schemas for more details on the
+    See the CustomerBankAccountInfo and CustomerInfo schemas for more details on the
     required and optional fields.
 
 
@@ -123,9 +123,9 @@ post:
 
     ```csv
 
-    umaAddress,platformUserId,userType,fullName,birthDate,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId,businessLegalName,routingNumber,accountCategory
+    umaAddress,platformCustomerId,customerType,fullName,birthDate,addressLine1,city,state,postalCode,country,accountType,accountNumber,bankName,platformAccountId,businessLegalName,routingNumber,accountCategory
 
-    john.doe@uma.domain.com,user123,INDIVIDUAL,John Doe,1990-01-15,123 Main
+    john.doe@uma.domain.com,customer123,INDIVIDUAL,John Doe,1990-01-15,123 Main
     St,San Francisco,CA,94105,US,US_ACCOUNT,123456789,Chase
     Bank,chase_primary_1234,,222888888,SAVINGS
 
@@ -139,9 +139,9 @@ post:
     The upload process is asynchronous and will return a job ID that can be used
     to track progress.
 
-    You can monitor the job status using the `/users/bulk/jobs/{jobId}`
+    You can monitor the job status using the `/customers/bulk/jobs/{jobId}`
     endpoint.
-  operationId: uploadUsersCsv
+  operationId: uploadCustomersCsv
   tags:
     - Customers
   security:

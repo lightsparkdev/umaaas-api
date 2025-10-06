@@ -16,4 +16,4 @@ properties:
         INDIVIDUAL_COUNTERPARTY: ../counterparty/BusinessCounterParty.yaml
         BUSINESS_COUNTERPARTY: ../counterparty/IndividualCounterParty.yaml
   accountInfo:
-    $ref: ../users/UserBankAccountInfo.yaml
+    $ref: ../customers/CustomerBankAccountInfo.yaml

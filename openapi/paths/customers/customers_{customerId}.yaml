@@ -8,7 +8,7 @@ parameters:
 get:
   summary: Get customer by ID
   description: Retrieve a customer by their system-generated ID
-  operationId: getUserById
+  operationId: getCustomerById
   tags:
     - Customers
   security:
@@ -21,14 +21,14 @@ get:
           schema:
             oneOf:
               - title: Individual Customer
-                $ref: ../../components/schemas/users/IndividualUser.yaml
+                $ref: ../../components/schemas/customers/IndividualCustomer.yaml
               - title: Business Customer
-                $ref: ../../components/schemas/users/BusinessUser.yaml
+                $ref: ../../components/schemas/customers/BusinessCustomer.yaml
             discriminator:
-              propertyName: userType
+              propertyName: customerType
               mapping:
-                INDIVIDUAL: ../../components/schemas/users/IndividualUser.yaml
-                BUSINESS: ../../components/schemas/users/BusinessUser.yaml
+                INDIVIDUAL: ../../components/schemas/customers/IndividualCustomer.yaml
+                BUSINESS: ../../components/schemas/customers/BusinessCustomer.yaml
     '401':
       description: Unauthorized
       content:
@@ -50,7 +50,7 @@ get:
 patch:
   summary: Update customer by ID
   description: Update a customer's metadata by their system-generated ID
-  operationId: updateUserById
+  operationId: updateCustomerById
   tags:
     - Customers
   security:
@@ -62,19 +62,19 @@ patch:
         schema:
           oneOf:
             - title: Individual cCstomer Update
-              $ref: ../../components/schemas/users/IndividualUserUpdate.yaml
+              $ref: ../../components/schemas/customers/IndividualCustomerUpdate.yaml
             - title: Business Customer Update
-              $ref: ../../components/schemas/users/BusinessUserUpdate.yaml
+              $ref: ../../components/schemas/customers/BusinessCustomerUpdate.yaml
           discriminator:
-            propertyName: userType
+            propertyName: customerType
             mapping:
-              INDIVIDUAL: ../../components/schemas/users/IndividualUserUpdate.yaml
-              BUSINESS: ../../components/schemas/users/BusinessUserUpdate.yaml
+              INDIVIDUAL: ../../components/schemas/customers/IndividualCustomerUpdate.yaml
+              BUSINESS: ../../components/schemas/customers/BusinessCustomerUpdate.yaml
         examples:
           individualUpdate:
             summary: Update individual customer example
             value:
-              userType: INDIVIDUAL
+              customerType: INDIVIDUAL
               fullName: John Smith
               birthDate: '1985-06-15'
               address:
@@ -93,7 +93,7 @@ patch:
           businessUpdate:
             summary: Update business customer example
             value:
-              userType: BUSINESS
+              customerType: BUSINESS
               businessInfo:
                 legalName: New Tech Solutions LLC
                 registrationNumber: BRN-987654321
@@ -119,14 +119,14 @@ patch:
           schema:
             oneOf:
               - title: Individual Customer
-                $ref: ../../components/schemas/users/IndividualUser.yaml
+                $ref: ../../components/schemas/customers/IndividualCustomer.yaml
               - title: Business Customer
-                $ref: ../../components/schemas/users/BusinessUser.yaml
+                $ref: ../../components/schemas/customers/BusinessCustomer.yaml
             discriminator:
-              propertyName: userType
+              propertyName: customerType
               mapping:
-                INDIVIDUAL: ../../components/schemas/users/IndividualUser.yaml
-                BUSINESS: ../../components/schemas/users/BusinessUser.yaml
+                INDIVIDUAL: ../../components/schemas/customers/IndividualCustomer.yaml
+                BUSINESS: ../../components/schemas/customers/BusinessCustomer.yaml
     '400':
       description: Bad request
       content:
@@ -154,7 +154,7 @@ patch:
 delete:
   summary: Delete customer by ID
   description: Delete a customer by their system-generated ID
-  operationId: deleteUserById
+  operationId: deleteCustomerById
   tags:
     - Customers
   security:
@@ -167,14 +167,14 @@ delete:
           schema:
             oneOf:
               - title: Individual Customer
-                $ref: ../../components/schemas/users/IndividualUser.yaml
+                $ref: ../../components/schemas/customers/IndividualCustomer.yaml
               - title: Business Customer
-                $ref: ../../components/schemas/users/BusinessUser.yaml
+                $ref: ../../components/schemas/customers/BusinessCustomer.yaml
             discriminator:
-              propertyName: userType
+              propertyName: customerType
               mapping:
-                INDIVIDUAL: ../../components/schemas/users/IndividualUser.yaml
-                BUSINESS: ../../components/schemas/users/BusinessUser.yaml
+                INDIVIDUAL: ../../components/schemas/customers/IndividualCustomer.yaml
+                BUSINESS: ../../components/schemas/customers/BusinessCustomer.yaml
     '401':
       description: Unauthorized
       content:

@@ -16,7 +16,7 @@ get:
     - Detailed error information for failed entries
 
     - Completion timestamp when finished
-  operationId: getBulkUserImportJob
+  operationId: getBulkCustomerImportJob
   tags:
     - Customers
   security:
@@ -34,7 +34,7 @@ get:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/users/BulkUserImportJob.yaml
+            $ref: ../../components/schemas/customers/BulkCustomerImportJob.yaml
     '401':
       description: Unauthorized
       content:

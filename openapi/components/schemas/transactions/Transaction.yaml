@@ -6,7 +6,7 @@ required:
   - senderUmaAddress
   - receiverUmaAddress
   - customerId
-  - platformUserId
+  - platformCustomerId
 properties:
   id:
     type: string
@@ -27,8 +27,8 @@ properties:
   customerId:
     type: string
     description: System ID of the customer (sender for outgoing, recipient for incoming)
-    example: User:019542f5-b3e7-1d02-0000-000000000001
-  platformUserId:
+    example: Customer:019542f5-b3e7-1d02-0000-000000000001
+  platformCustomerId:
     type: string
     description: >-
       Platform-specific ID of the customer (sender for outgoing, recipient for
