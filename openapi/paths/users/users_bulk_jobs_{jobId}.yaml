@@ -1,7 +1,7 @@
 get:
   summary: Get bulk import job status
   description: >
-    Retrieve the current status and results of a bulk user import job. This
+    Retrieve the current status and results of a bulk customer import job. This
     endpoint can be used
 
     to track the progress of both CSV uploads.
@@ -18,7 +18,7 @@ get:
     - Completion timestamp when finished
   operationId: getBulkUserImportJob
   tags:
-    - Users
+    - Customers
   security:
     - BasicAuth: []
   parameters:

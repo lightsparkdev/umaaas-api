@@ -14,8 +14,8 @@ post:
     created the invitation
 
 
-    This endpoint allows users to accept invitations sent to them by other UMA
-    users.
+    This endpoint allows customers to accept invitations sent to them by other UMA
+    customers.
   operationId: claimInvitation
   tags:
     - Invitations
@@ -39,7 +39,7 @@ post:
           properties:
             inviteeUma:
               type: string
-              description: The UMA address of the user claiming the invitation
+              description: The UMA address of the customer claiming the invitation
               example: $invitee@uma.domain
   responses:
     '200':

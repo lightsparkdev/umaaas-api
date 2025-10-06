@@ -1,7 +1,7 @@
 post:
   summary: Simulate payment send to test receiving a payment
   description: >
-    Simulate sending payment from an sandbox uma address to a platform user to
+    Simulate sending payment from an sandbox uma address to a platform customer to
     test payment receive.
 
     This endpoint is only for the sandbox environment and will fail for
@@ -28,9 +28,9 @@ post:
               example: $success.usd@sandbox.grid.uma.money
             receiverUmaAddress:
               type: string
-              description: UMA address of the receiver (optional if userId is provided)
+              description: UMA address of the receiver (optional if customerId is provided)
               example: $receiver@uma.domain
-            userId:
+            customerId:
               type: string
               description: >-
                 System ID of the receiver (optional if receiverUmaAddress is
