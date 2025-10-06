@@ -3,8 +3,8 @@ required:
   - id
   - status
   - type
-  - senderUmaAddress
-  - receiverUmaAddress
+  - source
+  - destination
   - customerId
   - platformCustomerId
 properties:
@@ -16,14 +16,66 @@ properties:
     $ref: ./TransactionStatus.yaml
   type:
     $ref: ./TransactionType.yaml
-  senderUmaAddress:
-    type: string
-    description: UMA address of the payment sender
-    example: $sender@external.domain
-  receiverUmaAddress:
-    type: string
-    description: UMA address of the payment recipient
-    example: $recipient@uma.domain
+  source:
+    oneOf:
+      - title: Account Source
+        type: object
+        required:
+          - accountId
+        properties:
+          accountId:
+            type: string
+            description: Source account identifier
+            example: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+          currency:
+            type: string
+            description: Currency code for the source account
+            example: USD
+        description: Source account details
+      - title: UMA Address Source
+        type: object
+        required:
+          - umaAddress
+          - currency
+        properties:
+          umaAddress:
+            type: string
+            description: UMA address of the sender
+            example: $sender@uma.domain.com
+          currency:
+            type: string
+            description: Currency code for the source
+            example: USD
+        description: UMA address source details
+  destination:
+    oneOf:
+      - title: Account Destination
+        type: object
+        required:
+          - accountId
+        properties:
+          accountId:
+            type: string
+            description: Destination account identifier
+            example: ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+          currency:
+            type: string
+            description: Currency code for the destination account
+            example: EUR
+        description: Destination account details
+      - title: UMA Address Destination
+        type: object
+        required:
+          - umaAddress
+        properties:
+          umaAddress:
+            type: string
+            description: UMA address of the recipient
+            example: $receiver@uma.domain.com
+          currency:
+            type: string
+            description: Currency code for the destination
+            example: EUR
   customerId:
     type: string
     description: System ID of the customer (sender for outgoing, recipient for incoming)
@@ -44,13 +96,18 @@ properties:
     format: date-time
     description: When the transaction was created
     example: '2023-08-15T14:25:18Z'
+  updatedAt:
+    type: string
+    format: date-time
+    description: When the transaction was last updated
+    example: '2023-08-15T14:30:00Z'
   description:
     type: string
     description: Optional memo or description for the payment
     example: 'Payment for invoice #1234'
   counterpartyInformation:
     type: object
-    description: Additional information about the counterparty, if available
+    description: Additional information about the counterparty, if available and relevant to the transaction and platform. Only applicable for transactions to/from UMA addresses.
     additionalProperties: true
     example:
       FULL_NAME: John Sender
