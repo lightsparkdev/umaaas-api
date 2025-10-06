@@ -2,8 +2,8 @@ openapi: 3.1.0
 info:
   title: Lightspark Grid API
   description: >
-    API for managing global payments on the Money Grid. 
-  version: '2025-10-13'
+    API for managing global payments on the Money Grid.
+  version: "2025-10-13"
   contact:
     name: Lightspark Support
     email: support@lightspark.com
@@ -90,10 +90,14 @@ paths:
     $ref: paths/customers/customers_{customerId}.yaml
   /customers/kyc-link:
     $ref: paths/customers/customers_kyc_link.yaml
-  /internal-account: 
+  /internal-account:
     $ref: paths/internal-account/account.yaml
   /external-accounts:
     $ref: paths/external_accounts/external_accounts.yaml
+  /plaid/link-tokens:
+    $ref: paths/plaid/plaid_link-tokens.yaml
+  /plaid/callback/{plaid_link_token}:
+    $ref: paths/plaid/plaid_callback_{plaid_link_token}.yaml
   /transfer-in:
     $ref: paths/transfers/transfer_in.yaml
   /transfer-out:
