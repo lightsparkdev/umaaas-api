@@ -9,7 +9,7 @@ get:
     from quote creation to settlement.
   operationId: getQuoteById
   tags:
-    - Cross-Currency Payments
+    - Cross-Currency Transfers
   security:
     - BasicAuth: []
   parameters:

@@ -10,7 +10,7 @@ post:
     Once executed, the quote cannot be cancelled and the transfer will be processed.
   operationId: executeQuote
   tags:
-    - Cross-Currency Payments
+    - Cross-Currency Transfers
   security:
     - BasicAuth: []
   parameters:

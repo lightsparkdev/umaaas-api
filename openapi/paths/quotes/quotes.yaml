@@ -19,7 +19,7 @@ post:
     use the `/transfer-in` or `/transfer-out` endpoints instead.
   operationId: createQuote
   tags:
-    - Cross-Currency Payments
+    - Cross-Currency Transfers
   security:
     - BasicAuth: []
   requestBody:
@@ -118,7 +118,7 @@ get:
     (paginated).
   operationId: listQuotes
   tags:
-    - Cross-Currency Payments
+    - Cross-Currency Transfers
   security:
     - BasicAuth: []
   parameters:
