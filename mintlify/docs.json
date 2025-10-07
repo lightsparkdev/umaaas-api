@@ -72,12 +72,45 @@
             "group": "Getting Started",
             "pages": [
               "pay-to-bank/getting-started/introduction",
-              "pay-to-bank/getting-started/send-to-bank-account"
+              "pay-to-bank/getting-started/send-to-bank-account",
+              "pay-to-bank/getting-started/buying-btc-self-custody"
             ]
           },
           {
             "group": "Developer Guides",
             "pages": ["pay-to-bank/developer-guides/platform-configuration"]
+          }
+        ]
+      },
+      {
+        "tab": "Bitcoin Rewards",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "rewards/getting-started/introduction",
+              "rewards/getting-started/quick-start"
+            ]
+          },
+          {
+            "group": "Onboarding Customers",
+            "pages": ["rewards/placeholder/placeholder"]
+          },
+          {
+            "group": "Depositing Funds",
+            "pages": ["rewards/placeholder/placeholder"]
+          },
+          {
+            "group": "Distributing Bitcoin rewards",
+            "pages": ["rewards/placeholder/placeholder"]
+          },
+          {
+            "group": "Platform Tools",
+            "pages": ["rewards/placeholder/placeholder"]
+          },
+          {
+            "group": "Developer Resources",
+            "pages": ["rewards/placeholder/placeholder"]
           }
         ]
       },
