@@ -83,15 +83,17 @@ components:
 
 paths:
   /config:
-    $ref: paths/config/config.yaml
+    $ref: paths/platform/config.yaml
   /customers:
     $ref: paths/customers/customers.yaml
+  /platform/internal-accounts: 
+    $ref: paths/platform/platform_internal_accounts.yaml
   /customers/{customerId}:
     $ref: paths/customers/customers_{customerId}.yaml
   /customers/kyc-link:
     $ref: paths/customers/customers_kyc_link.yaml
-  /internal-account: 
-    $ref: paths/internal-account/account.yaml
+  /customers/internal-accounts:
+    $ref: paths/customers/customers_internal_accounts.yaml
   /external-accounts:
     $ref: paths/external_accounts/external_accounts.yaml
   /transfer-in:
