@@ -22,8 +22,7 @@ The process consists of the following steps:
 3. **Fund your internal account** via ACH push and receive a webhook notification
 2. **Create a customer** using the hosted KYC/KYB link flow
 4. **Add a Spark wallet** as an external account
-5. **Create a quote** to lock in the BTC/USD exchange rate
-6. **Execute the quote** to complete the Bitcoin purchase and transfer
+5. **Execute a quote** to complete the Bitcoin purchase and transfer a reward to the Spark wallet
 
 ## Step 1: List your platform's internal accounts
 
@@ -200,9 +199,9 @@ Content-Type: application/json
 }
 ```
 
-## Step 5: Create a Quote
+## Step 5: Create and Execute a Quote
 
-Create a quote to lock in the BTC/USD exchange rate, fees, and get the final transfer details.
+Create an execute a trade from USD to BTC, and initiate the final transfer in one step.
 
 ### Request
 
@@ -223,70 +222,17 @@ Content-Type: application/json
   },
   "lockedCurrencySide": "SENDING",
   "lockedCurrencyAmount": 100,
+  "immediatelyExecute": true, // Execute the quote immediately. See note below.
   "description": "Bitcoin purchase for self-custody"
 }
 ```
 
 <Note>
-  **Amount Locking**: You can lock either the USD amount you want to spend (`SENDING`) or the BTC amount you want to receive (`RECEIVING`). In this example, we're locking the sending amount to exactly $1.00 USD (100 cents).
+  **Immediate Quote Execution (Market Order)**: Note that `immediatelyExecute` is set to `true` in this example.
+  Because we always just want to send $1.00 worth of BTC to users as a reward at the current market rate, we don't
+  need to lock a quote and view the rate details before executing. If you want to lock a quote and confirm fees
+  and exchange rate details before executing the quote, set `immediatelyExecute` to `false` or omit the field.
 </Note>
-
-### Response
-
-```json
-{
-  "quoteId": "Quote:019542f5-b3e7-1d02-0000-000000000020",
-  "status": "PENDING",
-  "createdAt": "2025-10-03T15:00:00Z",
-  "expiresAt": "2025-10-03T15:05:00Z",
-  "source": {
-    "accountId": "InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965",
-    "currency": "USD"
-  },
-  "destination": {
-    "accountId": "ExternalAccount:b23dcbd6-dced-4ec4-b756-3c3a9ea3d456",
-    "currency": "BTC"
-  },
-  "sendingCurrency": {
-    "code": "USD",
-    "name": "United States Dollar",
-    "symbol": "$",
-    "decimals": 2
-  },
-  "receivingCurrency": {
-    "code": "BTC",
-    "name": "Bitcoin",
-    "symbol": "₿",
-    "decimals": 8
-  },
-  "totalSendingAmount": 100,
-  "totalReceivingAmount": 810,
-  "exchangeRate": 8.1,
-  "feesIncluded": 5,
-  "transactionId": "Transaction:019542f5-b3e7-1d02-0000-000000000025"
-}
-```
-
-The quote shows:
-- **Sending**: \$1.00 USD (including $0.05 fee)
-- **Receiving**: 0.0000081 BTC (810 satoshis)
-- **Exchange rate**: 8.1 sats per USD cent (~$123,000 per BTC)
-- **Quote expires**: In 5 minutes
-
-<Warning>
-  Bitcoin prices are volatile. Quotes typically expire in 1-5 minutes to protect against rapid price changes. Make sure to execute the quote before the `expiresAt` timestamp, or you'll need to create a new quote with updated rates.
-</Warning>
-
-## Step 6: Execute the Quote
-
-Execute the quote to initiate the Bitcoin purchase and transfer to the Spark wallet.
-
-### Request
-
-```http
-POST /quotes/Quote:019542f5-b3e7-1d02-0000-000000000020/execute
-Authorization: Basic <base64-encoded-credentials>
-```
 
 ### Response
 
@@ -323,6 +269,11 @@ Authorization: Basic <base64-encoded-credentials>
   "transactionId": "Transaction:019542f5-b3e7-1d02-0000-000000000025"
 }
 ```
+
+The quote shows:
+- **Sending**: \$1.00 USD (including $0.05 fee)
+- **Receiving**: 0.0000081 BTC (810 satoshis)
+- **Exchange rate**: 8.1 sats per USD cent (~$123,000 per BTC)
 
 The quote status changes to `PROCESSING` and the Bitcoin transfer is initiated. The USD is debited from the internal account, Bitcoin is purchased, and then sent to the Spark wallet address.
 
@@ -383,8 +334,7 @@ You've successfully completed a Bitcoin purchase and transfer to a self-custody 
 2. ✅ Funded the internal account with USD via ACH
 3. ✅ Created a customer via hosted KYC flow
 4. ✅ Added a Spark wallet as an external account
-5. ✅ Created a quote with locked BTC/USD exchange rate
-6. ✅ Executed the quote to purchase Bitcoin and send to the Spark wallet
+6. ✅ Executed a quote to purchase Bitcoin and send to the Spark wallet
 
 The customer now has 810 Satoshis in their self-custody Spark wallet!
 
