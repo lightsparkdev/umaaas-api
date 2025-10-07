@@ -429,6 +429,58 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
+  /platform/internal-accounts:
+    get:
+      summary: List platform internal accounts
+      description: |
+        Retrieve a list of all internal accounts that belong to the platform, as opposed to an individual customer.
+
+        These accounts are created automatically when the platform is configured for each supported currency. They can be used for things like distributing bitcoin rewards to customers, or for other platform-wide purposes.
+      operationId: listPlatformInternalAccounts
+      tags:
+        - Internal Accounts
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: currency
+          in: query
+          description: Filter by currency code
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - accounts
+                properties:
+                  accounts:
+                    type: array
+                    description: List of internal accounts matching the filter criteria
+                    items:
+                      $ref: '#/components/schemas/InternalAccount'
+        '400':
+          description: Bad request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /customers/{customerId}:
     parameters:
       - name: customerId
@@ -671,16 +723,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
-  /internal-account:
+  /customers/internal-accounts:
     get:
-      summary: List internal accounts
+      summary: List Customer internal accounts
       description: |
         Retrieve a list of internal accounts with optional filtering parameters. Returns all
         internal accounts that match the specified filters. If no filters are provided, returns all internal accounts
         (paginated).
 
         Internal accounts are created automatically when a customer is created based on the platform configuration.
-      operationId: listInternalAccounts
+      operationId: listCustomerInternalAccounts
       tags:
         - Internal Accounts
       security:
@@ -4457,58 +4509,6 @@ components:
         details:
           type: object
           description: Additional error details
-    Error404:
-      type: object
-      required:
-        - message
-        - status
-        - code
-      properties:
-        status:
-          enum:
-            - 404
-          type: integer
-          description: HTTP status code
-        code:
-          type: string
-          description: |
-            | Error Code | Description |
-            |------------|-------------|
-            | TRANSACTION_NOT_FOUND | Transaction not found |
-            | INVITATION_NOT_FOUND | Invitation not found |
-            | USER_NOT_FOUND | Customer not found |
-            | QUOTE_NOT_FOUND | Quote not found |
-            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
-            | TOKEN_NOT_FOUND | Token not found |
-            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
-            | REFERENCE_NOT_FOUND | Reference not found | 
-          enum:
-            - TRANSACTION_NOT_FOUND
-            - INVITATION_NOT_FOUND
-            - USER_NOT_FOUND
-            - QUOTE_NOT_FOUND
-            - LOOKUP_REQUEST_NOT_FOUND
-            - TOKEN_NOT_FOUND
-            - BULK_UPLOAD_JOB_NOT_FOUND
-            - REFERENCE_NOT_FOUND
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-    Error:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Error code
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
     Currency:
       type: object
       properties:
@@ -4663,7 +4663,7 @@ components:
           example: InternalAccount:12dcbd6-dced-4ec4-b756-3c3a9ea3d123
         customerId:
           type: string
-          description: The ID of the customer associated with the internal account
+          description: The ID of the customer associated with the internal account. If this field is empty, the internal account belongs to the platform.
           example: Customer:019542f5-b3e7-1d02-0000-000000000001
         balance:
           $ref: '#/components/schemas/CurrencyAmount'
@@ -4682,6 +4682,58 @@ components:
           format: date-time
           description: Timestamp when the internal account was last updated
           example: '2025-10-03T12:30:00Z'
+    Error404:
+      type: object
+      required:
+        - message
+        - status
+        - code
+      properties:
+        status:
+          enum:
+            - 404
+          type: integer
+          description: HTTP status code
+        code:
+          type: string
+          description: |
+            | Error Code | Description |
+            |------------|-------------|
+            | TRANSACTION_NOT_FOUND | Transaction not found |
+            | INVITATION_NOT_FOUND | Invitation not found |
+            | USER_NOT_FOUND | Customer not found |
+            | QUOTE_NOT_FOUND | Quote not found |
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
+            | TOKEN_NOT_FOUND | Token not found |
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+            | REFERENCE_NOT_FOUND | Reference not found | 
+          enum:
+            - TRANSACTION_NOT_FOUND
+            - INVITATION_NOT_FOUND
+            - USER_NOT_FOUND
+            - QUOTE_NOT_FOUND
+            - LOOKUP_REQUEST_NOT_FOUND
+            - TOKEN_NOT_FOUND
+            - BULK_UPLOAD_JOB_NOT_FOUND
+            - REFERENCE_NOT_FOUND
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error code
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
     ExternalAccountStatus:
       type: string
       enum:
