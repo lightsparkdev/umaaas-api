@@ -158,6 +158,6 @@ webhooks:
   kyc-status:
     $ref: webhooks/kyc-status.yaml
   account-status:
-    $ref: webhooks/account.yaml
+    $ref: webhooks/account-status.yaml
 security:
   - BasicAuth: []

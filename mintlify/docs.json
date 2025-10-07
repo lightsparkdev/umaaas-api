@@ -48,7 +48,7 @@
             "group": "Getting Started",
             "pages": [
               "pay-to-bank/getting-started/introduction",
-              "pay-to-bank/getting-started/send-to-bank-account",
+              "pay-to-bank/getting-started/cross-currency-transfers",
               "pay-to-bank/getting-started/buying-btc-self-custody"
             ]
           },
