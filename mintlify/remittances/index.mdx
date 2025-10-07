@@ -3,6 +3,7 @@ title: "Introduction"
 ---
 import { umaaasProductName } from '/snippets/variables.mdx';
 import PaymentFlow from '/snippets/payment-flow.mdx';
+import KycOnboarding from '/snippets/kyc-onboarding.mdx';
 
 With {umaaasProductName}, you can send and receive low cost real-time payments to bank accounts and UMA addresses worldwide through a single, simple API. Lightspark Grid automatically routes each payment across its network of Grid switches, handling FX, blockchain settlement, and instant banking off-ramps for you.
 
@@ -18,9 +19,8 @@ With {umaaasProductName}, you can send and receive low cost real-time payments t
 - **API**: Programmatic access to create users, look up receivers, create quotes, fund payments, and reconcile via webhooks.
 - **Dashboard**: Monitor payments and webhooks, manage API keys and environments, and troubleshoot with logs.
 ### Onboarding Customers
-1. Create a user: `POST /users` with lightweight attributes (KYC/KYB handled by your regulated entity).
-2. (Optional) Add external accounts: `POST /external-accounts` for bank account details when paying out to account numbers instead of UMAs.
-3. Store each user’s UMA handle or relevant account identifier in your system.
+
+<KycOnboarding />
 
 <Note>You keep your brand/domain for UMAs (e.g., `$alice@yourapp.com`). See the UMA Standard for addressing details: [UMA—Introduction](https://docs.uma.me/uma-standard/introduction).</Note>
 ### Funding Payments

@@ -3,6 +3,8 @@ title: "Quick Start"
 description: "Complete walkthrough for buying Bitcoin and sending it as a reward to an external Spark wallet for self-custody"
 ---
 
+import KycOnboarding from '/snippets/kyc-onboarding.mdx';
+
 This guide walks you through the complete process of buying Bitcoin with USD and sending it to a self-custody Spark wallet, from customer onboarding through quote execution.
 
 ## Prerequisites
@@ -124,28 +126,9 @@ When the funds are received and the internal account balance is updated, you'll 
 
 The internal account now has a balance of $2,000.00 (200000 cents). You can use this balance to instantly distribute Bitcoin rewards to your customers.
 
-## Step 3: Create a Customer with KYC/KYB Link
+## Step 3: Customer Onboarding
 
-First, generate a hosted KYC/KYB link that your customer can use to complete their onboarding. This link provides a secure, hosted flow where the customer can submit their information.
-
-### Request
-
-```http
-GET /customers/kyc-link?redirect_uri=https://yourapp.com/onboarding-complete
-Authorization: Basic <base64-encoded-credentials>
-```
-
-### Response
-
-```json
-{
-  "kycUrl": "https://kyc.lightspark.com/onboard/abc123def456"
-}
-```
-
-The customer should be redirected to this URL to complete their KYC information. Once completed, they'll be redirected to your specified `redirect_uri`.
-
-After the customer completes KYC, Grid will create their customer account and automatically provision internal accounts based on your platform configuration. You'll receive the customer ID through your onboarding flow.
+<KycOnboarding />
 
 For this example, let's assume the customer ID is: `Customer:019542f5-b3e7-1d02-0000-000000000001`
 

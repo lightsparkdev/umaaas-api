@@ -1,0 +1,632 @@
+---
+title: "KYC/Onboarding Flow"
+description: "Complete customer onboarding and KYC verification process"
+---
+
+<Info>
+The KYC/onboarding flow allows you to onboard customers through a hosted KYC link or direct API calls. This snippet covers both approaches with references to the OpenAPI schema.
+</Info>
+
+## Platform Regulation Status
+
+Your platform's regulatory status determines the KYC/onboarding requirements and available flows. This is configured in your platform settings and affects which verification methods are available.
+
+### Regulated Platforms
+
+<Check>
+**Regulated platforms** have lighter KYC requirements since they handle compliance verification internally.
+</Check>
+
+Regulated financial institutions can:
+
+- **Direct API Onboarding**: Create customers directly via API calls with minimal verification
+- **Internal KYC/KYB**: Handle identity verification through your own compliance systems
+- **Reduced Documentation**: Only provide essential customer information required by the UMA provider
+- **Faster Onboarding**: Streamlined process for known, verified customers
+
+<Tip>
+Regulated platforms should use the direct API onboarding flow since you handle KYC/KYB verification internally according to your regulatory requirements.
+</Tip>
+
+### Unregulated Platforms
+
+<Warning>
+**Unregulated platforms** require full KYC verification through hosted flows.
+</Warning>
+
+Unregulated platforms must:
+
+- **Hosted KYC Flow**: Use the hosted KYC link for complete identity verification
+- **Full Documentation**: Provide comprehensive customer information including all required PII
+- **Provider Verification**: Rely on UMA provider verification systems for compliance
+- **Extended Review**: Customers may require manual review and approval
+
+<Tip>
+Unregulated platforms should primarily use the hosted KYC flow to ensure compliance with regulatory requirements.
+</Tip>
+
+### Determining Your Platform Status
+
+You can check your platform's regulatory status via the platform configuration:
+
+```http
+GET /config
+```
+
+<ResponseField name="isRegulatedFinancialInstitution" type="boolean">
+Indicates whether your platform is a regulated financial institution. This affects available KYC flows and requirements.
+</ResponseField>
+
+<AccordionGroup>
+<Accordion title="Regulated Platform Example">
+```json
+{
+  "id": "PlatformConfig:019542f5-b3e7-1d02-0000-000000000003",
+  "isRegulatedFinancialInstitution": true,
+  "supportedCurrencies": [
+    {
+      "currencyCode": "USD",
+      "umaProviderRequiredCustomerFields": [
+        "FULL_NAME",
+        "BIRTH_DATE"
+      ]
+    }
+  ]
+}
+```
+</Accordion>
+
+<Accordion title="Unregulated Platform Example">
+```json
+{
+  "id": "PlatformConfig:019542f5-b3e7-1d02-0000-000000000003", 
+  "isRegulatedFinancialInstitution": false,
+  "supportedCurrencies": [
+    {
+      "currencyCode": "USD",
+      "umaProviderRequiredCustomerFields": [
+        "FULL_NAME",
+        "BIRTH_DATE",
+        "NATIONALITY",
+        "ADDRESS",
+        "IDENTITY_DOCUMENT"
+      ]
+    }
+  ]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+## Choosing Your Onboarding Flow
+
+Use this decision tree to determine the best onboarding approach for your platform:
+
+<AccordionGroup>
+<Accordion title="Are you a regulated financial institution?">
+**Yes (isRegulatedFinancialInstitution: true)**
+
+- ✅ **Use Direct API Onboarding** for most customers
+- ✅ Handle KYC/KYB verification internally through your compliance systems
+- ✅ Provide only essential fields required by UMA providers
+- ✅ Faster customer onboarding process
+
+**No (isRegulatedFinancialInstitution: false)**
+
+- ✅ **Use Hosted KYC Link Flow** for new customers
+- ✅ Let UMA providers handle identity verification
+- ✅ Provide comprehensive customer documentation if using direct API
+</Accordion>
+
+<Accordion title="Additional Considerations">
+**When to use Hosted KYC even as a regulated platform:**
+- **Business customers** (always required)
+- Enhanced verification requirements for specific use cases
+- International customers requiring local compliance
+- High-value transactions requiring additional verification
+- Regulatory requirements for specific customer types
+</Accordion>
+</AccordionGroup>
+
+## Hosted KYC Link Flow
+
+The hosted KYC flow provides a secure, hosted interface where customers can complete their identity verification and onboarding process.
+
+<Note>
+**Primary use case**: Unregulated platforms should use this flow for complete identity verification. Regulated platforms may use this flow for enhanced verification or when required by specific use cases. **Business customers must always use this flow regardless of platform regulatory status.**
+</Note>
+
+### Generate KYC Link
+
+<RequestExample>
+```http GET /customers/kyc-link
+GET /customers/kyc-link?redirect_uri=https://yourapp.com/onboarding-complete
+Authorization: Basic <base64-encoded-credentials>
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success
+{
+  "kycUrl": "https://kyc.lightspark.com/onboard/abc123def456"
+}
+```
+</ResponseExample>
+
+<ParamField query="redirect_uri" type="string">
+Optional URI parameter that specifies where the customer will be automatically redirected after successfully completing the hosted KYC verification process. If not provided, customers will be redirected to a default completion page.
+</ParamField>
+
+<ResponseField name="kycUrl" type="string" required>
+A hosted KYC link for your customer to complete identity verification and onboarding. This URL contains the KYC session and any redirect configuration.
+</ResponseField>
+
+<Note>
+The `redirect_uri` parameter is embedded in the KYC URL and will be used to redirect the customer back to your application after they complete the verification process. This provides a seamless user experience by returning them to your platform.
+</Note>
+
+### Complete KYC Process
+
+<Steps>
+<Step title="Generate KYC Link">
+  Call the `/customers/kyc-link` endpoint with your `redirect_uri` parameter to generate a hosted KYC URL for your customer.
+  
+  <Note>
+  The `redirect_uri` parameter is embedded in the generated KYC URL and will be used to automatically redirect the customer back to your application after they complete verification.
+  </Note>
+</Step>
+
+<Step title="Redirect Customer">
+  Redirect your customer to the returned `kycUrl` where they can complete their identity verification in the hosted interface.
+  
+  <Warning>
+  The KYC link is single-use and expires after a limited time period for security.
+  </Warning>
+</Step>
+
+<Step title="Customer Completes Verification">
+  The customer completes the identity verification process in the hosted KYC interface, providing required documents and information.
+  
+  <Info>
+  The hosted interface handles document collection, verification checks, and compliance requirements automatically.
+  </Info>
+  
+  <Note>
+  After verification processing, you'll receive a KYC status webhook notification indicating the final verification result.
+  </Note>
+</Step>
+
+<Step title="Automatic Redirect">
+  Upon successful KYC completion, the customer is automatically redirected to your specified `redirect_uri` URL.
+  
+  <Check>
+  The customer account will be automatically created by the system upon successful KYC completion. You can identify the new customer using your `platformCustomerId` or other identifiers.
+  </Check>
+</Step>
+
+<Step title="Handle Completion">
+  On your redirect page, handle the completed KYC flow and integrate the new customer into your application.
+  
+  <Tip>
+  You may want to query the customer details or internal accounts to confirm successful onboarding.
+  </Tip>
+</Step>
+</Steps>
+
+### Handling KYC Status Webhooks
+
+After a customer completes the hosted KYC verification process, you'll receive webhook notifications about their KYC status. These notifications are sent to your configured webhook endpoint.
+
+<RequestExample>
+```http POST Your Webhook Endpoint
+POST https://yourapp.com/webhooks/kyc-status
+Content-Type: application/json
+X-Webhook-Signature: sha256=abc123...
+
+{
+  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000020",
+  "type": "KYC_STATUS",
+  "timestamp": "2023-07-21T17:32:28Z",
+  "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
+  "kycStatus": "APPROVED"
+}
+```
+</RequestExample>
+
+<ResponseField name="customerId" type="string" required>
+System-generated unique identifier of the customer whose KYC status has changed.
+</ResponseField>
+
+<ResponseField name="kycStatus" type="string" required>
+Final KYC verification status. Webhooks are only sent for final states:
+- `APPROVED`: Customer verification completed successfully
+- `REJECTED`: Customer verification was rejected
+- `EXPIRED`: KYC verification has expired and needs renewal
+- `CANCELED`: Verification process was canceled
+- `MANUALLY_APPROVED`: Customer was manually approved by platform
+- `MANUALLY_REJECTED`: Customer was manually rejected by platform
+
+<Note>
+Intermediate states like `PENDING_REVIEW` do not trigger webhook notifications. Only final resolution states will send webhook notifications.
+</Note>
+</ResponseField>
+
+<Tip>
+**Webhook Implementation**: Ensure your webhook endpoint can handle KYC status updates and update your internal customer records accordingly. You may want to trigger different actions based on the status (e.g., activate accounts for `APPROVED` customers, notify support for `REJECTED` customers).
+</Tip>
+
+<Warning>
+**Final States Only**: Webhook notifications are only sent for final KYC states. Intermediate status changes during verification processing will not trigger webhook notifications.
+</Warning>
+
+<AccordionGroup>
+<Accordion title="Example Webhook Handler">
+```javascript
+// Example webhook handler for KYC status updates
+// Note: Only final states trigger webhook notifications
+app.post('/webhooks/kyc-status', (req, res) => {
+  const { customerId, kycStatus } = req.body;
+  
+  switch (kycStatus) {
+    case 'APPROVED':
+      // Activate customer account
+      await activateCustomer(customerId);
+      await sendWelcomeEmail(customerId);
+      break;
+      
+    case 'REJECTED':
+      // Notify support and customer
+      await notifySupport(customerId, 'KYC_REJECTED');
+      await sendRejectionEmail(customerId);
+      break;
+      
+    case 'MANUALLY_APPROVED':
+      // Handle manual approval
+      await activateCustomer(customerId);
+      await sendWelcomeEmail(customerId);
+      break;
+      
+    case 'MANUALLY_REJECTED':
+      // Handle manual rejection
+      await notifySupport(customerId, 'KYC_MANUALLY_REJECTED');
+      await sendRejectionEmail(customerId);
+      break;
+      
+    case 'EXPIRED':
+      // Handle expired KYC
+      await notifyCustomerForReKyc(customerId);
+      break;
+      
+    case 'CANCELED':
+      // Handle canceled verification
+      await logKycCancelation(customerId);
+      break;
+      
+    default:
+      // Log unexpected statuses
+      console.log(`Unexpected KYC status ${kycStatus} for customer ${customerId}`);
+  }
+  
+  res.status(200).send('OK');
+});
+```
+</Accordion>
+
+<Accordion title="Webhook Security">
+Always verify webhook signatures to ensure the request comes from the UMAaaS platform:
+
+```javascript
+const crypto = require('crypto');
+
+function verifyWebhookSignature(payload, signature, secret) {
+  const expectedSignature = crypto
+    .createHmac('sha256', secret)
+    .update(payload)
+    .digest('hex');
+  
+  return crypto.timingSafeEqual(
+    Buffer.from(signature.replace('sha256=', '')),
+    Buffer.from(expectedSignature)
+  );
+}
+```
+</Accordion>
+</AccordionGroup>
+
+## Direct API Onboarding
+
+For platforms that handle KYC/KYB verification internally, you can create customers directly via the API.
+
+<Note>
+**Primary use case**: Regulated platforms should use this flow since they handle compliance verification internally. Unregulated platforms can use this flow only if they provide comprehensive customer documentation and handle verification through other means.
+</Note>
+
+<Warning>
+**Business Customers**: Business customers must always use the hosted KYC link flow for onboarding, regardless of your platform's regulatory status. Direct API onboarding is only available for individual customers.
+</Warning>
+
+### Create Individual Customer
+
+<RequestExample>
+```http POST /customers
+POST /customers
+Authorization: Basic <base64-encoded-credentials>
+Content-Type: application/json
+
+{
+  "umaAddress": "$john.doe@mycompany.com",
+  "platformCustomerId": "customer_12345",
+  "customerType": "INDIVIDUAL",
+  "fullName": "John Michael Doe",
+  "birthDate": "1990-01-15",
+  "nationality": "US",
+  "address": {
+    "line1": "123 Main Street",
+    "line2": "Apt 4B",
+    "city": "San Francisco",
+    "state": "CA",
+    "postalCode": "94105",
+    "country": "US"
+  },
+  "bankAccountInfo": {
+    "accountType": "US_ACCOUNT",
+    "accountNumber": "123456789",
+    "routingNumber": "987654321",
+    "accountCategory": "CHECKING",
+    "bankName": "Chase Bank"
+  }
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success
+{
+  "id": "Customer:019542f5-b3e7-1d02-0000-000000000001",
+  "umaAddress": "$john.doe@mycompany.com",
+  "platformCustomerId": "customer_12345",
+  "customerType": "INDIVIDUAL",
+  "fullName": "John Michael Doe",
+  "birthDate": "1990-01-15",
+  "nationality": "US",
+  "address": {
+    "line1": "123 Main Street",
+    "line2": "Apt 4B",
+    "city": "San Francisco",
+    "state": "CA",
+    "postalCode": "94105",
+    "country": "US"
+  },
+  "kycStatus": "APPROVED",
+  "createdAt": "2023-07-21T17:32:28Z",
+  "updatedAt": "2023-07-21T17:32:28Z",
+  "isDeleted": false
+}
+```
+</ResponseExample>
+
+### Create Business Customer
+
+<RequestExample>
+```http POST /customers
+POST /customers
+Authorization: Basic <base64-encoded-credentials>
+Content-Type: application/json
+
+{
+  "umaAddress": "$acme.corp@mycompany.com",
+  "platformCustomerId": "business_67890",
+  "customerType": "BUSINESS",
+  "address": {
+    "line1": "456 Oak Avenue",
+    "line2": "Floor 12",
+    "city": "New York",
+    "state": "NY",
+    "postalCode": "10001",
+    "country": "US"
+  },
+  "businessInfo": {
+    "legalName": "Acme Corporation, Inc.",
+    "registrationNumber": "BRN-123456789",
+    "taxId": "EIN-987654321"
+  },
+  "bankAccountInfo": {
+    "accountType": "US_ACCOUNT",
+    "accountNumber": "987654321",
+    "routingNumber": "123456789",
+    "accountCategory": "CHECKING",
+    "bankName": "Bank of America"
+  }
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success
+{
+  "id": "Customer:019542f5-b3e7-1d02-0000-000000000002",
+  "umaAddress": "$acme.corp@mycompany.com",
+  "platformCustomerId": "business_67890",
+  "customerType": "BUSINESS",
+  "address": {
+    "line1": "456 Oak Avenue",
+    "line2": "Floor 12",
+    "city": "New York",
+    "state": "NY",
+    "postalCode": "10001",
+    "country": "US"
+  },
+  "businessInfo": {
+    "legalName": "Acme Corporation, Inc.",
+    "registrationNumber": "BRN-123456789",
+    "taxId": "EIN-987654321"
+  },
+  "kycStatus": "APPROVED",
+  "createdAt": "2023-07-21T17:32:28Z",
+  "updatedAt": "2023-07-21T17:32:28Z",
+  "isDeleted": false
+}
+```
+</ResponseExample>
+
+## Schema References
+
+The customer creation endpoints reference the following OpenAPI schema components:
+
+<AccordionGroup>
+<Accordion title="Customer Schema">
+The base customer schema includes:
+
+<ResponseField name="id" type="string" required>
+System-generated unique identifier for the customer.
+</ResponseField>
+
+<ResponseField name="umaAddress" type="string" required>
+Full UMA address following the format `$username@domain`.
+</ResponseField>
+
+<ResponseField name="platformCustomerId" type="string" required>
+Your platform's unique identifier for the customer.
+</ResponseField>
+
+<ResponseField name="customerType" type="string" required>
+Customer type: `INDIVIDUAL` or `BUSINESS`.
+</ResponseField>
+
+<ResponseField name="kycStatus" type="string">
+Current KYC verification status: `APPROVED`, `REJECTED`, `PENDING_REVIEW`, `EXPIRED`, `CANCELED`, `MANUALLY_APPROVED`, or `MANUALLY_REJECTED`.
+</ResponseField>
+</Accordion>
+
+<Accordion title="Individual Customer Fields">
+Additional fields for individual customers:
+
+<ResponseField name="fullName" type="string">
+Individual's full name.
+</ResponseField>
+
+<ResponseField name="birthDate" type="string" format="date">
+Date of birth in ISO 8601 format (YYYY-MM-DD).
+</ResponseField>
+
+<ResponseField name="nationality" type="string">
+Country code (ISO 3166-1 alpha-2).
+</ResponseField>
+
+<ResponseField name="address" type="object">
+Physical address information.
+</ResponseField>
+</Accordion>
+
+<Accordion title="Business Customer Fields">
+Additional fields for business customers:
+
+<ResponseField name="businessInfo" type="object">
+Business entity information including legal name, registration number, and tax ID.
+</ResponseField>
+
+<ResponseField name="beneficialOwners" type="array">
+List of ultimate beneficial owners for the business.
+</ResponseField>
+</Accordion>
+
+<Accordion title="Bank Account Information">
+Supported bank account types and formats:
+
+- **US_ACCOUNT**: ACH routing with account and routing numbers
+- **CLABE**: Mexican bank account format
+- **PIX**: Brazilian instant payment system
+- **UPI**: Indian Unified Payments Interface
+- **IBAN**: International Bank Account Number
+- **FBO**: For Benefit Of omnibus accounts
+
+<Note>
+Bank account requirements vary by customer type and transaction currency. Check your platform configuration for specific requirements.
+</Note>
+</Accordion>
+</AccordionGroup>
+
+## Required Fields by Currency
+
+<Warning>
+Required fields may vary based on the currencies your customers will transact with. Check your platform configuration via `GET /config` to see the `umaProviderRequiredCustomerFields` for each supported currency.
+</Warning>
+
+Common required fields by currency:
+
+<CodeGroup>
+```json USD Requirements
+{
+  "umaProviderRequiredCustomerFields": [
+    "FULL_NAME",
+    "BIRTH_DATE",
+    "ADDRESS"
+  ]
+}
+```
+
+```json EUR Requirements  
+{
+  "umaProviderRequiredCustomerFields": [
+    "FULL_NAME",
+    "BIRTH_DATE",
+    "NATIONALITY",
+    "ADDRESS"
+  ]
+}
+```
+
+```json MXN Requirements
+{
+  "umaProviderRequiredCustomerFields": [
+    "FULL_NAME",
+    "BIRTH_DATE",
+    "ADDRESS"
+  ]
+}
+```
+</CodeGroup>
+
+## Best Practices
+
+### For Regulated Platforms
+
+<Tip>
+**Internal Compliance**: Leverage your existing KYC/KYB systems and compliance procedures when using direct API onboarding.
+</Tip>
+
+<Tip>
+**Minimal Data**: Only provide essential customer fields required by UMA providers to streamline the onboarding process.
+</Tip>
+
+### For Unregulated Platforms
+
+<Tip>
+**Hosted Verification**: Use the hosted KYC link flow for comprehensive identity verification and compliance.
+</Tip>
+
+<Tip>
+**Complete Documentation**: Provide all required customer information and supporting documentation when using direct API calls.
+</Tip>
+
+<Tip>
+**Verification Status**: Monitor customer verification status and handle pending/rejected cases appropriately.
+</Tip>
+
+### Universal Best Practices
+
+<Tip>
+**Idempotent Operations**: Use consistent `platformCustomerId` values to avoid duplicate customer creation.
+</Tip>
+
+<Warning>
+**Regulatory Compliance**: Ensure your chosen onboarding flow meets all applicable regulatory requirements for your jurisdiction and customer types.
+</Warning>
+
+<Warning>
+**UMA Address Format**: UMA addresses must follow the format `$username@domain` where:
+- The `$` symbol is required
+- Username can contain a-z, 0-9, -, _, . and +
+- Maximum 64 characters for the username portion
+- Addresses are case-insensitive but conventionally lowercase
+</Warning>
