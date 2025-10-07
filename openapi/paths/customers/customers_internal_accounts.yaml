@@ -1,12 +1,12 @@
 get:
-  summary: List internal accounts
+  summary: List Customer internal accounts
   description: |
     Retrieve a list of internal accounts with optional filtering parameters. Returns all
     internal accounts that match the specified filters. If no filters are provided, returns all internal accounts
     (paginated).
 
     Internal accounts are created automatically when a customer is created based on the platform configuration.
-  operationId: listInternalAccounts
+  operationId: listCustomerInternalAccounts
   tags:
     - Internal Accounts
   security:
