@@ -18,20 +18,21 @@ Before starting this guide, ensure you have:
 
 The process consists of the following steps:
 
-1. **List platform internal accounts** to find your platform's USD funding instructions
-2. **Fund your internal account** via ACH push and receive a webhook notification
-3. **Create a customer** using the hosted KYC/KYB link flow
-4. **Execute a quote** to complete the Bitcoin purchase and transfer a reward to the user's own Spark wallet.
+1. **Create a customer** using the hosted KYC/KYB link flow
+2. **List internal accounts** to find the customer's USD funding instructions
+3. **Fund the internal account** via ACH push and receive a webhook notification
+4. **Add a Spark wallet** as an external account
+5. **Create a quote** to lock in the BTC/USD exchange rate
+6. **Execute the quote** to complete the Bitcoin purchase and transfer
 
-## Step 1: List your platform's internal accounts
+## Step 1: Create a Customer with KYC/KYB Link
 
-When your platform is first created, it is automatically assigned an internal account with a balance in your configured fiat currency.
-List your platform's internal accounts to see the available balances and funding instructions for USD.
+First, generate a hosted KYC/KYB link that your customer can use to complete their onboarding. This link provides a secure, hosted flow where the customer can submit their information.
 
 ### Request
 
 ```http
-GET /platform/internal-accounts?currency=USD
+GET /customers/kyc-link?redirect_uri=https://yourapp.com/onboarding-complete
 Authorization: Basic <base64-encoded-credentials>
 ```
 
@@ -39,9 +40,35 @@ Authorization: Basic <base64-encoded-credentials>
 
 ```json
 {
-  "accounts": [
+  "kycUrl": "https://kyc.lightspark.com/onboard/abc123def456"
+}
+```
+
+The customer should be redirected to this URL to complete their KYC information. Once completed, they'll be redirected to your specified `redirect_uri`.
+
+After the customer completes KYC, Grid will create their customer account and automatically provision internal accounts based on your platform configuration. You'll receive the customer ID through your onboarding flow.
+
+For this example, let's assume the customer ID is: `Customer:019542f5-b3e7-1d02-0000-000000000001`
+
+## Step 2: List Internal Accounts
+
+Once the customer is created, list their internal accounts to see the available balances and funding instructions for USD.
+
+### Request
+
+```http
+GET /internal-account?customerId=Customer:019542f5-b3e7-1d02-0000-000000000001&currency=USD
+Authorization: Basic <base64-encoded-credentials>
+```
+
+### Response
+
+```json
+{
+  "data": [
     {
       "id": "InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965",
+      "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
       "balance": {
         "amount": 0,
         "currency": {
@@ -74,6 +101,8 @@ Authorization: Basic <base64-encoded-credentials>
       "updatedAt": "2025-10-03T12:00:00Z"
     }
   ],
+  "hasMore": false,
+  "totalCount": 1
 }
 ```
 
@@ -83,9 +112,9 @@ The `fundingPaymentInstructions` provide the bank account details and reference 
   You can also see that there are Spark wallet funding instructions in this example response which can be used to fund the internal account with USDB instantly.
 </Note>
 
-## Step 2: Fund your Internal Account
+## Step 3: Fund the Internal Account
 
-You can initiate an ACH transfer from your bank to the account details provided in the funding instructions, making sure to include the reference code `FUND-BTC123` in the transfer memo.
+Your customer initiates an ACH transfer from their bank to the account details provided in the funding instructions, making sure to include the reference code `FUND-BTC123` in the transfer memo.
 
 <Note>
   In sandbox mode, you can use the `/sandbox/receive` endpoint to simulate receiving funds. In production, actual ACH transfers typically take 1-3 business days to settle.
@@ -116,43 +145,67 @@ When the funds are received and the internal account balance is updated, you'll 
       "decimals": 2
     }
   },
+  "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
   "timestamp": "2025-10-03T14:32:00Z",
   "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000020",
   "type": "ACCOUNT_STATUS"
 }
 ```
 
-The internal account now has a balance of $2,000.00 (200000 cents). You can use this balance to instantly distribute Bitcoin rewards to your customers.
+The internal account now has a balance of $2,000.00 (200000 cents).
 
-## Step 3: Create a Customer with KYC/KYB Link
+## Step 4: Add a Spark Wallet as External Account
 
-First, generate a hosted KYC/KYB link that your customer can use to complete their onboarding. This link provides a secure, hosted flow where the customer can submit their information.
+Now add the customer's Spark wallet as an external account where the Bitcoin will be sent when the quote is executed.
 
 ### Request
 
 ```http
-GET /customers/kyc-link?redirect_uri=https://yourapp.com/onboarding-complete
+POST /external-accounts
 Authorization: Basic <base64-encoded-credentials>
+Content-Type: application/json
+```
+
+```json
+{
+  "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
+  "currency": "BTC",
+  "beneficiary": {
+    "counterPartyType": "INDIVIDUAL",
+    "fullName": "John Doe",
+    "birthDate": "1990-01-15",
+    "nationality": "US"
+  },
+  "accountInfo": {
+    "accountType": "SPARK_WALLET",
+    "address": "spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu"
+  }
+}
 ```
 
 ### Response
 
 ```json
 {
-  "kycUrl": "https://kyc.lightspark.com/onboard/abc123def456"
+  "id": "ExternalAccount:b23dcbd6-dced-4ec4-b756-3c3a9ea3d456",
+  "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
+  "status": "ACTIVE",
+  "beneficiary": {
+    "counterPartyType": "INDIVIDUAL",
+    "fullName": "John Doe",
+    "birthDate": "1990-01-15",
+    "nationality": "US"
+  },
+  "accountInfo": {
+    "accountType": "SPARK_WALLET",
+    "address": "spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu"
+  }
 }
 ```
 
-The customer should be redirected to this URL to complete their KYC information. Once completed, they'll be redirected to your specified `redirect_uri`.
+## Step 5: Create a Quote
 
-After the customer completes KYC, Grid will create their customer account and automatically provision internal accounts based on your platform configuration. You'll receive the customer ID through your onboarding flow.
-
-For this example, let's assume the customer ID is: `Customer:019542f5-b3e7-1d02-0000-000000000001`
-
-## Step 4: Create and Execute a Quote to the Customer's Spark Wallet
-
-Create and execute a trade from USD to BTC, and initiate the final transfer in one step. This combines external account
-creation and quote execution using the `externalAccountDetails` option.
+Create a quote to lock in the BTC/USD exchange rate, fees, and get the final transfer details.
 
 ### Request
 
@@ -168,39 +221,75 @@ Content-Type: application/json
     "accountId": "InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965"
   },
   "destination": {
-    "externalAccountDetails": {
-      "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
-      "currency": "BTC",
-      "beneficiary": {
-        "counterPartyType": "INDIVIDUAL",
-        "fullName": "John Doe",
-
-        "nationality": "US"
-      },
-      "accountInfo": {
-        "accountType": "SPARK_WALLET",
-        "address": "spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu"
-      }
-    }
+    "accountId": "ExternalAccount:b23dcbd6-dced-4ec4-b756-3c3a9ea3d456",
+    "currency": "BTC"
   },
   "lockedCurrencySide": "SENDING",
-  "lockedCurrencyAmount": 100,
-  "immediatelyExecute": true, // Execute the quote immediately. See note below.
-  "description": "Bitcoin reward payout!"
+  "lockedCurrencyAmount": 100000,
+  "description": "Bitcoin purchase for self-custody"
 }
 ```
 
 <Note>
-  **Combined External Account Creation and Quote Execution**: The `externalAccountDetails` option allows you to
-  create the external account and execute the quote in a single API call, which is perfect for one-off payments
-  to new destinations. The external account will be automatically created and then used as the destination for
-  the Bitcoin transfer. Its ID in the response can be used directly in future quote creation requests.
-
-  **Immediate Quote Execution (Market Order)**: Note that `immediatelyExecute` is set to `true` in this example.
-  Because we always just want to send $1.00 worth of BTC to users as a reward at the current market rate, we don't
-  need to lock a quote and view the rate details before executing. If you want to lock a quote and confirm fees
-  and exchange rate details before executing the quote, set `immediatelyExecute` to `false` or omit the field.
+  **Amount Locking**: You can lock either the USD amount you want to spend (`SENDING`) or the BTC amount you want to receive (`RECEIVING`). In this example, we're locking the sending amount to exactly $1,000.00 USD (100000 cents).
 </Note>
+
+### Response
+
+```json
+{
+  "quoteId": "Quote:019542f5-b3e7-1d02-0000-000000000020",
+  "status": "PENDING",
+  "createdAt": "2025-10-03T15:00:00Z",
+  "expiresAt": "2025-10-03T15:05:00Z",
+  "source": {
+    "accountId": "InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965",
+    "currency": "USD"
+  },
+  "destination": {
+    "accountId": "ExternalAccount:b23dcbd6-dced-4ec4-b756-3c3a9ea3d456",
+    "currency": "BTC"
+  },
+  "sendingCurrency": {
+    "code": "USD",
+    "name": "United States Dollar",
+    "symbol": "$",
+    "decimals": 2
+  },
+  "receivingCurrency": {
+    "code": "BTC",
+    "name": "Bitcoin",
+    "symbol": "₿",
+    "decimals": 8
+  },
+  "totalSendingAmount": 100000,
+  "totalReceivingAmount": 1050000,
+  "exchangeRate": 0.000010526,
+  "feesIncluded": 150,
+  "transactionId": "Transaction:019542f5-b3e7-1d02-0000-000000000025"
+}
+```
+
+The quote shows:
+- **Sending**: \$1,000.00 USD (including $1.50 fee)
+- **Receiving**: 0.0105 BTC (1,050,000 satoshis)
+- **Exchange rate**: 0.000010526 BTC per USD (~$95,000 per BTC)
+- **Quote expires**: In 5 minutes
+
+<Warning>
+  Bitcoin prices are volatile. Quotes typically expire in 1-5 minutes to protect against rapid price changes. Make sure to execute the quote before the `expiresAt` timestamp, or you'll need to create a new quote with updated rates.
+</Warning>
+
+## Step 6: Execute the Quote
+
+Execute the quote to initiate the Bitcoin purchase and transfer to the Spark wallet.
+
+### Request
+
+```http
+POST /quotes/Quote:019542f5-b3e7-1d02-0000-000000000020/execute
+Authorization: Basic <base64-encoded-credentials>
+```
 
 ### Response
 
@@ -230,21 +319,15 @@ Content-Type: application/json
     "symbol": "₿",
     "decimals": 8
   },
-  "totalSendingAmount": 100,
-  "totalReceivingAmount": 810,
-  "exchangeRate": 8.1,
-  "feesIncluded": 5,
+  "totalSendingAmount": 100000,
+  "totalReceivingAmount": 1050000,
+  "exchangeRate": 0.000010526,
+  "feesIncluded": 150,
   "transactionId": "Transaction:019542f5-b3e7-1d02-0000-000000000025"
 }
 ```
 
-The quote shows:
-- **Sending**: \$1.00 USD (including $0.05 fee)
-- **Receiving**: 0.0000081 BTC (810 satoshis)
-- **Exchange rate**: 8.1 sats per USD cent (~$123,000 per BTC)
-- **External account created**: The Spark wallet was automatically added as an external account during quote creation
-
-The quote status changes to `PROCESSING` and the Bitcoin transfer is initiated. The external account is created, USD is debited from the internal account, Bitcoin is purchased, and then sent to the Spark wallet address.
+The quote status changes to `PROCESSING` and the Bitcoin transfer is initiated. The USD is debited from the internal account, Bitcoin is purchased, and then sent to the Spark wallet address.
 
 You can track the status by:
 1. Polling the quote endpoint: `GET /quotes/{quoteId}`
@@ -261,7 +344,7 @@ When the Bitcoin transfer completes, you'll receive a webhook notification:
     "status": "COMPLETED",
     "type": "OUTGOING",
     "sentAmount": {
-      "amount": 100,
+      "amount": 100000,
       "currency": {
         "code": "USD",
         "name": "United States Dollar",
@@ -270,7 +353,7 @@ When the Bitcoin transfer completes, you'll receive a webhook notification:
       }
     },
     "receivedAmount": {
-      "amount": 810,
+      "amount": 1050000,
       "currency": {
         "code": "BTC",
         "name": "Bitcoin",
@@ -282,7 +365,7 @@ When the Bitcoin transfer completes, you'll receive a webhook notification:
     "settledAt": "2025-10-03T15:01:45Z",
     "createdAt": "2025-10-03T15:00:00Z",
     "description": "Bitcoin purchase for self-custody",
-    "exchangeRate": 8.1,
+    "exchangeRate": 0.000010526,
     "quoteId": "Quote:019542f5-b3e7-1d02-0000-000000000020"
   },
   "timestamp": "2025-10-03T15:02:00Z",
@@ -299,12 +382,14 @@ When the Bitcoin transfer completes, you'll receive a webhook notification:
 
 You've successfully completed a Bitcoin purchase and transfer to a self-custody Spark wallet! Here's what happened:
 
-1. ✅ Listed internal accounts and obtained USD funding instructions
-2. ✅ Funded the internal account with USD via ACH
-3. ✅ Created a customer via hosted KYC flow
-4. ✅ Created and executed a quote to purchase Bitcoin and send to the Spark wallet
+1. ✅ Created a customer via hosted KYC flow
+2. ✅ Listed internal accounts and obtained USD funding instructions
+3. ✅ Funded the internal account with USD via ACH pull
+4. ✅ Added a Spark wallet as an external account
+5. ✅ Created a quote with locked BTC/USD exchange rate
+6. ✅ Executed the quote to purchase Bitcoin and send to the Spark wallet
 
-The customer now has 810 Satoshis in their self-custody Spark wallet!
+The customer now has 0.0105 BTC in their self-custody Spark wallet!
 
 ## Next Steps
 
