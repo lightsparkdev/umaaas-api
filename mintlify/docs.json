@@ -21,22 +21,46 @@
         "pages": ["index"]
       },
       {
-        "tab": "UMA Connect",
-        "groups": [
+        "tab": "Remittances",
+        "pages": [
+          "remittances/index",
+          "remittances/quickstart",
           {
             "group": "Getting Started",
-            "pages": ["uma-connect/developer-guides/index"]
+            "pages": [
+              "remittances/developer-guides/implementation-overview",
+              "remittances/developer-guides/platform-configuration"
+            ]
           },
           {
-            "group": "Developer Guides",
+            "group": "Onboarding Customers",
             "pages": [
-              "uma-connect/developer-guides/platform-configuration",
-              "uma-connect/developer-guides/configuring-users",
-              "uma-connect/developer-guides/sending-payments",
-              "uma-connect/developer-guides/receiving-payments",
-              "uma-connect/developer-guides/webhooks",
-              "uma-connect/developer-guides/sandbox-testing",
-              "uma-connect/developer-guides/invitations"
+              "remittances/developer-guides/configuring-users",
+              "remittances/developer-guides/invitations"
+            ]
+          },
+          {
+            "group": "Sending & Receiving Payments",
+            "pages": [
+              "remittances/developer-guides/sending-payments",
+              "remittances/developer-guides/receiving-payments",
+              "remittances/developer-guides/reconciliation",
+              "remittances/developer-guides/payment-error-handling"
+            ]
+          },
+          {
+            "group": "Platform Tools",
+            "pages": [
+              "remittances/developer-guides/webhooks",
+              "remittances/developer-guides/sandbox-testing"
+            ]
+          },
+          {
+            "group": "Developer Resources",
+            "pages": [
+              "developer-resources/terminology",
+              "developer-resources/tools",
+              "developer-resources/postman-collection"
             ]
           }
         ]
@@ -60,8 +84,9 @@
           {
             "group": "Using the API",
             "pages": [
-              "api-reference/environments", 
-              "api-reference/authentication"]
+              "api-reference/environments",
+              "api-reference/authentication"
+            ]
           },
           {
             "group": "API documentation",
@@ -110,9 +135,27 @@
   },
   "head": {
     "links": [
-      { "rel": "preload", "href": "/fonts/suisse-intl/SuisseIntl-Medium.woff2", "as": "font", "type": "font/woff2", "crossOrigin": "anonymous" },
-      { "rel": "preload", "href": "/fonts/suisse-intl/SuisseIntl-Regular.woff2", "as": "font", "type": "font/woff2", "crossOrigin": "anonymous" },
-      { "rel": "preload", "href": "/fonts/suisse-intl/SuisseIntl-Bold.woff2", "as": "font", "type": "font/woff2", "crossOrigin": "anonymous" },
+      {
+        "rel": "preload",
+        "href": "/fonts/suisse-intl/SuisseIntl-Medium.woff2",
+        "as": "font",
+        "type": "font/woff2",
+        "crossOrigin": "anonymous"
+      },
+      {
+        "rel": "preload",
+        "href": "/fonts/suisse-intl/SuisseIntl-Regular.woff2",
+        "as": "font",
+        "type": "font/woff2",
+        "crossOrigin": "anonymous"
+      },
+      {
+        "rel": "preload",
+        "href": "/fonts/suisse-intl/SuisseIntl-Bold.woff2",
+        "as": "font",
+        "type": "font/woff2",
+        "crossOrigin": "anonymous"
+      },
       { "rel": "stylesheet", "href": "/styles/fonts.css" },
       { "rel": "stylesheet", "href": "/styles/styles.css" }
     ]
