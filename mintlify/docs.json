@@ -78,7 +78,10 @@
           },
           {
             "group": "Developer Guides",
-            "pages": ["pay-to-bank/developer-guides/platform-configuration"]
+            "pages": [
+              "pay-to-bank/developer-guides/platform-configuration",
+              "pay-to-bank/developer-guides/rails-by-country"
+            ]
           }
         ]
       },
