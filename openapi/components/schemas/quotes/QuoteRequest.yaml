@@ -88,6 +88,17 @@ properties:
             description: Currency code for the destination
             example: EUR
         description: UMA address destination details
+      - title: External Account Details Destination
+        type: object
+        required:
+          - externalAccountDetails
+        properties:
+          externalAccountDetails:
+            $ref: ../external_accounts/ExternalAccountCreateRequest.yaml
+        description: >-
+          A convenient destination option which adds the external account and creates
+          the quote in one step rather than first needing to call /external-accounts
+          to add the account. Useful for one-off payments to some destination.
   lockedCurrencySide:
     $ref: ./QuoteLockSide.yaml
   lockedCurrencyAmount:
