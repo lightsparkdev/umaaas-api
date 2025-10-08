@@ -8,4 +8,4 @@ enum:
   - MANUALLY_APPROVED
   - MANUALLY_REJECTED
 description: The current kyc status of a customer
-example: ACCEPTED
+example: APPROVED

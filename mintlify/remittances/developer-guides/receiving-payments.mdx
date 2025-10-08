@@ -9,33 +9,33 @@ This guide outlines the process for platforms to receive payments from UMA addre
 
 ## Process Overview
 
-The following sequence diagram illustrates the interaction between your platform and the UMAaaS API when receiving payments:
+The following sequence diagram illustrates the interaction between your platform and the Grid API when receiving payments:
 
 ```mermaid
 sequenceDiagram
     participant Sender as External Sender
-    participant UMAaaS as UMAaaS API
+    participant Grid as Grid API
     participant Client as Your Platform
     participant Bank as Banking Provider
     
-    Note over Client, UMAaaS: One-time setup
-    Client->>UMAaaS: PUT /config (set domain, webhook URL)
-    UMAaaS-->>Client: Configuration saved
-    Client->>UMAaaS: POST /users (register users with bank info)
-    UMAaaS-->>Client: User registered
+    Note over Client, Grid: One-time setup
+    Client->>Grid: PUT /config (set domain, webhook URL)
+    Grid-->>Client: Configuration saved
+    Client->>Grid: POST /users (register users with bank info)
+    Grid-->>Client: User registered
     
-    Note over Sender, UMAaaS: Payment initiated by sender
-    Sender->>UMAaaS: Initiates payment to UMA address
-    UMAaaS->>Client: Webhook: INCOMING_PAYMENT (PENDING)
+    Note over Sender, Grid: Payment initiated by sender
+    Sender->>Grid: Initiates payment to UMA address
+    Grid->>Client: Webhook: INCOMING_PAYMENT (PENDING)
     
     alt Payment approved
-        Client-->>UMAaaS: HTTP 200 OK (approve payment, provide PII if requested)
-        UMAaaS->>Bank: Execute payment to user's bank account
-        UMAaaS->>Client: Webhook: INCOMING_PAYMENT (COMPLETED)
-        Client-->>UMAaaS: HTTP 200 OK (acknowledge completion)
+        Client-->>Grid: HTTP 200 OK (approve payment, provide PII if requested)
+        Grid->>Bank: Execute payment to user's bank account
+        Grid->>Client: Webhook: INCOMING_PAYMENT (COMPLETED)
+        Client-->>Grid: HTTP 200 OK (acknowledge completion)
     else Payment rejected
-        Client-->>UMAaaS: HTTP 403 Forbidden with rejection reason
-        UMAaaS->>Sender: Payment rejected notification
+        Client-->>Grid: HTTP 403 Forbidden with rejection reason
+        Grid->>Sender: Payment rejected notification
     end
 ```
 
@@ -136,7 +136,7 @@ When someone initiates a payment to one of your users' UMA addresses, you'll rec
 }
 ```
 
-The `counterpartyInformation` object contains PII about the *sender*, provided by their VASP. The `requestedReceiverUserInfoFields` array, if present, lists information fields that the sender's VASP (or governing regulations) require about your user (the *recipient*). UMAaaS does not have this information and is requesting it from your platform to proceed with the payment. Each item in this array is an object specifying the `name` of the field (from `UserInfoFieldName`) and whether it's `mandatory`.
+The `counterpartyInformation` object contains PII about the *sender*, provided by their VASP. The `requestedReceiverUserInfoFields` array, if present, lists information fields that the sender's VASP (or governing regulations) require about your user (the *recipient*). Grid does not have this information and is requesting it from your platform to proceed with the payment. Each item in this array is an object specifying the `name` of the field (from `UserInfoFieldName`) and whether it's `mandatory`.
 
 You have two options for approving or rejecting the payment:
 
@@ -259,26 +259,26 @@ This section is not necessary knowledge for platforms, but it describes the flow
 ```mermaid
 sequenceDiagram
     participant Sender as External Sender
-    participant UMAaaS as UMAaaS API
+    participant Grid as Grid API
     participant Client as Your Platform
     participant Bank as Banking Provider
     
-    Note over Sender, UMAaaS: Payment initiated by sender
-    Sender->>UMAaaS: Lnurlp request for UMA address
-    Note over UMAaaS: Resolves the UMA address to a registered user
-    UMAaaS->>Sender: Lnurlp response with currencies and requested payer fields
-    Sender->>UMAaaS: Payreq request with payer information and amount
-    UMAaaS->>Client: Webhook: INCOMING_PAYMENT (PENDING)
+    Note over Sender, Grid: Payment initiated by sender
+    Sender->>Grid: Lnurlp request for UMA address
+    Note over Grid: Resolves the UMA address to a registered user
+    Grid->>Sender: Lnurlp response with currencies and requested payer fields
+    Sender->>Grid: Payreq request with payer information and amount
+    Grid->>Client: Webhook: INCOMING_PAYMENT (PENDING)
     
     alt Payment approved
-        Client-->>UMAaaS: HTTP 200 OK (approve payment, provide recipient PII if requested)
-        UMAaaS-->>Sender: Payreq response with payee info and a Lightning Invoice
+        Client-->>Grid: HTTP 200 OK (approve payment, provide recipient PII if requested)
+        Grid-->>Sender: Payreq response with payee info and a Lightning Invoice
         Note over Sender: Sender pays Lightning Invoice
-        UMAaaS->>Bank: Execute payment to user's bank account
-        UMAaaS->>Client: Webhook: INCOMING_PAYMENT (COMPLETED)
-        Client-->>UMAaaS: HTTP 200 OK (acknowledge completion)
+        Grid->>Bank: Execute payment to user's bank account
+        Grid->>Client: Webhook: INCOMING_PAYMENT (COMPLETED)
+        Client-->>Grid: HTTP 200 OK (acknowledge completion)
     else Payment rejected
-        Client-->>UMAaaS: HTTP 403 Forbidden with rejection reason
+        Client-->>Grid: HTTP 403 Forbidden with rejection reason
         UMAaaS->>Sender: Failed payreq response.
     end
 ```

@@ -5,8 +5,8 @@ description: "Creating and managing UMA invitations"
 
 # UMA Invitations
 
-UMAaaS provides an invitation system that allows platform users to invite others to create their own UMA addresses. This guide explains how to use the invitation system effectively.
-See the full [UMA invitations guide](https://docs.lightspark.com/uma-invitations/introduction) for details outside of the context of UMAaaS.
+The Grid API provides an invitation system that allows platform users to invite others to create their own UMA addresses. This guide explains how to use the invitation system effectively.
+See the full [UMA invitations guide](https://docs.lightspark.com/uma-invitations/introduction) for details outside of the context of the Grid API.
 
 ## Overview
 
@@ -60,7 +60,7 @@ When the invitee clicks the URL, they will be presented with a list of UMA provi
 
 ## Pay-by-Link Invitations
 
-UMAaaS supports a "pay-by-link" feature that allows users to create invitations that include a payment amount. This is useful for scenarios where you want to send money to someone who doesn't yet have a UMA address or where the sender doesn't know the receiver's UMA address. They can simply share a link via email, SMS, whatsapp, or other channels to send money.
+The Grid API supports a "pay-by-link" feature that allows users to create invitations that include a payment amount. This is useful for scenarios where you want to send money to someone who doesn't yet have a UMA address or where the sender doesn't know the receiver's UMA address. They can simply share a link via email, SMS, whatsapp, or other channels to send money.
 
 To create a pay-by-link invitation, include the `amountToSend` field when creating the invitation:
 
@@ -113,7 +113,7 @@ These payments can only be sender-locked, meaning that the sender will not know 
 
 ## Claiming Invitations
 
-Once onboarding (or login from an invite link) is complete, the invitee's new VASP (which may or may not be the same as the inviter's UMAaaS platform) will need to claim the invitation by making a
+Once onboarding (or login from an invite link) is complete, the invitee's new VASP (which may or may not be the same as the inviter's Grid API platform) will need to claim the invitation by making a
 POST request to `/invitations/{invitationCode}/claim` including the invitee's newly-created UMA address:
 
 ```http
@@ -171,7 +171,7 @@ Example error response for an already claimed invitation:
 
 ## Webhook Integration
 
-When an invitation is claimed, UMAaaS will send an `INVITATION_CLAIMED` webhook to your configured webhook endpoint. This allows you to:
+When an invitation is claimed, the Grid API will send an `INVITATION_CLAIMED` webhook to your configured webhook endpoint. This allows you to:
 
 - Track invitation usage and conversion rates
 - Apply referral bonuses or rewards to the inviter
