@@ -1,0 +1,236 @@
+---
+title: "Webhook Verification"
+description: "Secure webhook signature verification and implementation guidance"
+---
+
+<Info>
+Webhook verification ensures that incoming webhook requests are authentic and come from the Grid platform. This snippet provides implementation guidance for verifying webhook signatures across all webhook types.
+</Info>
+
+## Webhook Security Overview
+
+All webhook requests from the Grid platform include a signature header that allows you to verify the authenticity of the request. This prevents malicious actors from sending fake webhook notifications to your endpoints.
+
+<Warning>
+**Always verify webhook signatures** in production environments to ensure request authenticity and prevent security vulnerabilities.
+</Warning>
+
+## Signature Verification
+
+### Signature Header Format
+
+Webhook requests include an `X-Grid-Signature` header with a base64-encoded signature that allows you to verify the webhook was sent by the Grid API.
+
+### Verification Steps
+
+To verify the signature:
+
+1. **Get the Grid webhook public key** provided to you during integration
+   - The key is in PEM format and can be used with standard cryptographic libraries
+2. **Parse the signature header** - it may be JSON format `{"v": "1", "s": "base64_signature"}` or direct base64
+3. **Extract the base64 signature** from the JSON `s` field or use the header directly
+4. **Create a SHA-256 verifier** and update it with the request body
+5. **Verify the signature** using the public key in PEM format
+
+### Implementation Example
+
+```javascript
+const crypto = require('crypto');
+
+async function verifyWebhookSignature(payload, signatureHeader, publicKey) {
+  try {
+    let signature;
+    
+    try {
+      // Parse the signature as JSON. It's in the format {"v": "1", "s": "base64_signature"}
+      const signatureObj = JSON.parse(signatureHeader);
+      if (signatureObj.v && signatureObj.s) {
+        // The signature is in the 's' field
+        signature = Buffer.from(signatureObj.s, "base64");
+      } else {
+        throw new Error("Invalid JSON signature format");
+      }
+    } catch {
+      // If JSON parsing fails, treat as direct base64
+      signature = Buffer.from(signatureHeader, "base64");
+    }
+    
+    // Create verifier with the public key and correct algorithm
+    const verifier = crypto.createVerify("SHA256");
+    verifier.update(payload);
+    verifier.end();
+
+    // Verify the signature using the webhook public key
+    const isValid = verifier.verify(
+      {
+        key: publicKey,
+        format: "pem",
+        type: "spki",
+      },
+      signature,
+    );
+    
+    return isValid;
+  } catch (error) {
+    console.error('Signature verification error:', error);
+    return false;
+  }
+}
+
+// Example webhook handler
+app.post('/webhooks', express.raw({type: 'application/json'}), async (req, res) => {
+  const signatureHeader = req.headers['x-grid-signature'];
+  const payload = req.body;
+  
+  if (!await verifyWebhookSignature(payload, signatureHeader, process.env.UMAaaS_WEBHOOK_PUBLIC_KEY)) {
+    return res.status(401).send('Invalid signature');
+  }
+  
+  // Process verified webhook
+  const webhookData = JSON.parse(payload);
+  // ... handle webhook data
+  
+  res.status(200).send('OK');
+});
+```
+
+## Implementation Best Practices
+
+### Security Considerations
+
+<Tip>
+**Use Raw Request Body**: Always verify signatures against the raw request body, not the parsed JSON. Parsing can modify the payload and cause verification failures.
+</Tip>
+
+<Tip>
+**Public Key Management**: Store your Grid webhook public key securely using environment variables or a secure secret management system. Never hardcode keys in your application code.
+</Tip>
+
+### Error Handling
+
+Handle signature verification failures appropriately:
+
+```javascript
+async function handleWebhookVerification(req, res, next) {
+  const signatureHeader = req.headers['x-grid-signature'];
+  
+  if (!signatureHeader) {
+    return res.status(400).send('Missing webhook signature');
+  }
+  
+  if (!await verifyWebhookSignature(req.body, signatureHeader, process.env.UMAaaS_WEBHOOK_PUBLIC_KEY)) {
+    // Log the failed attempt for security monitoring
+    console.warn('Invalid webhook signature received', {
+      ip: req.ip,
+      userAgent: req.headers['user-agent'],
+      timestamp: new Date().toISOString()
+    });
+    
+    return res.status(401).send('Invalid signature');
+  }
+  
+  next();
+}
+```
+
+### Idempotent Processing
+
+Webhook endpoints should handle duplicate notifications:
+
+```javascript
+// Example idempotent webhook handler
+const processedWebhooks = new Set();
+
+app.post('/webhooks', handleWebhookVerification, async (req, res) => {
+  const { webhookId, type, timestamp } = req.body;
+  
+  // Check if webhook was already processed
+  if (processedWebhooks.has(webhookId)) {
+    return res.status(200).send('Already processed');
+  }
+  
+  try {
+    // Process webhook based on type
+    switch (type) {
+      case 'KYC_STATUS':
+        await handleKycStatusUpdate(req.body);
+        break;
+      case 'PAYMENT_STATUS':
+        await handlePaymentStatusUpdate(req.body);
+        break;
+      // ... other webhook types
+    }
+    
+    // Mark as processed
+    processedWebhooks.add(webhookId);
+    
+    res.status(200).send('OK');
+  } catch (error) {
+    console.error('Webhook processing error:', error);
+    res.status(500).send('Processing failed');
+  }
+});
+```
+
+## Testing Webhook Verification
+
+### Test Webhook Endpoint
+
+Use the test webhook endpoint to verify your signature verification implementation:
+
+<RequestExample>
+```http POST /webhooks/test
+POST /webhooks/test
+Authorization: Basic <base64-encoded-credentials>
+Content-Type: application/json
+
+{
+  "testData": "This is a test webhook payload"
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success
+{
+  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000023",
+  "type": "TEST",
+  "timestamp": "2023-07-21T17:32:28Z",
+  "testData": "This is a test webhook payload"
+}
+```
+</ResponseExample>
+
+<Tip>
+**Development Testing**: Use the test webhook endpoint to verify your signature verification works correctly before deploying to production.
+</Tip>
+
+## Security Checklist
+
+<Check>
+✅ **Signature verification implemented** using Grid webhook public key
+</Check>
+
+<Check>
+✅ **Public key stored securely** using environment variables
+</Check>
+
+<Check>
+✅ **Raw request body used** for signature verification
+</Check>
+
+<Check>
+✅ **Error handling implemented** for invalid signatures
+</Check>
+
+<Check>
+✅ **Idempotent webhook processing** to handle duplicate notifications
+</Check>
+
+<Check>
+✅ **Security logging** for failed verification attempts
+</Check>
+
+<Warning>
+**Production Deployment**: Always test webhook verification thoroughly in a staging environment before deploying to production. Invalid webhook verification can cause missed notifications and integration failures.
+</Warning>
