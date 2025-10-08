@@ -3,4 +3,165 @@ title: "Quickstart"
 ---
 import { umaaasProductName } from '/snippets/variables.mdx'
 
-This guide will walk you through the steps to get started with {umaaasProductName}.
+This quickstart guides you through sending a payment from the US to a bank account in Mexicousing just‑in‑time funding.
+
+<Steps>
+<Step title="Get API credentials">
+  Create a Sandbox API key and secret in the dashboard, then set environment variables for local use.
+
+  ```bash
+  export GRID_BASE_URL="https://api.lightspark.com/grid/2025-10-13"
+  export GRID_API_KEY="YOUR_SANDBOX_KEY"
+  export GRID_API_SECRET="YOUR_SANDBOX_SECRET"
+  ```
+
+  <Tip>
+  Use Basic Auth in cURL with `-u "$GRID_API_KEY:$GRID_API_SECRET"`.
+  </Tip>
+</Step>
+
+<Step title="Create a customer">
+  Register a customer who will send the payment. You can provide your own UMA handle or let the system generate one.
+
+  ```bash
+  curl -sS -X POST "$GRID_BASE_URL/customers" \
+    -u "$GRID_API_KEY:$GRID_API_SECRET" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "platformCustomerId": "cust_7b3c5a89d2f1e0",
+      "customerType": "INDIVIDUAL",
+      "umaAddress": "$alice@yourapp.example",
+      "fullName": "Alice Smith",
+      "address": {
+        "line1": "123 Pine Street",
+        "city": "Seattle",
+        "state": "WA",
+        "postalCode": "98101",
+        "country": "US"
+      }
+    }'
+  ```
+  
+  Response:
+  ```json
+  {
+    "id": "Customer:019542f5-b3e7-1d02-0000-000000000001",
+    "customerType": "INDIVIDUAL",
+    "umaAddress": "$alice@yourapp.example",
+    "platformCustomerId": "cust_7b3c5a89d2f1e0"
+  }
+  ```
+</Step>
+
+<Step title="Create an external receiving bank account (CLABE in MX)">
+  Add a beneficiary account in Mexico using their CLABE. We attach it to the same customer for this example.
+
+  ```bash
+  curl -sS -X POST "$GRID_BASE_URL/external-accounts" \
+    -u "$GRID_API_KEY:$GRID_API_SECRET" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "currency": "MXN",
+      "platformAccountId": "mx_beneficiary_001",
+      "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
+      "beneficiary": {
+        "counterPartyType": "INDIVIDUAL",
+        "fullName": "Carlos Pérez",
+        "email": "carlos.perez@example.mx"
+      },
+      "accountInfo": {
+        "accountType": "CLABE",
+        "clabeNumber": "123456789012345678",
+        "bankName": "BBVA Mexico",
+        "accountHolderName": "Carlos Pérez"
+      }
+    }'
+  ```
+  
+  Response:
+  ```json
+  {
+    "id": "ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123",
+    "currency": "MXN",
+    "beneficiary": { "fullName": "Carlos Pérez" },
+    "accountInfo": { "accountType": "CLABE", "bankName": "BBVA Mexico" }
+  }
+  ```
+</Step>
+
+<Step title="Create a quote (just‑in‑time funding)">
+  Quote a transfer 100 USD from the customer to the MXN CLABE account. The quote returns the exchange rate, fees, and `paymentInstructions` to fund in real time.
+
+  ```bash
+  curl -sS -X POST "$GRID_BASE_URL/quotes" \
+    -u "$GRID_API_KEY:$GRID_API_SECRET" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "source": {
+        "umaAddress": "$alice@yourapp.example",
+        "currency": "USD"
+      },
+      "destination": {
+        "accountId": "ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123",
+        "currency": "MXN"
+      },
+      "lockedCurrencySide": "SENDING",
+      "lockedCurrencyAmount": 10000,
+      "description": "Remittance to MX beneficiary"
+    }'
+  ```
+  
+  Response:
+  ```json
+  {
+    "id": "Quote:019542f5-b3e7-1d02-0000-000000000006",
+    "exchangeRate": 16.85,
+    "fees": { "amount": 50, "currency": { "code": "USD", "decimals": 2 } },
+    "paymentInstructions": {
+      "reference": "UMA-Q12345-REF",
+      "bankAccountInfo": {
+        "accountType": "US_ACCOUNT",
+        "accountNumber": "987654321",
+        "routingNumber": "123456789",
+        "accountCategory": "CHECKING",
+        "bankName": "Example Bank"
+      }
+    },
+    "status": "PENDING"
+  }
+  ```
+
+  <Tip>
+  For just-in-time funding, you fund using `paymentInstructions`; you do not call `/quotes/{quoteId}/execute`.
+  </Tip>
+</Step>
+
+<Step title="Fund the quote using payment instructions">
+  Initiate a real‑time payment from your bank to the provided `bankAccountInfo` with the exact `reference`. Supported rails depend on your region (e.g., RTP, SPEI, SEPA Instant). Once funds are received, {umaaasProductName} executes conversion and delivers to the external account.
+</Step>
+
+<Step title="Handle the outgoing payment webhook">
+  Implement a webhook endpoint to receive status updates as the payment moves from pending to completed (or failed). Verify the `X-Grid-Signature` header using the public key provided during onboarding.
+
+  Webhook event:
+  ```json
+  {
+    "transaction": {
+      "id": "Transaction:019542f5-b3e7-1d02-0000-000000000005",
+      "status": "COMPLETED",
+      "type": "OUTGOING",
+      "senderUmaAddress": "$alice@yourapp.example",
+      "receivedAmount": { "amount": 9706, "currency": { "code": "MXN", "decimals": 2 } },
+      "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
+      "quoteId": "Quote:019542f5-b3e7-1d02-0000-000000000006",
+      "paymentInstructions": {
+        "reference": "UMA-Q12345-REF"
+      }
+    },
+    "timestamp": "2025-01-15T14:32:00Z",
+    "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000007",
+    "type": "OUTGOING_PAYMENT"
+  }
+  ```
+</Step>
+</Steps>
