@@ -30,7 +30,6 @@ This quickstart guides you through sending a payment from the US to a bank accou
     -d '{
       "platformCustomerId": "cust_7b3c5a89d2f1e0",
       "customerType": "INDIVIDUAL",
-      "umaAddress": "$alice@yourapp.example",
       "fullName": "Alice Smith",
       "address": {
         "line1": "123 Pine Street",
@@ -47,7 +46,7 @@ This quickstart guides you through sending a payment from the US to a bank accou
   {
     "id": "Customer:019542f5-b3e7-1d02-0000-000000000001",
     "customerType": "INDIVIDUAL",
-    "umaAddress": "$alice@yourapp.example",
+    "umaAddress": "$default-generated-uma@grid.lightspark.com",
     "platformCustomerId": "cust_7b3c5a89d2f1e0"
   }
   ```
@@ -98,7 +97,7 @@ This quickstart guides you through sending a payment from the US to a bank accou
     -H "Content-Type: application/json" \
     -d '{
       "source": {
-        "umaAddress": "$alice@yourapp.example",
+        "umaAddress": "$default-generated-uma@grid.lightspark.com",
         "currency": "USD"
       },
       "destination": {
