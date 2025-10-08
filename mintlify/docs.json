@@ -75,6 +75,24 @@
             "pages": ["developer-resources/placeholder"]
           },
           {
+            "group": "Accounts",
+            "pages": [
+              "pay-to-bank/depositing-funds/internal-accounts",
+              "pay-to-bank/depositing-funds/external-accounts",
+              "pay-to-bank/depositing-funds/plaid"
+            ]
+          },
+          {
+            "group": "Payment Flow",
+            "pages": [
+              "pay-to-bank/payment-flow/send-payment",
+              "pay-to-bank/payment-flow/receive-payment",
+              "pay-to-bank/payment-flow/list-transactions",
+              "pay-to-bank/payment-flow/reconciliation",
+              "pay-to-bank/payment-flow/error-handling"
+            ]
+          },
+          {
             "group": "Developer Guides",
             "pages": ["developer-resources/placeholder"]
           }
