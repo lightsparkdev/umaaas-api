@@ -26,7 +26,3 @@ properties:
     type: string
     description: Name of the bank
     example: Nubank
-  accountHolderName:
-    type: string
-    description: Name of the account holder
-    example: John Doe

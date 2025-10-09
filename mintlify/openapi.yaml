@@ -914,6 +914,12 @@ paths:
                     counterPartyType: INDIVIDUAL
                     fullName: John Doe
                     email: john.doe@example.com
+                    address:
+                      line1: 123 Main Street
+                      city: San Francisco
+                      state: CA
+                      postalCode: '94105'
+                      country: US
                   accountInfo:
                     accountType: US_ACCOUNT
                     accountNumber: "12345678901"
@@ -931,6 +937,12 @@ paths:
                     counterPartyType: INDIVIDUAL
                     fullName: Jane Smith
                     email: jane.smith@example.com
+                    address:
+                      line1: 456 Oak Avenue
+                      city: New York
+                      state: NY
+                      postalCode: '10001'
+                      country: US
                   accountInfo:
                     accountType: SPARK_WALLET
                     address: sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
