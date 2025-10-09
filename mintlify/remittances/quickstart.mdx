@@ -30,7 +30,6 @@ This quickstart guides you through sending a payment from the US to a bank accou
     -d '{
       "platformCustomerId": "cust_7b3c5a89d2f1e0",
       "customerType": "INDIVIDUAL",
-      "umaAddress": "$alice@yourapp.example",
       "fullName": "Alice Smith",
       "address": {
         "line1": "123 Pine Street",
@@ -47,7 +46,7 @@ This quickstart guides you through sending a payment from the US to a bank accou
   {
     "id": "Customer:019542f5-b3e7-1d02-0000-000000000001",
     "customerType": "INDIVIDUAL",
-    "umaAddress": "$alice@yourapp.example",
+    "umaAddress": "$default-generated-uma@grid.lightspark.com",
     "platformCustomerId": "cust_7b3c5a89d2f1e0"
   }
   ```
@@ -90,7 +89,7 @@ This quickstart guides you through sending a payment from the US to a bank accou
 </Step>
 
 <Step title="Create a quote (just‑in‑time funding)">
-  Quote a transfer 100 USD from the customer to the MXN CLABE account using real-time funding. The quote returns the exchange rate, fees, and `paymentInstructions` to fund in real time.
+  Quote a transfer 100 USD from the customer to the MXN CLABE account. The quote returns the exchange rate, fees, and `paymentInstructions` to fund in real time.
 
   ```bash
   curl -sS -X POST "$GRID_BASE_URL/quotes" \
@@ -98,7 +97,7 @@ This quickstart guides you through sending a payment from the US to a bank accou
     -H "Content-Type: application/json" \
     -d '{
       "source": {
-        "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000009",
+        "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
         "currency": "USD"
       },
       "destination": {
@@ -136,8 +135,29 @@ This quickstart guides you through sending a payment from the US to a bank accou
   </Tip>
 </Step>
 
-<Step title="Fund the quote using payment instructions">
-  Initiate a real‑time payment from your bank to the provided `bankAccountInfo` with the exact `reference`. Supported rails depend on your region (e.g., RTP, SPEI, SEPA Instant). Once funds are received, {umaaasProductName} executes conversion and delivers to the external account.
+<Step title="Fund the quote (Sandbox simulation)">
+  In production, you would trigger a real‑time push on a local instant rail (e.g., RTP, SPEI, SEPA Instant) to the provided `bankAccountInfo` using the exact `reference`. In Sandbox, you can mock funding using the simulate send endpoint.
+
+  ```bash
+  curl -sS -X POST "$GRID_BASE_URL/sandbox/send" \
+    -u "$GRID_API_KEY:$GRID_API_SECRET" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "reference": "UMA-Q12345-REF",
+      "currencyCode": "USD",
+      "currencyAmount": 10000
+    }'
+  ```
+
+  Response:
+  ```json
+  {
+    "id": "Transaction:019542f5-b3e7-1d02-0000-000000000005",
+    "status": "PROCESSING",
+    "type": "OUTGOING",
+    "quoteId": "Quote:019542f5-b3e7-1d02-0000-000000000006"
+  }
+  ```
 </Step>
 
 <Step title="Handle the outgoing payment webhook">

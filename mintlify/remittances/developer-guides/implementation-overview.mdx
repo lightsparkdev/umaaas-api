@@ -1,56 +1,86 @@
 ---
 title: "Implementation Overview"
 ---
+This page gives you a 10,000‑ft view of an end‑to‑end implementation. It is intentionally generalized because the flow supports multiple customer types and external account types (e.g., CLABE, IBAN, US accounts, UPI). The detailed guides that follow provide concrete fields, edge cases, and step‑by‑step instructions.
 
-Welcome to the Grid API for Remittances documentation. The Grid API is an API that facilitates global payments to and from UMA addresses, which are human-readable addresses that can send to and from any currency.
+<Info>
+This overview highlights the main building blocks: platform setup, onboarding, funding, payout accounts, sending and receiving flows, reconciliation, sandbox testing, and go‑live enablement.
+</Info>
 
-## Overview
+## Platform configuration
+Configure your platform once before building user flows.
 
-The Grid API provides endpoints for:
+- Provide webhook endpoints for outgoing and incoming payment notifications
+- Generate API credentials for Sandbox (and later Production)
+- Review regional capabilities (rails, currencies, settlement windows)
+- If implementing UMA, set your UMA domain and brand details used for UMA addressing
+    - Configure required counterparty and compliance fields for your target corridors
 
-1. Platform Configuration - Managing platform-specific settings such as UMA domain and required counterparty fields
-2. User Management - Adding and updating users with their UMA addresses and bank account information
-3. Sending Payments - Creating and executing payments to UMA addresses
-4. Receiving Payments - Receiving payments from UMA addresses and approving or rejecting them
-5. Fetching Transactions - Fetching transactions by ID or by quote ID
+## Onboarding customers
+Onboard customers and assign UMA addresses if implementing UMA. There are two patterns:
 
-## Getting Started
+- Regulated entities can directly create customers by providing KYC/KYB data via API
+- Unregulated entities should request a KYC link and embed the hosted KYC flow; once completed, the customer can transact.
 
-To start integrating the Grid API, follow these steps:
+You'll also need to persist the Grid customer IDs and UMA handles for use in payment flows
 
-1. [Set up your platform configuration](/remittances/developer-guides/platform-configuration)
-2. [Configure your users](/remittances/developer-guides/configuring-users)
-3. [Send payments](/remittances/developer-guides/sending-payments)
-4. [Receive payments](/remittances/developer-guides/receiving-payments)
-5. [Handle webhooks](/remittances/developer-guides/webhooks)
 
-## Authentication
+## Account funding
+Choose how transactions are funded based on your product design and region.
 
-All API requests must include HTTP Basic Authentication using the `Authorization` header. The credentials should be provided in the format `<api token id>:<api client secret>` and then Base64 encoded.
+- Prefunded: Maintain balances in one or more currencies/cryptocurrencies and spend from those balances
+- Just‑in‑time (JIT): Create a quote and fund it in real time using the payment instructions provided; ideal when you don’t wish to hold float
 
-Example:
+<Tip>
+You can mix models as necessary. But it may make reconciliation more complex.
+</Tip>
 
-```http
-Authorization: Basic <base64-encoded-credentials>
-```
+## External account creation
+Register accounts your customers will send to or receive from, such as CLABE (MX), IBAN (EU/UK), ACH/RTP(US), UPI (IN), Spark address, and others.
+- Capture beneficiary details (individual or business) and required banking fields
+- Validate account formats where applicable and map them to your internal customer
 
-Where `<base64-encoded-credentials>` is the Base64 encoding of `<api token id>:<api client secret>`.
+## Sending payments
+Sending consists of lookup, pricing, funding, and execution.
+- Resolve the counterparty: look up receiver information (bank account, UMA, Spark address) for compliance review and to determine capabilities
+- Create a quote: specify source/destination, currencies, and whether you lock sending or receiving amount; receive exchange rate, limits, fees, and (for JIT) funding instructions
+- Fund and execute: for prefunded, confirm/execute; for JIT, push funds exactly as instructed (amount, reference) and the platform handles FX and delivery
+- Observe status via webhooks and surface outcomes in your UI
 
-You can generate a new API token and client secret at any time in the Grid dashboard.
+<Note>
+When sending UMA payments, the sender can retrieve counterparty information before initiating to support compliance and risk checks.
+</Note>
 
-## API Reference
+## Receiving payments
+Enable customers to receive funds to their UMA or linked bank account.
+- Expose customer UMA/addressing to payers
+- The platform handles conversion and offramping to the receiver’s account currency
+- Approve or auto‑approve per your policy; update balances on completion via webhooks
 
-For detailed information about the API endpoints, request and response formats, and available operations, refer to the [API Reference](/api) section.
+## Reconciling transactions
+Implement operational processes to keep your ledger in sync.
+- Process webhooks idempotently; map statuses (pending, processing, completed, failed)
+- Tie transactions back to quotes and customers; persist references
+- Query for transactions by date range or other filters as necessary
+
+## Testing in Sandbox
+Use Sandbox to build and validate end‑to‑end without moving real funds.
+- Exercise receiver lookup, quote creation, funding instructions, and webhook lifecycles
+- Validate compliance decisioning with realistic but synthetic data
+- Optionally use the Test Wallet as a counterparty for faster iteration (see Tools)
+
+## Enabling Production
+When you’re ready to go live:
+- Complete corridor and provider onboarding as needed for your regions
+- Confirm webhook security, monitoring, and alerting are in place
+- Review rate limits, error handling, retries, and idempotency keys
+- Run final UAT in Sandbox, then request Production access from our team
+
+<Check>
+Contact our team to enable Production and finalize corridor activations.
+</Check>
 
 ## Support
-
-If you need assistance with the Grid API, please contact our support team at [support@lightspark.com](mailto:support@lightspark.com) or visit our support portal at [https://support.lightspark.com](https://support.lightspark.com).
-
-## About This Documentation
-
-This documentation is organized into the following sections:
-
-- **Guides**: Step-by-step instructions for implementing the Grid API features
-- **API Reference**: Detailed documentation of API endpoints and schemas
-
-We continuously improve our documentation. If you have any suggestions or find any issues, please let us know through our [GitHub repository](https://github.com/lightsparkdev/umaaas-api).
+If you need assistance with UMA as a Service, please contact our support team 
+at [support@lightspark.com](mailto:support@lightspark.com) or visit our support 
+portal at [https://support.lightspark.com](https://support.lightspark.com).
