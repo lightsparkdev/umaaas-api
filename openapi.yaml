@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Lightspark Grid API
   description: |
-    API for managing global payments on the Money Grid. 
+    API for managing global payments on the Money Grid.
   version: '2025-10-13'
   contact:
     name: Lightspark Support
@@ -808,12 +808,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
-  /external-accounts:
+  /customers/external-accounts:
     get:
-      summary: List external accounts
+      summary: List Customer external accounts
       description: |
-        Retrieve a list of external accounts with optional filtering parameters. Returns all external accounts that match the specified filters. If no filters are provided, returns all  external accounts (paginated).
-      operationId: listExternalAccounts
+        Retrieve a list of external accounts with optional filtering parameters. Returns all
+        external accounts that match the specified filters. If no filters are provided, returns all external accounts
+        (paginated).
+
+        External accounts are bank accounts, cryptocurrency wallets, or other payment destinations that customers can use to receive funds from the platform.
+      operationId: listCustomerExternalAccounts
       tags:
         - External Accounts
       security:
@@ -892,7 +896,7 @@ paths:
     post:
       summary: Add a new external account
       description: Register a new external bank account for a customer
-      operationId: createExternalAccount
+      operationId: createCustomerExternalAccount
       tags:
         - External Accounts
       security:
@@ -970,6 +974,58 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /platform/external-accounts:
+    get:
+      summary: List platform external accounts
+      description: |
+        Retrieve a list of all external accounts that belong to the platform, as opposed to an individual customer.
+
+        These accounts are used for platform-wide operations such as receiving funds from external sources or managing platform-level payment destinations.
+      operationId: listPlatformExternalAccounts
+      tags:
+        - External Accounts
+      security:
+        - BasicAuth: []
+      parameters:
+        - name: currency
+          in: query
+          description: Filter by currency code
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - accounts
+                properties:
+                  accounts:
+                    type: array
+                    description: List of external accounts matching the filter criteria
+                    items:
+                      $ref: '#/components/schemas/ExternalAccount'
+        '400':
+          description: Bad request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
         '500':
           description: Internal service error
           content:
@@ -3655,17 +3711,6 @@ components:
 
         If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
   schemas:
-    AllErrors:
-      anyOf:
-        - $ref: '#/components/schemas/Error400'
-        - $ref: '#/components/schemas/Error401'
-        - $ref: '#/components/schemas/Error403'
-        - $ref: '#/components/schemas/Error404'
-        - $ref: '#/components/schemas/Error409'
-        - $ref: '#/components/schemas/Error412'
-        - $ref: '#/components/schemas/Error424'
-        - $ref: '#/components/schemas/Error500'
-        - $ref: '#/components/schemas/Error501'
     CustomerInfoFieldName:
       type: string
       enum:
