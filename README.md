@@ -34,7 +34,7 @@ The API is documented using the OpenAPI 3.1 specification. The full schema is av
 
 You can view the API documentation in two formats:
 
-1. **Live Documentation Server**: Use `make serve-docs` to start a local documentation server for the Docusaurus docs. These docs are also available at [https://lightspark.github.io/umaaas-api/](https://lightspark.github.io/umaaas-api/)
+1. **Live Documentation Server**: Use `make serve-docs` to start a local documentation server for the Docusaurus docs. These docs are also available at [https://lightspark.github.io/umaaas-api/](https://lightsparkdev.github.io/umaaas-api/)
 2. **Markdown Documentation**: Use `npm run build:markdown` to generate markdown documentation in `generated/api-docs.md`
 
 ## API Guides
