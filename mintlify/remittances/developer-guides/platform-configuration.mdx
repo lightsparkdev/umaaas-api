@@ -1,18 +1,145 @@
 ---
 title: "Platform Configuration"
-description: "Configuring UMA Connect settings"
 ---
 
-This guide provides comprehensive information about configuring your platform settings in the UMA as a Service API, including setting up your UMA domain, webhook endpoints, and required counterparty fields.
+This guide explains how to configure your platform: get API credentials, set the base API path, configure webhooks, and set up UMA parameters and compliance settings.
 
-NOTE: All of this configuration can be managed in the UMAaaS dashboard in addition to using the API endpoints.
+## API credentials and authentication
+Create API credentials in the Grid dashboard. Credentials are scoped to an environment (Sandbox or Production) and cannot be used across environments.
 
-## Retrieve Current Configuration
+- Authentication: Use HTTP Basic Auth with your API key and secret in the `Authorization` header.
+- Keys: Sandbox keys only work against Sandbox; Production keys only work against Production.
+
+<Tip>
+Never share or expose your API secret. Rotate credentials periodically and restrict access.
+</Tip>
+
+### Example: HTTP Basic Auth in cURL
+
+```bash
+# Using cURL's Basic Auth shorthand (-u):
+curl -sS -X GET "$GRID_BASE_URL/config" \
+  -u "$GRID_API_KEY:$GRID_API_SECRET"
+
+```
+
+## Base API path
+
+The base API path is consistent across environments; your credentials determine the environment.
+
+Base URL: `https://api.lightspark.com/grid/2025-10-13` (same for Sandbox and Production; your keys select the environment).
+
+<Tip>
+If you use an SDK, it manages request paths and authentication after you initialize it with your credentials.
+</Tip>
+
+## Webhooks and signature verification
+Configure your webhook endpoint to receive payment lifecycle events. Webhooks use asymmetric (public/private key) signatures; verify each webhook using the Grid public key available in your dashboard.
+
+- Expose a public HTTPS endpoint (for development, reverse proxies like ngrok can help). You'll also need to set your webhook endpoint in the Grid dashboard.
+- When receiving webhooks, verify the `X-Grid-Signature` header against the exact request body using the dashboard-provided public key
+- Process events idempotently and respond with 2xx on success
+
+You can trigger a test delivery from the API to validate your endpoint setup. The public key for verification is shown in the dashboard; rotate and update it when instructed by Lightspark.
+
+### Test your webhook endpoint
+Use the webhook test endpoint to send a synthetic event to your configured endpoint.
+
+```bash
+curl -sS -X POST "$GRID_BASE_URL/webhooks/test" \
+  -u "$GRID_API_KEY:$GRID_API_SECRET"
+```
+
+Example test webhook payload:
+
+```json
+{
+  "test": true,
+  "timestamp": "2023-08-15T14:32:00Z",
+  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000001",
+  "type": "TEST"
+}
+```
+
+For more details about webhooks like retry policy and examples, take a look at our [Webhooks](/developer-tools/webhooks) documentation.
+
+## UMA configuration
+If you want to send and receive to UMA addresses, you'll need to fill in your UMA configuration. Configuring UMA requires 3 steps:
+
+1. configure your UMA domain
+2. proxy inbound UMA requests to Lightspark Grid
+3. define the currency you support and the counterparty information you require
+
+### UMA Domain
+
+The `umaDomain` parameter defines the domain part of all UMA addresses for your users. For example, if you set `umaDomain` to `mycompany.com`, your users' UMA addresses will follow the format `$username@mycompany.com`.
+
+### Configuring UMA proxy requests
+Configure your UMA domain and proxy UMA‑related requests to your assigned `proxyUmaaasSubdomain`.
+
+- UMA domain determines the address format (e.g., `$alice@yourdomain.com`)
+- Proxy the following paths to `{proxyUmaaasSubdomain}`:
+  - `https://<umaDomain>/.well-known/lnurlp/*` -> `https://<proxyUmaaasSubdomain>.umaaas.uma.money/.well-known/lnurlp/*`
+  - `https://<umaDomain>/.well-known/lnurlpubkey` -> `https://<proxyUmaaasSubdomain>.umaaas.uma.money/.well-known/lnurlpubkey`
+  - `https://<umaDomain>/.well-known/uma-configuration` -> `https://<proxyUmaaasSubdomain>.umaaas.uma.money/.well-known/uma-configuration`
+
+Additionally, configure:
+- Supported currencies (min/max, enabled transaction types)
+- Required counterparty fields per currency for compliance screening
+
+
+### Supported currencies
+
+The `supportedCurrencies` array allows you to define settings for each currency your platform will support. Each object in this array can contain:
+
+- `currencyCode`: (String, required) The ISO 4217 currency code (e.g., "USD").
+- `minAmount`: (Integer, required) Minimum transaction amount in the smallest unit of the currency.
+- `maxAmount`: (Integer, required) Maximum transaction amount in the smallest unit of the currency.
+- `requiredCounterpartyFields`: (Array, required) Defines PII your platform requires about *external counterparties* for transactions in this currency.
+- `umaProviderRequiredUserFields`: (Array, read-only) Lists user info field names (from `UserInfoFieldName`) that the UMA provider mandates for *your own users* to transact in this currency. This impacts user creation/updates.
+
+### Required counterparty fields
+
+Within each currency defined in `supportedCurrencies`, the `requiredCounterpartyFields` parameter allows you to specify what information your platform needs to collect from *external counterparties* (senders or receivers) involved in transactions with your users for that specific currency.
+
+Available counterparty fields (to be specified with a `name` and `mandatory` flag):
+
+| Field Name (type `UserInfoFieldName`) | Description |
+|---------------------------------------|-------------|
+| `FULL_NAME` | Full legal name of the individual or business |
+| `BIRTH_DATE` | Date of birth in YYYY-MM-DD format (for individuals) |
+| `NATIONALITY` | Nationality of the individual |
+| `ADDRESS` | Physical address including country, city, etc. |
+| `PHONE_NUMBER` | Contact phone number including country code |
+| `EMAIL` | Email address |
+| `BUSINESS_NAME` | Legal business name (for business entities) |
+| `TAX_ID` | Tax identification number |
+
+Each field in `requiredCounterpartyFields` is an object containing:
+
+- `name`: The `UserInfoFieldName` representing the PII you require.
+- `mandatory`: A boolean (true/false) indicating if this field is strictly required by your platform for transactions in this currency.
+
+This information will be provided to your platform via webhooks for pending payments, allowing you to screen the counterparty based on your compliance rules before approving the payment.
+
+### UMA provider required user fields
+
+Also within each currency defined in `supportedCurrencies`, you will find the `umaProviderRequiredUserFields` array. This is a **read-only** list of `UserInfoFieldName` strings.
+
+This list specifies which user information fields are mandated by the underlying UMA provider for *your own registered users* if they intend to send or receive payments in that particular currency. For example, to allow a user to transact in "USD", the UMA provider might require that the user has a `NATIONALITY` on record.
+
+These fields must be supplied when creating or updating a user via the `POST /users` or `PATCH /users/{userId}` endpoints if that user is expected to use the specified currency. Refer to the [Configuring Users](/docs/configuring-users) guide for more details on how this impacts user setup.
+
+## Manage configuration via API
+If you prefer to manage settings programmatically, use the `/config` endpoints.
+
+### Retrieve current configuration
 
 You can retrieve your current platform configuration to see what settings are already in place:
 
-```http
-GET /config
+```bash
+curl -sS -X GET "$GRID_BASE_URL/config" \
+  -u "$GRID_API_KEY:$GRID_API_SECRET"
 ```
 
 Response example:
@@ -50,42 +177,30 @@ Response example:
 
 If this is your first time configuring the platform, some default values may be returned which were set up when you first created your account.
 
-## Update Platform Configuration
+### Update platform configuration
 
-To update your platform configuration, use the PATCH endpoint:
+To update your platform configuration, call the PATCH endpoint with the fields you want to change:
 
-```http
-PATCH /config
-```
-
-Request body:
-
-```json
-{
-  "umaDomain": "mycompany.com",
-  "webhookEndpoint": "https://api.mycompany.com/webhooks/uma",
-  "supportedCurrencies": [
-    {
-      "currencyCode": "USD",
-      "minAmount": 100,
-      "maxAmount": 1000000,
-      "requiredCounterpartyFields": [
-        {
-          "name": "FULL_NAME",
-          "mandatory": true
-        },
-        {
-          "name": "BIRTH_DATE",
-          "mandatory": true
-        },
-        {
-          "name": "ADDRESS",
-          "mandatory": false
-        }
-      ]
-    }
-  ]
-}
+```bash
+curl -sS -X PATCH "$GRID_BASE_URL/config" \
+  -u "$GRID_API_KEY:$GRID_API_SECRET" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "umaDomain": "mycompany.com",
+    "webhookEndpoint": "https://api.mycompany.com/webhooks/uma",
+    "supportedCurrencies": [
+      {
+        "currencyCode": "USD",
+        "minAmount": 100,
+        "maxAmount": 1000000,
+        "requiredCounterpartyFields": [
+          { "name": "FULL_NAME", "mandatory": true },
+          { "name": "BIRTH_DATE", "mandatory": true },
+          { "name": "ADDRESS", "mandatory": false }
+        ]
+      }
+    ]
+  }'
 ```
 
 Response:
@@ -125,73 +240,8 @@ Response:
 }
 ```
 
-Note: The `webhookSecret` is not returned in the response. It can only be retrieved from the UMAaaS dashboard. Store this securely as it's used to verify the authenticity of webhooks (see the [Webhook Verification Guide](/docs/webhooks)).
 
-## Configuration Parameters
 
-### UMA Domain
-
-The `umaDomain` parameter defines the domain part of all UMA addresses for your users. For example, if you set `umaDomain` to `mycompany.com`, your users' UMA addresses will follow the format `$username@mycompany.com`.
-
-Requirements for a valid UMA domain:
-
-- Must be a valid domain name format
-- Should be a domain that you control
-- Must proxy incoming requests to the UMAaaS API as follows:
-  - `https://<umaDomain>/.well-known/lnurlp/*` -> `https://<proxyUmaaasSubdomain>.umaaas.uma.money/.well-known/lnurlp/*`
-  - `https://<umaDomain>/.well-known/lnurlpubkey` -> `https://<proxyUmaaasSubdomain>.umaaas.uma.money/.well-known/lnurlpubkey`
-  - `https://<umaDomain>/.well-known/uma-configuration` -> `https://<proxyUmaaasSubdomain>.umaaas.uma.money/.well-known/uma-configuration`
-
-### Webhook Endpoint
-
-The `webhookEndpoint` parameter specifies the URL where UMAaaS will send webhook notifications about payment events. Your webhook endpoint must:
-
-- Be publicly accessible over HTTPS
-- Respond with appropriate HTTP status codes
-- Handle webhook verification (see [Webhook Verification Guide](/docs/webhooks))
-- Process webhook payloads within a reasonable time (recommended: under 5 seconds)
-
-### Supported Currencies
-
-The `supportedCurrencies` array allows you to define settings for each currency your platform will support. Each object in this array can contain:
-
-- `currencyCode`: (String, required) The ISO 4217 currency code (e.g., "USD").
-- `minAmount`: (Integer, required) Minimum transaction amount in the smallest unit of the currency.
-- `maxAmount`: (Integer, required) Maximum transaction amount in the smallest unit of the currency.
-- `requiredCounterpartyFields`: (Array, required) Defines PII your platform requires about *external counterparties* for transactions in this currency.
-- `umaProviderRequiredUserFields`: (Array, read-only) Lists user info field names (from `UserInfoFieldName`) that the UMA provider mandates for *your own users* to transact in this currency. This impacts user creation/updates.
-
-### Required Counterparty Fields
-
-Within each currency defined in `supportedCurrencies`, the `requiredCounterpartyFields` parameter allows you to specify what information your platform needs to collect from *external counterparties* (senders or receivers) involved in transactions with your users for that specific currency.
-
-Available counterparty fields (to be specified with a `name` and `mandatory` flag):
-
-| Field Name (type `UserInfoFieldName`) | Description |
-|---------------------------------------|-------------|
-| `FULL_NAME` | Full legal name of the individual or business |
-| `BIRTH_DATE` | Date of birth in YYYY-MM-DD format (for individuals) |
-| `NATIONALITY` | Nationality of the individual |
-| `ADDRESS` | Physical address including country, city, etc. |
-| `PHONE_NUMBER` | Contact phone number including country code |
-| `EMAIL` | Email address |
-| `BUSINESS_NAME` | Legal business name (for business entities) |
-| `TAX_ID` | Tax identification number |
-
-Each field in `requiredCounterpartyFields` is an object containing:
-
-- `name`: The `UserInfoFieldName` representing the PII you require.
-- `mandatory`: A boolean (true/false) indicating if this field is strictly required by your platform for transactions in this currency.
-
-This information will be provided to your platform via webhooks for pending payments, allowing you to screen the counterparty based on your compliance rules before approving the payment.
-
-### UMA Provider Required User Fields
-
-Also within each currency defined in `supportedCurrencies`, you will find the `umaProviderRequiredUserFields` array. This is a **read-only** list of `UserInfoFieldName` strings.
-
-This list specifies which user information fields are mandated by the underlying UMA provider for *your own registered users* if they intend to send or receive payments in that particular currency. For example, to allow a user to transact in "USD", the UMA provider might require that the user has a `NATIONALITY` on record.
-
-These fields must be supplied when creating or updating a user via the `POST /users` or `PATCH /users/{userId}` endpoints if that user is expected to use the specified currency. Refer to the [Configuring Users](/docs/configuring-users) guide for more details on how this impacts user setup.
 
 ## Verify Configuration
 
@@ -201,25 +251,4 @@ After updating your configuration, it's recommended to verify that the changes w
 GET /config
 ```
 
-The response should reflect your updated settings.
-
-## Testing Your Webhook Endpoint
-
-Once your webhook endpoint is configured, UMAaaS will send a test webhook notification to verify that your endpoint is correctly set up. You should implement your webhook handler to properly respond to this test event.
-
-Example test webhook payload:
-
-```json
-{
-  "test": true,
-  "timestamp": "2023-08-15T14:32:00Z",
-  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000001",
-  "type": "TEST"
-}
-```
-
-Your webhook handler should:
-
-1. Verify the webhook signature (see [Webhook Verification Guide](/docs/webhooks))
-2. Identify the webhook as a test event
-3. Respond with a 200 OK status
+The response should reflect your updated **settings**.
