@@ -21,52 +21,7 @@
         "pages": ["index"]
       },
       {
-        "tab": "Remittances",
-        "pages": [
-          "remittances/index",
-          "remittances/quickstart",
-          {
-            "group": "Getting Started",
-            "pages": [
-              "remittances/developer-guides/implementation-overview",
-              "developer-resources/terminology",
-              "remittances/developer-guides/platform-configuration"
-            ]
-          },
-          {
-            "group": "Onboarding Customers",
-            "pages": [
-              "remittances/developer-guides/configuring-users",
-              "remittances/developer-guides/invitations"
-            ]
-          },
-          {
-            "group": "Sending & Receiving Payments",
-            "pages": [
-              "remittances/developer-guides/sending-payments",
-              "remittances/developer-guides/receiving-payments",
-              "remittances/developer-guides/reconciliation",
-              "remittances/developer-guides/payment-error-handling"
-            ]
-          },
-          {
-            "group": "Platform Tools",
-            "pages": [
-              "remittances/developer-guides/webhooks",
-              "remittances/developer-guides/sandbox-testing"
-            ]
-          },
-          {
-            "group": "Developer Resources",
-            "pages": [
-              "developer-resources/tools",
-              "developer-resources/postman-collection"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "X-Border Payouts",
+        "tab": "Payouts",
         "pages": [
           "x-border-payouts/index",
           "x-border-payouts/quickstart",
@@ -116,7 +71,7 @@
         ]
       },
       {
-        "tab": "Bitcoin Rewards",
+        "tab": "Rewards",
         "pages": [
           "rewards/index",
           "rewards/quickstart",
@@ -139,6 +94,51 @@
           {
             "group": "Developer Resources",
             "pages": ["developer-resources/placeholder"]
+          }
+        ]
+      },
+      {
+        "tab": "Global P2P",
+        "pages": [
+          "remittances/index",
+          "remittances/quickstart",
+          {
+            "group": "Getting Started",
+            "pages": [
+              "remittances/developer-guides/implementation-overview",
+              "developer-resources/terminology",
+              "remittances/developer-guides/platform-configuration"
+            ]
+          },
+          {
+            "group": "Onboarding Customers",
+            "pages": [
+              "remittances/developer-guides/configuring-users",
+              "remittances/developer-guides/invitations"
+            ]
+          },
+          {
+            "group": "Sending & Receiving Payments",
+            "pages": [
+              "remittances/developer-guides/sending-payments",
+              "remittances/developer-guides/receiving-payments",
+              "remittances/developer-guides/reconciliation",
+              "remittances/developer-guides/payment-error-handling"
+            ]
+          },
+          {
+            "group": "Platform Tools",
+            "pages": [
+              "remittances/developer-guides/webhooks",
+              "remittances/developer-guides/sandbox-testing"
+            ]
+          },
+          {
+            "group": "Developer Resources",
+            "pages": [
+              "developer-resources/tools",
+              "developer-resources/postman-collection"
+            ]
           }
         ]
       },
