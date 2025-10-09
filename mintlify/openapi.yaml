@@ -3657,14 +3657,15 @@ webhooks:
                         name: United States Dollar
                         symbol: $
                         decimals: 2
-                      newBalance:
-                        amount: 10000
-                        currency:
-                          code: USD
-                          name: United States Dollar
-                          symbol: $
-                          decimals: 2
-                  customerId: User:019542f5-b3e7-1d02-0000-000000000001
+                    newBalance:
+                      amount: 10000
+                      currency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                    customerId: User:019542f5-b3e7-1d02-0000-000000000001
+                    platformCustomerId: 019542f5-b3e7-1d02-0000-000000000001
                   timestamp: '2023-08-15T14:32:00Z'
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000007
                   type: ACCOUNT_STATUS
@@ -6007,7 +6008,7 @@ components:
               type: string
               description: The ID of the customer associated with the internal account
               example: User:019542f5-b3e7-1d02-0000-000000000001
-            type:
-              $ref: '#/components/schemas/WebhookType'
-              description: Type of webhook event
-              example: ACCOUNT_STATUS
+            platformCustomerId:
+              type: string
+              description: The ID of the customer as associated in your platform
+              example: 019542f5-b3e7-1d02-0000-000000000001
