@@ -926,7 +926,6 @@ paths:
                     routingNumber: '123456789'
                     accountCategory: CHECKING
                     bankName: Chase Bank
-                    accountHolderName: John Doe
               sparkWallet:
                 summary: Create external Spark wallet
                 value:
@@ -3683,6 +3682,8 @@ components:
         - ACCOUNT_IDENTIFIER
         - FI_LEGAL_ENTITY_NAME
         - FI_ADDRESS
+        - PURPOSE_OF_PAYMENT
+        - ULTIMATE_INSTITUTION_COUNTRY
       description: Name of a type of field containing info about a platform's customer or counterparty customer.
       example: FULL_NAME
     CounterpartyFieldDefinition:
@@ -4081,47 +4082,47 @@ components:
           example: US
     UltimateBeneficialOwner:
       type: object
-          required:
-            - fullName
-            - individualType
-          properties:
-            fullName:
-              type: string
-              description: Individual's full name
-              example: John Michael Doe
-            emailAddress:
-              type: string
-              format: email
-              description: Email address of the individual
-              example: example@test.com
-            birthDate:
-              type: string
-              format: date
-              description: Date of birth in ISO 8601 format (YYYY-MM-DD)
-              example: '1990-01-15'
-            nationality:
-              type: string
-              description: Country code (ISO 3166-1 alpha-2)
-              example: US
-            address:
-              $ref: '#/components/schemas/Address'
-            individualType:
-              type: string
-              enum:
-                - OFFICER
-                - BENEFICIAL_OWNER
-                - CONTROL_PERSON
-                - AUTHORIZED_PERSON
-              description: Type of individual in the corporation
-              example: BENEFICIAL_OWNER
-            percentageOwnership:
-              type: number
-              description: Percent of ownership when individual type is benificial owner
-              example: 10
-            title:
-              type: string
-              description: Title at company
-              example: CEO, COO, President
+      required:
+        - fullName
+        - individualType
+      properties:
+        fullName:
+          type: string
+          description: Individual's full name
+          example: John Michael Doe
+        emailAddress:
+          type: string
+          format: email
+          description: Email address of the individual
+          example: example@test.com
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+          example: '1990-01-15'
+        nationality:
+          type: string
+          description: Country code (ISO 3166-1 alpha-2)
+          example: US
+        address:
+          $ref: '#/components/schemas/Address'
+        individualType:
+          type: string
+          enum:
+            - OFFICER
+            - BENEFICIAL_OWNER
+            - CONTROL_PERSON
+            - AUTHORIZED_PERSON
+          description: Type of individual in the corporation
+          example: BENEFICIAL_OWNER
+        percentageOwnership:
+          type: number
+          description: Percent of ownership when individual type is benificial owner
+          example: 10
+        title:
+          type: string
+          description: Title at company
+          example: CEO, COO, President
     BusinessCustomer:
       allOf:
         - $ref: '#/components/schemas/Customer'
@@ -4208,10 +4209,6 @@ components:
           type: string
           description: Name of the bank
           example: Chase Bank
-        accountHolderName:
-          type: string
-          description: Name of the account holder
-          example: John Doe
     ClabeAccountInfo:
       type: object
       required:
@@ -4234,10 +4231,6 @@ components:
           type: string
           description: Name of the bank
           example: BBVA Mexico
-        accountHolderName:
-          type: string
-          description: Name of the account holder
-          example: John Doe
     BankAccountBase:
       type: object
       properties:
@@ -4275,14 +4268,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/UsAccountInfo'
         - $ref: '#/components/schemas/BankAccountBase'
-        - type: object
-          required:
-            - accountHolderName
-          properties:
-            accountHolderName:
-              type: string
-              description: Name of the account holder
-              example: Jane Doe
     PixAccountInfo:
       type: object
       required:
@@ -4312,10 +4297,6 @@ components:
           type: string
           description: Name of the bank
           example: Nubank
-        accountHolderName:
-          type: string
-          description: Name of the account holder
-          example: John Doe
     CustomerPixAccountInfo:
       allOf:
         - $ref: '#/components/schemas/PixAccountInfo'
@@ -4347,10 +4328,6 @@ components:
           type: string
           description: Name of the bank
           example: Deutsche Bank
-        accountHolderName:
-          type: string
-          description: Name of the account holder
-          example: John Doe
     CustomerIbanAccountInfo:
       allOf:
         - $ref: '#/components/schemas/IbanAccountInfo'
@@ -4380,10 +4357,6 @@ components:
           type: string
           description: Virtual Payment Address for UPI payments
           example: somecustomers@okbank
-        accountHolderName:
-          type: string
-          description: Name of the account holder
-          example: John Doe
     CustomerUpiAccountInfo:
       allOf:
         - $ref: '#/components/schemas/UpiAccountInfo'
@@ -4898,12 +4871,12 @@ components:
         source:
           oneOf:
             - title: Account Source
-          type: object
+              type: object
               required:
                 - accountId
-          properties:
-            accountId:
-              type: string
+              properties:
+                accountId:
+                  type: string
                   description: Source account identifier
                   example: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
                 currency:
@@ -4929,14 +4902,14 @@ components:
         destination:
           oneOf:
             - title: Account Destination
-          type: object
+              type: object
               required:
                 - accountId
-          properties:
-            accountId:
-              type: string
+              properties:
+                accountId:
+                  type: string
                   description: Destination account identifier
-              example: ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                  example: ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
                 currency:
                   type: string
                   description: Currency code for the destination account
@@ -5455,7 +5428,6 @@ components:
             - accountType: US_ACCOUNT
               accountNumber: '1234567890'
               routingNumber: '021000021'
-              accountHolderName: John Doe
               bankName: Chase Bank
               referenceCode: REF123456
             - accountType: SPARK_WALLET
