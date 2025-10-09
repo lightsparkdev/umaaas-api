@@ -280,6 +280,32 @@ The quote shows:
   Quotes typically expire in 1-5 minutes. Make sure to execute the quote before the `expiresAt` timestamp, or you'll need to create a new quote.
 </Warning>
 
+**Alternative: External Account to Stablecoin Transfer**
+
+Fund stablecoin transfers from external accounts:
+
+```http
+POST /quotes
+Authorization: Basic <base64-encoded-credentials>
+Content-Type: application/json
+```
+
+```json
+{
+  "lookupId": "LookupRequest:019542f5-b3e7-1d02-0000-000000000009",
+  "source": {
+    "accountId": "ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123"
+  },
+  "destination": {
+    "accountId": "ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123",
+    "currency": "USDC"
+  },
+  "lockedCurrencySide": "SENDING",
+  "lockedCurrencyAmount": 500000,
+  "description": "External account to USDC stablecoin transfer"
+}
+```
+
 ### Step 7: Execute the Quote
 
 Execute the quote to initiate the transfer from the internal account to the external bank account.
@@ -358,348 +384,6 @@ The quote status changes to `PROCESSING` and the transfer is initiated. You can 
     "createdAt": "2025-10-03T15:00:00Z",
     "description": "Payment to Maria Garcia for services",
     "exchangeRate": 17.25,
-    "quoteId": "Quote:019542f5-b3e7-1d02-0000-000000000006"
-  },
-  "timestamp": "2025-10-03T15:03:00Z",
-  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000025",
-  "type": "OUTGOING_PAYMENT"
-}
-```
-
----
-
-## Advanced: Cross-Currency Transfers
-
-This advanced flow follows the same overall steps as the basic example, with options to fund from an internal USD account or an external multi-currency account, and to send to fiat, crypto, or stablecoin destinations.
-
-### Step 1: Create or Identify the Customer
-
-Use the same onboarding flow as the basic example (hosted KYC link), or reuse an existing `customerId` if the customer is already onboarded.
-
-### Step 2: Prepare the Funding Source
-
-- Internal funding (USD-only): List internal accounts and fund via ACH as shown in the basic example (Steps 2–3).  
-- External funding (multi-currency): Use an existing external source account ID.
-
-### Step 3: Add the Destination Account (Fiat, Crypto, or Stablecoin)
-
-Add the external destination account in the desired currency/asset.
-
-```http
-POST /external-accounts
-Authorization: Basic <base64-encoded-credentials>
-Content-Type: application/json
-```
-
-```json
-{
-  "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
-  "currency": "EUR",
-  "beneficiary": {
-    "counterPartyType": "BUSINESS",
-    "legalName": "European Partners GmbH"
-  },
-  "accountInfo": {
-    "accountType": "IBAN",
-    "ibanNumber": "DE89370400440532013000",
-    "bankName": "Deutsche Bank",
-    "accountHolderName": "European Partners GmbH"
-  }
-}
-```
-
-Crypto and stablecoin examples:
-
-```json
-{
-  "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
-  "currency": "BTC",
-  "beneficiary": { "counterPartyType": "BUSINESS", "legalName": "Crypto Exchange Ltd" },
-  "accountInfo": { "accountType": "SPARK_WALLET", "address": "sprt1pg...mrhu" }
-}
-```
-
-```json
-{
-  "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
-  "currency": "USDC",
-  "beneficiary": { "counterPartyType": "BUSINESS", "legalName": "Stablecoin Gateway Inc" },
-  "accountInfo": { "accountType": "SPARK_WALLET", "address": "sprt1pg...mrhu" }
-}
-```
-
-### Step 4: Look Up the Destination (Rates and Limits)
-
-```http
-GET /receiver/external-account/ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123?customerId=Customer:019542f5-b3e7-1d02-0000-000000000001
-Authorization: Basic <base64-encoded-credentials>
-```
-
-Use the response to confirm supported currencies, min/max limits, and estimated exchange rates.
-
-### Step 5: Create a Quote (Choose Funding Source)
-
-Option A — Internal USD account funding:
-
-```http
-POST /quotes
-Authorization: Basic <base64-encoded-credentials>
-Content-Type: application/json
-```
-
-```json
-{
-  "source": { "accountId": "InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965" },
-  "destination": { "accountId": "ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123", "currency": "EUR" },
-  "lockedCurrencySide": "SENDING",
-  "lockedCurrencyAmount": 100000,
-  "description": "Cross-currency transfer"
-}
-```
-
-Option B — External account funding (multi-currency):
-
-```http
-POST /quotes
-Authorization: Basic <base64-encoded-credentials>
-Content-Type: application/json
-```
-
-```json
-{
-  "source": { "accountId": "ExternalAccount:source_account_123" },
-  "destination": { "accountId": "ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123", "currency": "EUR" },
-  "lockedCurrencySide": "SENDING",
-  "lockedCurrencyAmount": 100000,
-  "description": "Cross-currency transfer from external account"
-}
-```
-
-Option C — Crypto/stablecoin destination (either funding source):
-
-```json
-{
-  "source": { "accountId": "InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965" },
-  "destination": { "accountId": "ExternalAccount:crypto_destination_account", "currency": "BTC" },
-  "lockedCurrencySide": "SENDING",
-  "lockedCurrencyAmount": 1000000,
-  "description": "USD to BTC"
-}
-```
-
-### Step 6: Execute the Quote
-
-Execute the quote using:
-
-```http
-POST /quotes/{quoteId}/execute
-Authorization: Basic <base64-encoded-credentials>
-```
-
-### Step 7: Monitor Completion via Webhooks
-
-Monitor status via the OUTGOING_PAYMENT webhook, as shown in the basic example.
-
-Create a quote for stablecoin transfer using internal account funding:
-
-```http
-POST /quotes
-Authorization: Basic <base64-encoded-credentials>
-Content-Type: application/json
-```
-
-```json
-{
-  "source": {
-    "accountId": "InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965"
-  },
-  "destination": {
-    "accountId": "ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d127",
-    "currency": "USDC"
-  },
-  "lockedCurrencySide": "SENDING",
-  "lockedCurrencyAmount": 500000,
-  "description": "USD to USDC stablecoin transfer"
-}
-```
-
-**Alternative: External Account to Stablecoin Transfer**
-
-Fund stablecoin transfers from external accounts:
-
-```http
-POST /quotes
-Authorization: Basic <base64-encoded-credentials>
-Content-Type: application/json
-```
-
-```json
-{
-  "source": {
-    "accountId": "ExternalAccount:external_funding_account"
-  },
-  "destination": {
-    "accountId": "ExternalAccount:stablecoin_destination",
-    "currency": "USDC"
-  },
-  "lockedCurrencySide": "SENDING",
-  "lockedCurrencyAmount": 500000,
-  "description": "External account to USDC stablecoin transfer"
-}
-```
-
----
-
-## Advanced Features
-
-### Multi-Currency Account Management
-
-Enable customers to hold multiple currencies through external accounts:
-
-```http
-GET /internal-account?customerId=Customer:019542f5-b3e7-1d02-0000-000000000001
-Authorization: Basic <base64-encoded-credentials>
-```
-
-**Internal Account Response (USD only):**
-```json
-{
-  "data": [
-    {
-      "id": "InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965",
-      "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
-      "balance": {
-        "amount": 100000,
-        "currency": {
-          "code": "USD",
-          "name": "United States Dollar",
-          "symbol": "$",
-          "decimals": 2
-        }
-      }
-    }
-  ]
-}
-```
-
-**External Accounts (Multi-currency):**
-```http
-GET /external-accounts?customerId=Customer:019542f5-b3e7-1d02-0000-000000000001
-Authorization: Basic <base64-encoded-credentials>
-```
-
-**Response:**
-```json
-{
-  "data": [
-    {
-      "id": "ExternalAccount:eur_account_123",
-      "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
-      "currency": "EUR",
-      "status": "ACTIVE"
-    },
-    {
-      "id": "ExternalAccount:btc_account_456",
-      "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
-      "currency": "BTC",
-      "status": "ACTIVE"
-    },
-    {
-      "id": "ExternalAccount:usdc_account_789",
-      "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
-      "currency": "USDC",
-      "status": "ACTIVE"
-    }
-  ]
-}
-```
-
-### Real-Time Exchange Rates
-
-Get current exchange rates before creating quotes:
-
-```http
-GET /receiver/external-account/ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123?customerId=Customer:019542f5-b3e7-1d02-0000-000000000001
-Authorization: Basic <base64-encoded-credentials>
-```
-
-**Response:**
-```json
-{
-  "accountId": "ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123",
-  "supportedCurrencies": [
-    {
-      "currency": {
-        "code": "EUR",
-        "name": "Euro",
-        "symbol": "€",
-        "decimals": 2
-      },
-      "estimatedExchangeRate": 0.92,
-      "min": 1000,
-      "max": 1000000
-    },
-    {
-      "currency": {
-        "code": "BTC",
-        "name": "Bitcoin",
-        "symbol": "₿",
-        "decimals": 8
-      },
-      "estimatedExchangeRate": 0.000023,
-      "min": 1000,
-      "max": 1000000
-    },
-    {
-      "currency": {
-        "code": "USDC",
-        "name": "USD Coin",
-        "symbol": "$",
-        "decimals": 6
-      },
-      "estimatedExchangeRate": 1.0,
-      "min": 1000,
-      "max": 1000000
-    }
-  ]
-}
-```
-
-### Quote Execution and Monitoring
-
-Execute quotes and monitor progress:
-
-```http
-POST /quotes/Quote:019542f5-b3e7-1d02-0000-000000000006/execute
-Authorization: Basic <base64-encoded-credentials>
-```
-
-**Webhook Notification:**
-```json
-{
-  "transaction": {
-    "id": "Transaction:019542f5-b3e7-1d02-0000-000000000015",
-    "status": "COMPLETED",
-    "type": "OUTGOING",
-    "sentAmount": {
-      "amount": 100000,
-      "currency": {
-        "code": "USD",
-        "name": "United States Dollar",
-        "symbol": "$",
-        "decimals": 2
-      }
-    },
-    "receivedAmount": {
-      "amount": 92000,
-      "currency": {
-        "code": "EUR",
-        "name": "Euro",
-        "symbol": "€",
-        "decimals": 2
-      }
-    },
-    "exchangeRate": 0.92,
     "quoteId": "Quote:019542f5-b3e7-1d02-0000-000000000006"
   },
   "timestamp": "2025-10-03T15:03:00Z",
