@@ -1334,6 +1334,7 @@ paths:
                   format: int64
                   description: The amount to send/receive in the smallest unit of the locked currency (eg. cents). See `lockedCurrencySide` for more information.
                   exclusiveMinimum: 0
+                  maximum: 9000000000000000
                   example: 1000
                 description:
                   type: string
@@ -3432,6 +3433,8 @@ components:
         - ACCOUNT_IDENTIFIER
         - FI_LEGAL_ENTITY_NAME
         - FI_ADDRESS
+        - PURPOSE_OF_PAYMENT
+        - ULTIMATE_INSTITUTION_COUNTRY
       description: Name of a type of field containing info about a platform's user or counterparty user.
       example: FULL_NAME
     CounterpartyFieldDefinition:
