@@ -1,9 +1,16 @@
----
-title: "Core Concepts"
-description: "Understanding the key entities in the Grid API"
----
+There are several key entities in the Grid API: **Platform**, **Customers**, **Internal Accounts**, **External Accounts**, **Quotes**, **Transactions**, and **UMA Addresses**.
 
-This page provides a high-level overview of the key entities in the Grid API and their relationships to each other.
+<Frame>
+<img src="/images/entities.png" alt="Entity relationships diagram showing platform, customers, internal accounts, external accounts, transactions, and UMA addresses" />
+</Frame>
+
+- A platform has many customers
+- Customers can have multiple internal accounts (one per currency)
+- Customers can have multiple external accounts (bank accounts)
+- The platform has its own internal accounts separate from customers
+- Transactions move money between internal accounts, external accounts, and UMA addresses
+- Quotes define the parameters for creating transactions
+- Each customer has one UMA address (optional)
 
 ## Platform
 
@@ -86,19 +93,4 @@ Transactions are created when:
 - Work similar to email addresses but for payments
 - Are an optional UX improvement for some use cases. Use of UMA addresses is not required in order to use the Grid API.
 
-## Entity Relationships
 
-<Info>
-**Diagram Coming Soon**
-
-A visual diagram showing how platforms, customers, internal accounts, external accounts, and UMA addresses are connected will be displayed here.
-</Info>
-
-**Key relationships:**
-- A platform has many customers
-- Customers can have multiple internal accounts (one per currency)
-- Customers can have multiple external accounts (bank accounts)
-- The platform has its own internal accounts separate from customers
-- Each customer has one UMA address (optional)
-- Transactions move money between internal accounts, external accounts, and UMA addresses
-- Quotes define the parameters for creating transactions
