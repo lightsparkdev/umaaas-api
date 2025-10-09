@@ -29,6 +29,7 @@
             "group": "Getting Started",
             "pages": [
               "remittances/developer-guides/implementation-overview",
+              "developer-resources/terminology",
               "remittances/developer-guides/platform-configuration"
             ]
           },
@@ -58,7 +59,6 @@
           {
             "group": "Developer Resources",
             "pages": [
-              "developer-resources/terminology",
               "developer-resources/tools",
               "developer-resources/postman-collection"
             ]
