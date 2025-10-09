@@ -2,8 +2,8 @@ openapi: 3.1.0
 info:
   title: Lightspark Grid API
   description: |
-    API for managing global payments on the Money Grid. 
-  version: '2025-10-13'
+    API for managing global payments on the Money Grid.
+  version: "2025-10-13"
   contact:
     name: Lightspark Support
     email: support@lightspark.com
@@ -49,24 +49,24 @@ paths:
       security:
         - BasicAuth: []
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PlatformConfig'
-        '401':
+                $ref: "#/components/schemas/PlatformConfig"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
+                $ref: "#/components/schemas/Error401"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
     patch:
       summary: Update platform configuration
       description: Update the platform configuration settings
@@ -91,7 +91,7 @@ paths:
                 supportedCurrencies:
                   type: array
                   items:
-                    $ref: '#/components/schemas/PlatformCurrencyConfig'
+                    $ref: "#/components/schemas/PlatformCurrencyConfig"
             example:
               umaDomain: mycompany.com
               webhookEndpoint: https://api.mycompany.com/webhooks/uma
@@ -110,36 +110,36 @@ paths:
                     - name: BIRTH_DATE
                       mandatory: true
       responses:
-        '200':
+        "200":
           description: Configuration updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PlatformConfig'
-        '400':
+                $ref: "#/components/schemas/PlatformConfig"
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
+                $ref: "#/components/schemas/Error401"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
-        '501':
+                $ref: "#/components/schemas/Error500"
+        "501":
           description: Not implemented
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error501'
+                $ref: "#/components/schemas/Error501"
   /customers:
     post:
       summary: Add a new customer
@@ -157,7 +157,7 @@ paths:
               oneOf:
                 - title: Individual Customer
                   allOf:
-                    - $ref: '#/components/schemas/IndividualCustomerUpdate'
+                    - $ref: "#/components/schemas/IndividualCustomerUpdate"
                     - type: object
                       required:
                         - platformCustomerId
@@ -178,7 +178,7 @@ paths:
                           example: https://example.com/kyc
                 - title: Business Customer
                   allOf:
-                    - $ref: '#/components/schemas/BusinessCustomerUpdate'
+                    - $ref: "#/components/schemas/BusinessCustomerUpdate"
                     - type: object
                       required:
                         - platformCustomerId
@@ -200,8 +200,8 @@ paths:
               discriminator:
                 propertyName: customerType
                 mapping:
-                  INDIVIDUAL: '#/components/schemas/IndividualCustomerUpdate'
-                  BUSINESS: '#/components/schemas/BusinessCustomerUpdate'
+                  INDIVIDUAL: "#/components/schemas/IndividualCustomerUpdate"
+                  BUSINESS: "#/components/schemas/BusinessCustomerUpdate"
             examples:
               individualCustomerWithUmaAddress:
                 summary: Create individual customer with UMA address, including deposit bank account information.
@@ -210,18 +210,18 @@ paths:
                   platformCustomerId: 7b3c5a89d2f1e0
                   customerType: INDIVIDUAL
                   fullName: Jane Doe
-                  birthDate: '1992-03-25'
+                  birthDate: "1992-03-25"
                   address:
                     line1: 123 Pine Street
                     line2: Unit 501
                     city: Seattle
                     state: WA
-                    postalCode: '98101'
+                    postalCode: "98101"
                     country: US
                   bankAccountInfo:
                     accountType: US_ACCOUNT
-                    accountNumber: '12345678901'
-                    routingNumber: '123456789'
+                    accountNumber: "12345678901"
+                    routingNumber: "123456789"
                     accountCategory: CHECKING
                     bankName: Chase Bank
                     platformAccountId: chase_primary_1234
@@ -231,12 +231,12 @@ paths:
                   platformCustomerId: 7b3c5a89d2f1e0
                   customerType: INDIVIDUAL
                   fullName: John Smith
-                  birthDate: '1985-06-10'
+                  birthDate: "1985-06-10"
                   address:
                     line1: 456 Oak Avenue
                     city: Portland
                     state: OR
-                    postalCode: '97201'
+                    postalCode: "97201"
                     country: US
               businessCustomer:
                 summary: Create business customer example
@@ -251,54 +251,54 @@ paths:
                     line1: 400 Commerce Way
                     city: Austin
                     state: TX
-                    postalCode: '78701'
+                    postalCode: "78701"
                     country: US
       responses:
-        '201':
+        "201":
           description: Customer created successfully
           content:
             application/json:
               schema:
                 oneOf:
                   - title: Individual Customer
-                    $ref: '#/components/schemas/IndividualCustomer'
+                    $ref: "#/components/schemas/IndividualCustomer"
                   - title: Business Customer
-                    $ref: '#/components/schemas/BusinessCustomer'
+                    $ref: "#/components/schemas/BusinessCustomer"
                 discriminator:
                   propertyName: customerType
                   mapping:
-                    INDIVIDUAL: '#/components/schemas/IndividualCustomer'
-                    BUSINESS: '#/components/schemas/BusinessCustomer'
-        '400':
+                    INDIVIDUAL: "#/components/schemas/IndividualCustomer"
+                    BUSINESS: "#/components/schemas/BusinessCustomer"
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '409':
+                $ref: "#/components/schemas/Error401"
+        "409":
           description: Conflict - Customer with the UMA address already exists
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error409'
-        '500':
+                $ref: "#/components/schemas/Error409"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
-        '501':
+                $ref: "#/components/schemas/Error500"
+        "501":
           description: Not implemented
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error501'
+                $ref: "#/components/schemas/Error501"
     get:
       summary: List customers
       description: |
@@ -321,7 +321,7 @@ paths:
           description: Filter by customer type
           required: false
           schema:
-            $ref: '#/components/schemas/CustomerType'
+            $ref: "#/components/schemas/CustomerType"
         - name: createdAfter
           in: query
           description: Filter customers created after this timestamp (inclusive)
@@ -378,7 +378,7 @@ paths:
           schema:
             type: boolean
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
@@ -394,14 +394,14 @@ paths:
                     items:
                       oneOf:
                         - title: Individual Customer
-                          $ref: '#/components/schemas/IndividualCustomer'
+                          $ref: "#/components/schemas/IndividualCustomer"
                         - title: Business Customer
-                          $ref: '#/components/schemas/BusinessCustomer'
+                          $ref: "#/components/schemas/BusinessCustomer"
                       discriminator:
                         propertyName: customerType
                         mapping:
-                          INDIVIDUAL: '#/components/schemas/IndividualCustomer'
-                          BUSINESS: '#/components/schemas/BusinessCustomer'
+                          INDIVIDUAL: "#/components/schemas/IndividualCustomer"
+                          BUSINESS: "#/components/schemas/BusinessCustomer"
                   hasMore:
                     type: boolean
                     description: Indicates if more results are available beyond this page
@@ -411,24 +411,24 @@ paths:
                   totalCount:
                     type: integer
                     description: Total number of customers matching the criteria (excluding pagination)
-        '400':
+        "400":
           description: Bad request - Invalid parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
+                $ref: "#/components/schemas/Error401"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /platform/internal-accounts:
     get:
       summary: List platform internal accounts
@@ -449,7 +449,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
@@ -462,25 +462,25 @@ paths:
                     type: array
                     description: List of internal accounts matching the filter criteria
                     items:
-                      $ref: '#/components/schemas/InternalAccount'
-        '400':
+                      $ref: "#/components/schemas/InternalAccount"
+        "400":
           description: Bad request - Invalid parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
+                $ref: "#/components/schemas/Error401"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /customers/{customerId}:
     parameters:
       - name: customerId
@@ -498,39 +498,39 @@ paths:
       security:
         - BasicAuth: []
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
               schema:
                 oneOf:
                   - title: Individual Customer
-                    $ref: '#/components/schemas/IndividualCustomer'
+                    $ref: "#/components/schemas/IndividualCustomer"
                   - title: Business Customer
-                    $ref: '#/components/schemas/BusinessCustomer'
+                    $ref: "#/components/schemas/BusinessCustomer"
                 discriminator:
                   propertyName: customerType
                   mapping:
-                    INDIVIDUAL: '#/components/schemas/IndividualCustomer'
-                    BUSINESS: '#/components/schemas/BusinessCustomer'
-        '401':
+                    INDIVIDUAL: "#/components/schemas/IndividualCustomer"
+                    BUSINESS: "#/components/schemas/BusinessCustomer"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
+                $ref: "#/components/schemas/Error401"
+        "404":
           description: Customer not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
+                $ref: "#/components/schemas/Error404"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
     patch:
       summary: Update customer by ID
       description: Update a customer's metadata by their system-generated ID
@@ -546,31 +546,31 @@ paths:
             schema:
               oneOf:
                 - title: Individual cCstomer Update
-                  $ref: '#/components/schemas/IndividualCustomerUpdate'
+                  $ref: "#/components/schemas/IndividualCustomerUpdate"
                 - title: Business Customer Update
-                  $ref: '#/components/schemas/BusinessCustomerUpdate'
+                  $ref: "#/components/schemas/BusinessCustomerUpdate"
               discriminator:
                 propertyName: customerType
                 mapping:
-                  INDIVIDUAL: '#/components/schemas/IndividualCustomerUpdate'
-                  BUSINESS: '#/components/schemas/BusinessCustomerUpdate'
+                  INDIVIDUAL: "#/components/schemas/IndividualCustomerUpdate"
+                  BUSINESS: "#/components/schemas/BusinessCustomerUpdate"
             examples:
               individualUpdate:
                 summary: Update individual customer example
                 value:
                   customerType: INDIVIDUAL
                   fullName: John Smith
-                  birthDate: '1985-06-15'
+                  birthDate: "1985-06-15"
                   address:
                     line1: 456 Market St
                     city: San Francisco
                     state: CA
-                    postalCode: '94103'
+                    postalCode: "94103"
                     country: US
                   bankAccountInfo:
                     accountType: US_ACCOUNT
-                    accountNumber: '11122233344'
-                    routingNumber: '111222333'
+                    accountNumber: "11122233344"
+                    routingNumber: "111222333"
                     accountCategory: CHECKING
                     bankName: Wells Fargo
                     platformAccountId: wf_checking_9012
@@ -586,55 +586,55 @@ paths:
                     line1: 100 Technology Parkway
                     city: Palo Alto
                     state: CA
-                    postalCode: '94304'
+                    postalCode: "94304"
                     country: US
                   bankAccountInfo:
                     accountType: US_ACCOUNT
-                    accountNumber: '55566677788'
-                    routingNumber: '555666777'
+                    accountNumber: "55566677788"
+                    routingNumber: "555666777"
                     accountCategory: CHECKING
                     bankName: JP Morgan Chase
                     platformAccountId: chase_business_3456
       responses:
-        '200':
+        "200":
           description: Customer updated successfully
           content:
             application/json:
               schema:
                 oneOf:
                   - title: Individual Customer
-                    $ref: '#/components/schemas/IndividualCustomer'
+                    $ref: "#/components/schemas/IndividualCustomer"
                   - title: Business Customer
-                    $ref: '#/components/schemas/BusinessCustomer'
+                    $ref: "#/components/schemas/BusinessCustomer"
                 discriminator:
                   propertyName: customerType
                   mapping:
-                    INDIVIDUAL: '#/components/schemas/IndividualCustomer'
-                    BUSINESS: '#/components/schemas/BusinessCustomer'
-        '400':
+                    INDIVIDUAL: "#/components/schemas/IndividualCustomer"
+                    BUSINESS: "#/components/schemas/BusinessCustomer"
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
+                $ref: "#/components/schemas/Error401"
+        "404":
           description: Customer not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
+                $ref: "#/components/schemas/Error404"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
     delete:
       summary: Delete customer by ID
       description: Delete a customer by their system-generated ID
@@ -644,45 +644,45 @@ paths:
       security:
         - BasicAuth: []
       responses:
-        '200':
+        "200":
           description: Customer deleted successfully
           content:
             application/json:
               schema:
                 oneOf:
                   - title: Individual Customer
-                    $ref: '#/components/schemas/IndividualCustomer'
+                    $ref: "#/components/schemas/IndividualCustomer"
                   - title: Business Customer
-                    $ref: '#/components/schemas/BusinessCustomer'
+                    $ref: "#/components/schemas/BusinessCustomer"
                 discriminator:
                   propertyName: customerType
                   mapping:
-                    INDIVIDUAL: '#/components/schemas/IndividualCustomer'
-                    BUSINESS: '#/components/schemas/BusinessCustomer'
-        '401':
+                    INDIVIDUAL: "#/components/schemas/IndividualCustomer"
+                    BUSINESS: "#/components/schemas/BusinessCustomer"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
+                $ref: "#/components/schemas/Error401"
+        "404":
           description: Customer not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '410':
+                $ref: "#/components/schemas/Error404"
+        "410":
           description: Customer deleted already
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '500':
+                $ref: "#/components/schemas/Error"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /customers/kyc-link:
     parameters:
       - name: redirect_uri
@@ -700,7 +700,7 @@ paths:
       security:
         - BasicAuth: []
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
@@ -711,18 +711,18 @@ paths:
                     type: string
                     description: A hosted kyc link for your customer to complete kyc
                     example: https://example.com/redirect
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
+                $ref: "#/components/schemas/Error401"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /customers/internal-accounts:
     get:
       summary: List Customer internal accounts
@@ -766,7 +766,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
@@ -780,7 +780,7 @@ paths:
                     type: array
                     description: List of internal accounts matching the filter criteria
                     items:
-                      $ref: '#/components/schemas/InternalAccount'
+                      $ref: "#/components/schemas/InternalAccount"
                   hasMore:
                     type: boolean
                     description: Indicates if more results are available beyond this page
@@ -790,24 +790,24 @@ paths:
                   totalCount:
                     type: integer
                     description: Total number of customers matching the criteria (excluding pagination)
-        '400':
+        "400":
           description: Bad request - Invalid parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
+                $ref: "#/components/schemas/Error401"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /external-accounts:
     get:
       summary: List external accounts
@@ -847,7 +847,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
@@ -861,7 +861,7 @@ paths:
                     type: array
                     description: List of external accounts matching the filter criteria
                     items:
-                      $ref: '#/components/schemas/ExternalAccount'
+                      $ref: "#/components/schemas/ExternalAccount"
                   hasMore:
                     type: boolean
                     description: Indicates if more results are available beyond this page
@@ -871,24 +871,24 @@ paths:
                   totalCount:
                     type: integer
                     description: Total number of external accounts matching the criteria (excluding pagination)
-        '400':
+        "400":
           description: Bad request - Invalid parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
+                $ref: "#/components/schemas/Error401"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
     post:
       summary: Add a new external account
       description: Register a new external bank account for a customer
@@ -902,7 +902,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExternalAccountCreateRequest'
+              $ref: "#/components/schemas/ExternalAccountCreateRequest"
             examples:
               usBankAccount:
                 summary: Create external US bank account
@@ -922,8 +922,8 @@ paths:
                       country: US
                   accountInfo:
                     accountType: US_ACCOUNT
-                    accountNumber: '12345678901'
-                    routingNumber: '123456789'
+                    accountNumber: "12345678901"
+                    routingNumber: "123456789"
                     accountCategory: CHECKING
                     bankName: Chase Bank
                     accountHolderName: John Doe
@@ -947,36 +947,36 @@ paths:
                     accountType: SPARK_WALLET
                     address: sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
       responses:
-        '201':
+        "201":
           description: External account created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExternalAccount'
-        '400':
+                $ref: "#/components/schemas/ExternalAccount"
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '409':
+                $ref: "#/components/schemas/Error401"
+        "409":
           description: Conflict - External account already exists
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error409'
-        '500':
+                $ref: "#/components/schemas/Error409"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /transfer-in:
     post:
       summary: Create a transfer-in request
@@ -1032,36 +1032,36 @@ paths:
                     accountId: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
                   amount: 12550
       responses:
-        '201':
+        "201":
           description: Transfer-in request created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Transaction'
-        '400':
+                $ref: "#/components/schemas/Transaction"
+        "400":
           description: Bad request - Invalid parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
+                $ref: "#/components/schemas/Error401"
+        "404":
           description: Customer or account not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
+                $ref: "#/components/schemas/Error404"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /transfer-out:
     post:
       summary: Create a transfer-out request
@@ -1117,36 +1117,36 @@ paths:
                     accountId: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
                   amount: 12550
       responses:
-        '201':
+        "201":
           description: Transfer-out request created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Transaction'
-        '400':
+                $ref: "#/components/schemas/Transaction"
+        "400":
           description: Bad request - Invalid parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
+                $ref: "#/components/schemas/Error401"
+        "404":
           description: Customer or account not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
+                $ref: "#/components/schemas/Error404"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /receiver/uma/{receiverUmaAddress}:
     get:
       summary: Look up a UMA address for payment
@@ -1178,13 +1178,13 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful lookup
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ReceiverLookupResponse'
+                  - $ref: "#/components/schemas/ReceiverLookupResponse"
                   - type: object
                     required:
                       - receiverUmaAddress
@@ -1193,42 +1193,42 @@ paths:
                         type: string
                         description: The UMA address that was looked up
                         example: $receiver@uma.domain
-        '400':
+        "400":
           description: Bad request - Missing or invalid parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
+                $ref: "#/components/schemas/Error401"
+        "404":
           description: UMA address not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '412':
+                $ref: "#/components/schemas/Error404"
+        "412":
           description: Counterparty doesn't support UMA version
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error412'
-        '424':
+                $ref: "#/components/schemas/Error412"
+        "424":
           description: Counterparty issue
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error424'
-        '500':
+                $ref: "#/components/schemas/Error424"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /receiver/external-account/{accountId}:
     get:
       summary: Look up an external account for payment
@@ -1261,13 +1261,13 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful lookup
           content:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/ReceiverLookupResponse'
+                  - $ref: "#/components/schemas/ReceiverLookupResponse"
                   - type: object
                     required:
                       - accountId
@@ -1276,42 +1276,42 @@ paths:
                         type: string
                         description: The external account ID that was looked up
                         example: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-        '400':
+        "400":
           description: Bad request - Missing or invalid parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
+                $ref: "#/components/schemas/Error401"
+        "404":
           description: External account not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '412':
+                $ref: "#/components/schemas/Error404"
+        "412":
           description: Counterparty doesn't support UMA version
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error412'
-        '424':
+                $ref: "#/components/schemas/Error412"
+        "424":
           description: Counterparty issue
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error424'
-        '500':
+                $ref: "#/components/schemas/Error424"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /quotes/{quoteId}:
     get:
       summary: Get quote by ID
@@ -1332,30 +1332,30 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Quote retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Quote'
-        '401':
+                $ref: "#/components/schemas/Quote"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
+                $ref: "#/components/schemas/Error401"
+        "404":
           description: Quote not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
+                $ref: "#/components/schemas/Error404"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /quotes:
     post:
       summary: Create a transfer quote
@@ -1386,7 +1386,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/QuoteRequest'
+              $ref: "#/components/schemas/QuoteRequest"
             examples:
               accountToAccount:
                 summary: Account to Account Transfer
@@ -1410,7 +1410,7 @@ paths:
                     currency: EUR
                   lockedCurrencySide: SENDING
                   lockedCurrencyAmount: 1000
-                  description: 'Payment for invoice #1234'
+                  description: "Payment for invoice #1234"
               umaToAccount:
                 summary: UMA Address to Account Transfer
                 value:
@@ -1423,8 +1423,29 @@ paths:
                   lockedCurrencySide: RECEIVING
                   lockedCurrencyAmount: 9200
                   description: Receiving specific amount
+              realTimeFundingToSparkWallet:
+                summary: Real-time funding to Spark Wallet as an on-ramp flow. Immediate execution.
+                value:
+                  source:
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000009
+                    currency: USD
+                  destination:
+                    externalAccountDetails:
+                      customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                      currency: BTC
+                      beneficiary:
+                        counterPartyType: INDIVIDUAL
+                        fullName: John Doe
+                        nationality: US
+                      accountInfo:
+                        accountType: SPARK_WALLET
+                        address: sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
+                  lockedCurrencySide: RECEIVING
+                  lockedCurrencyAmount: 10000
+                  immediatelyExecute: true
+                  description: Bitcoin reward payout!
       responses:
-        '201':
+        "201":
           description: |
             Transfer quote created successfully. The response includes exchange rates, 
             fees, and transfer details. For transfers involving UMA addresses, payment 
@@ -1432,43 +1453,43 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Quote'
-        '400':
+                $ref: "#/components/schemas/Quote"
+        "400":
           description: Bad request - Missing or invalid parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '412':
+                $ref: "#/components/schemas/Error401"
+        "412":
           description: Counterparty doesn't support UMA version
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error412'
-        '424':
+                $ref: "#/components/schemas/Error412"
+        "424":
           description: Counterparty issue
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error424'
-        '500':
+                $ref: "#/components/schemas/Error424"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
-        '501':
+                $ref: "#/components/schemas/Error500"
+        "501":
           description: Not implemented
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error501'
+                $ref: "#/components/schemas/Error501"
     get:
       summary: List transfer quotes
       description: |
@@ -1553,7 +1574,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
@@ -1567,7 +1588,7 @@ paths:
                     type: array
                     description: List of quotes matching the criteria
                     items:
-                      $ref: '#/components/schemas/Quote'
+                      $ref: "#/components/schemas/Quote"
                   hasMore:
                     type: boolean
                     description: Indicates if more results are available beyond this page
@@ -1577,24 +1598,24 @@ paths:
                   totalCount:
                     type: integer
                     description: Total number of quotes matching the criteria (excluding pagination)
-        '400':
+        "400":
           description: Bad request - Invalid parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
+                $ref: "#/components/schemas/Error401"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /quotes/{quoteId}/retry:
     post:
       summary: Retry an incomplete payment
@@ -1640,27 +1661,27 @@ paths:
                     FULL_NAME: Jane Receiver
                     NATIONALITY: FR
       responses:
-        '201':
+        "201":
           description: |
             Quote created successfully. The response includes payment instructions
             that the client can use to execute the payment through their banking provider.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Quote'
-        '400':
+                $ref: "#/components/schemas/Quote"
+        "400":
           description: Bad request - Missing or invalid parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '401':
+                $ref: "#/components/schemas/Error"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
-        '422':
+                $ref: "#/components/schemas/Error"
+        "422":
           description: |
             Unprocessable Entity - Additional counterparty information required,
             or the payment cannot be completed for another reason.
@@ -1668,7 +1689,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/Error'
+                  - $ref: "#/components/schemas/Error"
                   - type: object
                     properties:
                       code:
@@ -1705,44 +1726,44 @@ paths:
             type: string
           example: Quote:019542f5-b3e7-1d02-0000-000000000001
       responses:
-        '200':
+        "200":
           description: |
             Quote confirmed successfully. The transfer has been initiated and
             the quote status has been updated.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Quote'
-        '400':
+                $ref: "#/components/schemas/Quote"
+        "400":
           description: Bad request - Invalid quote ID or quote cannot be confirmed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
+                $ref: "#/components/schemas/Error401"
+        "404":
           description: Quote not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '409':
+                $ref: "#/components/schemas/Error404"
+        "409":
           description: Conflict - Quote already confirmed, expired, or in invalid state
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error409'
-        '500':
+                $ref: "#/components/schemas/Error409"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /transactions:
     get:
       summary: List transactions
@@ -1791,13 +1812,13 @@ paths:
           description: Filter by transaction status
           required: false
           schema:
-            $ref: '#/components/schemas/TransactionStatus'
+            $ref: "#/components/schemas/TransactionStatus"
         - name: type
           in: query
           description: Filter by transaction type
           required: false
           schema:
-            $ref: '#/components/schemas/TransactionType'
+            $ref: "#/components/schemas/TransactionType"
         - name: reference
           in: query
           description: Filter by reference
@@ -1844,7 +1865,7 @@ paths:
               - desc
             default: desc
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
@@ -1858,7 +1879,7 @@ paths:
                     type: array
                     description: List of transactions matching the criteria
                     items:
-                      $ref: '#/components/schemas/Transaction'
+                      $ref: "#/components/schemas/Transaction"
                   hasMore:
                     type: boolean
                     description: Indicates if more results are available beyond this page
@@ -1868,24 +1889,24 @@ paths:
                   totalCount:
                     type: integer
                     description: Total number of transactions matching the criteria (excluding pagination)
-        '400':
+        "400":
           description: Bad request - Invalid parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
+                $ref: "#/components/schemas/Error401"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /transactions/{transactionId}:
     parameters:
       - name: transactionId
@@ -1903,30 +1924,30 @@ paths:
       security:
         - BasicAuth: []
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Transaction'
-        '401':
+                $ref: "#/components/schemas/Transaction"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
+                $ref: "#/components/schemas/Error401"
+        "404":
           description: Transaction not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
+                $ref: "#/components/schemas/Error404"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /transactions/{transactionId}/approve:
     post:
       summary: Approve a pending incoming payment
@@ -1957,42 +1978,42 @@ paths:
                   additionalProperties: true
                   description: Information about the recipient, provided by the platform if requested in the original webhook via `requestedReceiverCustomerInfoFields`.
       responses:
-        '200':
+        "200":
           description: Payment approved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IncomingTransaction'
-        '400':
+                $ref: "#/components/schemas/IncomingTransaction"
+        "400":
           description: Bad request - Invalid parameters or payment cannot be approved
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
+                $ref: "#/components/schemas/Error401"
+        "404":
           description: Transaction not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '409':
+                $ref: "#/components/schemas/Error404"
+        "409":
           description: Conflict - Payment is not in a pending state or has already been processed or timed out.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error409'
-        '500':
+                $ref: "#/components/schemas/Error409"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /transactions/{transactionId}/reject:
     post:
       summary: Reject a pending incoming payment
@@ -2023,42 +2044,42 @@ paths:
                   description: Optional reason for rejecting the payment. This is just for debugging purposes or can be used for a platform's own purposes.
                   example: RESTRICTED_JURISDICTION
       responses:
-        '200':
+        "200":
           description: Payment rejected successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IncomingTransaction'
-        '400':
+                $ref: "#/components/schemas/IncomingTransaction"
+        "400":
           description: Bad request - Invalid parameters or payment cannot be rejected
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
+                $ref: "#/components/schemas/Error401"
+        "404":
           description: Transaction not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '409':
+                $ref: "#/components/schemas/Error404"
+        "409":
           description: Conflict - Payment is not in a pending state or has already been processed or timed out.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error409'
-        '500':
+                $ref: "#/components/schemas/Error409"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /webhooks/test:
     post:
       summary: Send a test webhook
@@ -2069,30 +2090,30 @@ paths:
       security:
         - BasicAuth: []
       responses:
-        '200':
+        "200":
           description: Webhook delivered successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TestWebhookResponse'
-        '400':
+                $ref: "#/components/schemas/TestWebhookResponse"
+        "400":
           description: Bad request - Webhook delivery failed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
+                $ref: "#/components/schemas/Error401"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /customers/bulk/csv:
     post:
       summary: Upload customers via CSV file
@@ -2190,7 +2211,7 @@ paths:
                   format: binary
                   description: CSV file containing customer information
       responses:
-        '202':
+        "202":
           description: CSV upload accepted for processing
           content:
             application/json:
@@ -2209,18 +2230,18 @@ paths:
                     enum:
                       - PENDING
                       - PROCESSING
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
+                $ref: "#/components/schemas/Error401"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /customers/bulk/jobs/{jobId}:
     get:
       summary: Get bulk import job status
@@ -2246,30 +2267,30 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Job status retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BulkCustomerImportJob'
-        '401':
+                $ref: "#/components/schemas/BulkCustomerImportJob"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
+                $ref: "#/components/schemas/Error401"
+        "404":
           description: Job not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
+                $ref: "#/components/schemas/Error404"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /invitations:
     post:
       summary: Create an UMA invitation from a given platform customer.
@@ -2311,32 +2332,32 @@ paths:
                   type: string
                   format: date-time
                   description: When the invitation expires (if at all)
-                  example: '2023-09-01T14:30:00Z'
+                  example: "2023-09-01T14:30:00Z"
       responses:
-        '201':
+        "201":
           description: Invitation created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UmaInvitation'
-        '400':
+                $ref: "#/components/schemas/UmaInvitation"
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
+                $ref: "#/components/schemas/Error401"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /invitations/{invitationCode}:
     get:
       summary: Get a specific UMA invitation by code.
@@ -2355,30 +2376,30 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Invitation retrieved successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UmaInvitation'
-        '401':
+                $ref: "#/components/schemas/UmaInvitation"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
+                $ref: "#/components/schemas/Error401"
+        "404":
           description: Invitation not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
+                $ref: "#/components/schemas/Error404"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /invitations/{invitationCode}/claim:
     post:
       summary: Claim an UMA invitation
@@ -2417,36 +2438,36 @@ paths:
                   description: The UMA address of the customer claiming the invitation
                   example: $invitee@uma.domain
       responses:
-        '200':
+        "200":
           description: Invitation claimed successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UmaInvitation'
-        '400':
+                $ref: "#/components/schemas/UmaInvitation"
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
+                $ref: "#/components/schemas/Error401"
+        "404":
           description: Invitation not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
+                $ref: "#/components/schemas/Error404"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /invitations/{invitationCode}/cancel:
     post:
       summary: Cancel an UMA invitation
@@ -2473,42 +2494,42 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Invitation cancelled successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UmaInvitation'
-        '400':
+                $ref: "#/components/schemas/UmaInvitation"
+        "400":
           description: Bad request - Invitation cannot be cancelled (already claimed, expired, or cancelled)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
+                $ref: "#/components/schemas/Error401"
+        "403":
           description: Forbidden - Only the platform which created the invitation can cancel it
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error403'
-        '404':
+                $ref: "#/components/schemas/Error403"
+        "404":
           description: Invitation not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
+                $ref: "#/components/schemas/Error404"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /sandbox/send:
     post:
       summary: Simulate sending funds
@@ -2546,42 +2567,42 @@ paths:
                   exclusiveMinimum: 0
                   example: 1000
       responses:
-        '200':
+        "200":
           description: Funds received successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OutgoingTransaction'
-        '400':
+                $ref: "#/components/schemas/OutgoingTransaction"
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
+                $ref: "#/components/schemas/Error401"
+        "403":
           description: Forbidden - request was made with a production platform token
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error403'
-        '404':
+                $ref: "#/components/schemas/Error403"
+        "404":
           description: Reference not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
+                $ref: "#/components/schemas/Error404"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /sandbox/receive:
     post:
       summary: Simulate payment send to test receiving a payment
@@ -2627,42 +2648,42 @@ paths:
                   exclusiveMinimum: 0
                   example: 1000
       responses:
-        '200':
+        "200":
           description: Payment triggered successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IncomingTransaction'
-        '400':
+                $ref: "#/components/schemas/IncomingTransaction"
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
+                $ref: "#/components/schemas/Error401"
+        "403":
           description: Forbidden - request was made with a production platform token
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error403'
-        '404':
+                $ref: "#/components/schemas/Error403"
+        "404":
           description: Sender or receiver not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
+                $ref: "#/components/schemas/Error404"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /uma-providers:
     get:
       summary: This endpoint provides a list of Counterparty Providers that are available.
@@ -2723,7 +2744,7 @@ paths:
       security:
         - BasicAuth: []
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
@@ -2733,7 +2754,7 @@ paths:
                     description: List of available Uma Providers using Grid
                     type: array
                     items:
-                      $ref: '#/components/schemas/UmaProvider'
+                      $ref: "#/components/schemas/UmaProvider"
                   hasMore:
                     type: boolean
                     description: Indicates if more results are available beyond this page
@@ -2743,18 +2764,18 @@ paths:
                   totalCount:
                     type: integer
                     description: Total number of transactions matching the criteria (excluding pagination)
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
+                $ref: "#/components/schemas/Error401"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /tokens:
     post:
       summary: Create a new API token
@@ -2780,35 +2801,35 @@ paths:
                   type: array
                   description: A list of permissions to grant to the token
                   items:
-                    $ref: '#/components/schemas/Permission'
+                    $ref: "#/components/schemas/Permission"
               required:
                 - name
                 - permissions
       responses:
-        '201':
+        "201":
           description: API token created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiToken'
-        '400':
+                $ref: "#/components/schemas/ApiToken"
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
+                $ref: "#/components/schemas/Error401"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
     get:
       summary: List tokens
       description: |
@@ -2870,7 +2891,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
@@ -2884,7 +2905,7 @@ paths:
                     type: array
                     description: List of tokens matching the filter criteria
                     items:
-                      $ref: '#/components/schemas/ApiToken'
+                      $ref: "#/components/schemas/ApiToken"
                   hasMore:
                     type: boolean
                     description: Indicates if more results are available beyond this page
@@ -2894,24 +2915,24 @@ paths:
                   totalCount:
                     type: integer
                     description: Total number of tokens matching the criteria (excluding pagination)
-        '400':
+        "400":
           description: Bad request - Invalid parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
+                $ref: "#/components/schemas/Error401"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
   /tokens/{tokenId}:
     parameters:
       - name: tokenId
@@ -2929,30 +2950,30 @@ paths:
       security:
         - BasicAuth: []
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiToken'
-        '401':
+                $ref: "#/components/schemas/ApiToken"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
+                $ref: "#/components/schemas/Error401"
+        "404":
           description: Token not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
+                $ref: "#/components/schemas/Error404"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
     delete:
       summary: Delete API token by ID
       description: Delete an API token by their system-generated ID
@@ -2962,32 +2983,32 @@ paths:
       security:
         - BasicAuth: []
       responses:
-        '204':
+        "204":
           description: API token deleted successfully
-        '400':
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
+                $ref: "#/components/schemas/Error401"
+        "404":
           description: Token not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
+                $ref: "#/components/schemas/Error404"
+        "500":
           description: Internal service error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: "#/components/schemas/Error500"
 webhooks:
   incoming-payment:
     post:
@@ -3028,7 +3049,7 @@ webhooks:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/IncomingPaymentWebhook'
+              $ref: "#/components/schemas/IncomingPaymentWebhook"
             examples:
               pendingPayment:
                 summary: Pending payment example requiring approval
@@ -3052,14 +3073,14 @@ webhooks:
                       reference: REF-123456789
                     counterpartyInformation:
                       FULL_NAME: John Sender
-                      BIRTH_DATE: '1985-06-15'
+                      BIRTH_DATE: "1985-06-15"
                       NATIONALITY: US
                   requestedReceiverCustomerInfoFields:
                     - name: NATIONALITY
                       mandatory: true
                     - name: ADDRESS
                       mandatory: false
-                  timestamp: '2023-08-15T14:32:00Z'
+                  timestamp: "2023-08-15T14:32:00Z"
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000007
                   type: INCOMING_PAYMENT
               incomingCompletedPayment:
@@ -3080,16 +3101,16 @@ webhooks:
                         decimals: 2
                     customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
                     platformCustomerId: 18d3e5f7b4a9c2
-                    settledAt: '2023-08-15T14:30:00Z'
-                    createdAt: '2023-08-15T14:25:18Z'
+                    settledAt: "2023-08-15T14:30:00Z"
+                    createdAt: "2023-08-15T14:25:18Z"
                     description: Payment for services
                     reconciliationInstructions:
                       reference: REF-123456789
-                  timestamp: '2023-08-15T14:32:00Z'
+                  timestamp: "2023-08-15T14:32:00Z"
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000007
                   type: INCOMING_PAYMENT
       responses:
-        '200':
+        "200":
           description: |
             Webhook received successfully. 
             For PENDING transactions, this indicates approval to proceed with the payment.
@@ -3097,46 +3118,46 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IncomingPaymentWebhookResponse'
-        '202':
+                $ref: "#/components/schemas/IncomingPaymentWebhookResponse"
+        "202":
           description: |
             Webhook received and will be processed asynchronously. The synchronous 200 response should be preferred where possible. This asycnhronous path should only be used in
             cases where the platform's architecture requires async (but still very quick) processing before approving or rejecting the payment.
             The platform must call the `/transactions/{transactionId}/approve` or `/transactions/{transactionId}/reject` endpoint to approve or reject the payment within 5 seconds or the payment will be automatically rejected.
-        '400':
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized - Signature validation failed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
+                $ref: "#/components/schemas/Error401"
+        "403":
           description: |
             Forbidden - Payment rejected by the client.
             Only applicable for PENDING transactions.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IncomingPaymentWebhookForbiddenResponse'
-        '409':
+                $ref: "#/components/schemas/IncomingPaymentWebhookForbiddenResponse"
+        "409":
           description: Conflict - Webhook has already been processed (duplicate webhookId)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error403'
-        '422':
+                $ref: "#/components/schemas/Error403"
+        "422":
           description: |
             Unprocessable Entity - Additional counterparty information required.
             Only applicable for PENDING transactions.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IncomingPaymentWebhookUnprocessableResponse'
+                $ref: "#/components/schemas/IncomingPaymentWebhookUnprocessableResponse"
   outgoing-payment:
     post:
       summary: Outgoing payment status webhook
@@ -3165,7 +3186,7 @@ webhooks:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OutgoingPaymentWebhook'
+              $ref: "#/components/schemas/OutgoingPaymentWebhook"
             examples:
               outgoingCompletedPayment:
                 summary: Completed outgoing payment
@@ -3192,9 +3213,9 @@ webhooks:
                         decimals: 2
                     customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
                     platformCustomerId: 18d3e5f7b4a9c2
-                    settlementTime: '2023-08-15T14:30:00Z'
-                    createdAt: '2023-08-15T14:25:18Z'
-                    description: 'Payment for invoice #1234'
+                    settlementTime: "2023-08-15T14:30:00Z"
+                    createdAt: "2023-08-15T14:25:18Z"
+                    description: "Payment for invoice #1234"
                     exchangeRate: 0.92
                     quoteId: Quote:019542f5-b3e7-1d02-0000-000000000006
                     paymentInstructions:
@@ -3205,7 +3226,7 @@ webhooks:
                         routingNumber: 123456789
                         accountCategory: CHECKING
                         bankName: Chase Bank
-                  timestamp: '2023-08-15T14:32:00Z'
+                  timestamp: "2023-08-15T14:32:00Z"
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000007
                   type: OUTGOING_PAYMENT
               failedPayment:
@@ -3226,7 +3247,7 @@ webhooks:
                         decimals: 2
                     customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
                     platformCustomerId: 18d3e5f7b4a9c2
-                    createdAt: '2023-08-15T14:25:18Z'
+                    createdAt: "2023-08-15T14:25:18Z"
                     quoteId: Quote:019542f5-b3e7-1d02-0000-000000000006
                     paymentInstructions:
                       reference: UMA-Q12345-REF
@@ -3236,30 +3257,30 @@ webhooks:
                         routingNumber: 123456789
                         accountCategory: CHECKING
                         bankName: Chase Bank
-                  timestamp: '2023-08-15T14:32:00Z'
+                  timestamp: "2023-08-15T14:32:00Z"
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000007
                   type: OUTGOING_PAYMENT
       responses:
-        '200':
+        "200":
           description: Webhook received successfully
-        '400':
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized - Signature validation failed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '409':
+                $ref: "#/components/schemas/Error401"
+        "409":
           description: Conflict - Webhook has already been processed (duplicate webhookId)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error409'
+                $ref: "#/components/schemas/Error409"
   test-webhook:
     post:
       summary: Test webhook for integration verification
@@ -3288,35 +3309,35 @@ webhooks:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TestWebhookRequest'
+              $ref: "#/components/schemas/TestWebhookRequest"
             examples:
               testWebhook:
                 summary: Test webhook example
                 value:
-                  timestamp: '2023-08-15T14:32:00Z'
+                  timestamp: "2023-08-15T14:32:00Z"
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000001
                   type: TEST
       responses:
-        '200':
+        "200":
           description: Webhook received successfully. This confirms your webhook endpoint is properly configured.
-        '400':
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized - Signature validation failed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '409':
+                $ref: "#/components/schemas/Error401"
+        "409":
           description: Conflict - Webhook has already been processed (duplicate webhookId)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error409'
+                $ref: "#/components/schemas/Error409"
   bulk-upload:
     post:
       summary: Bulk upload status webhook
@@ -3345,7 +3366,7 @@ webhooks:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BulkUploadWebhookRequest'
+              $ref: "#/components/schemas/BulkUploadWebhookRequest"
             examples:
               completedUpload:
                 summary: Successful bulk upload completion
@@ -3361,7 +3382,7 @@ webhooks:
                     errors: []
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000008
                   type: BULK_UPLOAD
-                  timestamp: '2023-08-15T14:32:00Z'
+                  timestamp: "2023-08-15T14:32:00Z"
               failedUpload:
                 summary: Failed bulk upload
                 value:
@@ -3383,28 +3404,28 @@ webhooks:
                             column: umaAddress
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000008
                   type: BULK_UPLOAD
-                  timestamp: '2023-08-15T14:32:00Z'
+                  timestamp: "2023-08-15T14:32:00Z"
       responses:
-        '200':
+        "200":
           description: Webhook received successfully
-        '400':
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized - Signature validation failed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '409':
+                $ref: "#/components/schemas/Error401"
+        "409":
           description: Conflict - Webhook has already been processed (duplicate webhookId)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error409'
+                $ref: "#/components/schemas/Error409"
   invitation-claimed:
     post:
       summary: Invitation claimed webhook
@@ -3442,43 +3463,43 @@ webhooks:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/InvitationClaimedWebhook'
+              $ref: "#/components/schemas/InvitationClaimedWebhook"
             examples:
               claimedInvitation:
                 summary: Invitation claimed notification
                 value:
                   invitation:
                     code: 019542f5
-                    createdAt: '2023-09-01T14:30:00Z'
-                    claimedAt: '2023-09-01T15:45:00Z'
+                    createdAt: "2023-09-01T14:30:00Z"
+                    claimedAt: "2023-09-01T15:45:00Z"
                     inviterUma: $inviter@uma.domain
                     inviteeUma: $invitee@uma.domain
                     status: CLAIMED
                     url: https://uma.me/i/019542f5
-                  timestamp: '2023-09-01T15:45:00Z'
+                  timestamp: "2023-09-01T15:45:00Z"
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000008
                   type: INVITATION_CLAIMED
       responses:
-        '200':
+        "200":
           description: Webhook received successfully
-        '400':
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized - Signature validation failed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '409':
+                $ref: "#/components/schemas/Error401"
+        "409":
           description: Conflict - Webhook has already been processed (duplicate webhookId)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error409'
+                $ref: "#/components/schemas/Error409"
   kyc-status:
     post:
       summary: Kyc customer status change
@@ -3518,7 +3539,7 @@ webhooks:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/KycStatusWebhook'
+              $ref: "#/components/schemas/KycStatusWebhook"
             examples:
               kycApprovedWebhook:
                 summary: When a customer kyc has been approved
@@ -3526,30 +3547,30 @@ webhooks:
                   customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
                   kycStatus: APPROVED
                   type: KYC_STATUS
-                  timestamp: '2023-08-15T14:32:00Z'
+                  timestamp: "2023-08-15T14:32:00Z"
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000007
       responses:
-        '200':
+        "200":
           description: |
-            Webhook received successfully. 
-        '400':
+            Webhook received successfully.
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized - Signature validation failed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '409':
+                $ref: "#/components/schemas/Error401"
+        "409":
           description: Conflict - Webhook has already been processed (duplicate webhookId)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error403'
+                $ref: "#/components/schemas/Error403"
   account-status:
     post:
       summary: Account status notification webhook
@@ -3579,7 +3600,7 @@ webhooks:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AccountStatusWebhook'
+              $ref: "#/components/schemas/AccountStatusWebhook"
             examples:
               balanceDecrease:
                 summary: A transaction just cleared a customer account and the balance has decreased
@@ -3601,31 +3622,31 @@ webhooks:
                           symbol: $
                           decimals: 2
                   customerId: User:019542f5-b3e7-1d02-0000-000000000001
-                  timestamp: '2023-08-15T14:32:00Z'
+                  timestamp: "2023-08-15T14:32:00Z"
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000007
                   type: ACCOUNT_STATUS
       responses:
-        '200':
+        "200":
           description: |
-            Webhook received successfully. 
-        '400':
+            Webhook received successfully.
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
+                $ref: "#/components/schemas/Error400"
+        "401":
           description: Unauthorized - Signature validation failed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '409':
+                $ref: "#/components/schemas/Error401"
+        "409":
           description: Conflict - Webhook has already been processed (duplicate webhookId)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error403'
+                $ref: "#/components/schemas/Error403"
 components:
   securitySchemes:
     BasicAuth:
@@ -3649,15 +3670,15 @@ components:
   schemas:
     AllErrors:
       anyOf:
-        - $ref: '#/components/schemas/Error400'
-        - $ref: '#/components/schemas/Error401'
-        - $ref: '#/components/schemas/Error403'
-        - $ref: '#/components/schemas/Error404'
-        - $ref: '#/components/schemas/Error409'
-        - $ref: '#/components/schemas/Error412'
-        - $ref: '#/components/schemas/Error424'
-        - $ref: '#/components/schemas/Error500'
-        - $ref: '#/components/schemas/Error501'
+        - $ref: "#/components/schemas/Error400"
+        - $ref: "#/components/schemas/Error401"
+        - $ref: "#/components/schemas/Error403"
+        - $ref: "#/components/schemas/Error404"
+        - $ref: "#/components/schemas/Error409"
+        - $ref: "#/components/schemas/Error412"
+        - $ref: "#/components/schemas/Error424"
+        - $ref: "#/components/schemas/Error500"
+        - $ref: "#/components/schemas/Error501"
     CustomerInfoFieldName:
       type: string
       enum:
@@ -3680,7 +3701,7 @@ components:
       type: object
       properties:
         name:
-          $ref: '#/components/schemas/CustomerInfoFieldName'
+          $ref: "#/components/schemas/CustomerInfoFieldName"
         mandatory:
           type: boolean
           description: Whether the field is mandatory
@@ -3716,7 +3737,7 @@ components:
         requiredCounterpartyFields:
           type: array
           items:
-            $ref: '#/components/schemas/CounterpartyFieldDefinition'
+            $ref: "#/components/schemas/CounterpartyFieldDefinition"
           description: List of fields which the platform requires from the counterparty institutions about counterparty customers. Platforms can set mandatory to false if the platform does not require the field, but would like to have it available. Some fields may be required by the underlying UMA provider.
           example:
             - name: FULL_NAME
@@ -3728,7 +3749,7 @@ components:
         umaProviderRequiredCustomerFields:
           type: array
           items:
-            $ref: '#/components/schemas/CustomerInfoFieldName'
+            $ref: "#/components/schemas/CustomerInfoFieldName"
           description: List of customer info field names that are required by the underlying UMA provider when creating a customer for this currency. These fields must be supplied when creating or updating a customer if this currency is intended to be used by that customer. If no fields are required, this field is omitted.
           readOnly: true
           example:
@@ -3737,7 +3758,7 @@ components:
         umaProviderRequiredCounterpartyCustomerFields:
           type: array
           items:
-            $ref: '#/components/schemas/CustomerInfoFieldName'
+            $ref: "#/components/schemas/CustomerInfoFieldName"
           description: List of fields that are required by the underlying UMA provider for this currency. If the counterparty does not provide these fields, quote requests will fail.
           readOnly: true
           example:
@@ -3746,7 +3767,7 @@ components:
         enabledTransactionTypes:
           type: array
           items:
-            $ref: '#/components/schemas/TransactionType'
+            $ref: "#/components/schemas/TransactionType"
           description: List of transaction types that are enabled for this currency.
           example:
             - OUTGOING
@@ -3780,7 +3801,7 @@ components:
         supportedCurrencies:
           type: array
           items:
-            $ref: '#/components/schemas/PlatformCurrencyConfig'
+            $ref: "#/components/schemas/PlatformCurrencyConfig"
           description: |
             List of currencies supported by the platform. This is what the platform's
             customers are able to hold, send, and receive.
@@ -3797,13 +3818,13 @@ components:
           format: date-time
           description: Creation timestamp
           readOnly: true
-          example: '2023-06-15T12:30:45Z'
+          example: "2023-06-15T12:30:45Z"
         updatedAt:
           type: string
           format: date-time
           description: Last update timestamp
           readOnly: true
-          example: '2023-06-15T12:30:45Z'
+          example: "2023-06-15T12:30:45Z"
     Error401:
       type: object
       required:
@@ -3822,7 +3843,7 @@ components:
             | Error Code | Description |
             |------------|-------------|
             | UNAUTHORIZED | Issue with API credentials |
-            | INVALID_SIGNATURE | Signature header is invalid | 
+            | INVALID_SIGNATURE | Signature header is invalid |
           enum:
             - UNAUTHORIZED
             - INVALID_SIGNATURE
@@ -3850,7 +3871,7 @@ components:
             | Error Code | Description |
             |------------|-------------|
             | GRID_SWITCH_ERROR | Grid switch error |
-            | INTERNAL_ERROR | Internal server or UMA error | 
+            | INTERNAL_ERROR | Internal server or UMA error |
           enum:
             - GRID_SWITCH_ERROR
             - INTERNAL_ERROR
@@ -3903,7 +3924,7 @@ components:
             | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
             | INVALID_AMOUNT | Amount is invalid |
             | WEBHOOK_ENDPOINT_NOT_SET | Webhook endpoint is not set |
-            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error | 
+            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error |
           enum:
             - INVALID_INPUT
             - MISSING_MANDATORY_USER_INFO
@@ -3956,7 +3977,7 @@ components:
             | Error Code | Description |
             |------------|-------------|
             | UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY | Unrecognized mandatory payee data key |
-            | NOT_IMPLEMENTED | Feature not implemented | 
+            | NOT_IMPLEMENTED | Feature not implemented |
           enum:
             - UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY
             - NOT_IMPLEMENTED
@@ -3975,7 +3996,7 @@ components:
       example: INDIVIDUAL
     IndividualCustomer:
       allOf:
-        - $ref: '#/components/schemas/Customer'
+        - $ref: "#/components/schemas/Customer"
         - type: object
           properties:
             fullName:
@@ -3986,13 +4007,13 @@ components:
               type: string
               format: date
               description: Date of birth in ISO 8601 format (YYYY-MM-DD)
-              example: '1990-01-15'
+              example: "1990-01-15"
             nationality:
               type: string
               description: Country code (ISO 3166-1 alpha-2)
               example: US
             address:
-              $ref: '#/components/schemas/Address'
+              $ref: "#/components/schemas/Address"
     Customer:
       type: object
       required:
@@ -4010,9 +4031,9 @@ components:
           description: Platform-specific customer identifier
           example: 9f84e0c2a72c4fa
         customerType:
-          $ref: '#/components/schemas/CustomerType'
+          $ref: "#/components/schemas/CustomerType"
         kycStatus:
-          $ref: '#/components/schemas/KycStatus'
+          $ref: "#/components/schemas/KycStatus"
         umaAddress:
           type: string
           description: Full UMA address (always present in responses, even if system-generated). This is an optional identifier to route payments to the customer.
@@ -4022,13 +4043,13 @@ components:
           format: date-time
           description: Creation timestamp
           readOnly: true
-          example: '2023-07-21T17:32:28Z'
+          example: "2023-07-21T17:32:28Z"
         updatedAt:
           type: string
           format: date-time
           description: Last update timestamp
           readOnly: true
-          example: '2023-07-21T17:32:28Z'
+          example: "2023-07-21T17:32:28Z"
         isDeleted:
           type: boolean
           description: Whether the customer is marked as deleted
@@ -4037,8 +4058,8 @@ components:
       discriminator:
         propertyName: customerType
         mapping:
-          INDIVIDUAL: '#/components/schemas/IndividualCustomer'
-          BUSINESS: '#/components/schemas/BusinessCustomer'
+          INDIVIDUAL: "#/components/schemas/IndividualCustomer"
+          BUSINESS: "#/components/schemas/BusinessCustomer"
     Address:
       type: object
       required:
@@ -4065,7 +4086,7 @@ components:
         postalCode:
           type: string
           description: Postal/ZIP code
-          example: '94105'
+          example: "94105"
         country:
           type: string
           description: Country code (ISO 3166-1 alpha-2)
@@ -4089,13 +4110,13 @@ components:
           type: string
           format: date
           description: Date of birth in ISO 8601 format (YYYY-MM-DD)
-          example: '1990-01-15'
+          example: "1990-01-15"
         nationality:
           type: string
           description: Country code (ISO 3166-1 alpha-2)
           example: US
         address:
-          $ref: '#/components/schemas/Address'
+          $ref: "#/components/schemas/Address"
         individualType:
           type: string
           enum:
@@ -4115,11 +4136,11 @@ components:
           example: CEO, COO, President
     BusinessCustomer:
       allOf:
-        - $ref: '#/components/schemas/Customer'
+        - $ref: "#/components/schemas/Customer"
         - type: object
           properties:
             address:
-              $ref: '#/components/schemas/Address'
+              $ref: "#/components/schemas/Address"
             businessInfo:
               type: object
               required:
@@ -4141,7 +4162,7 @@ components:
             beneficialOwners:
               type: array
               items:
-                $ref: '#/components/schemas/UltimateBeneficialOwner'
+                $ref: "#/components/schemas/UltimateBeneficialOwner"
     KycStatus:
       type: string
       enum:
@@ -4175,16 +4196,16 @@ components:
       properties:
         accountType:
           allOf:
-            - $ref: '#/components/schemas/BankAccountType'
+            - $ref: "#/components/schemas/BankAccountType"
           example: US_ACCOUNT
         accountNumber:
           type: string
           description: US bank account number
-          example: '123456789'
+          example: "123456789"
         routingNumber:
           type: string
           description: ACH routing number (9 digits)
-          example: '987654321'
+          example: "987654321"
           minLength: 9
           maxLength: 9
           pattern: ^[0-9]{9}$
@@ -4212,12 +4233,12 @@ components:
       properties:
         accountType:
           allOf:
-            - $ref: '#/components/schemas/BankAccountType'
+            - $ref: "#/components/schemas/BankAccountType"
           example: CLABE
         clabeNumber:
           type: string
           description: 18-digit CLABE number (Mexican banking standard)
-          example: '123456789012345678'
+          example: "123456789012345678"
           minLength: 18
           maxLength: 18
           pattern: ^[0-9]{18}$
@@ -4251,21 +4272,21 @@ components:
           discriminator:
             propertyName: accountType
             mapping:
-              CLABE: '#/components/schemas/CustomerClabeAccountInfo'
-              US_ACCOUNT: '#/components/schemas/CustomerUsAccountInfo'
-              PIX: '#/components/schemas/CustomerPixAccountInfo'
-              IBAN: '#/components/schemas/CustomerIbanAccountInfo'
-              FBO: '#/components/schemas/CustomerFboAccountInfo'
-              UPI: '#/components/schemas/CustomerUpiAccountInfo'
-              SPARK_WALLET: '#/components/schemas/CustomerSparkWalletInfo'
+              CLABE: "#/components/schemas/CustomerClabeAccountInfo"
+              US_ACCOUNT: "#/components/schemas/CustomerUsAccountInfo"
+              PIX: "#/components/schemas/CustomerPixAccountInfo"
+              IBAN: "#/components/schemas/CustomerIbanAccountInfo"
+              FBO: "#/components/schemas/CustomerFboAccountInfo"
+              UPI: "#/components/schemas/CustomerUpiAccountInfo"
+              SPARK_WALLET: "#/components/schemas/CustomerSparkWalletInfo"
     CustomerClabeAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/ClabeAccountInfo'
-        - $ref: '#/components/schemas/BankAccountBase'
+        - $ref: "#/components/schemas/ClabeAccountInfo"
+        - $ref: "#/components/schemas/BankAccountBase"
     CustomerUsAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/UsAccountInfo'
-        - $ref: '#/components/schemas/BankAccountBase'
+        - $ref: "#/components/schemas/UsAccountInfo"
+        - $ref: "#/components/schemas/BankAccountBase"
         - type: object
           required:
             - accountHolderName
@@ -4283,12 +4304,12 @@ components:
       properties:
         accountType:
           allOf:
-            - $ref: '#/components/schemas/BankAccountType'
+            - $ref: "#/components/schemas/BankAccountType"
           example: PIX
         pixKey:
           type: string
           description: PIX key for Brazilian instant payments
-          example: '55119876543210'
+          example: "55119876543210"
         pixKeyType:
           type: string
           enum:
@@ -4309,8 +4330,8 @@ components:
           example: John Doe
     CustomerPixAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/PixAccountInfo'
-        - $ref: '#/components/schemas/BankAccountBase'
+        - $ref: "#/components/schemas/PixAccountInfo"
+        - $ref: "#/components/schemas/BankAccountBase"
     IbanAccountInfo:
       type: object
       required:
@@ -4320,7 +4341,7 @@ components:
       properties:
         accountType:
           allOf:
-            - $ref: '#/components/schemas/BankAccountType'
+            - $ref: "#/components/schemas/BankAccountType"
           example: IBAN
         iban:
           type: string
@@ -4344,11 +4365,11 @@ components:
           example: John Doe
     CustomerIbanAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/IbanAccountInfo'
-        - $ref: '#/components/schemas/BankAccountBase'
+        - $ref: "#/components/schemas/IbanAccountInfo"
+        - $ref: "#/components/schemas/BankAccountBase"
     CustomerFboAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/BankAccountBase'
+        - $ref: "#/components/schemas/BankAccountBase"
         - type: object
           required:
             - currencyCode
@@ -4365,7 +4386,7 @@ components:
       properties:
         accountType:
           allOf:
-            - $ref: '#/components/schemas/BankAccountType'
+            - $ref: "#/components/schemas/BankAccountType"
           example: UPI
         vpa:
           type: string
@@ -4377,8 +4398,8 @@ components:
           example: John Doe
     CustomerUpiAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/UpiAccountInfo'
-        - $ref: '#/components/schemas/BankAccountBase'
+        - $ref: "#/components/schemas/UpiAccountInfo"
+        - $ref: "#/components/schemas/BankAccountBase"
     SparkWalletInfo:
       type: object
       required:
@@ -4387,7 +4408,7 @@ components:
       properties:
         accountType:
           allOf:
-            - $ref: '#/components/schemas/BankAccountType'
+            - $ref: "#/components/schemas/BankAccountType"
           example: SPARK_WALLET
         address:
           type: string
@@ -4395,34 +4416,34 @@ components:
           example: sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
     CustomerSparkWalletInfo:
       allOf:
-        - $ref: '#/components/schemas/SparkWalletInfo'
-        - $ref: '#/components/schemas/BankAccountBase'
+        - $ref: "#/components/schemas/SparkWalletInfo"
+        - $ref: "#/components/schemas/BankAccountBase"
     CustomerBankAccountInfo:
       oneOf:
         - title: US Bank Account
-          $ref: '#/components/schemas/CustomerUsAccountInfo'
+          $ref: "#/components/schemas/CustomerUsAccountInfo"
         - title: CLABE Account
-          $ref: '#/components/schemas/CustomerClabeAccountInfo'
+          $ref: "#/components/schemas/CustomerClabeAccountInfo"
         - title: PIX Account
-          $ref: '#/components/schemas/CustomerPixAccountInfo'
+          $ref: "#/components/schemas/CustomerPixAccountInfo"
         - title: IBAN Account
-          $ref: '#/components/schemas/CustomerIbanAccountInfo'
+          $ref: "#/components/schemas/CustomerIbanAccountInfo"
         - title: FBO Account
-          $ref: '#/components/schemas/CustomerFboAccountInfo'
+          $ref: "#/components/schemas/CustomerFboAccountInfo"
         - title: UPI Account
-          $ref: '#/components/schemas/CustomerUpiAccountInfo'
+          $ref: "#/components/schemas/CustomerUpiAccountInfo"
         - title: Spark Wallet
-          $ref: '#/components/schemas/CustomerSparkWalletInfo'
+          $ref: "#/components/schemas/CustomerSparkWalletInfo"
       discriminator:
         propertyName: accountType
         mapping:
-          US_ACCOUNT: '#/components/schemas/CustomerUsAccountInfo'
-          CLABE: '#/components/schemas/CustomerClabeAccountInfo'
-          PIX: '#/components/schemas/CustomerPixAccountInfo'
-          IBAN: '#/components/schemas/CustomerIbanAccountInfo'
-          FBO: '#/components/schemas/CustomerFboAccountInfo'
-          UPI: '#/components/schemas/CustomerUpiAccountInfo'
-          SPARK_WALLET: '#/components/schemas/CustomerSparkWalletInfo'
+          US_ACCOUNT: "#/components/schemas/CustomerUsAccountInfo"
+          CLABE: "#/components/schemas/CustomerClabeAccountInfo"
+          PIX: "#/components/schemas/CustomerPixAccountInfo"
+          IBAN: "#/components/schemas/CustomerIbanAccountInfo"
+          FBO: "#/components/schemas/CustomerFboAccountInfo"
+          UPI: "#/components/schemas/CustomerUpiAccountInfo"
+          SPARK_WALLET: "#/components/schemas/CustomerSparkWalletInfo"
     IndividualCustomerUpdate:
       type: object
       properties:
@@ -4439,13 +4460,13 @@ components:
           type: string
           format: date
           description: Date of birth in ISO 8601 format (YYYY-MM-DD)
-          example: '1990-01-15'
+          example: "1990-01-15"
         nationality:
           type: string
           description: Country code (ISO 3166-1 alpha-2)
           example: US
         address:
-          $ref: '#/components/schemas/Address'
+          $ref: "#/components/schemas/Address"
         umaAddress:
           type: string
           description: |
@@ -4454,7 +4475,7 @@ components:
             identifier to route payments to the customer.
           example: $john.doe@uma.domain.com
         bankAccountInfo:
-          $ref: '#/components/schemas/CustomerBankAccountInfo'
+          $ref: "#/components/schemas/CustomerBankAccountInfo"
           description: |
             Optional bank account information for a default receiving account where incoming payments will be deposited.
             This field should only be used by platforms that are regulated financial institutions and can directly
@@ -4487,13 +4508,13 @@ components:
               description: Tax identification number
               example: EIN-987654321
         address:
-          $ref: '#/components/schemas/Address'
+          $ref: "#/components/schemas/Address"
         bankAccountInfo:
-          $ref: '#/components/schemas/CustomerBankAccountInfo'
+          $ref: "#/components/schemas/CustomerBankAccountInfo"
         beneficialOwners:
           type: array
           items:
-            $ref: '#/components/schemas/UltimateBeneficialOwner'
+            $ref: "#/components/schemas/UltimateBeneficialOwner"
     Error409:
       type: object
       required:
@@ -4512,7 +4533,7 @@ components:
             | Error Code | Description |
             |------------|-------------|
             | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
-            | UMA_ADDRESS_EXISTS | UMA address already exists | 
+            | UMA_ADDRESS_EXISTS | UMA address already exists |
           enum:
             - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
             - UMA_ADDRESS_EXISTS
@@ -4554,43 +4575,43 @@ components:
           description: Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)
           example: 12550
         currency:
-          $ref: '#/components/schemas/Currency'
+          $ref: "#/components/schemas/Currency"
     PaymentClabeAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - $ref: '#/components/schemas/ClabeAccountInfo'
+        - $ref: "#/components/schemas/PaymentBankAccountInfo"
+        - $ref: "#/components/schemas/ClabeAccountInfo"
     PaymentBankAccountInfo:
       type: object
       required:
         - accountType
       properties:
         accountType:
-          $ref: '#/components/schemas/BankAccountType'
+          $ref: "#/components/schemas/BankAccountType"
       discriminator:
         propertyName: accountType
         mapping:
-          CLABE: '#/components/schemas/PaymentClabeAccountInfo'
-          US_ACCOUNT: '#/components/schemas/PaymentUsAccountInfo'
-          PIX: '#/components/schemas/PaymentPixAccountInfo'
-          IBAN: '#/components/schemas/PaymentIbanAccountInfo'
-          FBO: '#/components/schemas/PaymentFboAccountInfo'
-          UPI: '#/components/schemas/PaymentUpiAccountInfo'
-          SPARK_WALLET: '#/components/schemas/PaymentSparkWalletInfo'
+          CLABE: "#/components/schemas/PaymentClabeAccountInfo"
+          US_ACCOUNT: "#/components/schemas/PaymentUsAccountInfo"
+          PIX: "#/components/schemas/PaymentPixAccountInfo"
+          IBAN: "#/components/schemas/PaymentIbanAccountInfo"
+          FBO: "#/components/schemas/PaymentFboAccountInfo"
+          UPI: "#/components/schemas/PaymentUpiAccountInfo"
+          SPARK_WALLET: "#/components/schemas/PaymentSparkWalletInfo"
     PaymentUsAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - $ref: '#/components/schemas/UsAccountInfo'
+        - $ref: "#/components/schemas/PaymentBankAccountInfo"
+        - $ref: "#/components/schemas/UsAccountInfo"
     PaymentPixAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - $ref: '#/components/schemas/PixAccountInfo'
+        - $ref: "#/components/schemas/PaymentBankAccountInfo"
+        - $ref: "#/components/schemas/PixAccountInfo"
     PaymentIbanAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - $ref: '#/components/schemas/IbanAccountInfo'
+        - $ref: "#/components/schemas/PaymentBankAccountInfo"
+        - $ref: "#/components/schemas/IbanAccountInfo"
     PaymentFboAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
+        - $ref: "#/components/schemas/PaymentBankAccountInfo"
         - type: object
           required:
             - paymentUrl
@@ -4610,12 +4631,12 @@ components:
               example: POST
     PaymentUpiAccountInfo:
       allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - $ref: '#/components/schemas/UpiAccountInfo'
+        - $ref: "#/components/schemas/PaymentBankAccountInfo"
+        - $ref: "#/components/schemas/UpiAccountInfo"
     PaymentSparkWalletInfo:
       allOf:
-        - $ref: '#/components/schemas/PaymentBankAccountInfo'
-        - $ref: '#/components/schemas/SparkWalletInfo'
+        - $ref: "#/components/schemas/PaymentBankAccountInfo"
+        - $ref: "#/components/schemas/SparkWalletInfo"
       properties:
         invoice:
           type: string
@@ -4638,29 +4659,29 @@ components:
         bankAccountInfo:
           oneOf:
             - title: CLABE Account
-              $ref: '#/components/schemas/PaymentClabeAccountInfo'
+              $ref: "#/components/schemas/PaymentClabeAccountInfo"
             - title: US Bank Account
-              $ref: '#/components/schemas/PaymentUsAccountInfo'
+              $ref: "#/components/schemas/PaymentUsAccountInfo"
             - title: PIX Account
-              $ref: '#/components/schemas/PaymentPixAccountInfo'
+              $ref: "#/components/schemas/PaymentPixAccountInfo"
             - title: IBAN Account
-              $ref: '#/components/schemas/PaymentIbanAccountInfo'
+              $ref: "#/components/schemas/PaymentIbanAccountInfo"
             - title: FBO Account
-              $ref: '#/components/schemas/PaymentFboAccountInfo'
+              $ref: "#/components/schemas/PaymentFboAccountInfo"
             - title: UPI Account
-              $ref: '#/components/schemas/PaymentUpiAccountInfo'
+              $ref: "#/components/schemas/PaymentUpiAccountInfo"
             - title: Spark Wallet
-              $ref: '#/components/schemas/PaymentSparkWalletInfo'
+              $ref: "#/components/schemas/PaymentSparkWalletInfo"
           discriminator:
             propertyName: accountType
             mapping:
-              CLABE: '#/components/schemas/PaymentClabeAccountInfo'
-              US_ACCOUNT: '#/components/schemas/PaymentUsAccountInfo'
-              PIX: '#/components/schemas/PaymentPixAccountInfo'
-              IBAN: '#/components/schemas/PaymentIbanAccountInfo'
-              FBO: '#/components/schemas/PaymentFboAccountInfo'
-              UPI: '#/components/schemas/PaymentUpiAccountInfo'
-              SPARK_WALLET: '#/components/schemas/PaymentSparkWalletInfo'
+              CLABE: "#/components/schemas/PaymentClabeAccountInfo"
+              US_ACCOUNT: "#/components/schemas/PaymentUsAccountInfo"
+              PIX: "#/components/schemas/PaymentPixAccountInfo"
+              IBAN: "#/components/schemas/PaymentIbanAccountInfo"
+              FBO: "#/components/schemas/PaymentFboAccountInfo"
+              UPI: "#/components/schemas/PaymentUpiAccountInfo"
+              SPARK_WALLET: "#/components/schemas/PaymentSparkWalletInfo"
     InternalAccount:
       type: object
       required:
@@ -4679,22 +4700,22 @@ components:
           description: The ID of the customer associated with the internal account. If this field is empty, the internal account belongs to the platform.
           example: Customer:019542f5-b3e7-1d02-0000-000000000001
         balance:
-          $ref: '#/components/schemas/CurrencyAmount'
+          $ref: "#/components/schemas/CurrencyAmount"
         fundingPaymentInstructions:
           type: array
           description: Payment instructions for funding the account
           items:
-            $ref: '#/components/schemas/PaymentInstructions'
+            $ref: "#/components/schemas/PaymentInstructions"
         createdAt:
           type: string
           format: date-time
           description: Timestamp when the internal account was created
-          example: '2025-10-03T12:30:00Z'
+          example: "2025-10-03T12:30:00Z"
         updatedAt:
           type: string
           format: date-time
           description: Timestamp when the internal account was last updated
-          example: '2025-10-03T12:30:00Z'
+          example: "2025-10-03T12:30:00Z"
     Error404:
       type: object
       required:
@@ -4719,7 +4740,7 @@ components:
             | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
             | TOKEN_NOT_FOUND | Token not found |
             | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
-            | REFERENCE_NOT_FOUND | Reference not found | 
+            | REFERENCE_NOT_FOUND | Reference not found |
           enum:
             - TRANSACTION_NOT_FOUND
             - INVITATION_NOT_FOUND
@@ -4761,15 +4782,15 @@ components:
         - counterPartyType
       properties:
         counterPartyType:
-          $ref: '#/components/schemas/CustomerType'
+          $ref: "#/components/schemas/CustomerType"
       discriminator:
         propertyName: counterPartyType
         mapping:
-          INDIVIDUAL: '#/components/schemas/IndividualCounterParty'
-          BUSINESS: '#/components/schemas/BusinessCounterParty'
+          INDIVIDUAL: "#/components/schemas/IndividualCounterParty"
+          BUSINESS: "#/components/schemas/BusinessCounterParty"
     IndividualCounterParty:
       allOf:
-        - $ref: '#/components/schemas/CounterParty'
+        - $ref: "#/components/schemas/CounterParty"
         - type: object
           properties:
             fullName:
@@ -4780,20 +4801,20 @@ components:
               type: string
               format: date
               description: Date of birth in ISO 8601 format (YYYY-MM-DD)
-              example: '1990-01-15'
+              example: "1990-01-15"
             nationality:
               type: string
               description: Country code (ISO 3166-1 alpha-2)
               example: US
             address:
-              $ref: '#/components/schemas/Address'
+              $ref: "#/components/schemas/Address"
     BusinessCounterParty:
       allOf:
-        - $ref: '#/components/schemas/CounterParty'
+        - $ref: "#/components/schemas/CounterParty"
         - type: object
           properties:
             address:
-              $ref: '#/components/schemas/Address'
+              $ref: "#/components/schemas/Address"
             businessInfo:
               type: object
               required:
@@ -4830,23 +4851,23 @@ components:
           description: The customer this account is tied to
           example: Customer:da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7
         status:
-          $ref: '#/components/schemas/ExternalAccountStatus'
+          $ref: "#/components/schemas/ExternalAccountStatus"
           description: Status of the external account
           example: ACTIVE
         beneficiary:
           description: Beneficiary of the account
           oneOf:
             - title: Individual Counterparty
-              $ref: '#/components/schemas/IndividualCounterParty'
+              $ref: "#/components/schemas/IndividualCounterParty"
             - title: Business Counterparty
-              $ref: '#/components/schemas/BusinessCounterParty'
+              $ref: "#/components/schemas/BusinessCounterParty"
           discriminator:
             propertyName: counterpartyType
             mapping:
-              INDIVIDUAL_COUNTERPARTY: '#/components/schemas/BusinessCounterParty'
-              BUSINESS_COUNTERPARTY: '#/components/schemas/IndividualCounterParty'
+              INDIVIDUAL_COUNTERPARTY: "#/components/schemas/BusinessCounterParty"
+              BUSINESS_COUNTERPARTY: "#/components/schemas/IndividualCounterParty"
         accountInfo:
-          $ref: '#/components/schemas/CustomerBankAccountInfo'
+          $ref: "#/components/schemas/CustomerBankAccountInfo"
     ExternalAccountCreateRequest:
       type: object
       required:
@@ -4857,16 +4878,16 @@ components:
           description: Beneficiary of the account
           oneOf:
             - title: Business Counterparty
-              $ref: '#/components/schemas/BusinessCounterParty'
+              $ref: "#/components/schemas/BusinessCounterParty"
             - title: Individual Counterparty
-              $ref: '#/components/schemas/IndividualCounterParty'
+              $ref: "#/components/schemas/IndividualCounterParty"
           discriminator:
             propertyName: counterpartyType
             mapping:
-              INDIVIDUAL_COUNTERPARTY: '#/components/schemas/BusinessCounterParty'
-              BUSINESS_COUNTERPARTY: '#/components/schemas/IndividualCounterParty'
+              INDIVIDUAL_COUNTERPARTY: "#/components/schemas/BusinessCounterParty"
+              BUSINESS_COUNTERPARTY: "#/components/schemas/IndividualCounterParty"
         accountInfo:
-          $ref: '#/components/schemas/CustomerBankAccountInfo'
+          $ref: "#/components/schemas/CustomerBankAccountInfo"
     Transaction:
       type: object
       required:
@@ -4883,9 +4904,9 @@ components:
           description: Unique identifier for the transaction
           example: Transaction:019542f5-b3e7-1d02-0000-000000000004
         status:
-          $ref: '#/components/schemas/TransactionStatus'
+          $ref: "#/components/schemas/TransactionStatus"
         type:
-          $ref: '#/components/schemas/TransactionType'
+          $ref: "#/components/schemas/TransactionType"
         source:
           oneOf:
             - title: Account Source
@@ -4958,34 +4979,34 @@ components:
           type: string
           format: date-time
           description: When the payment was or will be settled
-          example: '2023-08-15T14:30:00Z'
+          example: "2023-08-15T14:30:00Z"
         createdAt:
           type: string
           format: date-time
           description: When the transaction was created
-          example: '2023-08-15T14:25:18Z'
+          example: "2023-08-15T14:25:18Z"
         updatedAt:
           type: string
           format: date-time
           description: When the transaction was last updated
-          example: '2023-08-15T14:30:00Z'
+          example: "2023-08-15T14:30:00Z"
         description:
           type: string
           description: Optional memo or description for the payment
-          example: 'Payment for invoice #1234'
+          example: "Payment for invoice #1234"
         counterpartyInformation:
           type: object
           description: Additional information about the counterparty, if available and relevant to the transaction and platform. Only applicable for transactions to/from UMA addresses.
           additionalProperties: true
           example:
             FULL_NAME: John Sender
-            BIRTH_DATE: '1985-06-15'
+            BIRTH_DATE: "1985-06-15"
             NATIONALITY: DE
       discriminator:
         propertyName: type
         mapping:
-          INCOMING: '#/components/schemas/IncomingTransaction'
-          OUTGOING: '#/components/schemas/OutgoingTransaction'
+          INCOMING: "#/components/schemas/IncomingTransaction"
+          OUTGOING: "#/components/schemas/OutgoingTransaction"
     ReconciliationInstructions:
       type: object
       required:
@@ -5042,22 +5063,22 @@ components:
       description: Reason for failure of an incoming transaction. This is used to provide more context on why a transaction failed. If the transaction is not in a failed state, this field is omitted.
     IncomingTransaction:
       allOf:
-        - $ref: '#/components/schemas/Transaction'
+        - $ref: "#/components/schemas/Transaction"
         - type: object
           required:
             - receivedAmount
           properties:
             receivedAmount:
-              $ref: '#/components/schemas/CurrencyAmount'
+              $ref: "#/components/schemas/CurrencyAmount"
               description: Amount received in the recipient's currency
             reconciliationInstructions:
-              $ref: '#/components/schemas/ReconciliationInstructions'
+              $ref: "#/components/schemas/ReconciliationInstructions"
               description: Included for all transactions except those with "CREATED" status
             rateDetails:
-              $ref: '#/components/schemas/IncomingRateDetails'
+              $ref: "#/components/schemas/IncomingRateDetails"
               description: Details about the rate and fees for the transaction.
             failureReason:
-              $ref: '#/components/schemas/IncomingTransactionFailureReason'
+              $ref: "#/components/schemas/IncomingTransactionFailureReason"
               description: If the transaction failed, this field provides the reason for failure.
     Refund:
       type: object
@@ -5073,12 +5094,12 @@ components:
           type: string
           format: date-time
           description: When the refund was initiated
-          example: '2023-08-15T14:30:00Z'
+          example: "2023-08-15T14:30:00Z"
         settledAt:
           type: string
           format: date-time
           description: When the refund was or will be settled
-          example: '2023-08-15T14:30:00Z'
+          example: "2023-08-15T14:30:00Z"
     OutgoingRateDetails:
       description: Details about the rate and fees for an outgoing transaction or quote.
       type: object
@@ -5138,17 +5159,17 @@ components:
       description: Reason for failure of an outgoing transaction. This is used to provide more context on why a transaction failed. If the transaction is not in a failed state, this field is omitted.
     OutgoingTransaction:
       allOf:
-        - $ref: '#/components/schemas/Transaction'
+        - $ref: "#/components/schemas/Transaction"
         - type: object
           required:
             - sentAmount
             - paymentInstructions
           properties:
             sentAmount:
-              $ref: '#/components/schemas/CurrencyAmount'
+              $ref: "#/components/schemas/CurrencyAmount"
               description: Amount sent in the sender's currency
             receivedAmount:
-              $ref: '#/components/schemas/CurrencyAmount'
+              $ref: "#/components/schemas/CurrencyAmount"
               description: Amount to be received by recipient in the recipient's currency
             exchangeRate:
               type: number
@@ -5170,16 +5191,16 @@ components:
               description: ID of the original transaction that this transaction is retrying, if applicable
               example: Transaction:019542f5-b3e7-1d02-0000-000000000003
             paymentInstructions:
-              $ref: '#/components/schemas/PaymentInstructions'
+              $ref: "#/components/schemas/PaymentInstructions"
               description: Contains the reference code, banking details, and instructions needed to complete the payment
             refund:
-              $ref: '#/components/schemas/Refund'
+              $ref: "#/components/schemas/Refund"
               description: The refund if transaction was refunded.
             rateDetails:
-              $ref: '#/components/schemas/OutgoingRateDetails'
+              $ref: "#/components/schemas/OutgoingRateDetails"
               description: Details about the rate and fees for the transaction.
             failureReason:
-              $ref: '#/components/schemas/OutgoingTransactionFailureReason'
+              $ref: "#/components/schemas/OutgoingTransactionFailureReason"
               description: If the transaction failed, this field provides the reason for failure.
     TransactionStatus:
       type: string
@@ -5202,7 +5223,7 @@ components:
         - max
       properties:
         currency:
-          $ref: '#/components/schemas/Currency'
+          $ref: "#/components/schemas/Currency"
         estimatedExchangeRate:
           type: number
           description: An estimated exchange rate from the sender's currency to this currency. This is not a locked rate and is subject to change when calling the quotes endpoint.
@@ -5230,12 +5251,12 @@ components:
           type: array
           description: List of currencies supported by the receiving account
           items:
-            $ref: '#/components/schemas/CurrencyPreference'
+            $ref: "#/components/schemas/CurrencyPreference"
         requiredPayerDataFields:
           type: array
           description: Fields required by the receiving institution about the payer before payment can be completed
           items:
-            $ref: '#/components/schemas/CounterpartyFieldDefinition'
+            $ref: "#/components/schemas/CounterpartyFieldDefinition"
         lookupId:
           type: string
           description: Unique identifier for the lookup. Needed in the subsequent create quote request.
@@ -5286,7 +5307,7 @@ components:
             | PAYREQ_REQUEST_FAILED | Payment request failed |
             | COUNTERPARTY_PUBKEY_FETCH_ERROR | Error fetching counterparty public key |
             | NO_COMPATIBLE_UMA_VERSION | No compatible UMA version |
-            | LNURLP_REQUEST_FAILED | LNURLP request failed | 
+            | LNURLP_REQUEST_FAILED | LNURLP request failed |
           enum:
             - PAYREQ_REQUEST_FAILED
             - COUNTERPARTY_PUBKEY_FETCH_ERROR
@@ -5298,6 +5319,36 @@ components:
         details:
           type: object
           description: Additional error details
+    QuoteSource:
+      oneOf:
+        - title: Account
+          type: object
+          required:
+            - accountId
+          properties:
+            accountId:
+              type: string
+              description: Source account identifier
+              example: InternalAccount:85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+            currency:
+              type: string
+              description: Currency code for the source account
+              example: USD
+          description: Source account details
+        - title: Real-time funding
+          type: object
+          required:
+            - currency
+          properties:
+            customerId:
+              type: string
+              description: Source customer ID. If this transaction is being initiated on behalf of a customer, this is required. If customerId is not provided, the quote will be created on behalf of the platform itself.
+              example: Customer:019542f5-b3e7-1d02-0000-000000000009
+            currency:
+              type: string
+              description: Currency code for the source
+              example: USD
+          description: Fund the quote using a real-time funding source (RTP, SEPA Instant, Spark, Stables, etc.). This will require manual just-in-time funding using `paymentInstructions` in the response. Because quotes expire quickly, this option is only valid for instant payment methods. Do not try to fund a quote with a non-instant payment method (ACH, etc.).
     Quote:
       type: object
       required:
@@ -5333,58 +5384,14 @@ components:
           type: string
           format: date-time
           description: When this quote was created
-          example: '2025-10-03T12:00:00Z'
+          example: "2025-10-03T12:00:00Z"
         expiresAt:
           type: string
           format: date-time
           description: When this quote expires (typically 1-5 minutes after creation)
-          example: '2025-10-03T12:05:00Z'
+          example: "2025-10-03T12:05:00Z"
         source:
-          oneOf:
-            - title: Account Source
-              type: object
-              required:
-                - accountId
-              properties:
-                accountId:
-                  type: string
-                  description: Source account identifier
-                  example: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-                currency:
-                  type: string
-                  description: Currency code for the source account
-                  example: USD
-              description: Source account details
-            - title: Customer ID Source
-              type: object
-              required:
-                - customerId
-                - currency
-              properties:
-                customerId:
-                  type: string
-                  description: Source customer ID
-                  example: Customer:019542f5-b3e7-1d02-0000-000000000009
-                currency:
-                  type: string
-                  description: Currency code for the source
-                  example: USD
-              description: Source customer ID details. This will require just-in-time funding using payment instructions.
-            - title: UMA Address Source
-              type: object
-              required:
-                - umaAddress
-                - currency
-              properties:
-                umaAddress:
-                  type: string
-                  description: UMA address of the sender
-                  example: $sender@uma.domain.com
-                currency:
-                  type: string
-                  description: Currency code for the source
-                  example: USD
-              description: UMA address source details. This will require just-in-time funding using payment instructions.
+          $ref: "#/components/schemas/QuoteSource"
         destination:
           oneOf:
             - title: Account Destination
@@ -5420,14 +5427,14 @@ components:
                   additionalProperties: true
                   example:
                     FULL_NAME: Jane Receiver
-                    BIRTH_DATE: '1990-01-01'
+                    BIRTH_DATE: "1990-01-01"
                     NATIONALITY: FR
               description: UMA address destination details
         sendingCurrency:
-          $ref: '#/components/schemas/Currency'
+          $ref: "#/components/schemas/Currency"
           description: Currency for the sending amount
         receivingCurrency:
-          $ref: '#/components/schemas/Currency'
+          $ref: "#/components/schemas/Currency"
           description: Currency for the receiving amount
         totalSendingAmount:
           type: integer
@@ -5455,11 +5462,11 @@ components:
           type: array
           description: Payment instructions for executing the payment. This is not required when using an internal account source.
           items:
-            $ref: '#/components/schemas/PaymentInstructions'
+            $ref: "#/components/schemas/PaymentInstructions"
           example:
             - accountType: US_ACCOUNT
-              accountNumber: '1234567890'
-              routingNumber: '021000021'
+              accountNumber: "1234567890"
+              routingNumber: "021000021"
               accountHolderName: John Doe
               bankName: Chase Bank
               referenceCode: REF123456
@@ -5475,7 +5482,7 @@ components:
           type: string
           example: Quote:019542f5-b3e7-1d02-0000-000000000001
         rateDetails:
-          $ref: '#/components/schemas/OutgoingRateDetails'
+          $ref: "#/components/schemas/OutgoingRateDetails"
           description: Details about the rate and fees for the transaction.
     QuoteLockSide:
       type: string
@@ -5498,50 +5505,10 @@ components:
             NOTE: This is required for UMA destinations due to counterparty institution requirements. See `senderCustomerInfo` for more information.
           example: Lookup:019542f5-b3e7-1d02-0000-000000000009
         source:
-          oneOf:
-            - title: Account Source
-              type: object
-              required:
-                - accountId
-              properties:
-                accountId:
-                  type: string
-                  description: Source account identifier
-                  example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-              description: Source account details
-            - title: Customer ID Source
-              type: object
-              required:
-                - customerId
-                - currency
-              properties:
-                customerId:
-                  type: string
-                  description: Source customer ID
-                  example: Customer:019542f5-b3e7-1d02-0000-000000000009
-                currency:
-                  type: string
-                  description: Currency code for the source
-                  example: USD
-              description: Source customer ID details. This will require just-in-time funding using payment instructions.
-            - title: UMA Address Source
-              type: object
-              required:
-                - umaAddress
-                - currency
-              properties:
-                umaAddress:
-                  type: string
-                  description: UMA address of the sender
-                  example: $sender@uma.domain.com
-                currency:
-                  type: string
-                  description: Currency code for the source
-                  example: USD
-              description: UMA address source details. This will require just-in-time funding using payment instructions.
+          $ref: "#/components/schemas/QuoteSource"
         destination:
           oneOf:
-            - title: Account Destination
+            - title: Account
               type: object
               required:
                 - accountId
@@ -5556,7 +5523,7 @@ components:
                   description: Currency code for the destination account
                   example: EUR
               description: Destination account details
-            - title: UMA Address Destination
+            - title: UMA Address
               type: object
               required:
                 - umaAddress
@@ -5571,16 +5538,16 @@ components:
                   description: Currency code for the destination
                   example: EUR
               description: UMA address destination details
-            - title: External Account Details Destination
+            - title: External Account Details
               type: object
               required:
                 - externalAccountDetails
               properties:
                 externalAccountDetails:
-                  $ref: '#/components/schemas/ExternalAccountCreateRequest'
+                  $ref: "#/components/schemas/ExternalAccountCreateRequest"
               description: A convenient destination option which adds the external account and creates the quote in one step rather than first needing to call /external-accounts to add the account. Useful for one-off payments to some destination.
         lockedCurrencySide:
-          $ref: '#/components/schemas/QuoteLockSide'
+          $ref: "#/components/schemas/QuoteLockSide"
         lockedCurrencyAmount:
           type: integer
           format: int64
@@ -5595,13 +5562,14 @@ components:
         description:
           type: string
           description: Optional description/memo for the transfer
-          example: 'Invoice #1234 payment'
+          example: "Invoice #1234 payment"
         senderCustomerInfo:
           type: object
           additionalProperties: true
           description: |
+            Only relevant for UMA destinations.
             Key-value pairs of information about the sender which was requested by the counterparty (recipient) institution.
-            Any fields specified in `requiredPayerDataFields` from the response of the `/receiver/{receiverUmaAddress}` (lookupUma) endpoint
+            Any fields specified in `requiredPayerDataFields` from the response of the `/receiver/uma/{receiverUmaAddress}` (lookupUma) endpoint
             MUST be provided here if they were requested. If the counterparty (recipient) institution did not request any information, this field can be omitted.
           example:
             FULL_NAME: Jane Receiver
@@ -5681,12 +5649,12 @@ components:
                 description: Platform customer ID or row number for the failed entry
                 example: biz456
               error:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
         completedAt:
           type: string
           format: date-time
           description: Timestamp when the job completed (only present for COMPLETED or FAILED status)
-          example: '2023-08-15T14:32:00Z'
+          example: "2023-08-15T14:32:00Z"
     UmaInvitation:
       type: object
       required:
@@ -5704,12 +5672,12 @@ components:
           type: string
           format: date-time
           description: When the invitation was created
-          example: '2023-09-01T14:30:00Z'
+          example: "2023-09-01T14:30:00Z"
         claimedAt:
           type: string
           format: date-time
           description: When the invitation was claimed if it has been claimed
-          example: '2023-09-01T14:30:00Z'
+          example: "2023-09-01T14:30:00Z"
         url:
           type: string
           description: The URL where this invitation can be claimed.
@@ -5718,7 +5686,7 @@ components:
           type: string
           format: date-time
           description: When the invitation expires (if at all)
-          example: '2023-09-01T14:30:00Z'
+          example: "2023-09-01T14:30:00Z"
         inviterUma:
           type: string
           description: The UMA address of the inviter
@@ -5741,7 +5709,7 @@ components:
           description: The inviter's first name.  Will be displayed when the recipient clicks the invite link
           example: Jane
         amountToSend:
-          $ref: '#/components/schemas/CurrencyAmount'
+          $ref: "#/components/schemas/CurrencyAmount"
           description: |-
             The amount to send to the invitee when the invitation is claimed. This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter platform either does not send the payment or the payment fails, the invitee will not receive this amount. This field is primarily used for display purposes on the claiming side of the invitation.
             This field is useful for "send-by-link" style customer flows where an inviter can send a payment simply by sharing a link without knowing the receiver's UMA address. Note that these sends can only be sender-locked, meaning that the sender will not know ahead of time how much the receiver will receive in the receiving currency.
@@ -5765,7 +5733,7 @@ components:
             | FORBIDDEN | Insufficient permissions |
             | USER_NOT_READY | Customer exists but is not ready for operation |
             | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account | 
-            | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits | 
+            | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits |
           enum:
             - FORBIDDEN
             - USER_NOT_READY
@@ -5803,7 +5771,7 @@ components:
         supportedCurrencies:
           type: array
           items:
-            $ref: '#/components/schemas/Currency'
+            $ref: "#/components/schemas/Currency"
           description: List of currencies supported by this Uma Provider
           example:
             - code: USD
@@ -5824,7 +5792,7 @@ components:
         - VIEW
         - TRANSACT
         - MANAGE
-      description: 'Permission of an API token that determines what actions the token can perform: VIEW: Can view all data, including platform config, customers and transactions TRANSACT: Can send payments MANAGE: Can manage platform config, api tokens and customers'
+      description: "Permission of an API token that determines what actions the token can perform: VIEW: Can view all data, including platform config, customers and transactions TRANSACT: Can send payments MANAGE: Can manage platform config, api tokens and customers"
     ApiToken:
       type: object
       required:
@@ -5847,7 +5815,7 @@ components:
           type: array
           description: A list of permissions granted to the token
           items:
-            $ref: '#/components/schemas/Permission'
+            $ref: "#/components/schemas/Permission"
         clientId:
           type: string
           description: An opaque identifier that should be used as a client_id (or username)  in the HTTP Basic Authentication scheme when issuing http requests to Grid.
@@ -5860,29 +5828,29 @@ components:
           type: string
           format: date-time
           description: Creation timestamp
-          example: '2023-07-21T17:32:28Z'
+          example: "2023-07-21T17:32:28Z"
         updatedAt:
           type: string
           format: date-time
           description: Last update timestamp
-          example: '2023-07-21T17:32:28Z'
+          example: "2023-07-21T17:32:28Z"
     IncomingPaymentWebhook:
       allOf:
-        - $ref: '#/components/schemas/BaseWebhook'
+        - $ref: "#/components/schemas/BaseWebhook"
         - type: object
           required:
             - transaction
           properties:
             transaction:
-              $ref: '#/components/schemas/IncomingTransaction'
+              $ref: "#/components/schemas/IncomingTransaction"
             type:
-              $ref: '#/components/schemas/WebhookType'
+              $ref: "#/components/schemas/WebhookType"
               description: Type of webhook event
               example: INCOMING_PAYMENT
             requestedReceiverCustomerInfoFields:
               type: array
               items:
-                $ref: '#/components/schemas/CounterpartyFieldDefinition'
+                $ref: "#/components/schemas/CounterpartyFieldDefinition"
               description: Information required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which Grid does not already have from initial customer registration.
     BaseWebhook:
       type: object
@@ -5895,23 +5863,23 @@ components:
           type: string
           format: date-time
           description: ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)
-          example: '2023-08-15T14:32:00Z'
+          example: "2023-08-15T14:32:00Z"
         webhookId:
           type: string
           description: Unique identifier for this webhook delivery (can be used for idempotency)
           example: Webhook:019542f5-b3e7-1d02-0000-000000000007
         type:
-          $ref: '#/components/schemas/WebhookType'
+          $ref: "#/components/schemas/WebhookType"
           description: Type of webhook event
       discriminator:
         propertyName: type
         mapping:
-          INCOMING_PAYMENT: '#/components/schemas/IncomingPaymentWebhook'
-          OUTGOING_PAYMENT: '#/components/schemas/OutgoingPaymentWebhook'
-          TEST: '#/components/schemas/TestWebhookRequest'
-          BULK_UPLOAD: '#/components/schemas/BulkUploadWebhookRequest'
-          INVITATION_CLAIMED: '#/components/schemas/InvitationClaimedWebhook'
-          KYC_STATUS: '#/components/schemas/KycStatusWebhook'
+          INCOMING_PAYMENT: "#/components/schemas/IncomingPaymentWebhook"
+          OUTGOING_PAYMENT: "#/components/schemas/OutgoingPaymentWebhook"
+          TEST: "#/components/schemas/TestWebhookRequest"
+          BULK_UPLOAD: "#/components/schemas/BulkUploadWebhookRequest"
+          INVITATION_CLAIMED: "#/components/schemas/InvitationClaimedWebhook"
+          KYC_STATUS: "#/components/schemas/KycStatusWebhook"
     WebhookType:
       type: string
       enum:
@@ -5925,48 +5893,48 @@ components:
       description: Type of webhook event, used by the receiver to identify which webhook is being received
     OutgoingPaymentWebhook:
       allOf:
-        - $ref: '#/components/schemas/BaseWebhook'
+        - $ref: "#/components/schemas/BaseWebhook"
         - type: object
           required:
             - transaction
           properties:
             transaction:
-              $ref: '#/components/schemas/OutgoingTransaction'
+              $ref: "#/components/schemas/OutgoingTransaction"
             type:
-              $ref: '#/components/schemas/WebhookType'
+              $ref: "#/components/schemas/WebhookType"
               description: Type of webhook event
               example: OUTGOING_PAYMENT
     TestWebhookRequest:
       allOf:
-        - $ref: '#/components/schemas/BaseWebhook'
+        - $ref: "#/components/schemas/BaseWebhook"
         - type: object
           properties:
             type:
-              $ref: '#/components/schemas/WebhookType'
+              $ref: "#/components/schemas/WebhookType"
               description: Type of webhook event
               example: TEST
     BulkUploadWebhookRequest:
       allOf:
-        - $ref: '#/components/schemas/BaseWebhook'
+        - $ref: "#/components/schemas/BaseWebhook"
         - type: object
           required:
             - bulkCustomerImportJob
           properties:
             bulkCustomerImportJob:
-              $ref: '#/components/schemas/BulkCustomerImportJob'
+              $ref: "#/components/schemas/BulkCustomerImportJob"
             type:
-              $ref: '#/components/schemas/WebhookType'
+              $ref: "#/components/schemas/WebhookType"
               description: Type of webhook event
               example: BULK_UPLOAD
     InvitationClaimedWebhook:
       allOf:
-        - $ref: '#/components/schemas/BaseWebhook'
+        - $ref: "#/components/schemas/BaseWebhook"
         - type: object
           required:
             - invitation
           properties:
             invitation:
-              $ref: '#/components/schemas/UmaInvitation'
+              $ref: "#/components/schemas/UmaInvitation"
             type:
               type: string
               enum:
@@ -5975,7 +5943,7 @@ components:
               example: INVITATION_CLAIMED
     KycStatusWebhook:
       allOf:
-        - $ref: '#/components/schemas/BaseWebhook'
+        - $ref: "#/components/schemas/BaseWebhook"
         - type: object
           required:
             - customerId
@@ -5986,7 +5954,7 @@ components:
               description: System generated id of the customer
               example: Customer:019542f5-b3e7-1d02-0000-000000000001
             kycStatus:
-              $ref: '#/components/schemas/KycStatus'
+              $ref: "#/components/schemas/KycStatus"
     IncomingPaymentWebhookResponse:
       type: object
       properties:
@@ -5996,7 +5964,7 @@ components:
           description: Information about the recipient, provided by the platform if requested in the webhook via `requestedReceiverCustomerInfoFields` and the payment is approved.
     IncomingPaymentWebhookForbiddenResponse:
       allOf:
-        - $ref: '#/components/schemas/Error'
+        - $ref: "#/components/schemas/Error"
         - type: object
           properties:
             reason:
@@ -6005,7 +5973,7 @@ components:
               example: RESTRICTED_JURISDICTION
     IncomingPaymentWebhookUnprocessableResponse:
       allOf:
-        - $ref: '#/components/schemas/Error'
+        - $ref: "#/components/schemas/Error"
         - type: object
           properties:
             requiredFields:
@@ -6018,7 +5986,7 @@ components:
                 - REGISTRATION_NUMBER
     AccountStatusWebhook:
       allOf:
-        - $ref: '#/components/schemas/BaseWebhook'
+        - $ref: "#/components/schemas/BaseWebhook"
         - type: object
           required:
             - accountId
@@ -6027,14 +5995,14 @@ components:
               type: string
               description: The id of the account whose balance has changed
             oldBalance:
-              $ref: '#/components/schemas/CurrencyAmount'
+              $ref: "#/components/schemas/CurrencyAmount"
             newBalance:
-              $ref: '#/components/schemas/CurrencyAmount'
+              $ref: "#/components/schemas/CurrencyAmount"
             customerId:
               type: string
               description: The ID of the customer associated with the internal account
               example: User:019542f5-b3e7-1d02-0000-000000000001
             type:
-              $ref: '#/components/schemas/WebhookType'
+              $ref: "#/components/schemas/WebhookType"
               description: Type of webhook event
               example: ACCOUNT_STATUS

@@ -90,7 +90,7 @@ This quickstart guides you through sending a payment from the US to a bank accou
 </Step>
 
 <Step title="Create a quote (just‑in‑time funding)">
-  Quote a transfer 100 USD from the customer to the MXN CLABE account. The quote returns the exchange rate, fees, and `paymentInstructions` to fund in real time.
+  Quote a transfer 100 USD from the customer to the MXN CLABE account using real-time funding. The quote returns the exchange rate, fees, and `paymentInstructions` to fund in real time.
 
   ```bash
   curl -sS -X POST "$GRID_BASE_URL/quotes" \
@@ -98,7 +98,7 @@ This quickstart guides you through sending a payment from the US to a bank accou
     -H "Content-Type: application/json" \
     -d '{
       "source": {
-        "umaAddress": "$alice@yourapp.example",
+        "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000009",
         "currency": "USD"
       },
       "destination": {

@@ -52,18 +52,27 @@ post:
               lockedCurrencySide: SENDING
               lockedCurrencyAmount: 1000
               description: 'Payment for invoice #1234'
-          umaToAccount:
-            summary: UMA Address to Account Transfer
+          realTimeFundingToSparkWallet:
+            summary: Real-time funding to Spark Wallet as an on-ramp flow. Immediate execution.
             value:
               source:
-                umaAddress: $sender@uma.domain.com
+                customerId: Customer:019542f5-b3e7-1d02-0000-000000000009
                 currency: USD
               destination:
-                accountId: ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-                currency: EUR
+                externalAccountDetails:
+                  customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                  currency: BTC
+                  beneficiary:
+                    counterPartyType: INDIVIDUAL
+                    fullName: John Doe
+                    nationality: US
+                  accountInfo:
+                    accountType: SPARK_WALLET
+                    address: sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
               lockedCurrencySide: RECEIVING
-              lockedCurrencyAmount: 9200
-              description: 'Receiving specific amount'
+              lockedCurrencyAmount: 10000
+              immediatelyExecute: true
+              description: 'Bitcoin reward payout!'
   responses:
     '201':
       description: |

@@ -1411,18 +1411,27 @@ paths:
                   lockedCurrencySide: SENDING
                   lockedCurrencyAmount: 1000
                   description: 'Payment for invoice #1234'
-              umaToAccount:
-                summary: UMA Address to Account Transfer
+              realTimeFundingToSparkWallet:
+                summary: Real-time funding to Spark Wallet as an on-ramp flow. Immediate execution.
                 value:
                   source:
-                    umaAddress: $sender@uma.domain.com
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000009
                     currency: USD
                   destination:
-                    accountId: ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-                    currency: EUR
+                    externalAccountDetails:
+                      customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                      currency: BTC
+                      beneficiary:
+                        counterPartyType: INDIVIDUAL
+                        fullName: John Doe
+                        nationality: US
+                      accountInfo:
+                        accountType: SPARK_WALLET
+                        address: sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
                   lockedCurrencySide: RECEIVING
-                  lockedCurrencyAmount: 9200
-                  description: Receiving specific amount
+                  lockedCurrencyAmount: 10000
+                  immediatelyExecute: true
+                  description: Bitcoin reward payout!
       responses:
         '201':
           description: |
@@ -4072,47 +4081,47 @@ components:
           example: US
     UltimateBeneficialOwner:
       type: object
-      required:
-        - fullName
-        - individualType
-      properties:
-        fullName:
-          type: string
-          description: Individual's full name
-          example: John Michael Doe
-        emailAddress:
-          type: string
-          format: email
-          description: Email address of the individual
-          example: example@test.com
-        birthDate:
-          type: string
-          format: date
-          description: Date of birth in ISO 8601 format (YYYY-MM-DD)
-          example: '1990-01-15'
-        nationality:
-          type: string
-          description: Country code (ISO 3166-1 alpha-2)
-          example: US
-        address:
-          $ref: '#/components/schemas/Address'
-        individualType:
-          type: string
-          enum:
-            - OFFICER
-            - BENEFICIAL_OWNER
-            - CONTROL_PERSON
-            - AUTHORIZED_PERSON
-          description: Type of individual in the corporation
-          example: BENEFICIAL_OWNER
-        percentageOwnership:
-          type: number
-          description: Percent of ownership when individual type is benificial owner
-          example: 10
-        title:
-          type: string
-          description: Title at company
-          example: CEO, COO, President
+          required:
+            - fullName
+            - individualType
+          properties:
+            fullName:
+              type: string
+              description: Individual's full name
+              example: John Michael Doe
+            emailAddress:
+              type: string
+              format: email
+              description: Email address of the individual
+              example: example@test.com
+            birthDate:
+              type: string
+              format: date
+              description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+              example: '1990-01-15'
+            nationality:
+              type: string
+              description: Country code (ISO 3166-1 alpha-2)
+              example: US
+            address:
+              $ref: '#/components/schemas/Address'
+            individualType:
+              type: string
+              enum:
+                - OFFICER
+                - BENEFICIAL_OWNER
+                - CONTROL_PERSON
+                - AUTHORIZED_PERSON
+              description: Type of individual in the corporation
+              example: BENEFICIAL_OWNER
+            percentageOwnership:
+              type: number
+              description: Percent of ownership when individual type is benificial owner
+              example: 10
+            title:
+              type: string
+              description: Title at company
+              example: CEO, COO, President
     BusinessCustomer:
       allOf:
         - $ref: '#/components/schemas/Customer'
@@ -4889,12 +4898,12 @@ components:
         source:
           oneOf:
             - title: Account Source
-              type: object
+          type: object
               required:
                 - accountId
-              properties:
-                accountId:
-                  type: string
+          properties:
+            accountId:
+              type: string
                   description: Source account identifier
                   example: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
                 currency:
@@ -4920,14 +4929,14 @@ components:
         destination:
           oneOf:
             - title: Account Destination
-              type: object
+          type: object
               required:
                 - accountId
-              properties:
-                accountId:
-                  type: string
+          properties:
+            accountId:
+              type: string
                   description: Destination account identifier
-                  example: ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+              example: ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
                 currency:
                   type: string
                   description: Currency code for the destination account
@@ -5298,6 +5307,36 @@ components:
         details:
           type: object
           description: Additional error details
+    QuoteSource:
+      oneOf:
+        - title: Account
+          type: object
+          required:
+            - accountId
+          properties:
+            accountId:
+              type: string
+              description: Source account identifier
+              example: InternalAccount:85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+            currency:
+              type: string
+              description: Currency code for the source account
+              example: USD
+          description: Source account details
+        - title: Real-time funding
+          type: object
+          required:
+            - currency
+          properties:
+            customerId:
+              type: string
+              description: Source customer ID. If this transaction is being initiated on behalf of a customer, this is required. If customerId is not provided, the quote will be created on behalf of the platform itself.
+              example: Customer:019542f5-b3e7-1d02-0000-000000000009
+            currency:
+              type: string
+              description: Currency code for the source
+              example: USD
+          description: Fund the quote using a real-time funding source (RTP, SEPA Instant, Spark, Stables, etc.). This will require manual just-in-time funding using `paymentInstructions` in the response. Because quotes expire quickly, this option is only valid for instant payment methods. Do not try to fund a quote with a non-instant payment method (ACH, etc.).
     Quote:
       type: object
       required:
@@ -5340,51 +5379,7 @@ components:
           description: When this quote expires (typically 1-5 minutes after creation)
           example: '2025-10-03T12:05:00Z'
         source:
-          oneOf:
-            - title: Account Source
-              type: object
-              required:
-                - accountId
-              properties:
-                accountId:
-                  type: string
-                  description: Source account identifier
-                  example: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-                currency:
-                  type: string
-                  description: Currency code for the source account
-                  example: USD
-              description: Source account details
-            - title: Customer ID Source
-              type: object
-              required:
-                - customerId
-                - currency
-              properties:
-                customerId:
-                  type: string
-                  description: Source customer ID
-                  example: Customer:019542f5-b3e7-1d02-0000-000000000009
-                currency:
-                  type: string
-                  description: Currency code for the source
-                  example: USD
-              description: Source customer ID details. This will require just-in-time funding using payment instructions.
-            - title: UMA Address Source
-              type: object
-              required:
-                - umaAddress
-                - currency
-              properties:
-                umaAddress:
-                  type: string
-                  description: UMA address of the sender
-                  example: $sender@uma.domain.com
-                currency:
-                  type: string
-                  description: Currency code for the source
-                  example: USD
-              description: UMA address source details. This will require just-in-time funding using payment instructions.
+          $ref: '#/components/schemas/QuoteSource'
         destination:
           oneOf:
             - title: Account Destination
@@ -5498,50 +5493,10 @@ components:
             NOTE: This is required for UMA destinations due to counterparty institution requirements. See `senderCustomerInfo` for more information.
           example: Lookup:019542f5-b3e7-1d02-0000-000000000009
         source:
-          oneOf:
-            - title: Account Source
-              type: object
-              required:
-                - accountId
-              properties:
-                accountId:
-                  type: string
-                  description: Source account identifier
-                  example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-              description: Source account details
-            - title: Customer ID Source
-              type: object
-              required:
-                - customerId
-                - currency
-              properties:
-                customerId:
-                  type: string
-                  description: Source customer ID
-                  example: Customer:019542f5-b3e7-1d02-0000-000000000009
-                currency:
-                  type: string
-                  description: Currency code for the source
-                  example: USD
-              description: Source customer ID details. This will require just-in-time funding using payment instructions.
-            - title: UMA Address Source
-              type: object
-              required:
-                - umaAddress
-                - currency
-              properties:
-                umaAddress:
-                  type: string
-                  description: UMA address of the sender
-                  example: $sender@uma.domain.com
-                currency:
-                  type: string
-                  description: Currency code for the source
-                  example: USD
-              description: UMA address source details. This will require just-in-time funding using payment instructions.
+          $ref: '#/components/schemas/QuoteSource'
         destination:
           oneOf:
-            - title: Account Destination
+            - title: Account
               type: object
               required:
                 - accountId
@@ -5556,7 +5511,7 @@ components:
                   description: Currency code for the destination account
                   example: EUR
               description: Destination account details
-            - title: UMA Address Destination
+            - title: UMA Address
               type: object
               required:
                 - umaAddress
@@ -5571,7 +5526,7 @@ components:
                   description: Currency code for the destination
                   example: EUR
               description: UMA address destination details
-            - title: External Account Details Destination
+            - title: External Account Details
               type: object
               required:
                 - externalAccountDetails
@@ -5600,8 +5555,9 @@ components:
           type: object
           additionalProperties: true
           description: |
+            Only relevant for UMA destinations.
             Key-value pairs of information about the sender which was requested by the counterparty (recipient) institution.
-            Any fields specified in `requiredPayerDataFields` from the response of the `/receiver/{receiverUmaAddress}` (lookupUma) endpoint
+            Any fields specified in `requiredPayerDataFields` from the response of the `/receiver/uma/{receiverUmaAddress}` (lookupUma) endpoint
             MUST be provided here if they were requested. If the counterparty (recipient) institution did not request any information, this field can be omitted.
           example:
             FULL_NAME: Jane Receiver
