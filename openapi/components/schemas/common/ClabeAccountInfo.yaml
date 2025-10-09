@@ -19,7 +19,3 @@ properties:
     type: string
     description: Name of the bank
     example: BBVA Mexico
-  accountHolderName:
-    type: string
-    description: Name of the account holder
-    example: John Doe

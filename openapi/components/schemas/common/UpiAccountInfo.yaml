@@ -11,7 +11,3 @@ properties:
     type: string
     description: Virtual Payment Address for UPI payments
     example: somecustomers@okbank
-  accountHolderName:
-    type: string
-    description: Name of the account holder
-    example: John Doe

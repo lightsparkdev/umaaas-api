@@ -168,7 +168,6 @@ properties:
       - accountType: US_ACCOUNT
         accountNumber: "1234567890"
         routingNumber: "021000021"
-        accountHolderName: "John Doe"
         bankName: "Chase Bank"
         referenceCode: "REF123456"
       - accountType: SPARK_WALLET
