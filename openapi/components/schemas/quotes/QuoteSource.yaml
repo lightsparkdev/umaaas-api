@@ -7,7 +7,7 @@ oneOf:
       accountId:
         type: string
         description: Source account identifier
-        example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+        example: InternalAccount:85dcbd6-dced-4ec4-b756-3c3a9ea3d965
       currency:
         type: string
         description: Currency code for the source account
