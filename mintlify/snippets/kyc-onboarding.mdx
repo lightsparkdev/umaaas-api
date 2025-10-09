@@ -61,20 +61,19 @@ The hosted KYC flow provides a secure, hosted interface where customers can comp
 
 ### Generate KYC Link
 
-<RequestExample>
+
 ```http GET /customers/kyc-link
-GET /customers/kyc-link?redirect_uri=https://yourapp.com/onboarding-complete
+GET /customers/kyc-link?redirect_uri=https://yourapp.com/onboarding-complete&platform_customer_id=019542f5-b3e7-1d02-0000-000000000001
 Authorization: Basic <base64-encoded-credentials>
 ```
-</RequestExample>
 
-<ResponseExample>
 ```json Success
 {
-  "kycUrl": "https://kyc.lightspark.com/onboard/abc123def456"
+  "kycUrl": "https://kyc.lightspark.com/onboard/abc123def456",
+  "platformCustomerId": "019542f5-b3e7-1d02-0000-000000000001",
+  "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001"
 }
 ```
-</ResponseExample>
 
 <ParamField query="redirect_uri" type="string">
 Optional URI parameter that specifies where the customer will be automatically redirected after successfully completing the hosted KYC verification process. If not provided, customers will be redirected to a default completion page.
