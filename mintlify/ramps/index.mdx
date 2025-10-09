@@ -3,6 +3,49 @@ title: "Introduction"
 description: "On and off ramps with the Grid API"
 ---
 
-This guide covers the basics of on and off ramps with the Grid API.
+GRID Ramps provide the foundational infrastructure to connect the traditional financial system with the world of digital assets. Our API-driven solution allows partners to seamlessly embed on-ramp (fiat-to-crypto) and off-ramp (crypto-to-fiat) functionality directly into their applications.
+We handle the complexities of payment processing, liquidity, and compliance, so you can focus on building a great user experience.
 
-TODO: Add more details about on and off ramps.
+Key Capabilities
+<CardGroup cols={2}>
+  <Card title="Global Payment Rails" icon="globe">
+    Connect to the traditional financial system via **ACH**, **Wire**, and regional equivalents like **SEPA**. We also support popular **eWallets** to provide users with familiar and trusted payment options.
+  </Card>
+  <Card title="Guaranteed Exchange Rates" icon="lock">
+    Use our **quote** system to lock in an exchange rate for a specified period, protecting users from price volatility and ensuring transparency.
+  </Card>
+  <Card title="Automated Webhooks" icon="bell">
+    Our system monitors payment rails and provides real-time updates via **webhooks**, notifying you the moment fiat funds are received and when digital assets are delivered.
+  </Card>
+  <Card title="Robust Liquidity" icon="water">
+    We manage deep liquidity pools for both fiat and crypto to ensure high success rates and prevent slippage, leading to a reliable and smooth user experience.
+  </Card>
+</CardGroup>
+
+How an On-Ramp Works
+<Info>
+The on-ramp process is designed to be simple and secure, moving from quote to settlement with automated confirmations at each stage.
+</Info>
+<Steps>
+  <Step title="Request a Quote">
+    The user decides to buy a digital asset. Your application calls our `/ramps/quote` endpoint specifying the currency, amount, and destination.
+  </Step>
+  <Step title="Lock Rate & Display Instructions">
+    The user accepts the quote. Your application locks it and displays the specific payment instructions (e.g., bank account and a reference code) returned by the GRID API.
+  </Step>
+  <Step title="Confirm Fiat Payment">
+    The user sends their fiat funds. GRID automatically detects the payment and sends a webhook to your system confirming receipt.
+  </Step>
+  <Step title="Deliver Digital Assets">
+    Upon confirmation, GRID executes the transaction, delivering the digital assets to the user's destination wallet.
+  </Step>
+</Steps>
+
+<CardGroup cols={2}>
+  <Card title="On-Ramp API Reference" icon="arrow-down" href="/api-reference/ramps/on-ramp">
+    View the complete on-ramp API documentation
+  </Card>
+  <Card title="Off-Ramp API Reference" icon="arrow-up" href="/api-reference/ramps/off-ramp">
+    View the complete off-ramp API documentation
+  </Card>
+</CardGroup>
