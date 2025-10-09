@@ -35,18 +35,6 @@ Unregulated platforms must:
 - **Hosted KYC Flow**: Use the hosted KYC link for complete identity verification
 - **Extended Review**: Customers may require manual review and approval in some cases
 
-### Determining Your Platform Status
-
-You can check your platform's regulatory status via the platform configuration:
-
-```http
-GET /config
-```
-
-<Tip>
-If your platform is configured incorrectly, please reach out to Lightspark support, and we'll get that resolved.
-</Tip>
-
 ## Choosing Your Onboarding Flow
 
 Use this decision tree to determine the best onboarding approach for your platform:
@@ -55,23 +43,15 @@ Use this decision tree to determine the best onboarding approach for your platfo
 <Accordion title="Are you a regulated financial institution?">
 **Yes**
 
-- ✅ **Use Direct API Onboarding** or **Hosted KYC Link Flow** for customers
-- ✅ Provide essential fields required by UMA providers
+- ✅ **Use Direct API Onboarding** for customers
+- ✅ Provide essential fields required by UMA providers if you are using UMA addressing
 - ✅ Faster customer onboarding process
 
 **No**
 
-- ✅ **Use Hosted KYC Link Flow** for new customers
-- ✅ Provide comprehensive customer documentation if using direct API
-</Accordion>
-
-<Accordion title="Additional Considerations">
-**When to use Hosted KYC even as a regulated platform:**
-- **Business customers**
-- Enhanced verification requirements for specific use cases
-- International customers requiring local compliance
-- High-value transactions requiring additional verification
-- Regulatory requirements for specific customer types
+- ✅ **Use Hosted KYC Link Flow** or **Direct API Onboarding** for new individual customers
+- ✅ **Use Hosted KYC Link Flow** for new business customers
+- ✅ Provide complete customer information if using direct API
 </Accordion>
 </AccordionGroup>
 
