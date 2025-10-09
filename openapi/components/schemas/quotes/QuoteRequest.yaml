@@ -15,50 +15,10 @@ properties:
       See `senderCustomerInfo` for more information.
     example: Lookup:019542f5-b3e7-1d02-0000-000000000009
   source:
-    oneOf:
-      - title: Account Source
-        type: object
-        required:
-          - accountId
-        properties:
-          accountId:
-            type: string
-            description: Source account identifier
-            example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-        description: Source account details
-      - title: Customer ID Source
-        type: object
-        required:
-          - customerId
-          - currency
-        properties:
-          customerId:
-            type: string
-            description: Source customer ID
-            example: Customer:019542f5-b3e7-1d02-0000-000000000009
-          currency:
-            type: string
-            description: Currency code for the source
-            example: USD
-        description: Source customer ID details. This will require just-in-time funding using payment instructions.
-      - title: UMA Address Source
-        type: object
-        required:
-          - umaAddress
-          - currency
-        properties:
-          umaAddress:
-            type: string
-            description: UMA address of the sender
-            example: $sender@uma.domain.com
-          currency:
-            type: string
-            description: Currency code for the source
-            example: USD
-        description: UMA address source details. This will require just-in-time funding using payment instructions.
+    $ref: ./QuoteSource.yaml
   destination:
     oneOf:
-      - title: Account Destination
+      - title: Account
         type: object
         required:
           - accountId
@@ -73,7 +33,7 @@ properties:
             description: Currency code for the destination account
             example: EUR
         description: Destination account details
-      - title: UMA Address Destination
+      - title: UMA Address
         type: object
         required:
           - umaAddress
@@ -88,7 +48,7 @@ properties:
             description: Currency code for the destination
             example: EUR
         description: UMA address destination details
-      - title: External Account Details Destination
+      - title: External Account Details
         type: object
         required:
           - externalAccountDetails
@@ -129,11 +89,13 @@ properties:
     type: object
     additionalProperties: true
     description: >
+      Only relevant for UMA destinations.
+      
       Key-value pairs of information about the sender which was
       requested by the counterparty (recipient) institution.
 
       Any fields specified in `requiredPayerDataFields` from the
-      response of the `/receiver/{receiverUmaAddress}` (lookupUma)
+      response of the `/receiver/uma/{receiverUmaAddress}` (lookupUma)
       endpoint
 
       MUST be provided here if they were requested. If the

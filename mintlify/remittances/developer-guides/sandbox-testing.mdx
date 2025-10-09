@@ -1,7 +1,7 @@
 ---
 title: "Sandbox Testing"
 ---
-The UMAaaS sandbox environment allows you to test your integration without making real payments. When you set up your account, you can configure production and sandbox API tokens. The sandbox token is specifically for testing and development purposes.
+The Grid sandbox environment allows you to test your integration without making real payments. When you set up your account, you can configure production and sandbox API tokens. The sandbox token is specifically for testing and development purposes.
 It corresponds to a separate platform instance in "sandbox" mode, which can only transact with the sandbox UMA addresses for testing.
 
 ## Overview
@@ -32,23 +32,23 @@ To test sending payments from your platform, follow these steps:
 ```mermaid
 sequenceDiagram
     participant Client as Your Platform
-    participant UMAaaS as UMAaaS Sandbox
+    participant Grid as Grid Sandbox
     participant Test as Test UMA Address
 
-    Note over Client, UMAaaS: Testing Outgoing Payments
-    Client->>UMAaaS: GET /receiver/$success.usd@sandbox.uma.money
-    UMAaaS-->>Client: Supported currencies and requirements
-    Client->>UMAaaS: POST /quotes
-    UMAaaS-->>Client: Quote with payment instructions
-    Client->>UMAaaS: POST /sandbox/send
-    UMAaaS-->>Client: Payment simulated
-    UMAaaS->>Client: Webhook: OUTGOING_PAYMENT (COMPLETED)
+    Note over Client, Grid: Testing Outgoing Payments
+    Client->>Grid: GET /receiver/$success.usd@sandbox.uma.money
+    Grid-->>Client: Supported currencies and requirements
+    Client->>Grid: POST /quotes
+    Grid-->>Client: Quote with payment instructions
+    Client->>Grid: POST /sandbox/send
+    Grid-->>Client: Payment simulated
+    Grid->>Client: Webhook: OUTGOING_PAYMENT (COMPLETED)
 
-    Note over Client, UMAaaS: Testing Incoming Payments
-    Client->>UMAaaS: POST /sandbox/receive
-    UMAaaS->>Client: Webhook: INCOMING_PAYMENT (PENDING)
-    Client-->>UMAaaS: HTTP 200 OK (approve payment)
-    UMAaaS->>Client: Webhook: INCOMING_PAYMENT (COMPLETED)
+    Note over Client, Grid: Testing Incoming Payments
+    Client->>Grid: POST /sandbox/receive
+    Grid->>Client: Webhook: INCOMING_PAYMENT (PENDING)
+    Client-->>Grid: HTTP 200 OK (approve payment)
+    Grid->>Client: Webhook: INCOMING_PAYMENT (COMPLETED)
 ```
 
 1. Look up a sandbox UMA address:

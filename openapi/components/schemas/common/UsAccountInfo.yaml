@@ -31,7 +31,3 @@ properties:
     type: string
     description: Name of the bank
     example: Chase Bank
-  accountHolderName:
-    type: string
-    description: Name of the account holder
-    example: John Doe

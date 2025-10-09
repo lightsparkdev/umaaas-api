@@ -13,7 +13,7 @@ post:
 
     To verify the signature:
 
-    1. Get the UMAaas public key provided to you during integration
+    1. Get the Grid API public key provided to you during integration
 
     2. Decode the base64 signature from the header
 

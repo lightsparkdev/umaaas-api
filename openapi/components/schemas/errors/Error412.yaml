@@ -14,7 +14,7 @@ properties:
     description: |
       | Error Code | Description |
       |------------|-------------|
-      | UNSUPPORTED_UMA_VERSION | Counterparty doesn't support UMA as a service UMA version |
+      | UNSUPPORTED_UMA_VERSION | Counterparty doesn't support the Grid UMA version |
     enum:
       - UNSUPPORTED_UMA_VERSIONED
   message:

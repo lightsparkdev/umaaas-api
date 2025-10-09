@@ -316,12 +316,6 @@ paths:
           required: false
           schema:
             type: string
-        - name: umaAddress
-          in: query
-          description: Filter by uma address
-          required: false
-          schema:
-            type: string
         - name: customerType
           in: query
           description: Filter by customer type
@@ -368,6 +362,12 @@ paths:
         - name: cursor
           in: query
           description: Cursor for pagination (returned from previous request)
+          required: false
+          schema:
+            type: string
+        - name: umaAddress
+          in: query
+          description: Filter by uma address
           required: false
           schema:
             type: string
@@ -914,13 +914,18 @@ paths:
                     counterPartyType: INDIVIDUAL
                     fullName: John Doe
                     email: john.doe@example.com
+                    address:
+                      line1: 123 Main Street
+                      city: San Francisco
+                      state: CA
+                      postalCode: '94105'
+                      country: US
                   accountInfo:
                     accountType: US_ACCOUNT
                     accountNumber: '12345678901'
                     routingNumber: '123456789'
                     accountCategory: CHECKING
                     bankName: Chase Bank
-                    accountHolderName: John Doe
               sparkWallet:
                 summary: Create external Spark wallet
                 value:
@@ -931,6 +936,12 @@ paths:
                     counterPartyType: INDIVIDUAL
                     fullName: Jane Smith
                     email: jane.smith@example.com
+                    address:
+                      line1: 456 Oak Avenue
+                      city: New York
+                      state: NY
+                      postalCode: '10001'
+                      country: US
                   accountInfo:
                     accountType: SPARK_WALLET
                     address: sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
@@ -1399,18 +1410,27 @@ paths:
                   lockedCurrencySide: SENDING
                   lockedCurrencyAmount: 1000
                   description: 'Payment for invoice #1234'
-              umaToAccount:
-                summary: UMA Address to Account Transfer
+              realTimeFundingToSparkWallet:
+                summary: Real-time funding to Spark Wallet as an on-ramp flow. Immediate execution.
                 value:
                   source:
-                    umaAddress: $sender@uma.domain.com
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000009
                     currency: USD
                   destination:
-                    accountId: ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-                    currency: EUR
+                    externalAccountDetails:
+                      customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                      currency: BTC
+                      beneficiary:
+                        counterPartyType: INDIVIDUAL
+                        fullName: John Doe
+                        nationality: US
+                      accountInfo:
+                        accountType: SPARK_WALLET
+                        address: sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
                   lockedCurrencySide: RECEIVING
-                  lockedCurrencyAmount: 9200
-                  description: Receiving specific amount
+                  lockedCurrencyAmount: 10000
+                  immediatelyExecute: true
+                  description: Bitcoin reward payout!
       responses:
         '201':
           description: |
@@ -1590,8 +1610,8 @@ paths:
         In the case where a customer is debited but the Lightning payment fails to complete, integrators can retry the payment using this endpoint.  
 
         Payments retried with this endpoint will debit from the sender and deliver to the recipient the same amount as the original quote.
-        As UMA as a service does not persist customer PII, retries need to start with a lookup request to retrieve the original quote's recipient counter party data requirements then pass that sender information in the request body.
-        Before calling this endpoint, you should reach out to the UMA as a service team to investigate the underlying issue.  As part of resolution, they'll update the transaction to the appropriate state.  The quote / transaction to retry must be in a `FAILED` or `REFUNDED` state.
+        As the Grid API does not persist customer PII, retries need to start with a lookup request to retrieve the original quote's recipient counter party data requirements then pass that sender information in the request body.
+        Before calling this endpoint, you should reach out to the Lightspark team to investigate the underlying issue.  As part of resolution, they'll update the transaction to the appropriate state.  The quote / transaction to retry must be in a `FAILED` or `REFUNDED` state.
       operationId: retryQuote
       tags:
         - Cross-Currency Transfers
@@ -3477,7 +3497,7 @@ webhooks:
         ### Authentication
         The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by Grid.
         To verify the signature:
-        1. Get the UMAaas public key provided to you during integration
+        1. Get the Grid API public key provided to you during integration
         2. Decode the base64 signature from the header
         3. Create a SHA-256 hash of the request body
         4. Verify the signature using the public key and the hash
@@ -3662,6 +3682,8 @@ components:
         - ACCOUNT_IDENTIFIER
         - FI_LEGAL_ENTITY_NAME
         - FI_ADDRESS
+        - PURPOSE_OF_PAYMENT
+        - ULTIMATE_INSTITUTION_COUNTRY
       description: Name of a type of field containing info about a platform's customer or counterparty customer.
       example: FULL_NAME
     CounterpartyFieldDefinition:
@@ -3993,10 +4015,6 @@ components:
           description: System-generated unique identifier
           readOnly: true
           example: Customer:019542f5-b3e7-1d02-0000-000000000001
-        umaAddress:
-          type: string
-          description: Full UMA address (always present in responses, even if system-generated).
-          example: $john.doe@uma.domain.com
         platformCustomerId:
           type: string
           description: Platform-specific customer identifier
@@ -4005,6 +4023,10 @@ components:
           $ref: '#/components/schemas/CustomerType'
         kycStatus:
           $ref: '#/components/schemas/KycStatus'
+        umaAddress:
+          type: string
+          description: Full UMA address (always present in responses, even if system-generated). This is an optional identifier to route payments to the customer.
+          example: $john.doe@uma.domain.com
         createdAt:
           type: string
           format: date-time
@@ -4141,7 +4163,7 @@ components:
         - MANUALLY_APPROVED
         - MANUALLY_REJECTED
       description: The current kyc status of a customer
-      example: ACCEPTED
+      example: APPROVED
     BankAccountType:
       type: string
       enum:
@@ -4187,10 +4209,6 @@ components:
           type: string
           description: Name of the bank
           example: Chase Bank
-        accountHolderName:
-          type: string
-          description: Name of the account holder
-          example: John Doe
     ClabeAccountInfo:
       type: object
       required:
@@ -4213,10 +4231,6 @@ components:
           type: string
           description: Name of the bank
           example: BBVA Mexico
-        accountHolderName:
-          type: string
-          description: Name of the account holder
-          example: John Doe
     BankAccountBase:
       type: object
       properties:
@@ -4254,14 +4268,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/UsAccountInfo'
         - $ref: '#/components/schemas/BankAccountBase'
-        - type: object
-          required:
-            - accountHolderName
-          properties:
-            accountHolderName:
-              type: string
-              description: Name of the account holder
-              example: Jane Doe
     PixAccountInfo:
       type: object
       required:
@@ -4291,10 +4297,6 @@ components:
           type: string
           description: Name of the bank
           example: Nubank
-        accountHolderName:
-          type: string
-          description: Name of the account holder
-          example: John Doe
     CustomerPixAccountInfo:
       allOf:
         - $ref: '#/components/schemas/PixAccountInfo'
@@ -4326,10 +4328,6 @@ components:
           type: string
           description: Name of the bank
           example: Deutsche Bank
-        accountHolderName:
-          type: string
-          description: Name of the account holder
-          example: John Doe
     CustomerIbanAccountInfo:
       allOf:
         - $ref: '#/components/schemas/IbanAccountInfo'
@@ -4359,10 +4357,6 @@ components:
           type: string
           description: Virtual Payment Address for UPI payments
           example: somecustomers@okbank
-        accountHolderName:
-          type: string
-          description: Name of the account holder
-          example: John Doe
     CustomerUpiAccountInfo:
       allOf:
         - $ref: '#/components/schemas/UpiAccountInfo'
@@ -4419,12 +4413,6 @@ components:
           enum:
             - INDIVIDUAL
           description: Customer type
-        umaAddress:
-          type: string
-          description: |
-            Optional UMA address identifier. If not provided during customer creation, one will be generated by the system.
-            If provided during customer update, the UMA address will be updated to the provided value.
-          example: $john.doe@uma.domain.com
         fullName:
           type: string
           description: Individual's full name
@@ -4440,6 +4428,13 @@ components:
           example: US
         address:
           $ref: '#/components/schemas/Address'
+        umaAddress:
+          type: string
+          description: |
+            Optional UMA address identifier. If not provided during customer creation, one will be generated by the system.
+            If provided during customer update, the UMA address will be updated to the provided value. This is an optional
+            identifier to route payments to the customer.
+          example: $john.doe@uma.domain.com
         bankAccountInfo:
           $ref: '#/components/schemas/CustomerBankAccountInfo'
           description: |
@@ -5244,7 +5239,7 @@ components:
           description: |
             | Error Code | Description |
             |------------|-------------|
-            | UNSUPPORTED_UMA_VERSION | Counterparty doesn't support UMA as a service UMA version |
+            | UNSUPPORTED_UMA_VERSION | Counterparty doesn't support the Grid UMA version |
           enum:
             - UNSUPPORTED_UMA_VERSIONED
         message:
@@ -5285,6 +5280,36 @@ components:
         details:
           type: object
           description: Additional error details
+    QuoteSource:
+      oneOf:
+        - title: Account
+          type: object
+          required:
+            - accountId
+          properties:
+            accountId:
+              type: string
+              description: Source account identifier
+              example: InternalAccount:85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+            currency:
+              type: string
+              description: Currency code for the source account
+              example: USD
+          description: Source account details
+        - title: Real-time funding
+          type: object
+          required:
+            - currency
+          properties:
+            customerId:
+              type: string
+              description: Source customer ID. If this transaction is being initiated on behalf of a customer, this is required. If customerId is not provided, the quote will be created on behalf of the platform itself.
+              example: Customer:019542f5-b3e7-1d02-0000-000000000009
+            currency:
+              type: string
+              description: Currency code for the source
+              example: USD
+          description: Fund the quote using a real-time funding source (RTP, SEPA Instant, Spark, Stables, etc.). This will require manual just-in-time funding using `paymentInstructions` in the response. Because quotes expire quickly, this option is only valid for instant payment methods. Do not try to fund a quote with a non-instant payment method (ACH, etc.).
     Quote:
       type: object
       required:
@@ -5327,51 +5352,7 @@ components:
           description: When this quote expires (typically 1-5 minutes after creation)
           example: '2025-10-03T12:05:00Z'
         source:
-          oneOf:
-            - title: Account Source
-              type: object
-              required:
-                - accountId
-              properties:
-                accountId:
-                  type: string
-                  description: Source account identifier
-                  example: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-                currency:
-                  type: string
-                  description: Currency code for the source account
-                  example: USD
-              description: Source account details
-            - title: Customer ID Source
-              type: object
-              required:
-                - customerId
-                - currency
-              properties:
-                customerId:
-                  type: string
-                  description: Source customer ID
-                  example: Customer:019542f5-b3e7-1d02-0000-000000000009
-                currency:
-                  type: string
-                  description: Currency code for the source
-                  example: USD
-              description: Source customer ID details. This will require just-in-time funding using payment instructions.
-            - title: UMA Address Source
-              type: object
-              required:
-                - umaAddress
-                - currency
-              properties:
-                umaAddress:
-                  type: string
-                  description: UMA address of the sender
-                  example: $sender@uma.domain.com
-                currency:
-                  type: string
-                  description: Currency code for the source
-                  example: USD
-              description: UMA address source details. This will require just-in-time funding using payment instructions.
+          $ref: '#/components/schemas/QuoteSource'
         destination:
           oneOf:
             - title: Account Destination
@@ -5447,7 +5428,6 @@ components:
             - accountType: US_ACCOUNT
               accountNumber: '1234567890'
               routingNumber: '021000021'
-              accountHolderName: John Doe
               bankName: Chase Bank
               referenceCode: REF123456
             - accountType: SPARK_WALLET
@@ -5485,50 +5465,10 @@ components:
             NOTE: This is required for UMA destinations due to counterparty institution requirements. See `senderCustomerInfo` for more information.
           example: Lookup:019542f5-b3e7-1d02-0000-000000000009
         source:
-          oneOf:
-            - title: Account Source
-              type: object
-              required:
-                - accountId
-              properties:
-                accountId:
-                  type: string
-                  description: Source account identifier
-                  example: e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
-              description: Source account details
-            - title: Customer ID Source
-              type: object
-              required:
-                - customerId
-                - currency
-              properties:
-                customerId:
-                  type: string
-                  description: Source customer ID
-                  example: Customer:019542f5-b3e7-1d02-0000-000000000009
-                currency:
-                  type: string
-                  description: Currency code for the source
-                  example: USD
-              description: Source customer ID details. This will require just-in-time funding using payment instructions.
-            - title: UMA Address Source
-              type: object
-              required:
-                - umaAddress
-                - currency
-              properties:
-                umaAddress:
-                  type: string
-                  description: UMA address of the sender
-                  example: $sender@uma.domain.com
-                currency:
-                  type: string
-                  description: Currency code for the source
-                  example: USD
-              description: UMA address source details. This will require just-in-time funding using payment instructions.
+          $ref: '#/components/schemas/QuoteSource'
         destination:
           oneOf:
-            - title: Account Destination
+            - title: Account
               type: object
               required:
                 - accountId
@@ -5543,7 +5483,7 @@ components:
                   description: Currency code for the destination account
                   example: EUR
               description: Destination account details
-            - title: UMA Address Destination
+            - title: UMA Address
               type: object
               required:
                 - umaAddress
@@ -5558,7 +5498,7 @@ components:
                   description: Currency code for the destination
                   example: EUR
               description: UMA address destination details
-            - title: External Account Details Destination
+            - title: External Account Details
               type: object
               required:
                 - externalAccountDetails
@@ -5587,8 +5527,9 @@ components:
           type: object
           additionalProperties: true
           description: |
+            Only relevant for UMA destinations.
             Key-value pairs of information about the sender which was requested by the counterparty (recipient) institution.
-            Any fields specified in `requiredPayerDataFields` from the response of the `/receiver/{receiverUmaAddress}` (lookupUma) endpoint
+            Any fields specified in `requiredPayerDataFields` from the response of the `/receiver/uma/{receiverUmaAddress}` (lookupUma) endpoint
             MUST be provided here if they were requested. If the counterparty (recipient) institution did not request any information, this field can be omitted.
           example:
             FULL_NAME: Jane Receiver

@@ -176,12 +176,6 @@ get:
       required: false
       schema:
         type: string
-    - name: umaAddress
-      in: query
-      description: Filter by uma address
-      required: false
-      schema:
-        type: string
     - name: customerType
       in: query
       description: Filter by customer type
@@ -228,6 +222,12 @@ get:
     - name: cursor
       in: query
       description: Cursor for pagination (returned from previous request)
+      required: false
+      schema:
+        type: string
+    - name: umaAddress
+      in: query
+      description: Filter by uma address
       required: false
       schema:
         type: string

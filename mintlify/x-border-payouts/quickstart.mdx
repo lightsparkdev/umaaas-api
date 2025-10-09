@@ -1,7 +1,9 @@
 ---
-title: "Cross-Border Payments Guide"
+title: "Cross-Border Payouts"
 description: "Complete guide for sending cross-border payments from basic bank transfers to advanced multi-currency scenarios across different customer types"
 ---
+
+import KycOnboarding from '/snippets/kyc-onboarding.mdx';
 
 This comprehensive guide covers cross-border payments from basic examples to advanced multi-currency scenarios. Learn how to enable payments across fiat currencies, cryptocurrencies, and stablecoins for different customer types using the Grid API.
 
@@ -31,27 +33,9 @@ Cross-border payments enable transfers between different currencies using real-t
 
 This example walks through the complete process of sending funds to an external bank account, from customer onboarding through quote execution.
 
-### Step 1: Create a Customer with KYC Link
+### Step 1: Customer Onboarding
 
-First, generate a hosted KYC link that your customer can use to complete their onboarding. This link provides a secure, hosted flow where the customer can submit their information.
-
-```http
-GET /customers/kyc-link?redirect_uri=https://yourapp.com/onboarding-complete
-Authorization: Basic <base64-encoded-credentials>
-```
-
-**Response:**
-```json
-{
-  "kycUrl": "https://kyc.lightspark.com/onboard/abc123def456"
-}
-```
-
-The customer should be redirected to this URL to complete their KYC information. Once completed, they'll be redirected to your specified `redirect_uri`.
-
-After the customer completes KYC, Grid will create their customer account and automatically provision internal accounts based on your platform configuration. You'll receive the customer ID through your onboarding flow.
-
-For this example, let's assume the customer ID is: `Customer:019542f5-b3e7-1d02-0000-000000000001`
+<KycOnboarding />
 
 ### Step 2: List Internal Accounts
 
@@ -769,11 +753,11 @@ Each customer type has specific requirements and use cases, but all can benefit 
 
 - **API Reference**: Explore the complete [API](/api-reference/environments)
 - **Platform Configuration**: Set up your [platform settings](api-reference/platform-configuration/get-platform-configuration)
-- **Webhook Security**: Implement [webhook verification](/uma-connect/developer-guides/webhooks)
-- **Sandbox Testing**: Test your integration in [sandbox mode](/uma-connect/developer-guides/sandbox-testing)
+- **Webhook Security**: Implement [webhook verification](/remittances/developer-guides/webhooks)
+- **Sandbox Testing**: Test your integration in [sandbox mode](/remittances/developer-guides/sandbox-testing)
 
 ## Related Resources
 
 - [Platform Configuration](api-reference/platform-configuration/get-platform-configuration) - Configure your platform
-- [Webhooks Guide](/uma-connect/developer-guides/webhooks) - Real-time notifications
-- [Sandbox Testing](/uma-connect/developer-guides/sandbox-testing) - Safe testing environment
+- [Webhooks Guide](/remittances/developer-guides/webhooks) - Real-time notifications
+- [Sandbox Testing](/remittances/developer-guides/sandbox-testing) - Safe testing environment

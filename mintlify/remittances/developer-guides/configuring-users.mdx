@@ -5,11 +5,11 @@ description: "Configuring users in UMA Connect"
 
 # Configuring Users
 
-This guide provides comprehensive information about user configuration in the UMA as a Service API, including user types, registration processes, management, and bank account information.
+This guide provides comprehensive information about user configuration in the Grid API, including user types, registration processes, management, and bank account information.
 
 ## User Types
 
-The UMAaaS API supports both individual and business users. While the API schema itself makes most Personally Identifiable Information (PII) optional at the initial user creation, specific fields may become mandatory based on the currencies the user will transact with and the requirements of the underlying UMA provider.
+The Grid API supports both individual and business users. While the API schema itself makes most Personally Identifiable Information (PII) optional at the initial user creation, specific fields may become mandatory based on the currencies the user will transact with and the requirements of the underlying UMA provider.
 
 Your platform's configuration (retrieved via `GET /config`) includes a `supportedCurrencies` array. Each currency object within this array has a `umaProviderRequiredUserFields` list. If a user is intended to use a specific currency, any fields listed in `umaProviderRequiredUserFields` for that currency **must** be provided when creating or updating the user.
 
@@ -147,13 +147,13 @@ UMA addresses follow the format `$username@domain`. For your platform:
    - Addresses are case-insensitive, but by convention are written only with lowercase letters
    - Like email addresses, the maximum number of characters for the `username` portion of the address is 64 characters (including the $).
 
-The UMAaas API will validate these requirements and will throw an error if they are not met.
+The Grid API will validate these requirements and will throw an error if they are not met.
 
 ## User Management
 
 ### Retrieving User Information
 
-You can retrieve user information using either the UMAaaS-assigned user ID or your platform's user ID:
+You can retrieve user information using either the Grid-assigned user ID or your platform's user ID:
 
 ```http
 GET /users/{userId}
@@ -191,7 +191,7 @@ Example request body for updating a user's bank account information:
 ## Bank Account Information
 
 The API supports various bank account formats based on country and funding type. There are two types of funding
-mechanisms supported by UMAaaS: an omnibus FBO (for benefit of) account owned by the platform, or direct user-owned accounts. You must provide the correct format based on the user's region and bank account type.
+mechanisms supported by Grid: an omnibus FBO (for benefit of) account owned by the platform, or direct user-owned accounts. You must provide the correct format based on the user's region and bank account type.
 
 ### Optional Platform Account ID
 
@@ -213,7 +213,7 @@ Common use cases for `platformAccountId`:
 
 - Tracking multiple bank accounts and uma addresses for the same user
 - Linking accounts to internal accounting systems
-- Maintaining consistency between UMAaaS and your platform's account records
+- Maintaining consistency between the Grid API and your platform's account records
 - Facilitating account reconciliation and reporting
 
 ### FBO Accounts
@@ -224,7 +224,7 @@ must be provided manually at the platform level. For each user, during you shoul
 ```json
 "bankAccountInfo": {
   "accountType": "FBO",
-  "currencyCode": "USD" // or any other currency code supported by UMAaaS
+  "currencyCode": "USD" // or any other currency code supported by the Grid API
 }
 ```
 
@@ -292,7 +292,7 @@ PIX key types can be one of: `CPF`, `CNPJ`, `PHONE`, `EMAIL`, or `RANDOM`.
 
 ## Data Validation
 
-The UMAaaS API performs validation on all user data. Common validation rules include:
+The Grid API performs validation on all user data. Common validation rules include:
 
 - All required fields must be present based on user type
 - Date of birth must be in YYYY-MM-DD format and represent a valid date
@@ -304,7 +304,7 @@ If validation fails, the API will return a 400 Bad Request response with detaile
 
 ## Best Practices
 
-1. **Identity Verification**: Implement proper KYC/KYB identity verification before creating users in the UMAaaS system
+1. **Identity Verification**: Implement proper KYC/KYB identity verification before creating users in the Grid API system
 2. **Data Security**: Store and transmit user data securely, following data protection regulations
 3. **Regular Updates**: Keep user information up to date, especially banking details
 4. **Error Handling**: Implement proper error handling to manage validation failures gracefully
