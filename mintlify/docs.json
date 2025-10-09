@@ -108,7 +108,10 @@
           },
           {
             "group": "Developer Guides",
-            "pages": ["developer-resources/placeholder"]
+            "pages": [
+              "ramps/developer-guides/fiat-crypto-conversion",
+              "ramps/developer-guides/self-custody-wallets"
+            ]
           }
         ]
       },
