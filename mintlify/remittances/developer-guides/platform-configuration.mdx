@@ -14,6 +14,9 @@ Create API credentials in the Grid dashboard. Credentials are scoped to an envir
 Never share or expose your API secret. Rotate credentials periodically and restrict access.
 </Tip>
 
+## Supported currencies
+During onboarding, choose the currencies your platform will support. For prefunded models, Grid automatically creates per‑currency accounts for each new customer. You can add or remove supported currencies anytime in the Grid dashboard.
+
 ### Example: HTTP Basic Auth in cURL
 
 ```bash
@@ -63,19 +66,23 @@ Example test webhook payload:
 
 For more details about webhooks like retry policy and examples, take a look at our [Webhooks](/developer-tools/webhooks) documentation.
 
-## UMA configuration
-If you want to send and receive to UMA addresses, you'll need to fill in your UMA configuration. Configuring UMA requires 3 steps:
+## UMA configuration (optional)
+To send and receive using UMA with your own domain (e.g., `$alice@yourdomain.com`), configure the following:
 
-1. configure your UMA domain
-2. proxy inbound UMA requests to Lightspark Grid
-3. define the currency you support and the counterparty information you require
+1. Configure your UMA domain
+2. Proxy inbound UMA requests to Lightspark Grid
+3. Define supported currencies and, if you are a regulated institution, the counterparty information you require
 
-### UMA Domain
+If you do not configure a UMA domain, Grid will use the default domain `grid.lightspark.com`.
+
+<Note>You can find more information about the UMA protocol and end user experience at [https://uma.me](https://uma.me).</Note>
+
+### UMA domain
 
 The `umaDomain` parameter defines the domain part of all UMA addresses for your users. For example, if you set `umaDomain` to `mycompany.com`, your users' UMA addresses will follow the format `$username@mycompany.com`.
 
-### Configuring UMA proxy requests
-Configure your UMA domain and proxy UMA‑related requests to your assigned `proxyUmaaasSubdomain`.
+### Configure UMA proxy requests
+Set up proxying so UMA‑related requests are forwarded to your assigned `proxyUmaaasSubdomain`.
 
 - UMA domain determines the address format (e.g., `$alice@yourdomain.com`)
 - Proxy the following paths to `{proxyUmaaasSubdomain}`:
@@ -88,15 +95,14 @@ Additionally, configure:
 - Required counterparty fields per currency for compliance screening
 
 
-### Supported currencies
-
-The `supportedCurrencies` array allows you to define settings for each currency your platform will support. Each object in this array can contain:
+### UMA supported currencies
+Define per‑currency rules for your UMA flows. Each entry can include:
 
 - `currencyCode`: (String, required) The ISO 4217 currency code (e.g., "USD").
 - `minAmount`: (Integer, required) Minimum transaction amount in the smallest unit of the currency.
 - `maxAmount`: (Integer, required) Maximum transaction amount in the smallest unit of the currency.
-- `requiredCounterpartyFields`: (Array, required) Defines PII your platform requires about *external counterparties* for transactions in this currency.
-- `umaProviderRequiredUserFields`: (Array, read-only) Lists user info field names (from `UserInfoFieldName`) that the UMA provider mandates for *your own users* to transact in this currency. This impacts user creation/updates.
+- `requiredCounterpartyFields`: (Array, required) For regulated entities, defines PII your platform requires about *external counterparties* for transactions in this currency.
+- `umaProviderRequiredUserFields`: (Array, read-only) For regulated entities, lists user info field names (from `UserInfoFieldName`) that the UMA provider mandates for *your own users* to transact in this currency. This impacts user creation/updates.
 
 ### Required counterparty fields
 
@@ -123,8 +129,7 @@ Each field in `requiredCounterpartyFields` is an object containing:
 This information will be provided to your platform via webhooks for pending payments, allowing you to screen the counterparty based on your compliance rules before approving the payment.
 
 ### UMA provider required user fields
-
-Also within each currency defined in `supportedCurrencies`, you will find the `umaProviderRequiredUserFields` array. This is a **read-only** list of `UserInfoFieldName` strings.
+For regulated financial institutions, the `umaProviderRequiredUserFields` array (per currency) lists the user fields required by the underlying provider. This array is read‑only and informs what you must capture for your own users.
 
 This list specifies which user information fields are mandated by the underlying UMA provider for *your own registered users* if they intend to send or receive payments in that particular currency. For example, to allow a user to transact in "USD", the UMA provider might require that the user has a `NATIONALITY` on record.
 
