@@ -86,6 +86,10 @@ paths:
     $ref: paths/customers/customers_external_accounts.yaml
   /platform/external-accounts:
     $ref: paths/platform/platform_external_accounts.yaml
+  /plaid/link-tokens:
+    $ref: paths/plaid/plaid_link-tokens.yaml
+  /plaid/callback/{plaid_link_token}:
+    $ref: paths/plaid/plaid_callback_{plaid_link_token}.yaml
   /transfer-in:
     $ref: paths/transfers/transfer_in.yaml
   /transfer-out:
