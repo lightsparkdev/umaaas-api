@@ -1,56 +1,46 @@
 ---
-title: "Setting Up External Accounts"
-description: "Learn how to add and manage external bank accounts for customer withdrawals and payments"
+title: "External Accounts"
+description: "Add and manage external bank accounts, wallets, and payment destinations for withdrawals and payouts"
 ---
 
 ## Overview
 
-External accounts represent customer-owned bank accounts, cryptocurrency wallets, or other payment destinations outside the Grid platform. They serve as withdrawal destinations where you can send funds from internal accounts.
+External accounts are bank accounts, cryptocurrency wallets, or payment destinations outside Grid where you can send funds. Grid supports two types:
 
-External accounts enable you to:
-
-- **Send withdrawals**: Transfer funds from internal accounts to customer bank accounts
-- **Pay recipients**: Send cross-currency payments to external destinations
-- **Support multiple currencies**: Add accounts for different fiat currencies, cryptocurrencies, and payment rails
+- **Customer external accounts** - Scoped to individual customers, used for withdrawals and customer-specific payouts
+- **Platform external accounts** - Scoped to your platform, used for platform-wide operations like receiving funds from external sources
 
 <Info>
-  External accounts must be linked to a customer and include beneficiary
-  information for compliance purposes.
+  Customer external accounts require beneficiary information for compliance.
+  Platform accounts are managed at the organization level.
 </Info>
 
-## How external accounts work
+## How it works
 
-External accounts function as registered payout destinations in your payment flows:
-
-1. **Register account**: Add external account details including beneficiary information and bank account data
-2. **Verify status**: Account undergoes review and moves to `ACTIVE` status
-3. **Send payments**: Use the external account as a destination in quotes or same-currency transfers
-4. **Track transactions**: Monitor payment status via webhooks and transaction queries
-
-Each external account:
-
-- Is linked to a specific customer
-- Has a status lifecycle (`PENDING` → `ACTIVE`, `UNDER_REVIEW`, or `INACTIVE`)
-- Includes beneficiary details (individual or business)
-- Supports a specific account type and payment rail
-- Can be referenced by a unique system-generated ID
+1. **Register account** with required details (beneficiary info for customer accounts, bank details for all)
+2. **Wait for verification** (account moves to `ACTIVE` status)
+3. **Send payments** using the account as a destination in transfers or quotes
+4. **Track status** via webhooks and transaction queries
 
 ## Prerequisites
 
-Before creating external accounts, ensure you have:
+**For customer external accounts:**
 
-- An active Grid API account with API credentials
-- At least one customer created in the system
-- Valid bank account or wallet information for the destination
-- Beneficiary information meeting compliance requirements
+- Active Grid API credentials
+- At least one customer created
+- Valid bank account or wallet information
+- Beneficiary information (individual or business)
+
+**For platform external accounts:**
+
+- Active Grid API credentials
+- Valid bank account or wallet information for your organization
 
 ## Supported account types
 
-Grid supports multiple account types for different currencies and payment rails:
-
-### United States (ACH, Wire, RTP)
-
-US bank accounts supporting multiple payment rails including ACH,le wire transfers, and RTP (Real-Time Payments):
+<Tabs>
+<Tab title="United States">
+**ACH, Wire, RTP**
 
 ```json
 {
@@ -64,15 +54,12 @@ US bank accounts supporting multiple payment rails including ACH,le wire transfe
 ```
 
 <Note>
-  - Account category must be either `CHECKING` or `SAVINGS` - Routing numbers
-  must be exactly 9 digits - **ACH and RTP** use the standard routing and
-  account number - **Wire transfers** may require additional bank details (bank
-  address) which Grid handles based on the routing number and bank name provided
+  Category must be `CHECKING` or `SAVINGS`. Routing number must be 9 digits.
 </Note>
+</Tab>
 
-### Mexico (CLABE/SPEI)
-
-Mexican bank accounts using 18-digit CLABE numbers:
+<Tab title="Mexico">
+**CLABE/SPEI**
 
 ```json
 {
@@ -83,9 +70,10 @@ Mexican bank accounts using 18-digit CLABE numbers:
 }
 ```
 
-### Brazil (PIX)
+</Tab>
 
-Brazilian instant payment accounts using PIX keys:
+<Tab title="Brazil">
+**PIX**
 
 ```json
 {
@@ -97,11 +85,11 @@ Brazilian instant payment accounts using PIX keys:
 }
 ```
 
-<Tip>PIX key types include: `CPF`, `CNPJ`, `EMAIL`, `PHONE`, or `RANDOM`.</Tip>
+<Tip>Key types: `CPF`, `CNPJ`, `EMAIL`, `PHONE`, or `RANDOM`</Tip>
+</Tab>
 
-### Europe (IBAN/SEPA)
-
-European bank accounts using IBAN numbers:
+<Tab title="Europe">
+**IBAN/SEPA**
 
 ```json
 {
@@ -113,9 +101,10 @@ European bank accounts using IBAN numbers:
 }
 ```
 
-### India (UPI)
+</Tab>
 
-Indian Unified Payments Interface accounts:
+<Tab title="India">
+**UPI**
 
 ```json
 {
@@ -125,9 +114,10 @@ Indian Unified Payments Interface accounts:
 }
 ```
 
-### Cryptocurrency (Spark Wallet)
+</Tab>
 
-Bitcoin Lightning wallets for instant cryptocurrency payments:
+<Tab title="Cryptocurrency">
+**Bitcoin Lightning (Spark Wallet)**
 
 ```json
 {
@@ -136,15 +126,16 @@ Bitcoin Lightning wallets for instant cryptocurrency payments:
 }
 ```
 
-## Creating external accounts
+</Tab>
+</Tabs>
 
-### Basic account creation
+## Creating customer external accounts
 
-To register a new external account, provide the beneficiary information and account details:
+Add an external account for a specific customer:
 
 <CodeGroup>
 ```bash cURL
-curl -X POST 'https://api.lightspark.com/grid/2025-10-13/external-accounts' \
+curl -X POST 'https://api.lightspark.com/grid/2025-10-13/customers/external-accounts' \
   -H 'Authorization: Basic <base64-encoded-credentials>' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -167,7 +158,7 @@ curl -X POST 'https://api.lightspark.com/grid/2025-10-13/external-accounts' \
 
 ```javascript Node.js
 const response = await fetch(
-  "https://api.lightspark.com/grid/2025-10-13/external-accounts",
+  "https://api.lightspark.com/grid/2025-10-13/customers/external-accounts",
   {
     method: "POST",
     headers: {
@@ -209,7 +200,7 @@ credentials = base64.b64encode(
 ).decode()
 
 response = requests.post(
-    'https://api.lightspark.com/grid/2025-10-13/external-accounts',
+    'https://api.lightspark.com/grid/2025-10-13/customers/external-accounts',
     headers={
         'Authorization': f'Basic {credentials}',
         'Content-Type': 'application/json'
@@ -263,224 +254,167 @@ print(f"External account created: {external_account['id']}")
 
 ### Business beneficiaries
 
-For business accounts, provide additional business information:
+For business accounts, include business information:
 
 ```json
 {
-  "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
   "beneficiary": {
     "counterPartyType": "BUSINESS",
     "email": "accounting@acmecorp.com",
-    "address": {
-      "streetAddress": "123 Business Ave",
-      "city": "New York",
-      "state": "NY",
-      "postalCode": "10001",
-      "country": "US"
-    },
     "businessInfo": {
       "legalName": "Acme Corporation, Inc.",
-      "registrationNumber": "BRN-123456789",
       "taxId": "EIN-987654321"
     }
-  },
-  "accountInfo": {
-    "accountType": "US_ACCOUNT",
-    "accountNumber": "987654321",
-    "routingNumber": "021000021",
-    "accountCategory": "CHECKING",
-    "bankName": "Chase Bank",
-    "accountHolderName": "Acme Corporation"
   }
 }
 ```
 
-### Using platform account IDs
+### Platform account IDs
 
-Track external accounts in your internal systems using optional `platformAccountId`:
+Link external accounts to your internal system using `platformAccountId`:
 
 ```json
 {
-  "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
   "platformAccountId": "user_123_primary_bank",
-  "beneficiary": {
-    "counterPartyType": "INDIVIDUAL",
-    "fullName": "Jane Smith",
-    "email": "jane@example.com"
-  },
-  "accountInfo": {
-    "accountType": "US_ACCOUNT",
-    "accountNumber": "555666777",
-    "routingNumber": "021000021",
-    "accountCategory": "SAVINGS",
-    "bankName": "Bank of America",
-    "accountHolderName": "Jane Smith"
-  }
+  "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
+  ...
 }
 ```
 
-<Tip>
-  Use `platformAccountId` to link external accounts with your internal database
-  IDs, making it easier to reconcile transactions and manage multiple accounts
-  per customer.
-</Tip>
+<Tip>Use `platformAccountId` for easier reconciliation with your database.</Tip>
 
-## Understanding account status
+## Account status
 
-External accounts progress through different statuses:
+| Status         | Description                         |
+| -------------- | ----------------------------------- |
+| `PENDING`      | Created, awaiting verification      |
+| `ACTIVE`       | Verified and ready for transactions |
+| `UNDER_REVIEW` | Additional review required          |
+| `INACTIVE`     | Disabled, cannot be used            |
 
-| Status         | Description                                  |
-| -------------- | -------------------------------------------- |
-| `PENDING`      | Account created but awaiting verification    |
-| `ACTIVE`       | Account verified and ready for transactions  |
-| `UNDER_REVIEW` | Additional review required before activation |
-| `INACTIVE`     | Account disabled and cannot be used          |
+<Warning>Only `ACTIVE` accounts can receive payments.</Warning>
 
-<Warning>
-  Only `ACTIVE` external accounts can be used as destinations in transfers and
-  quotes. Transactions to accounts in other statuses will be rejected.
-</Warning>
+## Listing external accounts
+
+### List customer accounts
+
+```bash
+curl -X GET 'https://api.lightspark.com/grid/2025-10-13/customers/external-accounts?customerId=Customer:019542f5-b3e7-1d02-0000-000000000001' \
+  -H 'Authorization: Basic <base64-encoded-credentials>'
+```
+
+### List platform accounts
+
+For platform-wide operations, list all platform-level external accounts:
+
+```bash
+curl -X GET 'https://api.lightspark.com/grid/2025-10-13/platform/external-accounts' \
+  -H 'Authorization: Basic <base64-encoded-credentials>'
+```
+
+<Info>
+  Platform external accounts are used for platform-wide operations like
+  receiving funds from external sources.
+</Info>
 
 ## Using external accounts in payments
 
 ### Same-currency transfers
 
-For transfers in the same currency (no exchange needed), use the `/transfer-out` endpoint:
+Use `/transfer-out` for transfers without currency exchange:
 
 ```javascript
-// Transfer from internal account to external account (same currency)
 const response = await fetch(
   "https://api.lightspark.com/grid/2025-10-13/transfer-out",
   {
     method: "POST",
-    headers: {
-      Authorization: `Basic ${credentials}`,
-      "Content-Type": "application/json",
-    },
+    headers: { Authorization: `Basic ${credentials}` },
     body: JSON.stringify({
-      source: {
-        accountId: "InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123",
-      },
-      destination: {
-        accountId: "ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965",
-      },
+      source: { accountId: "InternalAccount:a12dcbd6..." },
+      destination: { accountId: "ExternalAccount:e85dcbd6..." },
       amount: 50000, // $500.00 in cents
     }),
   }
 );
-
-const transaction = await response.json();
 ```
 
 ### Cross-currency transfers
 
-For transfers requiring currency exchange, create a quote first:
+For currency exchange, create and execute a quote:
 
 ```javascript
-// Step 1: Create quote for cross-currency transfer
-const quoteResponse = await fetch(
-  "https://api.lightspark.com/grid/2025-10-13/quotes",
-  {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${credentials}`,
-      "Content-Type": "application/json",
+// 1. Create quote
+const quote = await fetch("https://api.lightspark.com/grid/2025-10-13/quotes", {
+  method: "POST",
+  body: JSON.stringify({
+    source: { accountId: "InternalAccount:a12dcbd6..." },
+    destination: {
+      accountId: "ExternalAccount:e85dcbd6...",
+      currency: "MXN",
     },
-    body: JSON.stringify({
-      source: {
-        accountId: "InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123",
-      },
-      destination: {
-        accountId: "ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965",
-        currency: "MXN",
-      },
-      lockedCurrencySide: "RECEIVING",
-      lockedCurrencyAmount: 1000000, // 10,000 MXN
-      description: "Payment to Mexico bank account",
-    }),
-  }
-);
+    lockedCurrencySide: "RECEIVING",
+    lockedCurrencyAmount: 1000000, // 10,000 MXN
+  }),
+}).then((r) => r.json());
 
-const quote = await quoteResponse.json();
-
-// Step 2: Execute the quote
-const executeResponse = await fetch(
+// 2. Execute quote
+await fetch(
   `https://api.lightspark.com/grid/2025-10-13/quotes/${quote.id}/execute`,
   {
     method: "POST",
-    headers: {
-      Authorization: `Basic ${credentials}`,
-      "Content-Type": "application/json",
-    },
   }
 );
 ```
 
-### Looking up payment details
+### Lookup receiver details
 
-Before creating a quote, you can look up an external account to see supported currencies and exchange rates:
+Check supported currencies and rates before creating a quote:
 
 ```bash
-curl -X GET 'https://api.lightspark.com/grid/2025-10-13/receiver/external-account/ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965?customerId=Customer:019542f5-b3e7-1d02-0000-000000000001' \
+curl -X GET 'https://api.lightspark.com/grid/2025-10-13/receiver/external-account/ExternalAccount:e85dcbd6...?customerId=Customer:019542f5...' \
   -H 'Authorization: Basic <base64-encoded-credentials>'
 ```
 
-This returns available currencies, exchange rates, and minimum/maximum transfer amounts for the destination account.
-
 ## Common use cases
 
-### International payouts
-
-Support global payments by registering accounts in different countries:
+### International contractor payments
 
 ```javascript
-// Register accounts for international contractor payments
+// Register accounts for multiple countries
 const contractors = [
   { country: "MX", accountType: "CLABE", clabeNumber: "..." },
-  { country: "BR", accountType: "PIX", pixKey: "...", pixKeyType: "CPF" },
+  { country: "BR", accountType: "PIX", pixKey: "..." },
   { country: "IN", accountType: "UPI", vpa: "contractor@bank" },
 ];
 
 for (const contractor of contractors) {
-  const externalAccount = await createExternalAccount({
+  const account = await createExternalAccount({
     customerId: contractor.customerId,
     beneficiary: contractor.beneficiaryInfo,
     accountInfo: contractor,
   });
 
-  // Store the external account ID for future payouts
-  await saveContractorPaymentMethod(contractor.id, externalAccount.id);
+  await savePaymentMethod(contractor.id, account.id);
 }
 ```
 
 ### Cryptocurrency withdrawals
 
-Enable customers to withdraw to their cryptocurrency wallets:
-
 ```javascript
-// Add Bitcoin Lightning wallet as external account
+// Add Bitcoin Lightning wallet
 const cryptoAccount = await createExternalAccount({
-  customerId: customerId,
-  beneficiary: {
-    counterPartyType: "INDIVIDUAL",
-    fullName: customerName,
-    email: customerEmail,
-  },
+  customerId,
+  beneficiary: { counterPartyType: "INDIVIDUAL", fullName, email },
   accountInfo: {
     accountType: "SPARK_WALLET",
     address: sparkWalletAddress,
   },
 });
 
-// Later, send crypto withdrawal
+// Send withdrawal
 await createQuote({
-  source: {
-    accountId: internalAccountId,
-  },
-  destination: {
-    accountId: cryptoAccount.id,
-    currency: "BTC",
-  },
+  source: { accountId: internalAccountId },
+  destination: { accountId: cryptoAccount.id, currency: "BTC" },
   lockedCurrencySide: "SENDING",
   lockedCurrencyAmount: usdAmountInCents,
 });
@@ -489,108 +423,58 @@ await createQuote({
 ## Best practices
 
 <AccordionGroup>
-<Accordion title="Validate account information before submission">
-Implement client-side validation for account numbers and routing information:
+<Accordion title="Validate account information">
+Validate account details before submission:
 
 ```javascript
-function validateUSAccount(accountNumber, routingNumber) {
-  // Routing number must be exactly 9 digits
-  if (!/^\d{9}$/.test(routingNumber)) {
-    throw new Error("Routing number must be 9 digits");
-  }
-
-  // Account number validation (basic length check)
-  if (accountNumber.length < 4 || accountNumber.length > 17) {
-    throw new Error("Account number length invalid");
-  }
-
-  return true;
+// US accounts: 9-digit routing, 4-17 digit account number
+if (!/^\d{9}$/.test(routingNumber)) {
+  throw new Error("Invalid routing number");
 }
 
-function validateCLABE(clabeNumber) {
-  // CLABE must be exactly 18 digits
-  if (!/^\d{18}$/.test(clabeNumber)) {
-    throw new Error("CLABE must be 18 digits");
-  }
-
-  // Add checksum validation if needed
-  return true;
+// CLABE: exactly 18 digits
+if (!/^\d{18}$/.test(clabeNumber)) {
+  throw new Error("Invalid CLABE number");
 }
 ```
 
 </Accordion>
 
-<Accordion title="Handle account status appropriately">
-Always check account status before attempting transfers:
+<Accordion title="Check account status">
+Verify status before sending payments:
 
 ```javascript
-async function sendWithdrawal(externalAccountId, amount) {
-  // Fetch current account status
-  const accounts = await listExternalAccounts({ customerId });
-  const account = accounts.data.find((a) => a.id === externalAccountId);
-
-  if (!account) {
-    throw new Error("External account not found");
-  }
-
-  if (account.status !== "ACTIVE") {
-    throw new Error(`Account is ${account.status} and cannot receive payments`);
-  }
-
-  // Proceed with transfer
-  return await createTransferOut({
-    source: { accountId: internalAccountId },
-    destination: { accountId: externalAccountId },
-    amount: amount,
-  });
+if (account.status !== "ACTIVE") {
+  throw new Error(`Account is ${account.status}, cannot process payment`);
 }
 ```
 
 </Accordion>
 
-<Accordion title="Store external account IDs securely">
-Never expose full account numbers in your UI. Use the external account ID as the reference:
+<Accordion title="Secure account data">
+Never expose full account numbers. Display only masked info:
 
 ```javascript
-// Good: Display masked account info with external account ID
-function displayAccountSafely(externalAccount) {
+function displaySafely(account) {
   return {
-    id: externalAccount.id,
-    bankName: externalAccount.accountInfo.bankName,
-    lastFourDigits: externalAccount.accountInfo.accountNumber.slice(-4),
-    accountType: externalAccount.accountInfo.accountCategory,
-    status: externalAccount.status,
+    id: account.id,
+    bankName: account.accountInfo.bankName,
+    lastFour: account.accountInfo.accountNumber.slice(-4),
+    status: account.status,
   };
 }
-
-// Store only the external account ID in your transactions
-await saveTransaction({
-  userId: userId,
-  externalAccountId: externalAccount.id, // Reference only
-  amount: amount,
-  timestamp: Date.now(),
-});
 ```
 
 </Accordion>
 
-<Accordion title="Use platformAccountId for reconciliation">
-Leverage `platformAccountId` to link external accounts with your internal systems:
+<Accordion title="Use platformAccountId">
+Link to your internal database for easier reconciliation:
 
 ```javascript
-// When creating accounts, use your internal ID
-const externalAccount = await createExternalAccount({
-  customerId: gridCustomerId,
+const account = await createExternalAccount({
   platformAccountId: `db_account_${yourDatabaseId}`,
-  beneficiary: beneficiaryInfo,
-  accountInfo: accountInfo,
+  ...
 });
-
-// Later, easily find the Grid external account from your ID
-const accounts = await listExternalAccounts({ customerId: gridCustomerId });
-const matchingAccount = accounts.data.find(
-  (acc) => acc.platformAccountId === `db_account_${yourDatabaseId}`
-);
 ```
 
 </Accordion>
