@@ -76,6 +76,14 @@
           "rewards/index",
           "rewards/quickstart",
           {
+            "group": "Getting Started",
+            "pages": [
+              "rewards/implementation-overview",
+              "developer-resources/terminology",
+              "rewards/developer-guides/platform-configuration"
+            ]
+          },
+          {
             "group": "Onboarding Customers",
             "pages": ["developer-resources/placeholder"]
           },
@@ -84,16 +92,22 @@
             "pages": ["developer-resources/placeholder"]
           },
           {
-            "group": "Distributing Bitcoin rewards",
+            "group": "Distributing Rewards",
             "pages": ["developer-resources/placeholder"]
           },
           {
             "group": "Platform Tools",
-            "pages": ["developer-resources/placeholder"]
+            "pages": [
+              "remittances/developer-guides/webhooks",
+              "remittances/developer-guides/sandbox-testing"
+            ]
           },
           {
             "group": "Developer Resources",
-            "pages": ["developer-resources/placeholder"]
+            "pages": [
+              "developer-resources/tools",
+              "developer-resources/postman-collection"
+            ]
           }
         ]
       },
