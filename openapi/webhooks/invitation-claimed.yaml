@@ -1,12 +1,12 @@
 post:
   summary: Invitation claimed webhook
   description: >
-    Webhook that is called when an invitation is claimed by a user.
+    Webhook that is called when an invitation is claimed by a customer.
 
-    This endpoint should be implemented by platform clients of the UMAaaS API.
+    This endpoint should be implemented by platform clients of the Grid API.
 
 
-    When a user claims an invitation, this webhook is triggered to notify the
+    When a customer claims an invitation, this webhook is triggered to notify the
     platform that:
 
     1. The invitation has been successfully claimed
@@ -20,7 +20,7 @@ post:
 
     - Track invitation usage and conversion rates
 
-    - Trigger onboarding flows for new users who joined via invitation
+    - Trigger onboarding flows for new customers who joined via invitation
 
     - Apply referral bonuses or rewards to the inviter
 
@@ -29,12 +29,12 @@ post:
 
     ### Authentication
 
-    The webhook includes a signature in the `X-UMAaas-Signature` header that
-    allows you to verify that the webhook was sent by UMAaas.
+    The webhook includes a signature in the `X-Grid-Signature` header that
+    allows you to verify that the webhook was sent by Grid.
 
     To verify the signature:
 
-    1. Get the UMAaas public key provided to you during integration
+    1. Get the Grid public key provided to you during integration
 
     2. Decode the base64 signature from the header
 
@@ -62,13 +62,13 @@ post:
             value:
               invitation:
                 code: 019542f5
-                createdAt: '2023-09-01T14:30:00Z'
-                claimedAt: '2023-09-01T15:45:00Z'
+                createdAt: '2025-09-01T14:30:00Z'
+                claimedAt: '2025-09-01T15:45:00Z'
                 inviterUma: $inviter@uma.domain
                 inviteeUma: $invitee@uma.domain
                 status: CLAIMED
                 url: https://uma.me/i/019542f5
-              timestamp: '2023-09-01T15:45:00Z'
+              timestamp: '2025-09-01T15:45:00Z'
               webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000008
               type: INVITATION_CLAIMED
   responses:

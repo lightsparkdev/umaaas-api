@@ -1,7 +1,7 @@
 type: object
 properties:
   name:
-    $ref: ../users/UserInfoFieldName.yaml
+    $ref: ../customers/CustomerInfoFieldName.yaml
   mandatory:
     type: boolean
     description: Whether the field is mandatory

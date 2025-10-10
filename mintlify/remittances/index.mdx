@@ -14,40 +14,31 @@ With {umaaasProductName}, you can send and receive low cost real-time payments t
 
 <PaymentFlow/>
 
-## {umaaasProductName} Interfaces
-- **API**: Programmatic access to create users, look up receivers, create quotes, fund payments, and reconcile via webhooks.
-- **Dashboard**: Monitor payments and webhooks, manage API keys and environments, and troubleshoot with logs.
-### Onboarding Customers
-1. Create a user: `POST /users` with lightweight attributes (KYC/KYB handled by your regulated entity).
-2. (Optional) Add external accounts: `POST /external-accounts` for bank account details when paying out to account numbers instead of UMAs.
-3. Store each user’s UMA handle or relevant account identifier in your system.
+## {umaaasProductName} Features
+Users interact with {umaaasProductName} through two main interfaces.
 
-<Note>You keep your brand/domain for UMAs (e.g., `$alice@yourapp.com`). See the UMA Standard for addressing details: [UMA—Introduction](https://docs.uma.me/uma-standard/introduction).</Note>
+- **API**: Programmatic access to create customers, quotes, fund the account, send payments and reconcile via webhooks.
+- **Dashboard**: Your development and operations team can use the dashboard to monitor payments and webhooks, manage API keys and environments, and troubleshoot with logs.
+
+{umaaasProductName} supports the following functionality.  
+
+### Onboarding customers
+{umaaasProductName} has two customer onboarding options - one for non regulated entities where {umaaasProductName} handles the KYC/KYB process and one for regulated entities where you handle the KYC/KYB process.
+
+When creating customers, you'll be able to assign a customized UMA address to facilitate sending and receiving UMA payments.
+
 ### Funding Payments
-1. Create a quote: `POST /quotes` using the sender user ID or sender UMA as the source.
-2. Use the returned `paymentInstructions` to fund in real time via supported rails (e.g., RTP, SEPA Instant, SPEI).
-3. Track status via webhooks; on completion, reconcile user balances and mark the payment settled.
+{umaaasProductName} supports multiple transaction funding options including prefunded accounts and real-time funding. You can prefund an account using several payment rails such as ACH, SEPA Instant, wire transfers, Lightning, and more.  
 
-<Note>Quotes lock rates and include fees so the user can preview before committing.</Note>
+With real-time funding, you'll receive payment instructions as part of the quote. Once payment is received by our services, we'll initiate the payment to the receiver. 
+
 ### Sending & Receiving Payments
-To send:
-- If paying by UMA, resolve the receiver: `GET /receiver/uma/{uma}`.
-- If paying by bank details, resolve the receiver: `GET /receiver/external-account/{accountId}` (create via `POST /external-accounts`).
-- Preview: `POST /quotes` to fetch rate, fees, min/max, and funding instructions.
-- Fund using one of the real-time `paymentInstructions` options returned by the quote.
-- Handle webhooks to update the payment state (pending → completed/failed) and customer balances.
+To send with {umaaasProductName}, you query recipient information and pricing, then execute and fund a quote. {umaaasProductName} resolves the receiver (by UMA or external bank details), returns min/max and an exchange rate, and provides funding instructions. Once funded, {umaaasProductName} handles FX and delivery to the receiving account.
 
-To receive:
-- Provide your customer’s UMA; partners convert BTC ↔ local fiat and settle to your specified rails.
-- Webhooks notify you of incoming payments so you can credit the receiver.
+To receive with {umaaasProductName}, you expose a UMA or supported account identifier. The platform handles conversion and offramping to the receiver’s account currency and notifies you via webhooks so you can credit the customer.
+
 ### Environments
-Use separate keys and base URLs for Sandbox and Production. See:
-- Authentication: `/api-reference/authentication`
-- Environments: `/api-reference/environments`
+{umaaasProductName} supports two environments: Sandbox and Production. Sandbox mirrors production behavior and webhooks so you can test receiver resolution, quotes and funding instructions, settlement status changes, and full end‑to‑end flows without moving real funds. Production uses live credentials and base URLs for real payments once you’re ready to launch.
 
-<Note>Sandbox simulates real-time flows so you can build and test end-to-end without moving funds.</Note>
-### Dashboard
-Use the dashboard to:
-- Inspect quotes, transactions, and webhook delivery attempts.
-- Retry failed webhook deliveries and download logs for troubleshooting.
-- Manage API keys and environment access.
+### Country Availability
+TODO(ADD COUNTRY AVAILABILITY)

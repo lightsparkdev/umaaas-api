@@ -1,5 +1,5 @@
 type: object
-required: 
+required:
   - message
   - status
   - code
@@ -15,7 +15,7 @@ properties:
       | Error Code | Description |
       |------------|-------------|
       | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
-      | UMA_ADDRESS_EXISTS | UMA address already exists | 
+      | UMA_ADDRESS_EXISTS | UMA address already exists |
     enum:
       - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
       - UMA_ADDRESS_EXISTS

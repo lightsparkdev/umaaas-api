@@ -1,5 +1,5 @@
 type: object
-required: 
+required:
   - message
   - status
   - code
@@ -17,7 +17,7 @@ properties:
       | PAYREQ_REQUEST_FAILED | Payment request failed |
       | COUNTERPARTY_PUBKEY_FETCH_ERROR | Error fetching counterparty public key |
       | NO_COMPATIBLE_UMA_VERSION | No compatible UMA version |
-      | LNURLP_REQUEST_FAILED | LNURLP request failed | 
+      | LNURLP_REQUEST_FAILED | LNURLP request failed |
     enum:
       - PAYREQ_REQUEST_FAILED
       - COUNTERPARTY_PUBKEY_FETCH_ERROR

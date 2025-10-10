@@ -1,12 +1,12 @@
 description: Details about the rate and fees for an incoming transaction.
 type: object
 required:
-  - umaaasMultiplier
-  - umaaasFixedFee
-  - umaaasVariableFeeRate
-  - umaaasVariableFeeAmount
+  - gridApiMultiplier
+  - gridApiFixedFee
+  - gridApiVariableFeeRate
+  - gridApiVariableFeeAmount
 properties:
-  umaaasMultiplier:
+  gridApiMultiplier:
     type: number
     format: double
     description: >-
@@ -14,28 +14,28 @@ properties:
       including variable fees.
     exclusiveMinimum: 0
     example: 0.925
-  umaaasFixedFee:
+  gridApiFixedFee:
     type: integer
     format: int64
     description: >-
-      The fixed fee charged by the UMAaaS product to execute the quote in the
+      The fixed fee charged by the Grid product to execute the quote in the
       smallest unit of the receiving currency (eg. cents).
     minimum: 0
     example: 10
-  umaaasVariableFeeRate:
+  gridApiVariableFeeRate:
     type: number
     format: double
     description: >-
-      The variable fee rate charged by the UMAaaS product to execute the quote
+      The variable fee rate charged by the Grid product to execute the quote
       as a percentage of the receiving currency amount.
     exclusiveMinimum: 0
     example: 0.003
-  umaaasVariableFeeAmount:
+  gridApiVariableFeeAmount:
     type: number
     format: int64
     description: >-
-      The variable fee amount charged by the UMAaaS product to execute the quote
+      The variable fee amount charged by the Grid product to execute the quote
       in the smallest unit of the receiving currency (eg. cents). This is the
-      receiving amount times umaaasVariableFeeRate.
+      receiving amount times gridApiVariableFeeRate.
     minimum: 0
     example: 30

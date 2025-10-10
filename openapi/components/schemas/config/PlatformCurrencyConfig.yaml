@@ -22,7 +22,7 @@ properties:
       $ref: ../common/CounterpartyFieldDefinition.yaml
     description: >-
       List of fields which the platform requires from the counterparty
-      institutions about counterparty users. Platforms can set mandatory to
+      institutions about counterparty customers. Platforms can set mandatory to
       false if the platform does not require the field, but would like to have
       it available. Some fields may be required by the underlying UMA provider.
     example:
@@ -32,23 +32,23 @@ properties:
         mandatory: true
       - name: NATIONALITY
         mandatory: true
-  umaProviderRequiredUserFields:
+  providerRequiredCustomerFields:
     type: array
     items:
-      $ref: ../users/UserInfoFieldName.yaml
+      $ref: ../customers/CustomerInfoFieldName.yaml
     description: >-
-      List of user info field names that are required by the underlying UMA
-      provider when creating a user for this currency. These fields must be
-      supplied when creating or updating a user if this currency is intended to
-      be used by that user. If no fields are required, this field is omitted.
+      List of customer info field names that are required by the underlying UMA
+      provider when creating a customer for this currency. These fields must be
+      supplied when creating or updating a customer if this currency is intended to
+      be used by that customer. If no fields are required, this field is omitted.
     readOnly: true
     example:
       - NATIONALITY
       - BIRTH_DATE
-  umaProviderRequiredCounterpartyUserFields:
+  providerRequiredCounterpartyCustomerFields:
     type: array
     items:
-      $ref: ../users/UserInfoFieldName.yaml
+      $ref: ../customers/CustomerInfoFieldName.yaml
     description: >-
       List of fields that are required by the underlying UMA provider for this
       currency. If the counterparty does not provide these fields, quote
@@ -62,7 +62,7 @@ properties:
     items:
       $ref: ../transactions/TransactionType.yaml
     description: List of transaction types that are enabled for this currency.
-    example: 
+    example:
       - OUTGOING
       - INCOMING
 required:

@@ -56,7 +56,7 @@ post:
       content:
         application/json:
           schema:
-            $ref: ../../components/schemas/errors/Error403.yaml    
+            $ref: ../../components/schemas/errors/Error403.yaml
     '404':
       description: Invitation not found
       content:

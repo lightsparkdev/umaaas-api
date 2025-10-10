@@ -1,7 +1,7 @@
 post:
-  summary: Create an UMA invitation from a given platform user.
+  summary: Create an UMA invitation from a given platform customer.
   description: |
-    Create an UMA invitation from a given platform user.
+    Create an UMA invitation from a given platform customer.
   operationId: createInvitation
   tags:
     - Invitations
@@ -18,7 +18,7 @@ post:
           properties:
             inviterUma:
               type: string
-              description: The UMA address of the user creating the invitation
+              description: The UMA address of the customer creating the invitation
               example: $inviter@uma.domain
             firstName:
               type: string
@@ -26,7 +26,7 @@ post:
               example: Alice
             amountToSend:
               description: >
-                An amount to send (in the smallest unit of the user's currency)
+                An amount to send (in the smallest unit of the customer's currency)
                 to the invitee when the invitation is claimed.
 
                 This is optional and if not provided, the invitee will not
@@ -47,7 +47,7 @@ post:
               type: string
               format: date-time
               description: When the invitation expires (if at all)
-              example: '2023-09-01T14:30:00Z'
+              example: '2025-09-01T14:30:00Z'
   responses:
     '201':
       description: Invitation created successfully
