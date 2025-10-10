@@ -34,7 +34,7 @@ If this is your first time configuring the platform, some default values may be 
 
 ## Update Platform Configuration
 
-To update your platform configuration for pay-to-bank payments, use the PATCH endpoint:
+To update your platform configuration for payouts payments, use the PATCH endpoint:
 
 
 ```bash cURL
@@ -90,7 +90,7 @@ The `webhookEndpoint` parameter specifies the URL where Grid will send webhook n
 
 ### Supported Currencies
 
-The `supportedCurrencies` array allows you to define settings for each currency your platform will support for pay-to-bank payments. Each object in this array can contain:
+The `supportedCurrencies` array allows you to define settings for each currency your platform will support for payouts payments. Each object in this array can contain:
 
 - `currencyCode`: (String, required) The ISO 4217 currency code (e.g., "USD").
 - `minAmount`: (Integer, required) Minimum transaction amount in the smallest unit of the currency.
@@ -98,7 +98,7 @@ The `supportedCurrencies` array allows you to define settings for each currency 
 - `enabledTransactionTypes`: (Array, optional) Specifies which transaction types are allowed (e.g., `["OUTGOING", "INCOMING"]`).
 
 <Note>
-For pay-to-bank payments, you do not need UMA-specific fields like `umaProviderRequiredCustomerFields` or `umaProviderRequiredCounterpartyCustomerFields`. The configuration is simpler and focuses on basic currency requirements.
+For payouts payments, you do not need UMA-specific fields like `umaProviderRequiredCustomerFields` or `umaProviderRequiredCounterpartyCustomerFields`. The configuration is simpler and focuses on basic currency requirements.
 </Note>
 
 ## Verify Configuration

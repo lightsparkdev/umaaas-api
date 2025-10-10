@@ -30,8 +30,8 @@ Before sending payments, ensure you have:
 
 <Tip>
   If you don't have these set up yet, review the [Internal
-  Accounts](/pay-to-bank/depositing-funds/internal-accounts) and [External
-  Accounts](/pay-to-bank/depositing-funds/external-accounts) guides first.
+  Accounts](/payouts/depositing-funds/internal-accounts) and [External
+  Accounts](/payouts/depositing-funds/external-accounts) guides first.
 </Tip>
 
 ## Same-Currency Transfers
@@ -389,7 +389,7 @@ app.post("/webhooks/grid", (req, res) => {
 ```
 
 <Tip>
-  See the [Webhooks guide](/pay-to-bank/developer-guides/webhooks) for complete
+  See the [Webhooks guide](/payouts/developer-guides/webhooks) for complete
   webhook implementation details including signature verification.
 </Tip>
 
@@ -560,14 +560,14 @@ await db.payments.update(
 ## Next Steps
 
 <CardGroup cols={2}>
-<Card title="Receive Payments" icon="arrow-down-to-bracket" href="/pay-to-bank/payment-flow/receive-payment">
+<Card title="Receive Payments" icon="arrow-down-to-bracket" href="/payouts/payment-flow/receive-payment">
   Learn how to receive incoming payments from external sources
 </Card>
 
 <Card
   title="Error Handling"
   icon="triangle-exclamation"
-  href="/pay-to-bank/payment-flow/error-handling"
+  href="/payouts/payment-flow/error-handling"
 >
   Handle payment failures and error scenarios
 </Card>
@@ -575,12 +575,12 @@ await db.payments.update(
 <Card
   title="List Transactions"
   icon="list"
-  href="/pay-to-bank/payment-flow/list-transactions"
+  href="/payouts/payment-flow/list-transactions"
 >
   Query and filter transaction history
 </Card>
 
-<Card title="Reconciliation" icon="file-invoice-dollar" href="/pay-to-bank/payment-flow/reconciliation">
+<Card title="Reconciliation" icon="file-invoice-dollar" href="/payouts/payment-flow/reconciliation">
   Match payments with your internal systems
 </Card>
 </CardGroup>

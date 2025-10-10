@@ -23,38 +23,38 @@
       {
         "tab": "Payouts",
         "pages": [
-          "pay-to-bank/index",
-          "pay-to-bank/quickstart",
+          "payouts/index",
+          "payouts/quickstart",
           {
             "group": "Getting Started",
             "pages": [
               "developer-resources/terminology",
-              "pay-to-bank/onboarding/implementation-overview"
+              "payouts/onboarding/implementation-overview"
             ]
           },
           {
             "group": "Onboarding",
             "pages": [
-              "pay-to-bank/onboarding/platform-configuration",
-              "pay-to-bank/onboarding/configuring-users"
+              "payouts/onboarding/platform-configuration",
+              "payouts/onboarding/configuring-users"
             ]
           },
           {
             "group": "Accounts",
             "pages": [
-              "pay-to-bank/depositing-funds/internal-accounts",
-              "pay-to-bank/depositing-funds/external-accounts",
-              "pay-to-bank/depositing-funds/plaid"
+              "payouts/depositing-funds/internal-accounts",
+              "payouts/depositing-funds/external-accounts",
+              "payouts/depositing-funds/plaid"
             ]
           },
           {
             "group": "Payment Flow",
             "pages": [
-              "pay-to-bank/payment-flow/send-payment",
-              "pay-to-bank/payment-flow/receive-payment",
-              "pay-to-bank/payment-flow/list-transactions",
-              "pay-to-bank/payment-flow/reconciliation",
-              "pay-to-bank/payment-flow/error-handling"
+              "payouts/payment-flow/send-payment",
+              "payouts/payment-flow/receive-payment",
+              "payouts/payment-flow/list-transactions",
+              "payouts/payment-flow/reconciliation",
+              "payouts/payment-flow/error-handling"
             ]
           },
           {
