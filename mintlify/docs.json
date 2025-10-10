@@ -103,8 +103,12 @@
             ]
           },
           {
-            "group": "Depositing Funds",
-            "pages": ["developer-resources/placeholder"]
+            "group": "Accounts",
+            "pages": [
+              "rewards/developer-guides/internal-accounts",
+              "rewards/developer-guides/external-accounts",
+              "rewards/developer-guides/plaid"
+            ]
           },
           {
             "group": "Distributing Rewards",
