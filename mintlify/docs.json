@@ -154,12 +154,18 @@
             ]
           },
           {
+            "group": "Managing Accounts",
+            "pages": [
+              "pay-to-bank/depositing-funds/internal-accounts",
+              "pay-to-bank/depositing-funds/external-accounts"
+            ]
+          },
+          {
             "group": "Sending & Receiving Payments",
             "pages": [
               "remittances/developer-guides/sending-payments",
               "remittances/developer-guides/receiving-payments",
               "remittances/developer-guides/reconciliation",
-              "remittances/developer-guides/payment-error-handling"
             ]
           },
           {
