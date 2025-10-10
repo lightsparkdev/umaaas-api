@@ -5090,59 +5090,6 @@ components:
                 mapping:
                   INDIVIDUAL: '#/components/schemas/IndividualBeneficiary'
                   BUSINESS: '#/components/schemas/BusinessBeneficiary'
-    FboAccountInfo:
-      type: object
-      required:
-        - accountType
-        - currencyCode
-      properties:
-        accountType:
-          allOf:
-            - $ref: '#/components/schemas/BankAccountType'
-          example: FBO
-        currencyCode:
-          type: string
-          description: Three-letter currency code (ISO 4217)
-          example: USD
-    FboAccountExternalAccountInfo:
-      allOf:
-        - $ref: '#/components/schemas/FboAccountInfo'
-        - type: object
-          required:
-            - accountType
-          properties:
-            accountType:
-              type: string
-              enum:
-                - FBO
-              example: FBO
-            beneficiary:
-              oneOf:
-                - title: Individual Beneficiary
-                  allOf:
-                    - $ref: '#/components/schemas/IndividualBeneficiary'
-                    - type: object
-                      properties:
-                        beneficiaryType:
-                          type: string
-                          enum:
-                            - INDIVIDUAL
-                          example: INDIVIDUAL
-                - title: Business Beneficiary
-                  allOf:
-                    - $ref: '#/components/schemas/BusinessBeneficiary'
-                    - type: object
-                      properties:
-                        beneficiaryType:
-                          type: string
-                          enum:
-                            - BUSINESS
-                          example: BUSINESS
-              discriminator:
-                propertyName: beneficiaryType
-                mapping:
-                  INDIVIDUAL: '#/components/schemas/IndividualBeneficiary'
-                  BUSINESS: '#/components/schemas/BusinessBeneficiary'
     UpiAccountExternalAccountInfo:
       allOf:
         - $ref: '#/components/schemas/UpiAccountInfo'
@@ -5204,8 +5151,6 @@ components:
           $ref: '#/components/schemas/PixAccountExternalAccountInfo'
         - title: IBAN Account
           $ref: '#/components/schemas/IbanAccountExternalAccountInfo'
-        - title: FBO Account
-          $ref: '#/components/schemas/FboAccountExternalAccountInfo'
         - title: UPI Account
           $ref: '#/components/schemas/UpiAccountExternalAccountInfo'
         - title: Spark Wallet
@@ -5217,7 +5162,6 @@ components:
           CLABE: '#/components/schemas/ClabeAccountExternalAccountInfo'
           PIX: '#/components/schemas/PixAccountExternalAccountInfo'
           IBAN: '#/components/schemas/IbanAccountExternalAccountInfo'
-          FBO: '#/components/schemas/FboAccountExternalAccountInfo'
           UPI: '#/components/schemas/UpiAccountExternalAccountInfo'
           SPARK_WALLET: '#/components/schemas/SparkWalletExternalAccountInfo'
     ExternalAccount:
