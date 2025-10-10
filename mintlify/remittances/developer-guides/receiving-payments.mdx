@@ -55,36 +55,33 @@ Configure your platform settings (if you haven't already in the onboarding proce
 
 First, register your users in the system so they can receive payments via UMA. You can optionally include a `platformAccountId` in the bank account information to link accounts with your internal systems.
 
-```http
-POST /users
-```
-
-Request body:
-
-```json
-{
-  "umaAddress": "$john.receiver@thegoodbank.com",
-  "platformUserId": "9f84e0c2a72c4fa",
-  "userType": "INDIVIDUAL",
-  "fullName": "John Receiver",
-  "birthDate": "1985-06-15",
-  "address": {
-    "line1": "123 Pine Street",
-    "line2": "Unit 501",
-    "city": "Seattle",
-    "state": "WA",
-    "postalCode": "98101",
-    "country": "US"
-  },
-  "bankAccountInfo": {
-    "accountType": "US_ACCOUNT",
-    "accountNumber": "123456789",
-    "routingNumber": "987654321",
-    "accountCategory": "CHECKING",
-    "bankName": "Chase Bank",
-    "platformAccountId": "chase_primary_1234"
-  }
-}
+```bash
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/users" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "umaAddress": "$john.receiver@thegoodbank.com",
+    "platformUserId": "9f84e0c2a72c4fa",
+    "userType": "INDIVIDUAL",
+    "fullName": "John Receiver",
+    "birthDate": "1985-06-15",
+    "address": {
+      "line1": "123 Pine Street",
+      "line2": "Unit 501",
+      "city": "Seattle",
+      "state": "WA",
+      "postalCode": "98101",
+      "country": "US"
+    },
+    "bankAccountInfo": {
+      "accountType": "US_ACCOUNT",
+      "accountNumber": "123456789",
+      "routingNumber": "987654321",
+      "accountCategory": "CHECKING",
+      "bankName": "Chase Bank",
+      "platformAccountId": "chase_primary_1234"
+    }
+  }'
 ```
 
 See the [Configuring Users](/docs/configuring-users) guide for more details.
@@ -181,33 +178,27 @@ If your platform's architecture requires asynchronous processing before approvin
 
 Example of approving asynchronously:
 
-```http
-POST /transactions/Transaction:019542f5-b3e7-1d02-0000-000000000005/approve
-```
-
-Request body (if information was requested):
-
-```json
-{
-  "receiverUserInfo": {
-    "COUNTRY_OF_RESIDENCE": "US",
-    "FULL_NAME": "John Receiver"
-  }
-}
+```bash
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/transactions/Transaction:019542f5-b3e7-1d02-0000-000000000005/approve" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "receiverUserInfo": {
+      "COUNTRY_OF_RESIDENCE": "US",
+      "FULL_NAME": "John Receiver"
+    }
+  }'
 ```
 
 Example of rejecting asynchronously:
 
-```http
-POST /transactions/Transaction:019542f5-b3e7-1d02-0000-000000000005/reject
-```
-
-Request body (optional):
-
-```json
-{
-  "reason": "RESTRICTED_JURISDICTION"
-}
+```bash
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/transactions/Transaction:019542f5-b3e7-1d02-0000-000000000005/reject" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "reason": "RESTRICTED_JURISDICTION"
+  }'
 ```
 
 > **Important**: If you choose the asynchronous path, you must call the approve/reject endpoint within 5 seconds, or the payment will be automatically rejected. The synchronous path (Option 1) is preferred where possible.

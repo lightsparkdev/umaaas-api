@@ -31,43 +31,41 @@ For platforms that are regulated financial institutions who already handle your 
 
 #### Create Individual Customer
 
-```http
-POST /customers
-Authorization: Basic <base64-encoded-credentials>
-Content-Type: application/json
-
-{
-  "platformCustomerId": "user_12345",
-  "customerType": "INDIVIDUAL",
-  "fullName": "Jane Doe",
-  "birthDate": "1992-03-25",
-  "nationality": "US"
-}
+```bash
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/customers" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "platformCustomerId": "user_12345",
+    "customerType": "INDIVIDUAL",
+    "fullName": "Jane Doe",
+    "birthDate": "1992-03-25",
+    "nationality": "US"
+  }'
 ```
 
 #### Create Business Customer
 
-```http
-POST /customers
-Authorization: Basic <base64-encoded-credentials>
-Content-Type: application/json
-
-{
-  "platformCustomerId": "biz_67890",
-  "customerType": "BUSINESS",
-  "businessInfo": {
-    "legalName": "Acme Corporation",
-    "registrationNumber": "BRN-456789123",
-    "taxId": "EIN-987123456"
-  },
-  "address": {
-    "line1": "400 Commerce Way",
-    "city": "Austin",
-    "state": "TX",
-    "postalCode": "78701",
-    "country": "US"
-  },
-}
+```bash
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/customers" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "platformCustomerId": "biz_67890",
+    "customerType": "BUSINESS",
+    "businessInfo": {
+      "legalName": "Acme Corporation",
+      "registrationNumber": "BRN-456789123",
+      "taxId": "EIN-987123456"
+    },
+    "address": {
+      "line1": "400 Commerce Way",
+      "city": "Austin",
+      "state": "TX",
+      "postalCode": "78701",
+      "country": "US"
+    }
+  }'
 ```
 
 ### Response
@@ -98,9 +96,9 @@ When a customer is created successfully, internal accounts are automatically cre
 
 Retrieve a paginated list of customers with optional filtering:
 
-```http
-GET /customers?limit=20&customerType=INDIVIDUAL
-Authorization: Basic <base64-encoded-credentials>
+```bash
+curl -X GET "https://api.lightspark.com/grid/2025-10-13/customers?limit=20&customerType=INDIVIDUAL" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
 ### Query Parameters
@@ -180,18 +178,18 @@ To find a specific customer by your platform ID, use: `GET /customers?platformCu
 
 Get detailed information about a specific customer:
 
-```http
-GET /customers/{customerId}
-Authorization: Basic <base64-encoded-credentials>
+```bash
+curl -X GET "https://api.lightspark.com/grid/2025-10-13/customers/{customerId}" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
 ## Deleting Customers
 
 Delete a customer by their system-generated ID:
 
-```http
-DELETE /customers/{customerId}
-Authorization: Basic <base64-encoded-credentials>
+```bash
+curl -X DELETE "https://api.lightspark.com/grid/2025-10-13/customers/{customerId}" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
 <Warning>

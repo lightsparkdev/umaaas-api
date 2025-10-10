@@ -45,8 +45,21 @@ out the [Quickstart Guide KYC/KYB section](/payouts/quickstart#choosing-your-onb
 
 To register a new user in the system, use the `POST /users` endpoint:
 
-```http
-POST /users
+```bash
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/users" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "platformUserId": "9f84e0c2a72c4fa",
+    "userType": "INDIVIDUAL",
+    "bankAccountInfo": {
+      "accountType": "US_ACCOUNT",
+      "accountNumber": "123450000",
+      "routingNumber": "000123456",
+      "accountCategory": "CHECKING",
+      "bankName": "Example Bank"
+    }
+  }'
 ```
 
 The API allows creating a user with minimal PII.
@@ -128,14 +141,16 @@ Example request body for a business user:
 
 You can retrieve user information using either the Grid-assigned user ID or your platform's user ID:
 
-```http
-GET /users/{userId}
+```bash
+curl -X GET "https://api.lightspark.com/grid/2025-10-13/users/{userId}" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
 or list users with a filter:
 
-```http
-GET /users?platformUserId={platformUserId}&userType={userType}&createdAfter={createdAfter}&createdBefore={createdBefore}&cursor={cursor}&limit={limit}
+```bash
+curl -X GET "https://api.lightspark.com/grid/2025-10-13/users?platformUserId={platformUserId}&userType={userType}&createdAfter={createdAfter}&createdBefore={createdBefore}&cursor={cursor}&limit={limit}" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
 Note that this example shows all available filters. You can use any combination of them.
@@ -144,8 +159,18 @@ Note that this example shows all available filters. You can use any combination 
 
 To update user information:
 
-```http
-PATCH /users/{userId}
+```bash
+curl -X PATCH "https://api.lightspark.com/grid/2025-10-13/users/{userId}" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "bankAccountInfo": {
+      "accountType": "US_ACCOUNT",
+      "accountNumber": "123456789",
+      "routingNumber": "987654321",
+      "bankName": "Chase Bank"
+    }
+  }'
 ```
 
 Example request body for updating a user's bank account information:
@@ -291,8 +316,10 @@ For scenarios where you need to add many users to the system at once, the API pr
 
 For large-scale user imports, you can upload a CSV file containing user information:
 
-```http
-POST /users/bulk/csv
+```bash
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/users/bulk/csv" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -F "file=@users.csv"
 ```
 
 The CSV file should follow a specific format with required and optional columns based on user type. Here's an example:
@@ -317,8 +344,9 @@ You can track the job status through:
 1. Webhook notifications (if configured)
 2. Status polling endpoint:
 
-```http
-GET /users/bulk/jobs/{jobId}
+```bash
+curl -X GET "https://api.lightspark.com/grid/2025-10-13/users/bulk/jobs/{jobId}" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
 Example job status response:

@@ -41,30 +41,29 @@ Create a quote to convert USD to Bitcoin and deliver it to a Spark wallet. The q
 
 ### Request
 
-```http
-POST /quotes
-Authorization: Basic <base64-encoded-credentials>
-Content-Type: application/json
-
-{
-  "source": {
-    "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
-    "currency": "USD"
-  },
-  "destination": {
-    "externalAccountDetails": {
+```bash
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/quotes" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "source": {
       "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
-      "currency": "BTC",
-      "accountInfo": {
-        "accountType": "SPARK_WALLET",
-        "address": "sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu"
+      "currency": "USD"
+    },
+    "destination": {
+      "externalAccountDetails": {
+        "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
+        "currency": "BTC",
+        "accountInfo": {
+          "accountType": "SPARK_WALLET",
+          "address": "sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu"
+        }
       }
-    }
-  },
-  "lockedCurrencySide": "SENDING",
-  "lockedCurrencyAmount": 10000,
-  "description": "On-ramp: Buy $100 of Bitcoin"
-}
+    },
+    "lockedCurrencySide": "SENDING",
+    "lockedCurrencyAmount": 10000,
+    "description": "On-ramp: Buy $100 of Bitcoin"
+  }'
 ```
 
 <Note>
@@ -145,16 +144,15 @@ In production, you would initiate a real-time push payment (ACH, RTP, wire, etc.
 <Tab title="Sandbox (Simulated)">
 In Sandbox, you can simulate funding using the `/sandbox/send` endpoint:
 
-```http
-POST /sandbox/send
-Authorization: Basic <base64-encoded-credentials>
-Content-Type: application/json
-
-{
-  "reference": "RAMP-ABC123",
-  "currencyCode": "USD",
-  "currencyAmount": 10000
-}
+```bash
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/sandbox/send" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "reference": "RAMP-ABC123",
+    "currencyCode": "USD",
+    "currencyAmount": 10000
+  }'
 ```
 
 **Response:**

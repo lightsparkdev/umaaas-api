@@ -20,13 +20,14 @@ Distributing Bitcoin rewards involves creating a quote that converts your fiat b
 In this guide, we'll use the platform's USD internal account as the funding source for the rewards.
 You can find your platform's internal account by listing all internal accounts for your platform.
 
-```http request
-GET /platform/internal-accounts
-Authorization: Basic <base64-encoded-credentials>
+```bash
+curl -X GET "https://api.lightspark.com/grid/2025-10-13/platform/internal-accounts" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
+Response:
 
-```json response
+```json
 {
   "accountId": "InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965",
   "currency": "USD",
@@ -38,34 +39,34 @@ Authorization: Basic <base64-encoded-credentials>
 
 The core request specifies your platform's internal account as the source and the customer's wallet as the destination.
 
-```http create quote request
-POST /quotes
-Authorization: Basic <base64-encoded-credentials>
-Content-Type: application/json
-
-{
-  "source": {
-    "accountId": "InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965"
-  },
-  "destination": {
-    "externalAccountDetails": {
-      "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
-      "currency": "BTC",
-      "accountInfo": {
-        "accountType": "SPARK_WALLET",
-        "address": "spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu"
+```bash
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/quotes" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "source": {
+      "accountId": "InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965"
+    },
+    "destination": {
+      "externalAccountDetails": {
+        "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
+        "currency": "BTC",
+        "accountInfo": {
+          "accountType": "SPARK_WALLET",
+          "address": "spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu"
+        }
       }
-    }
-  },
-  "lockedCurrencySide": "SENDING",
-  "lockedCurrencyAmount": 100, // $1.00 in cents
-  "immediatelyExecute": true,
-  "description": "Weekly reward payout"
-}
+    },
+    "lockedCurrencySide": "SENDING",
+    "lockedCurrencyAmount": 100,
+    "immediatelyExecute": true,
+    "description": "Weekly reward payout"
+  }'
 ```
 
+Response:
 
-```json response
+```json
 {
   "quoteId": "Quote:019542f5-b3e7-1d02-0000-000000000020",
   "status": "PROCESSING",
@@ -157,9 +158,9 @@ The response will be the same as the immediate execution response, but the statu
 
 After reviewing the quote's exchange rate and fees, execute it:
 
-```http
-POST /quotes/{quoteId}/execute
-Authorization: Basic <base64-encoded-credentials>
+```bash
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/quotes/{quoteId}/execute" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
 <Note>
@@ -195,19 +196,18 @@ If you've already registered the external account, reference it by ID. This is m
 
 First, create the external account:
 
-```http
-POST /customers/external-accounts
-Authorization: Basic <base64-encoded-credentials>
-Content-Type: application/json
-
-{
-  "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
-  "currency": "BTC",
-  "accountInfo": {
-    "accountType": "SPARK_WALLET",
-    "address": "spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu"
-  }
-}
+```bash
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/customers/external-accounts" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
+    "currency": "BTC",
+    "accountInfo": {
+      "accountType": "SPARK_WALLET",
+      "address": "spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu"
+    }
+  }'
 ```
 
 Then reference it in `/quotes`:
@@ -255,16 +255,16 @@ When the Bitcoin transfer completes, you'll receive a webhook:
 
 Alternatively, poll the quote or transaction endpoint:
 
-```http
-GET /quotes/{quoteId}
-Authorization: Basic <base64-encoded-credentials>
+```bash
+curl -X GET "https://api.lightspark.com/grid/2025-10-13/quotes/{quoteId}" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
 Or:
 
-```http
-GET /transactions/{transactionId}
-Authorization: Basic <base64-encoded-credentials>
+```bash
+curl -X GET "https://api.lightspark.com/grid/2025-10-13/transactions/{transactionId}" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
 ## Common Patterns
@@ -307,8 +307,9 @@ Authorization: Basic <base64-encoded-credentials>
 
 Then review the exchange rate and fees, and execute:
 
-```http
-POST /quotes/{quoteId}/execute
+```bash
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/quotes/{quoteId}/execute" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
 ## Best Practices

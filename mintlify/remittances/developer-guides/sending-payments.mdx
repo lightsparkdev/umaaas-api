@@ -44,8 +44,9 @@ The process consists of five main steps:
 
 First, check if a UMA address is valid and retrieve supported currencies and exchange rates.
 
-```http
-GET /receiver/$recipient@example.com?platformUserId=9f84e0c2a72c4fa
+```bash
+curl -X GET "https://api.lightspark.com/grid/2025-10-13/receiver/\$recipient@example.com?platformUserId=9f84e0c2a72c4fa" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
 Response:
@@ -96,25 +97,22 @@ This response tells you the currencies the recipient can receive and, crucially,
 
 Generate a quote for the payment with locked exchange rates and fees.
 
-```http
-POST /quotes
-```
-
-Request body:
-
-```json
-{
-  "lookupId": "Lookup:019542f5-b3e7-1d02-0000-000000000009",
-  "sendingCurrencyCode": "USD",
-  "receivingCurrencyCode": "EUR",
-  "lockedCurrencySide": "SENDING",
-  "lockedCurrencyAmount": 10000,
-  "description": "Invoice #1234 payment",
-  "senderUserInfo": {
-    "FULL_NAME": "John Sender",
-    "BIRTH_DATE": "1985-06-15"
-  }
-}
+```bash
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/quotes" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "lookupId": "Lookup:019542f5-b3e7-1d02-0000-000000000009",
+    "sendingCurrencyCode": "USD",
+    "receivingCurrencyCode": "EUR",
+    "lockedCurrencySide": "SENDING",
+    "lockedCurrencyAmount": 10000,
+    "description": "Invoice #1234 payment",
+    "senderUserInfo": {
+      "FULL_NAME": "John Sender",
+      "BIRTH_DATE": "1985-06-15"
+    }
+  }'
 ```
 
 If the `requiredPayerDataFields` array from the previous step (looking up the receiver) was not empty, you **must** include the `senderUserInfo` object in your quote request. This object should contain key-value pairs for each field that was listed as mandatory in `requiredPayerDataFields`. This is PII about your user (the sender) that the recipient's VASP requires.
@@ -166,8 +164,9 @@ Use the `paymentInstructions` from the quote to execute a payment through your b
 
 You can track the status of your payment by polling the payment status endpoint or waiting for the webhook notification. To poll the payment status, use the following endpoint:
 
-```http
-GET /quotes/Quote:019542f5-b3e7-1d02-0000-000000000006
+```bash
+curl -X GET "https://api.lightspark.com/grid/2025-10-13/quotes/Quote:019542f5-b3e7-1d02-0000-000000000006" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
 Response:

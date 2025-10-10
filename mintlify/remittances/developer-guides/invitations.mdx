@@ -33,12 +33,14 @@ You will need to provide:
 
 To create an invitation, make a POST request to `/invitations` with the inviter's UMA address:
 
-```http
-POST /invitations
-{
-  "inviterUma": "$inviter@uma.domain",
-  "expiresAt": "2024-12-31T23:59:59Z"  // Optional
-}
+```bash
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/invitations" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "inviterUma": "$inviter@uma.domain",
+    "expiresAt": "2024-12-31T23:59:59Z"
+  }'
 ```
 
 The response will include a unique invitation code that can be shared with the invitee:
@@ -64,13 +66,15 @@ The Grid API supports a "pay-by-link" feature that allows users to create invita
 
 To create a pay-by-link invitation, include the `amountToSend` field when creating the invitation:
 
-```http
-POST /invitations
-{
-  "inviterUma": "$inviter@uma.domain",
-  "amountToSend": 5000,
-  "expiresAt": "2024-12-31T23:59:59Z"  // It's best to set an expiration time for invitations with a payment amount.
-}
+```bash
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/invitations" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "inviterUma": "$inviter@uma.domain",
+    "amountToSend": 5000,
+    "expiresAt": "2024-12-31T23:59:59Z"
+  }'
 ```
 
 Assuming the user's currency is USD, this example creates an invitation that will send $50 USD to the invitee when
@@ -116,11 +120,13 @@ These payments can only be sender-locked, meaning that the sender will not know 
 Once onboarding (or login from an invite link) is complete, the invitee's new VASP (which may or may not be the same as the inviter's Grid API platform) will need to claim the invitation by making a
 POST request to `/invitations/{invitationCode}/claim` including the invitee's newly-created UMA address:
 
-```http
-POST /invitations/019542f5/claim
-{
-  "inviteeUma": "$invitee@uma.domain"
-}
+```bash
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/invitations/019542f5/claim" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "inviteeUma": "$invitee@uma.domain"
+  }'
 ```
 
 A successful claim will:
@@ -144,8 +150,9 @@ You can check the status of an invitation at any time by making a GET request to
 
 To cancel a pending invitation, make a POST request to `/invitations/{invitationCode}/cancel`:
 
-```http
-POST /invitations/019542f5/cancel
+```bash
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/invitations/019542f5/cancel" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
 A successful cancellation will:
