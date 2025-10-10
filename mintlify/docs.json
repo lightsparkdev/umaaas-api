@@ -120,7 +120,7 @@
           {
             "group": "Platform Tools",
             "pages": [
-              "remittances/developer-guides/webhooks",
+              "ramps/webhooks",
               "remittances/developer-guides/sandbox-testing"
             ]
           },
@@ -165,7 +165,7 @@
             "pages": [
               "remittances/developer-guides/sending-payments",
               "remittances/developer-guides/receiving-payments",
-              "remittances/developer-guides/reconciliation",
+              "remittances/developer-guides/reconciliation"
             ]
           },
           {
