@@ -65,6 +65,7 @@ The sandbox provides several test UMA addresses you can use to simulate differen
 | `$success.inr@sandbox.umaaas.uma.money` | Always succeeds, sends INR |
 | `$pending.long.usd@sandbox.umaaas.uma.money` | Simulates a long-pending payment |
 | `$fail.compliance.usd@sandbox.umaaas.uma.money` | Simulates compliance check failure |
+| `$fail.timeout.usd@sandbox.uma.money` | Simulates failure due to timeout |
 
 ## Testing Outgoing Payments
 
@@ -213,6 +214,13 @@ GET /receiver/$pending.long.usd@sandbox.umaaas.uma.money
 ```http
 GET /receiver/$non.existent.usd@sandbox.umaaas.uma.money
 # ... should return 404 Not Found
+```
+
+4. Test payment timeouts:
+
+```http
+GET /receiver/$fail.timeout.usd@sandbox.umaaas.uma.money
+# ... create quote and attempt payment
 ```
 
 Each of these will trigger appropriate error webhooks and status updates to help you test your error handling.
