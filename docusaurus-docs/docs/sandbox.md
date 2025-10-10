@@ -65,7 +65,7 @@ The sandbox provides several test UMA addresses you can use to simulate differen
 | `$success.inr@sandbox.umaaas.uma.money` | Always succeeds, sends INR |
 | `$pending.long.usd@sandbox.umaaas.uma.money` | Simulates a long-pending payment |
 | `$fail.compliance.usd@sandbox.umaaas.uma.money` | Simulates compliance check failure |
-| `$fail.timeout.usd@sandbox.uma.money` | Simulates failure due to timeout |
+| `$fail.timeout.usd@sandbox.umaaas.uma.money` | Simulates failure due to timeout |
 
 ## Testing Outgoing Payments
 
