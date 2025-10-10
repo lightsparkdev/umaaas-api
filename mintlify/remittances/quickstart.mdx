@@ -30,6 +30,7 @@ This quickstart guides you through sending a payment from the US to a bank accou
     -d '{
       "platformCustomerId": "cust_7b3c5a89d2f1e0",
       "customerType": "INDIVIDUAL",
+      "umaAddress": "$alice@yourapp.example",
       "fullName": "Alice Smith",
       "address": {
         "line1": "123 Pine Street",
@@ -46,7 +47,7 @@ This quickstart guides you through sending a payment from the US to a bank accou
   {
     "id": "Customer:019542f5-b3e7-1d02-0000-000000000001",
     "customerType": "INDIVIDUAL",
-    "umaAddress": "$default-generated-uma@grid.lightspark.com",
+    "umaAddress": "$alice@yourapp.example",
     "platformCustomerId": "cust_7b3c5a89d2f1e0"
   }
   ```
@@ -56,23 +57,30 @@ This quickstart guides you through sending a payment from the US to a bank accou
   Add a beneficiary account in Mexico using their CLABE. We attach it to the same customer for this example.
 
   ```bash
-  curl -sS -X POST "$GRID_BASE_URL/external-accounts" \
+  curl -sS -X POST "$GRID_BASE_URL/customers/external-accounts" \
     -u "$GRID_API_KEY:$GRID_API_SECRET" \
     -H "Content-Type: application/json" \
     -d '{
       "currency": "MXN",
       "platformAccountId": "mx_beneficiary_001",
       "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
-      "beneficiary": {
-        "counterPartyType": "INDIVIDUAL",
-        "fullName": "Carlos Pérez",
-        "email": "carlos.perez@example.mx"
-      },
       "accountInfo": {
         "accountType": "CLABE",
         "clabeNumber": "123456789012345678",
         "bankName": "BBVA Mexico",
-        "accountHolderName": "Carlos Pérez"
+        "beneficiary": {
+          "beneficiaryType": "INDIVIDUAL",
+          "fullName": "Carlos Pérez",
+          "birthDate": "1985-03-15",
+          "nationality": "MX",
+          "address": {
+            "line1": "Av. Reforma 123",
+            "city": "Ciudad de México",
+            "state": "CDMX",
+            "postalCode": "06600",
+            "country": "MX"
+          }
+        }
       }
     }'
   ```
@@ -81,9 +89,28 @@ This quickstart guides you through sending a payment from the US to a bank accou
   ```json
   {
     "id": "ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123",
+    "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
     "currency": "MXN",
-    "beneficiary": { "fullName": "Carlos Pérez" },
-    "accountInfo": { "accountType": "CLABE", "bankName": "BBVA Mexico" }
+    "status": "ACTIVE",
+    "platformAccountId": "mx_beneficiary_001",
+    "accountInfo": {
+      "accountType": "CLABE",
+      "clabeNumber": "123456789012345678",
+      "bankName": "BBVA Mexico",
+      "beneficiary": {
+        "beneficiaryType": "INDIVIDUAL",
+        "fullName": "Carlos Pérez",
+        "birthDate": "1985-03-15",
+        "nationality": "MX",
+        "address": {
+          "line1": "Av. Reforma 123",
+          "city": "Ciudad de México",
+          "state": "CDMX",
+          "postalCode": "06600",
+          "country": "MX"
+        }
+      }
+    }
   }
   ```
 </Step>
@@ -97,7 +124,7 @@ This quickstart guides you through sending a payment from the US to a bank accou
     -H "Content-Type: application/json" \
     -d '{
       "source": {
-        "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
+        "umaAddress": "$alice@yourapp.example",
         "currency": "USD"
       },
       "destination": {

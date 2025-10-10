@@ -1,51 +1,105 @@
 ---
 title: "Introduction"
-description: "On and off ramps with the Grid API"
+description: "Convert between fiat and crypto with Grid's on-ramp and off-ramp infrastructure"
 ---
 
-GRID Ramps provide the foundational infrastructure to connect the traditional financial system with the world of digital assets. Our API-driven solution allows partners to seamlessly embed on-ramp (fiat-to-crypto) and off-ramp (crypto-to-fiat) functionality directly into their applications.
-We handle the complexities of payment processing, liquidity, and compliance, so you can focus on building a great user experience.
+With **Grid Ramps**, you can seamlessly convert between fiat currencies and cryptocurrencies through a single, simple API. The Lightspark Grid automatically handles currency conversion, compliance, and instant settlement via the Lightning Network.
 
-Key Capabilities
-<CardGroup cols={2}>
-  <Card title="Global Payment Rails" icon="globe">
-    Connect to the traditional financial system via **ACH**, **Wire**, and regional equivalents like **SEPA**. We also support popular **eWallets** to provide users with familiar and trusted payment options.
+<CardGroup cols={3}>
+  <Card title="Instant Conversion" icon="bolt">
+    Convert fiat to crypto (on-ramp) or crypto to fiat (off-ramp) in seconds
+    using real-time exchange rates.
   </Card>
-  <Card title="Guaranteed Exchange Rates" icon="lock">
-    Use our **quote** system to lock in an exchange rate for a specified period, protecting users from price volatility and ensuring transparency.
+  <Card title="Simplified Infrastructure" icon="shield-check">
+    Grid handles the conversion and settlement process, reducing complexity in
+    your crypto integration.
   </Card>
-  <Card title="Automated Webhooks" icon="bell">
-    Our system monitors payment rails and provides real-time updates via **webhooks**, notifying you the moment fiat funds are received and when digital assets are delivered.
-  </Card>
-  <Card title="Robust Liquidity" icon="water">
-    We manage deep liquidity pools for both fiat and crypto to ensure high success rates and prevent slippage, leading to a reliable and smooth user experience.
+  <Card title="Global Settlement" icon="globe">
+    Leverages the Lightning Network for instant Bitcoin transfers and local
+    banking rails for fiat settlement worldwide.
   </Card>
 </CardGroup>
 
-How an On-Ramp Works
-<Info>
-The on-ramp process is designed to be simple and secure, moving from quote to settlement with automated confirmations at each stage.
-</Info>
+---
+
+## How Ramps Work
+
 <Steps>
-  <Step title="Request a Quote">
-    The user decides to buy a digital asset. Your application calls our `/ramps/quote` endpoint specifying the currency, amount, and destination.
+  <Step title="Quote Creation">
+    Get real-time exchange rates and payment instructions for your desired
+    conversion (fiat → crypto or crypto → fiat).
   </Step>
-  <Step title="Lock Rate & Display Instructions">
-    The user accepts the quote. Your application locks it and displays the specific payment instructions (e.g., bank account and a reference code) returned by the GRID API.
+  <Step title="Funding & Conversion">
+    Fund the quote using the provided payment instructions. Grid executes the
+    conversion at the quoted rate.
   </Step>
-  <Step title="Confirm Fiat Payment">
-    The user sends their fiat funds. GRID automatically detects the payment and sends a webhook to your system confirming receipt.
-  </Step>
-  <Step title="Deliver Digital Assets">
-    Upon confirmation, GRID executes the transaction, delivering the digital assets to the user's destination wallet.
+  <Step title="Settlement">
+    Receive your converted funds via Lightning Network (for crypto) or local
+    banking rails (for fiat) within seconds.
   </Step>
 </Steps>
 
-<CardGroup cols={2}>
-  <Card title="On-Ramp API Reference" icon="arrow-down" href="/api-reference/ramps/on-ramp">
-    View the complete on-ramp API documentation
-  </Card>
-  <Card title="Off-Ramp API Reference" icon="arrow-up" href="/api-reference/ramps/off-ramp">
-    View the complete off-ramp API documentation
-  </Card>
-</CardGroup>
+---
+
+## Grid Ramps Features
+
+Users interact with **Grid Ramps** through two main interfaces:
+
+<Tabs>
+  <Tab title="API">
+    Programmatic access to create quotes, fund conversions, execute transfers,
+    and reconcile all activity with real-time webhooks.
+  </Tab>
+  <Tab title="Dashboard">
+    Your development and operations team can use the dashboard to monitor
+    conversions, manage API keys and environments, and troubleshoot with
+    detailed logs.
+  </Tab>
+</Tabs>
+
+### On-Ramp: Fiat to Crypto
+
+Convert fiat currency to cryptocurrency and deliver it to self-custody wallets.
+
+- **Create quotes** to lock exchange rates for fiat-to-crypto conversions
+- **Payment instructions** guide users on how to fund their conversion
+- **Instant delivery** to Spark wallets or other supported crypto destinations
+- **Webhook notifications** confirm successful conversion and delivery
+
+### Off-Ramp: Crypto to Fiat
+
+Convert cryptocurrency to fiat currency and deliver it to bank accounts.
+
+- **Pre-funded accounts** hold crypto balances for conversion
+- **Real-time rates** for crypto-to-fiat exchange
+- **Bank account delivery** via local payment rails
+- **Compliance** handled automatically through Grid's infrastructure
+
+### Funding Options
+
+**Grid Ramps** supports multiple funding models:
+
+- **Just-in-time (JIT)**: Create a quote and fund it in real-time using payment instructions (ideal for on-ramps)
+- **Pre-funded accounts**: Maintain balances in crypto or fiat and convert from those balances (ideal for off-ramps)
+
+<Tip>
+  You can mix funding models based on your use case. On-ramps typically use JIT
+  funding, while off-ramps use pre-funded accounts.
+</Tip>
+
+### Environments
+
+<Note>
+**Grid Ramps** supports two environments: **Sandbox** and **Production**.
+
+The Sandbox mirrors production behavior, allowing you to test the full end-to-end flow—from creating quotes and simulating funding to executing conversions and receiving webhooks—without moving real funds.
+
+The Production environment uses live credentials and base URLs for real transactions once you're ready to launch.
+
+</Note>
+
+---
+
+<Card title="Get Started" icon="play" href="/ramps/quickstart">
+  Ready to integrate Grid Ramps? Check out our quickstart guide.
+</Card>

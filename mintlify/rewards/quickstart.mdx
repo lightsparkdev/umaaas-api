@@ -141,9 +141,7 @@ creation and quote execution using the `externalAccountDetails` option.
 POST /quotes
 Authorization: Basic <base64-encoded-credentials>
 Content-Type: application/json
-```
 
-```json
 {
   "source": {
     "accountId": "InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965"
@@ -152,12 +150,6 @@ Content-Type: application/json
     "externalAccountDetails": {
       "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
       "currency": "BTC",
-      "beneficiary": {
-        "counterPartyType": "INDIVIDUAL",
-        "fullName": "John Doe",
-
-        "nationality": "US"
-      },
       "accountInfo": {
         "accountType": "SPARK_WALLET",
         "address": "spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu"

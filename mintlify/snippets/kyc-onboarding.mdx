@@ -1,17 +1,10 @@
----
-title: "KYC/Onboarding Flow"
-description: "Complete customer onboarding and KYC verification process"
----
-
-<Info>
 The KYC/KYB flow allows you to onboard customers through a hosted KYC link or direct API calls.
-</Info>
 
-## Platform Regulation Status
+### Platform Regulation Status
 
 Your platform's regulatory status determines the KYC/onboarding requirements and available flows.
 
-### Regulated Platforms
+#### Regulated Platforms
 
 <Check>
 **Regulated platforms** have lighter KYC requirements since they handle compliance verification internally.
@@ -24,7 +17,7 @@ Regulated financial institutions can:
 - **Reduced Documentation**: Only provide essential customer information required by your payment counterparty or service provider.
 - **Faster Onboarding**: Streamlined process for known, verified customers
 
-### Unregulated Platforms
+#### Unregulated Platforms
 
 <Warning>
 **Unregulated platforms** require full KYC/KYB verification of customers through hosted flows.
@@ -35,7 +28,7 @@ Unregulated platforms must:
 - **Hosted KYC Flow**: Use the hosted KYC link for complete identity verification
 - **Extended Review**: Customers may require manual review and approval in some cases
 
-## Choosing Your Onboarding Flow
+### Choosing Your Onboarding Flow
 
 Use this decision tree to determine the best onboarding approach for your platform:
 
@@ -55,27 +48,24 @@ Use this decision tree to determine the best onboarding approach for your platfo
 </Accordion>
 </AccordionGroup>
 
-## Hosted KYC Link Flow
+### Hosted KYC Link Flow
 
 The hosted KYC flow provides a secure, hosted interface where customers can complete their identity verification and onboarding process.
 
-### Generate KYC Link
+#### Generate KYC Link
 
 
 ```http GET /customers/kyc-link
-GET /customers/kyc-link?redirect_uri=https://yourapp.com/onboarding-complete&platform_customer_id=019542f5-b3e7-1d02-0000-000000000001
+GET /customers/kyc-link?redirectUri=https://yourapp.com/onboarding-complete&platformCustomerId=019542f5-b3e7-1d02-0000-000000000001
 Authorization: Basic <base64-encoded-credentials>
-```
 
-```json Success
 {
   "kycUrl": "https://kyc.lightspark.com/onboard/abc123def456",
   "platformCustomerId": "019542f5-b3e7-1d02-0000-000000000001",
-  "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001"
 }
 ```
 
-<ParamField query="redirect_uri" type="string">
+<ParamField query="redirectUri" type="string">
 Optional URI parameter that specifies where the customer will be automatically redirected after successfully completing the hosted KYC verification process. If not provided, customers will be redirected to a default completion page.
 </ParamField>
 
@@ -84,17 +74,17 @@ A hosted KYC link for your customer to complete identity verification and onboar
 </ResponseField>
 
 <Note>
-The `redirect_uri` parameter is embedded in the KYC URL and will be used to redirect the customer back to your application after they complete the verification process. This provides a seamless user experience by returning them to your platform.
+The `redirectUri` parameter is embedded in the KYC URL and will be used to redirect the customer back to your application after they complete the verification process. This provides a seamless user experience by returning them to your platform.
 </Note>
 
-### Complete KYC Process
+#### Complete KYC Process
 
 <Steps>
 <Step title="Generate KYC Link">
-  Call the `/customers/kyc-link` endpoint with your `redirect_uri` parameter to generate a hosted KYC URL for your customer.
+  Call the `/customers/kyc-link` endpoint with your `redirectUri` parameter to generate a hosted KYC URL for your customer.
   
   <Note>
-  The `redirect_uri` parameter is embedded in the generated KYC URL and will be used to automatically redirect the customer back to your application after they complete verification.
+  The `redirectUri` parameter is embedded in the generated KYC URL and will be used to automatically redirect the customer back to your application after they complete verification.
   </Note>
 </Step>
 
@@ -119,7 +109,7 @@ The `redirect_uri` parameter is embedded in the KYC URL and will be used to redi
 </Step>
 
 <Step title="Automatic Redirect">
-  Upon successful KYC completion, the customer is automatically redirected to your specified `redirect_uri` URL.
+  Upon successful KYC completion, the customer is automatically redirected to your specified `redirectUri` URL.
   
   <Check>
   The customer account will be automatically created by the system upon successful KYC completion. You can identify the new customer using your `platformCustomerId` or other identifiers.
@@ -135,11 +125,10 @@ The `redirect_uri` parameter is embedded in the KYC URL and will be used to redi
 </Step>
 </Steps>
 
-### Handling KYC Status Webhooks
+#### Handling KYC Status Webhooks
 
 After a customer completes the hosted KYC verification process, you'll receive webhook notifications about their KYC status. These notifications are sent to your configured webhook endpoint.
 
-<RequestExample>
 ```http POST Your Webhook Endpoint
 POST https://yourapp.com/webhooks/kyc-status
 Content-Type: application/json
@@ -154,7 +143,6 @@ X-Webhook-Signature: sha256=abc123...
   "platformCustomerId": "1234567"
 }
 ```
-</RequestExample>
 
 <ResponseField name="customerId" type="string" required>
 System-generated unique identifier of the customer whose KYC status has changed.
@@ -231,14 +219,3 @@ app.post('/webhooks/kyc-status', (req, res) => {
 ```
 </Accordion>
 </AccordionGroup>
-
-### Universal Best Practices
-
-<Tip>
-**Idempotent Operations**: Use consistent `platformCustomerId` values to avoid duplicate customer creation.
-</Tip>
-
-<Warning>
-**Regulatory Compliance**: Ensure your chosen onboarding flow meets all applicable regulatory requirements for your jurisdiction and customer types.
-</Warning>
-

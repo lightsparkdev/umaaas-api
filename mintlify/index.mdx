@@ -6,7 +6,7 @@ mode: "custom"
 export const HeroCard = ({ title, description, href, icon }) => {
   return (
     <a className="group cursor-pointer pb-8 hero-card grow-0 basis-full sm:basis-1/2 lg:basis-[30%]" href={href}>
-      <img src={icon} alt="Globe icon" />
+      <img src={icon} alt="Globe icon" className="w-10 h-10" />
       <div className="card-content">
         <h3 className="highlight">{title}</h3>
         <span>{description}</span>
@@ -48,15 +48,9 @@ export const HeroCard = ({ title, description, href, icon }) => {
     <div className="flex flex-col">
       <div className="flex items-stretch w-full gap-6 flex-wrap">
         <HeroCard
-          title="Cross-border payouts"
+          title="Payouts"
           description="Send value instantly across currencies and borders."
-          href="/x-border-payouts"
-          icon="/images/IconGlobus.svg"
-        />
-        <HeroCard
-          title="Remittances"
-          description="Accept funds via bank transfers, wallets, or UMAs, and settle them in the currency of your choice."
-          href="/remittances"
+          href="/payouts"
           icon="/images/IconGlobus.svg"
         />
         <HeroCard
@@ -69,6 +63,12 @@ export const HeroCard = ({ title, description, href, icon }) => {
           title="Rewards & cashback"
           description="Deliver micro-payouts at scale instantly and in local currency."
           href="/rewards"
+          icon="/images/IconGlobus.svg"
+        />
+        <HeroCard
+          title="Gloabl P2P"
+          description="Accept funds via bank transfers, wallets, or UMAs, and settle them in the currency of your choice."
+          href="/remittances"
           icon="/images/IconGlobus.svg"
         />
       </div>
@@ -84,27 +84,21 @@ export const HeroCard = ({ title, description, href, icon }) => {
     <div className="flex flex-col gap-8">
       <div className="flex items-stretch w-full gap-6 flex-wrap">
         <HeroCard
-          title="SDKs"
+          title="Github Repository"
           description="Simplify implementation with our SDKs."
-          href="/remittances"
-          icon="/images/IconGlobus.svg"
-        />
-        <HeroCard
-          title="Samples"
-          description="Sample code to show you end to end flows and error handling."
-          href="/remittances"
-          icon="/images/IconGlobus.svg"
+          href="https://github.com/lightsparkdev/umaaas-api"
+          icon="/images/github.svg"
         />
         <HeroCard
           title="Tools"
           description="Tools and resources to help you understand and test payment flows."
-          href="/remittances"
+          href="/developer-resources/tools"
           icon="/images/IconGlobus.svg"
         />
         <HeroCard
           title="Postman collection"
           description="Quickly get started with Grid using our Postman collection."
-          href="/remittances"
+          href="/developer-resources/postman-collection"
           icon="/images/IconGlobus.svg"
         />
       </div>

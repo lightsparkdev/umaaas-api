@@ -1,11 +1,11 @@
 parameters:
-  - name: redirect_uri
+  - name: redirectUri
     in: query 
     description: An optional uri a customer will be redirected to after completing the hosted kyc flow 
     required: false 
     schema:
       type: string
-  - name: platform_account_id
+  - name: platformCustomerId
     in: query
     description: The platform id of the customer to onboard
     required: true
@@ -31,7 +31,7 @@ get:
                 type: string 
                 description: A hosted kyc link for your customer to complete kyc
                 example: "https://example.com/redirect"
-              platformAccountId:
+              platformCustomerId:
                 type: string
                 description: The platform id of the customer to onboard
                 example: 019542f5-b3e7-1d02-0000-000000000001
