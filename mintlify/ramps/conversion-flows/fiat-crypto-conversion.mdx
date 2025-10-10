@@ -226,15 +226,14 @@ async function refreshQuoteIfNeeded(quote) {
   const expiresAt = new Date(quote.expiresAt);
   const now = new Date();
 
-if (expiresAt - now < 60000) {
-// Less than 1 minute left
-return await createNewQuote(quote.originalParams);
-}
+  if (expiresAt - now < 60000) {
+    // Less than 1 minute left
+    return await createNewQuote(quote.originalParams);
+  }
 
-return quote;
+  return quote;
 }
-
-````
+```
 </Accordion>
 
 <Accordion title="Settlement times by payment rail">
@@ -246,8 +245,7 @@ const settlementTimes = {
   PIX: "Instant",
   SEPA: "1-2 business days",
 };
-````
-
+```
 </Accordion>
 
 <Accordion title="Handle failed transactions">
@@ -259,11 +257,10 @@ if (transaction.status === "FAILED") {
     action: "retry",
   });
 
-if (transaction.failureReason === "QUOTE_EXPIRED") {
-await createNewQuote(transaction.originalParams);
+  if (transaction.failureReason === "QUOTE_EXPIRED") {
+    await createNewQuote(transaction.originalParams);
+  }
 }
-}
-
 ```
 </Accordion>
 </AccordionGroup>
@@ -287,4 +284,3 @@ await createNewQuote(transaction.originalParams);
   Complete API documentation
 </Card>
 </CardGroup>
-```
