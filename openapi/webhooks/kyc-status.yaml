@@ -1,7 +1,7 @@
 post:
-  summary: Kyc customer status change 
+  summary: KYC customer status change
   description: >
-    Webhook that is called when the kyc status of a customer is updated.
+    Webhook that is called when the KYC status of a customer is updated.
 
     This endpoint should be implemented by clients of the Grid API.
 
@@ -54,7 +54,7 @@ post:
           $ref: ../components/schemas/webhooks/KycStatusWebhook.yaml
         examples:
           kycApprovedWebhook:
-            summary: When a customer kyc has been approved
+            summary: When a customer KYC has been approved
             value:
               customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
               kycStatus: APPROVED 

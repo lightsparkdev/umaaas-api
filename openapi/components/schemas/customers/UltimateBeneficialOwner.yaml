@@ -34,7 +34,7 @@ properties:
     example: BENEFICIAL_OWNER
   percentageOwnership:
     type: number
-    description: Percent of ownership when individual type is benificial owner
+    description: Percent of ownership when individual type is beneficial owner
     example: 10 
   title: 
     type: string 

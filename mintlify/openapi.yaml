@@ -37,7 +37,7 @@ tags:
   - name: Sandbox
     description: Endpoints to trigger test cases in sandbox
   - name: API Tokens
-    description: Endpoints to programatically manage API tokens
+    description: Endpoints to programmatically manage API tokens
 paths:
   /config:
     get:
@@ -174,7 +174,7 @@ paths:
                           description: Customer type
                         kycUrl:
                           type: string
-                          description: A kyc url to be shared with your individual customer if kyc needs to be completed
+                          description: A KYC URL to be shared with your individual customer if KYC needs to be completed
                           example: https://example.com/kyc
                 - title: Business Customer
                   allOf:
@@ -195,7 +195,7 @@ paths:
                           description: Customer type
                         kycUrl:
                           type: string
-                          description: A kyc url to be shared with your business customer if kyc needs to be completed
+                          description: A KYC URL to be shared with your business customer if KYC needs to be completed
                           example: https://example.com/kyc
               discriminator:
                 propertyName: customerType
@@ -687,7 +687,7 @@ paths:
     parameters:
       - name: redirectUri
         in: query
-        description: An optional uri a customer will be redirected to after completing the hosted kyc flow
+        description: An optional uri a customer will be redirected to after completing the hosted KYC flow
         required: false
         schema:
           type: string
@@ -698,8 +698,8 @@ paths:
         schema:
           type: string
     get:
-      summary: Get a kyc link for onboarding a customer
-      description: Generate a hosted kyc link to onboard a customer
+      summary: Get a KYC link for onboarding a customer
+      description: Generate a hosted KYC link to onboard a customer
       operationId: getKycLinkForCustomer
       tags:
         - Customers
@@ -715,7 +715,7 @@ paths:
                 properties:
                   kycUrl:
                     type: string
-                    description: A hosted kyc link for your customer to complete kyc
+                    description: A hosted KYC link for your customer to complete KYC
                     example: https://example.com/redirect
                   platformCustomerId:
                     type: string
@@ -2918,7 +2918,7 @@ paths:
               schema:
                 properties:
                   data:
-                    description: List of available Uma Providers using Grid
+                    description: List of available UMA Providers using Grid
                     type: array
                     items:
                       $ref: '#/components/schemas/UmaProvider'
@@ -3669,9 +3669,9 @@ webhooks:
                 $ref: '#/components/schemas/Error409'
   kyc-status:
     post:
-      summary: Kyc customer status change
+      summary: KYC customer status change
       description: |
-        Webhook that is called when the kyc status of a customer is updated.
+        Webhook that is called when the KYC status of a customer is updated.
         This endpoint should be implemented by clients of the Grid API.
 
         ### Authentication
@@ -3709,7 +3709,7 @@ webhooks:
               $ref: '#/components/schemas/KycStatusWebhook'
             examples:
               kycApprovedWebhook:
-                summary: When a customer kyc has been approved
+                summary: When a customer KYC has been approved
                 value:
                   customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
                   kycStatus: APPROVED
@@ -4063,7 +4063,7 @@ components:
             | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
             | INVALID_UMA_ADDRESS | UMA address format is invalid |
             | INVITATION_CANCELLED | Invitation has been cancelled |
-            | QUOTE_REQUEST_FAILED | An issue occurred during the quote process this is retryable |
+            | QUOTE_REQUEST_FAILED | An issue occurred during the quote process; this is retryable |
             | INVALID_PAYREQ_RESPONSE | Counterparty Payreq response was invalid |
             | INVALID_RECEIVER | Receiver is invalid |
             | PARSE_PAYREQ_RESPONSE_ERROR | Error parsing receiver PayReq response |
@@ -4287,7 +4287,7 @@ components:
           example: BENEFICIAL_OWNER
         percentageOwnership:
           type: number
-          description: Percent of ownership when individual type is benificial owner
+          description: Percent of ownership when individual type is beneficial owner
           example: 10
         title:
           type: string
@@ -4332,7 +4332,7 @@ components:
         - CANCELED
         - MANUALLY_APPROVED
         - MANUALLY_REJECTED
-      description: The current kyc status of a customer
+      description: The current KYC status of a customer
       example: APPROVED
     BankAccountType:
       type: string
@@ -4751,7 +4751,7 @@ components:
             paymentUrl:
               type: string
               format: uri
-              description: The url to make request to in order to confirm payment
+              description: The URL to make a request to in order to confirm payment
               example: https://api.lightspark.com/grid/2025-10-13/confirm
             paymentMethod:
               type: string
@@ -5684,7 +5684,7 @@ components:
             |------------|-------------|
             | UNSUPPORTED_UMA_VERSION | Counterparty doesn't support the Grid UMA version |
           enum:
-            - UNSUPPORTED_UMA_VERSIONED
+            - UNSUPPORTED_UMA_VERSION
         message:
           type: string
           description: Error message
@@ -6109,7 +6109,7 @@ components:
           example: PENDING
         firstName:
           type: string
-          description: The inviter's first name.  Will be displayed when the recipient clicks the invite link
+          description: The inviter's first name. Will be displayed when the recipient clicks the invite link
           example: Jane
         amountToSend:
           $ref: '#/components/schemas/CurrencyAmount'
@@ -6153,13 +6153,13 @@ components:
       properties:
         name:
           type: string
-          description: Name of the Uma Provider
+          description: Name of the UMA Provider
           example: Lightspark Group
         supportedRegions:
           type: array
           items:
             type: string
-          description: Region(s) this Uma Provider operates in
+          description: Region(s) this UMA Provider operates in
           example:
             - US
         domain:
@@ -6168,14 +6168,14 @@ components:
           example: uma.me
         logoUrl:
           type: string
-          description: Logo url for the VASP
+          description: Logo URL for the VASP
           format: uri
           example: https://uma.me/logo.png
         supportedCurrencies:
           type: array
           items:
             $ref: '#/components/schemas/Currency'
-          description: List of currencies supported by this Uma Provider
+          description: List of currencies supported by this UMA Provider
           example:
             - code: USD
               name: United States Dollar
@@ -6183,11 +6183,11 @@ components:
               decimals: 2
         lei:
           type: string
-          description: Legal Entity Identifier for the Uma Provider
+          description: Legal Entity Identifier for the UMA Provider
           example: 5493001KJTIIGC8Y1R12
         allowListStatus:
           type: boolean
-          description: Whether this Uma Provider is on your allow list
+          description: Whether this UMA Provider is on your allow list
           example: true
     Permission:
       type: string

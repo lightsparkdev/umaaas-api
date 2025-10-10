@@ -20,7 +20,7 @@ properties:
       | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
       | INVALID_UMA_ADDRESS | UMA address format is invalid |
       | INVITATION_CANCELLED | Invitation has been cancelled |
-      | QUOTE_REQUEST_FAILED | An issue occurred during the quote process this is retryable |
+      | QUOTE_REQUEST_FAILED | An issue occurred during the quote process; this is retryable |
       | INVALID_PAYREQ_RESPONSE | Counterparty Payreq response was invalid |
       | INVALID_RECEIVER | Receiver is invalid |
       | PARSE_PAYREQ_RESPONSE_ERROR | Error parsing receiver PayReq response |

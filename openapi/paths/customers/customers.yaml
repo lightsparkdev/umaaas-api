@@ -31,8 +31,8 @@ post:
                       enum: [INDIVIDUAL]
                       description: Customer type 
                     kycUrl:
-                      type: string 
-                      description: A kyc url to be shared with your individual customer if kyc needs to be completed 
+                      type: string
+                      description: A KYC URL to be shared with your individual customer if KYC needs to be completed 
                       example: "https://example.com/kyc"
             - title: Business Customer
               allOf:
@@ -51,8 +51,8 @@ post:
                       enum: [BUSINESS]
                       description: Customer type
                     kycUrl:
-                      type: string 
-                      description: A kyc url to be shared with your business customer if kyc needs to be completed 
+                      type: string
+                      description: A KYC URL to be shared with your business customer if KYC needs to be completed 
                       example: "https://example.com/kyc"
           discriminator:
             propertyName: customerType

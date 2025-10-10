@@ -1,7 +1,7 @@
 parameters:
   - name: redirectUri
-    in: query 
-    description: An optional uri a customer will be redirected to after completing the hosted kyc flow 
+    in: query
+    description: An optional uri a customer will be redirected to after completing the hosted KYC flow 
     required: false 
     schema:
       type: string
@@ -12,8 +12,8 @@ parameters:
     schema:
       type: string
 get:
-  summary: Get a kyc link for onboarding a customer
-  description: Generate a hosted kyc link to onboard a customer
+  summary: Get a KYC link for onboarding a customer
+  description: Generate a hosted KYC link to onboard a customer
   operationId: getKycLinkForCustomer
   tags:
     - Customers
@@ -28,8 +28,8 @@ get:
             type: object
             properties:
               kycUrl:
-                type: string 
-                description: A hosted kyc link for your customer to complete kyc
+                type: string
+                description: A hosted KYC link for your customer to complete KYC
                 example: "https://example.com/redirect"
               platformCustomerId:
                 type: string
