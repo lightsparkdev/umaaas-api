@@ -23,11 +23,19 @@
       {
         "tab": "Payouts",
         "pages": [
-          "x-border-payouts/index",
-          "x-border-payouts/quickstart",
+          "pay-to-bank/index",
+          "pay-to-bank/quickstart",
           {
             "group": "Getting Started",
-            "pages": ["developer-resources/placeholder"]
+            "pages": ["developer-resources/terminology", 
+            "pay-to-bank/onboarding/implementation-overview"
+            ]
+          },
+          {
+            "group": "Onboarding",
+            "pages": [
+              "pay-to-bank/onboarding/configuring-users"
+            ]
           },
           {
             "group": "Accounts",
@@ -49,7 +57,11 @@
           },
           {
             "group": "Developer Guides",
-            "pages": ["developer-resources/placeholder"]
+            "pages": [
+                "developer-resources/postman-collection",
+                "developer-resources/sdks",
+                "developer-resources/samples"
+              ]
           }
         ]
       },

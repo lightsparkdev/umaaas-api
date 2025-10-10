@@ -139,7 +139,6 @@ The `redirect_uri` parameter is embedded in the KYC URL and will be used to redi
 
 After a customer completes the hosted KYC verification process, you'll receive webhook notifications about their KYC status. These notifications are sent to your configured webhook endpoint.
 
-<RequestExample>
 ```http POST Your Webhook Endpoint
 POST https://yourapp.com/webhooks/kyc-status
 Content-Type: application/json
@@ -154,7 +153,6 @@ X-Webhook-Signature: sha256=abc123...
   "platformCustomerId": "1234567"
 }
 ```
-</RequestExample>
 
 <ResponseField name="customerId" type="string" required>
 System-generated unique identifier of the customer whose KYC status has changed.
