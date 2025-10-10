@@ -128,7 +128,7 @@ The internal account now has a balance of $1,000.00 (100000 cents).
 Now add the destination bank account where you want to send the funds. In this example, we'll add a Mexican CLABE account.
 
 ```http
-POST /external-accounts
+POST /customers/external-accounts
 Authorization: Basic <base64-encoded-credentials>
 Content-Type: application/json
 ```
@@ -137,17 +137,24 @@ Content-Type: application/json
 {
   "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
   "currency": "MXN",
-  "beneficiary": {
-    "counterPartyType": "INDIVIDUAL",
-    "fullName": "Maria Garcia",
-    "dateOfBirth": "1990-01-01",
-    "nationality": "MX"
-  },
+  "platformAccountId": "maria_garcia_account",
   "accountInfo": {
     "accountType": "CLABE",
     "clabeNumber": "123456789012345678",
     "bankName": "BBVA Mexico",
-    "accountHolderName": "Maria Garcia"
+    "beneficiary": {
+      "beneficiaryType": "INDIVIDUAL",
+      "fullName": "Maria Garcia",
+      "birthDate": "1990-01-01",
+      "nationality": "MX",
+      "address": {
+        "line1": "Av. Reforma 123",
+        "city": "Ciudad de México",
+        "state": "CDMX",
+        "postalCode": "06600",
+        "country": "MX"
+      }
+    }
   }
 }
 ```
@@ -158,17 +165,25 @@ Content-Type: application/json
   "id": "ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123",
   "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
   "status": "ACTIVE",
-  "beneficiary": {
-    "counterPartyType": "INDIVIDUAL",
-    "fullName": "Maria Garcia",
-    "dateOfBirth": "1990-01-01",
-    "nationality": "MX"
-  },
+  "currency": "MXN",
+  "platformAccountId": "maria_garcia_account",
   "accountInfo": {
     "accountType": "CLABE",
     "clabeNumber": "123456789012345678",
     "bankName": "BBVA Mexico",
-    "accountHolderName": "Maria Garcia"
+    "beneficiary": {
+      "beneficiaryType": "INDIVIDUAL",
+      "fullName": "Maria Garcia",
+      "birthDate": "1990-01-01",
+      "nationality": "MX",
+      "address": {
+        "line1": "Av. Reforma 123",
+        "city": "Ciudad de México",
+        "state": "CDMX",
+        "postalCode": "06600",
+        "country": "MX"
+      }
+    }
   }
 }
 ```

@@ -49,7 +49,19 @@ External accounts are bank accounts, cryptocurrency wallets, or payment destinat
   "routingNumber": "021000021",
   "accountCategory": "CHECKING",
   "bankName": "Chase Bank",
-  "accountHolderName": "John Doe"
+  "beneficiary": {
+    "beneficiaryType": "INDIVIDUAL",
+    "fullName": "John Doe",
+    "birthDate": "1990-01-15",
+    "nationality": "US",
+    "address": {
+      "line1": "123 Main Street",
+      "city": "San Francisco",
+      "state": "CA",
+      "postalCode": "94105",
+      "country": "US"
+    }
+  }
 }
 ```
 
@@ -66,7 +78,19 @@ External accounts are bank accounts, cryptocurrency wallets, or payment destinat
   "accountType": "CLABE",
   "clabeNumber": "123456789012345678",
   "bankName": "BBVA Mexico",
-  "accountHolderName": "María García"
+  "beneficiary": {
+    "beneficiaryType": "INDIVIDUAL",
+    "fullName": "María García",
+    "birthDate": "1985-03-15",
+    "nationality": "MX",
+    "address": {
+      "line1": "Av. Reforma 123",
+      "city": "Ciudad de México",
+      "state": "CDMX",
+      "postalCode": "06600",
+      "country": "MX"
+    }
+  }
 }
 ```
 
@@ -81,7 +105,19 @@ External accounts are bank accounts, cryptocurrency wallets, or payment destinat
   "pixKey": "user@email.com",
   "pixKeyType": "EMAIL",
   "bankName": "Nubank",
-  "accountHolderName": "João Silva"
+  "beneficiary": {
+    "beneficiaryType": "INDIVIDUAL",
+    "fullName": "João Silva",
+    "birthDate": "1988-07-22",
+    "nationality": "BR",
+    "address": {
+      "line1": "Rua das Flores 456",
+      "city": "São Paulo",
+      "state": "SP",
+      "postalCode": "01234-567",
+      "country": "BR"
+    }
+  }
 }
 ```
 
@@ -97,7 +133,19 @@ External accounts are bank accounts, cryptocurrency wallets, or payment destinat
   "iban": "DE89370400440532013000",
   "swiftBic": "DEUTDEFF",
   "bankName": "Deutsche Bank",
-  "accountHolderName": "Hans Schmidt"
+  "beneficiary": {
+    "beneficiaryType": "INDIVIDUAL",
+    "fullName": "Hans Schmidt",
+    "birthDate": "1982-11-08",
+    "nationality": "DE",
+    "address": {
+      "line1": "Hauptstraße 789",
+      "city": "Berlin",
+      "state": "Berlin",
+      "postalCode": "10115",
+      "country": "DE"
+    }
+  }
 }
 ```
 
@@ -110,7 +158,19 @@ External accounts are bank accounts, cryptocurrency wallets, or payment destinat
 {
   "accountType": "UPI",
   "vpa": "user@okbank",
-  "accountHolderName": "Priya Sharma"
+  "beneficiary": {
+    "beneficiaryType": "INDIVIDUAL",
+    "fullName": "Priya Sharma",
+    "birthDate": "1991-05-14",
+    "nationality": "IN",
+    "address": {
+      "line1": "123 MG Road",
+      "city": "Mumbai",
+      "state": "Maharashtra",
+      "postalCode": "400001",
+      "country": "IN"
+    }
+  }
 }
 ```
 
@@ -126,6 +186,9 @@ External accounts are bank accounts, cryptocurrency wallets, or payment destinat
 }
 ```
 
+<Note>
+  Spark wallets don't require beneficiary information as they are self-custody wallets.
+</Note>
 </Tab>
 </Tabs>
 
@@ -139,19 +202,27 @@ curl -X POST 'https://api.lightspark.com/grid/2025-10-13/customers/external-acco
   -H 'Authorization: Basic <base64-encoded-credentials>' \
   -H 'Content-Type: application/json' \
   -d '{
-    "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
-    "beneficiary": {
-      "counterPartyType": "INDIVIDUAL",
-      "fullName": "John Doe",
-      "email": "john.doe@example.com"
-    },
+    "currency": "USD",
+    "platformAccountId": "user_123_primary_bank",
     "accountInfo": {
       "accountType": "US_ACCOUNT",
       "accountNumber": "123456789",
       "routingNumber": "021000021",
       "accountCategory": "CHECKING",
       "bankName": "Chase Bank",
-      "accountHolderName": "John Doe"
+      "beneficiary": {
+        "beneficiaryType": "INDIVIDUAL",
+        "fullName": "John Doe",
+        "birthDate": "1990-01-15",
+        "nationality": "US",
+        "address": {
+          "line1": "123 Main Street",
+          "city": "San Francisco",
+          "state": "CA",
+          "postalCode": "94105",
+          "country": "US"
+        }
+      }
     }
   }'
 ```
@@ -168,20 +239,28 @@ const response = await fetch(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      customerId: "Customer:019542f5-b3e7-1d02-0000-000000000001",
-      beneficiary: {
-        counterPartyType: "INDIVIDUAL",
-        fullName: "John Doe",
-        email: "john.doe@example.com",
-      },
+      currency: "USD",
+      platformAccountId: "user_123_primary_bank",
       accountInfo: {
         accountType: "US_ACCOUNT",
         accountNumber: "123456789",
         routingNumber: "021000021",
         accountCategory: "CHECKING",
         bankName: "Chase Bank",
-        accountHolderName: "John Doe",
-      },
+        beneficiary: {
+          beneficiaryType: "INDIVIDUAL",
+          fullName: "John Doe",
+          birthDate: "1990-01-15",
+          nationality: "US",
+          address: {
+            line1: "123 Main Street",
+            city: "San Francisco",
+            state: "CA",
+            postalCode: "94105",
+            country: "US"
+          }
+        }
+      }
     }),
   }
 );
@@ -207,18 +286,27 @@ response = requests.post(
     },
     json={
         'customerId': 'Customer:019542f5-b3e7-1d02-0000-000000000001',
-        'beneficiary': {
-            'counterPartyType': 'INDIVIDUAL',
-            'fullName': 'John Doe',
-            'email': 'john.doe@example.com'
-        },
+        'currency': 'USD',
+        'platformAccountId': 'user_123_primary_bank',
         'accountInfo': {
             'accountType': 'US_ACCOUNT',
             'accountNumber': '123456789',
             'routingNumber': '021000021',
             'accountCategory': 'CHECKING',
             'bankName': 'Chase Bank',
-            'accountHolderName': 'John Doe'
+            'beneficiary': {
+                'beneficiaryType': 'INDIVIDUAL',
+                'fullName': 'John Doe',
+                'birthDate': '1990-01-15',
+                'nationality': 'US',
+                'address': {
+                    'line1': '123 Main Street',
+                    'city': 'San Francisco',
+                    'state': 'CA',
+                    'postalCode': '94105',
+                    'country': 'US'
+                }
+            }
         }
     }
 )
@@ -236,18 +324,27 @@ print(f"External account created: {external_account['id']}")
   "id": "ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965",
   "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
   "status": "ACTIVE",
-  "beneficiary": {
-    "counterPartyType": "INDIVIDUAL",
-    "fullName": "John Doe",
-    "email": "john.doe@example.com"
-  },
+  "currency": "USD",
+  "platformAccountId": "user_123_primary_bank",
   "accountInfo": {
     "accountType": "US_ACCOUNT",
     "accountNumber": "123456789",
     "routingNumber": "021000021",
     "accountCategory": "CHECKING",
     "bankName": "Chase Bank",
-    "accountHolderName": "John Doe"
+    "beneficiary": {
+      "beneficiaryType": "INDIVIDUAL",
+      "fullName": "John Doe",
+      "birthDate": "1990-01-15",
+      "nationality": "US",
+      "address": {
+        "line1": "123 Main Street",
+        "city": "San Francisco",
+        "state": "CA",
+        "postalCode": "94105",
+        "country": "US"
+      }
+    }
   }
 }
 ```
@@ -258,12 +355,28 @@ For business accounts, include business information:
 
 ```json
 {
-  "beneficiary": {
-    "counterPartyType": "BUSINESS",
-    "email": "accounting@acmecorp.com",
-    "businessInfo": {
-      "legalName": "Acme Corporation, Inc.",
-      "taxId": "EIN-987654321"
+  "currency": "USD",
+  "platformAccountId": "acme_corp_account",
+  "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
+  "accountInfo": {
+    "accountType": "US_ACCOUNT",
+    "accountNumber": "987654321",
+    "routingNumber": "021000021",
+    "accountCategory": "CHECKING",
+    "bankName": "Chase Bank",
+    "beneficiary": {
+      "beneficiaryType": "BUSINESS",
+      "businessInfo": {
+        "legalName": "Acme Corporation, Inc.",
+        "taxId": "EIN-987654321"
+      },
+      "address": {
+        "line1": "456 Business Ave",
+        "city": "New York",
+        "state": "NY",
+        "postalCode": "10001",
+        "country": "US"
+      }
     }
   }
 }
@@ -275,6 +388,7 @@ Link external accounts to your internal system using `platformAccountId`:
 
 ```json
 {
+  "currency": "USD",
   "platformAccountId": "user_123_primary_bank",
   "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
   ...
@@ -389,9 +503,14 @@ const contractors = [
 
 for (const contractor of contractors) {
   const account = await createExternalAccount({
+    currency: contractor.currency,
     customerId: contractor.customerId,
-    beneficiary: contractor.beneficiaryInfo,
-    accountInfo: contractor,
+    platformAccountId: `contractor_${contractor.id}`,
+    accountInfo: {
+      accountType: contractor.accountType,
+      ...contractor.accountDetails,
+      beneficiary: contractor.beneficiary
+    }
   });
 
   await savePaymentMethod(contractor.id, account.id);
@@ -403,12 +522,13 @@ for (const contractor of contractors) {
 ```javascript
 // Add Bitcoin Lightning wallet
 const cryptoAccount = await createExternalAccount({
+  currency: "BTC",
   customerId,
-  beneficiary: { counterPartyType: "INDIVIDUAL", fullName, email },
+  platformAccountId: `crypto_wallet_${customerId}`,
   accountInfo: {
     accountType: "SPARK_WALLET",
-    address: sparkWalletAddress,
-  },
+    address: sparkWalletAddress
+  }
 });
 
 // Send withdrawal
