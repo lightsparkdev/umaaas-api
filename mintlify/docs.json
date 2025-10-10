@@ -170,12 +170,12 @@
         "tab": "Global P2P",
         "pages": [
           "remittances/index",
+          "remittances/terminology",
           "remittances/quickstart",
           {
             "group": "Getting Started",
             "pages": [
               "remittances/developer-guides/implementation-overview",
-              "developer-resources/terminology",
               "remittances/developer-guides/platform-configuration"
             ]
           },
@@ -187,12 +187,18 @@
             ]
           },
           {
+            "group": "Managing Accounts",
+            "pages": [
+              "remittances/developer-guides/internal-accounts",
+              "pay-to-bank/depositing-funds/external-accounts"
+            ]
+          },
+          {
             "group": "Sending & Receiving Payments",
             "pages": [
               "remittances/developer-guides/sending-payments",
               "remittances/developer-guides/receiving-payments",
-              "remittances/developer-guides/reconciliation",
-              "remittances/developer-guides/payment-error-handling"
+              "remittances/developer-guides/reconciliation"
             ]
           },
           {
