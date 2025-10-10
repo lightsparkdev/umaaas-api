@@ -23,33 +23,46 @@
       {
         "tab": "Payouts",
         "pages": [
-          "x-border-payouts/index",
-          "x-border-payouts/quickstart",
+          "payouts/index",
+          "payouts/quickstart",
           {
             "group": "Getting Started",
-            "pages": ["developer-resources/placeholder"]
+            "pages": [
+              "developer-resources/terminology",
+              "payouts/onboarding/implementation-overview"
+            ]
+          },
+          {
+            "group": "Onboarding",
+            "pages": [
+              "payouts/onboarding/platform-configuration",
+              "payouts/onboarding/configuring-users"
+            ]
           },
           {
             "group": "Accounts",
             "pages": [
-              "pay-to-bank/depositing-funds/internal-accounts",
-              "pay-to-bank/depositing-funds/external-accounts",
-              "pay-to-bank/depositing-funds/plaid"
+              "payouts/depositing-funds/internal-accounts",
+              "payouts/depositing-funds/external-accounts",
+              "payouts/depositing-funds/plaid"
             ]
           },
           {
             "group": "Payment Flow",
             "pages": [
-              "pay-to-bank/payment-flow/send-payment",
-              "pay-to-bank/payment-flow/receive-payment",
-              "pay-to-bank/payment-flow/list-transactions",
-              "pay-to-bank/payment-flow/reconciliation",
-              "pay-to-bank/payment-flow/error-handling"
+              "payouts/payment-flow/send-payment",
+              "payouts/payment-flow/receive-payment",
+              "payouts/payment-flow/list-transactions",
+              "payouts/payment-flow/reconciliation",
+              "payouts/payment-flow/error-handling"
             ]
           },
           {
-            "group": "Developer Guides",
-            "pages": ["developer-resources/placeholder"]
+            "group": "Developer Resources",
+            "pages": [
+              "developer-resources/tools",
+              "developer-resources/postman-collection"
+            ]
           }
         ]
       },
@@ -57,15 +70,48 @@
         "tab": "Ramps",
         "pages": [
           "ramps/index",
+          "ramps/quickstart",
           {
             "group": "Getting Started",
-            "pages": ["developer-resources/placeholder"]
+            "pages": [
+              "ramps/onboarding/implementation-overview",
+              "developer-resources/terminology"
+            ]
           },
           {
-            "group": "Developer Guides",
+            "group": "Onboarding",
             "pages": [
-              "ramps/developer-guides/fiat-crypto-conversion",
-              "ramps/developer-guides/self-custody-wallets"
+              "ramps/onboarding/platform-configuration",
+              "ramps/onboarding/configuring-customers"
+            ]
+          },
+          {
+            "group": "Accounts",
+            "pages": [
+              "ramps/accounts/internal-accounts",
+              "ramps/accounts/external-accounts",
+              "ramps/accounts/plaid"
+            ]
+          },
+          {
+            "group": "Conversion Flows",
+            "pages": [
+              "ramps/conversion-flows/fiat-crypto-conversion",
+              "ramps/conversion-flows/self-custody-wallets"
+            ]
+          },
+          {
+            "group": "Platform Tools",
+            "pages": [
+              "ramps/platform-tools/webhooks",
+              "ramps/platform-tools/sandbox-testing"
+            ]
+          },
+          {
+            "group": "Developer Resources",
+            "pages": [
+              "developer-resources/tools",
+              "developer-resources/postman-collection"
             ]
           }
         ]
@@ -76,24 +122,47 @@
           "rewards/index",
           "rewards/quickstart",
           {
-            "group": "Onboarding Customers",
-            "pages": ["developer-resources/placeholder"]
+            "group": "Getting Started",
+            "pages": [
+              "rewards/developer-guides/implementation-overview",
+              "developer-resources/terminology"
+            ]
           },
           {
-            "group": "Depositing Funds",
-            "pages": ["developer-resources/placeholder"]
+            "group": "Onboarding",
+            "pages": [
+              "rewards/developer-guides/platform-configuration",
+              "rewards/developer-guides/configuring-customers"
+            ]
           },
           {
-            "group": "Distributing Bitcoin rewards",
-            "pages": ["developer-resources/placeholder"]
+            "group": "Accounts",
+            "pages": [
+              "rewards/developer-guides/internal-accounts",
+              "rewards/developer-guides/external-accounts",
+              "rewards/developer-guides/plaid"
+            ]
+          },
+          {
+            "group": "Distributing Rewards",
+            "pages": [
+              "rewards/developer-guides/distributing-rewards",
+              "rewards/developer-guides/listing-transactions"
+            ]
           },
           {
             "group": "Platform Tools",
-            "pages": ["developer-resources/placeholder"]
+            "pages": [
+              "remittances/developer-guides/webhooks",
+              "remittances/developer-guides/sandbox-testing"
+            ]
           },
           {
             "group": "Developer Resources",
-            "pages": ["developer-resources/placeholder"]
+            "pages": [
+              "developer-resources/tools",
+              "developer-resources/postman-collection"
+            ]
           }
         ]
       },
@@ -101,12 +170,12 @@
         "tab": "Global P2P",
         "pages": [
           "remittances/index",
+          "remittances/terminology",
           "remittances/quickstart",
           {
             "group": "Getting Started",
             "pages": [
               "remittances/developer-guides/implementation-overview",
-              "developer-resources/terminology",
               "remittances/developer-guides/platform-configuration"
             ]
           },
@@ -118,12 +187,18 @@
             ]
           },
           {
+            "group": "Managing Accounts",
+            "pages": [
+              "remittances/developer-guides/internal-accounts",
+              "pay-to-bank/depositing-funds/external-accounts"
+            ]
+          },
+          {
             "group": "Sending & Receiving Payments",
             "pages": [
               "remittances/developer-guides/sending-payments",
               "remittances/developer-guides/receiving-payments",
-              "remittances/developer-guides/reconciliation",
-              "remittances/developer-guides/payment-error-handling"
+              "remittances/developer-guides/reconciliation"
             ]
           },
           {
