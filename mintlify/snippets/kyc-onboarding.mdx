@@ -65,9 +65,7 @@ The hosted KYC flow provides a secure, hosted interface where customers can comp
 ```http GET /customers/kyc-link
 GET /customers/kyc-link?redirect_uri=https://yourapp.com/onboarding-complete&platform_customer_id=019542f5-b3e7-1d02-0000-000000000001
 Authorization: Basic <base64-encoded-credentials>
-```
 
-```json Success
 {
   "kycUrl": "https://kyc.lightspark.com/onboard/abc123def456",
   "platformCustomerId": "019542f5-b3e7-1d02-0000-000000000001",
@@ -139,7 +137,6 @@ The `redirect_uri` parameter is embedded in the KYC URL and will be used to redi
 
 After a customer completes the hosted KYC verification process, you'll receive webhook notifications about their KYC status. These notifications are sent to your configured webhook endpoint.
 
-<RequestExample>
 ```http POST Your Webhook Endpoint
 POST https://yourapp.com/webhooks/kyc-status
 Content-Type: application/json
@@ -154,7 +151,6 @@ X-Webhook-Signature: sha256=abc123...
   "platformCustomerId": "1234567"
 }
 ```
-</RequestExample>
 
 <ResponseField name="customerId" type="string" required>
 System-generated unique identifier of the customer whose KYC status has changed.

@@ -62,7 +62,6 @@ Note the `id` fields from both the internal and external accounts you want to us
 <Step title="Initiate the transfer">
   Create the transfer by specifying the source and destination accounts:
 
-<RequestExample>
 ```bash cURL
 curl -X POST 'https://api.lightspark.com/grid/2025-10-13/transfer-out' \
   -H 'Authorization: Basic <base64-encoded-credentials>' \
@@ -77,9 +76,8 @@ curl -X POST 'https://api.lightspark.com/grid/2025-10-13/transfer-out' \
     "amount": 12550
   }'
 ```
-</RequestExample>
 
-<ResponseExample>
+
 ```json Success (201 Created)
 {
   "id": "Transaction:019542f5-b3e7-1d02-0000-000000000015",
@@ -117,7 +115,6 @@ curl -X POST 'https://api.lightspark.com/grid/2025-10-13/transfer-out' \
   "settledAt": null
 }
 ```
-</ResponseExample>
 
 <Info>
   The `amount` is specified in the smallest unit of the currency (cents for USD, pence for GBP, etc.). For example, `12550` represents $125.50 USD.
@@ -179,7 +176,6 @@ Use the quotes flow when sending funds with currency conversion. This locks in a
 <Step title="Create a quote">
   Request a quote to lock in the exchange rate and get transfer details:
 
-<RequestExample>
 ```bash cURL
 curl -X POST 'https://api.lightspark.com/grid/2025-10-13/quotes' \
   -H 'Authorization: Basic <base64-encoded-credentials>' \
@@ -197,9 +193,7 @@ curl -X POST 'https://api.lightspark.com/grid/2025-10-13/quotes' \
     "description": "Payment for services - Invoice #1234"
   }'
 ```
-</RequestExample>
 
-<ResponseExample>
 ```json Success (201 Created)
 {
   "id": "Quote:019542f5-b3e7-1d02-0000-000000000025",
@@ -244,7 +238,6 @@ curl -X POST 'https://api.lightspark.com/grid/2025-10-13/quotes' \
   "description": "Payment for services - Invoice #1234"
 }
 ```
-</ResponseExample>
 
 <Info>
   **Locked currency side** determines which amount is fixed:
@@ -269,14 +262,12 @@ curl -X POST 'https://api.lightspark.com/grid/2025-10-13/quotes' \
 <Step title="Execute the quote">
   Confirm and execute the quote to initiate the transfer:
 
-<RequestExample>
+
 ```bash cURL
 curl -X POST 'https://api.lightspark.com/grid/2025-10-13/quotes/Quote:019542f5-b3e7-1d02-0000-000000000025/execute' \
   -H 'Authorization: Basic <base64-encoded-credentials>'
 ```
-</RequestExample>
 
-<ResponseExample>
 ```json Success (200 OK)
 {
   "id": "Quote:019542f5-b3e7-1d02-0000-000000000025",
@@ -310,7 +301,6 @@ curl -X POST 'https://api.lightspark.com/grid/2025-10-13/quotes/Quote:019542f5-b
   "executedAt": "2025-10-03T15:05:00Z"
 }
 ```
-</ResponseExample>
 
 <Check>
   Once executed, the quote creates a transaction and the transfer begins processing. The `transactionId` can be used to track the payment.

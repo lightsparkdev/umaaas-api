@@ -5,15 +5,11 @@ description: "Query and filter payment history with powerful filtering and pagin
 
 Retrieve transaction history with flexible filtering options. Transactions are returned in descending order (most recent first) with a default limit of 20 per page.
 
-<RequestExample>
+
 ```bash cURL
 curl -X GET 'https://api.lightspark.com/grid/2025-10-13/transactions' \
   -H 'Authorization: Basic <base64-encoded-credentials>'
-```
-</RequestExample>
 
-<ResponseExample>
-```json Success (200 OK)
 {
   "data": [
     {
@@ -57,7 +53,6 @@ curl -X GET 'https://api.lightspark.com/grid/2025-10-13/transactions' \
   "totalCount": 45
 }
 ```
-</ResponseExample>
 
 ## Filtering transactions
 

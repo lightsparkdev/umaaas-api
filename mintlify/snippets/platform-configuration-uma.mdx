@@ -7,14 +7,11 @@ Authentication: HTTP Basic (client_id as username, client_secret as password).
 
 You can retrieve your current platform configuration to see what settings are already in place:
 
-<RequestExample>
 ```bash cURL
 curl -X GET 'https://api.lightspark.com/grid/2025-10-13/config' \
   -u 'YOUR_CLIENT_ID:YOUR_CLIENT_SECRET'
 ```
-</RequestExample>
 
-<ResponseExample>
 ```json Success
 {
   "id": "PlatformConfig:019542f5-b3e7-1d02-0000-000000000003",
@@ -45,7 +42,6 @@ curl -X GET 'https://api.lightspark.com/grid/2025-10-13/config' \
   "updatedAt": "2023-07-01T10:00:00Z"
 }
 ```
-</ResponseExample>
 
 <Note>
 If this is your first time configuring the platform, some default values may be returned which were set up when you first created your account.
@@ -55,7 +51,6 @@ If this is your first time configuring the platform, some default values may be 
 
 To update your platform configuration for UMA payments, use the PATCH endpoint:
 
-<RequestExample>
 ```bash cURL
 curl -X PATCH 'https://api.lightspark.com/grid/2025-10-13/config' \
   -u 'YOUR_CLIENT_ID:YOUR_CLIENT_SECRET' \
@@ -78,9 +73,7 @@ curl -X PATCH 'https://api.lightspark.com/grid/2025-10-13/config' \
     ]
   }'
 ```
-</RequestExample>
 
-<ResponseExample>
 ```json Success
 {
   "id": "PlatformConfig:019542f5-b3e7-1d02-0000-000000000003",
@@ -112,7 +105,6 @@ curl -X PATCH 'https://api.lightspark.com/grid/2025-10-13/config' \
   "updatedAt": "2023-06-15T12:30:45Z"
 }
 ```
-</ResponseExample>
 
 <Warning>
 The `webhookSecret` is not returned in the response. It can only be retrieved from the Grid dashboard. Store this securely as it's used to verify the authenticity of webhooks (see the [Webhook Verification Guide](/snippets/webhooks)).
@@ -192,12 +184,10 @@ These fields must be supplied when creating or updating users or counterparties 
 
 After updating your configuration, it's recommended to verify that the changes were saved correctly:
 
-<RequestExample>
 ```bash cURL
 curl -X GET 'https://api.lightspark.com/grid/2025-10-13/config' \
   -u 'YOUR_CLIENT_ID:YOUR_CLIENT_SECRET'
 ```
-</RequestExample>
 
 <Warning>
 PATCH may return 400 for validation errors, 401 for authentication issues, and 500/501 for server or unsupported operations.
