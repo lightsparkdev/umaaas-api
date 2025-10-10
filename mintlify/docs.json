@@ -113,7 +113,8 @@
           {
             "group": "Distributing Rewards",
             "pages": [
-              "rewards/developer-guides/distributing-rewards"
+              "rewards/developer-guides/distributing-rewards",
+              "rewards/developer-guides/listing-transactions"
             ]
           },
           {
