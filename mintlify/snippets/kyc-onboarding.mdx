@@ -86,10 +86,6 @@ The `redirectUri` parameter is embedded in the KYC URL and will be used to redir
 <Steps>
 <Step title="Generate KYC Link">
   Call the `/customers/kyc-link` endpoint with your `redirectUri` parameter to generate a hosted KYC URL for your customer.
-  
-  <Note>
-  The `redirectUri` parameter is embedded in the generated KYC URL and will be used to automatically redirect the customer back to your application after they complete verification.
-  </Note>
 </Step>
 
 <Step title="Redirect Customer">
@@ -122,10 +118,6 @@ The `redirectUri` parameter is embedded in the KYC URL and will be used to redir
 
 <Step title="Handle Completion">
   On your redirect page, handle the completed KYC flow and integrate the new customer into your application.
-  
-  <Tip>
-  You may want to query the customer details or internal accounts to confirm successful onboarding.
-  </Tip>
 </Step>
 </Steps>
 
