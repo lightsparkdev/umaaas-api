@@ -157,7 +157,7 @@
             "group": "Managing Accounts",
             "pages": [
               "remittances/developer-guides/internal-accounts",
-              "pay-to-bank/depositing-funds/external-accounts"
+              "remittances/developer-guides/external-accounts"
             ]
           },
           {
