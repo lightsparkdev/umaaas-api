@@ -17,7 +17,7 @@ get:
       schema:
         type: string
   responses:
-    "200":
+    '200':
       description: Successful operation
       content:
         application/json:
@@ -31,19 +31,19 @@ get:
                 description: List of external accounts matching the filter criteria
                 items:
                   $ref: ../../components/schemas/external_accounts/ExternalAccount.yaml
-    "400":
+    '400':
       description: Bad request - Invalid parameters
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error400.yaml
-    "401":
+    '401':
       description: Unauthorized
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error401.yaml
-    "500":
+    '500':
       description: Internal service error
       content:
         application/json:

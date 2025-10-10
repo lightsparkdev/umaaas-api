@@ -1,5 +1,5 @@
 type: object
-required: 
+required:
   - message
   - status
   - code
@@ -16,8 +16,8 @@ properties:
       |------------|-------------|
       | FORBIDDEN | Insufficient permissions |
       | USER_NOT_READY | Customer exists but is not ready for operation |
-      | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account | 
-      | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits | 
+      | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account |
+      | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits |
     enum:
       - FORBIDDEN
       - USER_NOT_READY

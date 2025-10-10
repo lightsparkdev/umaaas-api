@@ -21,15 +21,15 @@ tags:
   - name: Customers
     description: Customer management endpoints for creating and updating customer information
   - name: Internal Accounts
-    description: Internal account management endpoints for creating and managing internal accounts.
+    description: Internal account management endpoints for creating and managing internal accounts
   - name: External Accounts
     description: External account management endpoints for creating and managing external bank accounts
   - name: Same-Currency Transfers
-    description: Endpoints for transferring funds between internal and external accounts with the same currency.
+    description: Endpoints for transferring funds between internal and external accounts with the same currency
   - name: Cross-Currency Transfers
-    description: Endpoints for creating and confirming quotes for cross-currency transfers.
+    description: Endpoints for creating and confirming quotes for cross-currency transfers
   - name: Transactions
-    description: Endpoints for retrieving transaction information.
+    description: Endpoints for retrieving transaction information
   - name: Webhooks
     description: Webhook endpoints and configuration for receiving notifications
   - name: Invitations
@@ -1499,7 +1499,7 @@ paths:
     get:
       summary: Get quote by ID
       description: |
-        Retrieve a quote by its ID. If the quote has been settled, it will include 
+        Retrieve a quote by its ID. If the quote has been settled, it will include
         the transaction ID. This allows clients to track the full lifecycle of a payment
         from quote creation to settlement.
       operationId: getQuoteById
@@ -1557,7 +1557,7 @@ paths:
         - **Currency Exchange**: Handles all cross-currency transfers with real-time exchange rates
         - **Payment Instructions**: For UMA or customer ID sources, provides banking details needed for execution
 
-        **Important:** If you are transferring funds in the same currency (no exchange required), 
+        **Important:** If you are transferring funds in the same currency (no exchange required),
         use the `/transfer-in` or `/transfer-out` endpoints instead.
       operationId: createQuote
       tags:
@@ -1614,8 +1614,8 @@ paths:
       responses:
         '201':
           description: |
-            Transfer quote created successfully. The response includes exchange rates, 
-            fees, and transfer details. For transfers involving UMA addresses, payment 
+            Transfer quote created successfully. The response includes exchange rates,
+            fees, and transfer details. For transfers involving UMA addresses, payment
             instructions are also included for execution through banking systems.
           content:
             application/json:
@@ -1787,7 +1787,7 @@ paths:
     post:
       summary: Retry an incomplete payment
       description: |
-        In the case where a customer is debited but the Lightning payment fails to complete, integrators can retry the payment using this endpoint.  
+        In the case where a customer is debited but the Lightning payment fails to complete, integrators can retry the payment using this endpoint.
 
         Payments retried with this endpoint will debit from the sender and deliver to the recipient the same amount as the original quote.
         As the Grid API does not persist customer PII, retries need to start with a lookup request to retrieve the original quote's recipient counter party data requirements then pass that sender information in the request body.
@@ -1936,7 +1936,7 @@ paths:
       summary: List transactions
       description: |
         Retrieve a paginated list of transactions with optional filtering.
-        The transactions can be filtered by customer ID, platform customer ID, UMA address, 
+        The transactions can be filtered by customer ID, platform customer ID, UMA address,
         date range, status, and transaction type.
       operationId: listTransactions
       tags:
@@ -2499,7 +2499,7 @@ paths:
                   type: string
                   format: date-time
                   description: When the invitation expires (if at all)
-                  example: '2023-09-01T14:30:00Z'
+                  example: '2025-09-01T14:30:00Z'
       responses:
         '201':
           description: Invitation created successfully
@@ -2701,7 +2701,7 @@ paths:
     post:
       summary: Simulate sending funds
       description: |
-        Simulate sending funds to the bank account as instructed in the quote. 
+        Simulate sending funds to the bank account as instructed in the quote.
         This endpoint is only for the sandbox environment and will fail for production platforms/keys.
       operationId: sandboxSend
       tags:
@@ -3247,7 +3247,7 @@ webhooks:
                       mandatory: true
                     - name: ADDRESS
                       mandatory: false
-                  timestamp: '2023-08-15T14:32:00Z'
+                  timestamp: '2025-08-15T14:32:00Z'
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000007
                   type: INCOMING_PAYMENT
               incomingCompletedPayment:
@@ -3268,18 +3268,18 @@ webhooks:
                         decimals: 2
                     customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
                     platformCustomerId: 18d3e5f7b4a9c2
-                    settledAt: '2023-08-15T14:30:00Z'
-                    createdAt: '2023-08-15T14:25:18Z'
+                    settledAt: '2025-08-15T14:30:00Z'
+                    createdAt: '2025-08-15T14:25:18Z'
                     description: Payment for services
                     reconciliationInstructions:
                       reference: REF-123456789
-                  timestamp: '2023-08-15T14:32:00Z'
+                  timestamp: '2025-08-15T14:32:00Z'
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000007
                   type: INCOMING_PAYMENT
       responses:
         '200':
           description: |
-            Webhook received successfully. 
+            Webhook received successfully.
             For PENDING transactions, this indicates approval to proceed with the payment.
             If `requestedReceiverCustomerInfoFields` were present in the webhook request, the corresponding fields for the recipient must be included in this response in the `receiverCustomerInfo` object.
           content:
@@ -3316,7 +3316,7 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error403'
+                $ref: '#/components/schemas/Error409'
         '422':
           description: |
             Unprocessable Entity - Additional counterparty information required.
@@ -3380,8 +3380,8 @@ webhooks:
                         decimals: 2
                     customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
                     platformCustomerId: 18d3e5f7b4a9c2
-                    settlementTime: '2023-08-15T14:30:00Z'
-                    createdAt: '2023-08-15T14:25:18Z'
+                    settlementTime: '2025-08-15T14:30:00Z'
+                    createdAt: '2025-08-15T14:25:18Z'
                     description: 'Payment for invoice #1234'
                     exchangeRate: 0.92
                     quoteId: Quote:019542f5-b3e7-1d02-0000-000000000006
@@ -3393,7 +3393,7 @@ webhooks:
                         routingNumber: 123456789
                         accountCategory: CHECKING
                         bankName: Chase Bank
-                  timestamp: '2023-08-15T14:32:00Z'
+                  timestamp: '2025-08-15T14:32:00Z'
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000007
                   type: OUTGOING_PAYMENT
               failedPayment:
@@ -3414,7 +3414,7 @@ webhooks:
                         decimals: 2
                     customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
                     platformCustomerId: 18d3e5f7b4a9c2
-                    createdAt: '2023-08-15T14:25:18Z'
+                    createdAt: '2025-08-15T14:25:18Z'
                     quoteId: Quote:019542f5-b3e7-1d02-0000-000000000006
                     paymentInstructions:
                       reference: UMA-Q12345-REF
@@ -3424,7 +3424,7 @@ webhooks:
                         routingNumber: 123456789
                         accountCategory: CHECKING
                         bankName: Chase Bank
-                  timestamp: '2023-08-15T14:32:00Z'
+                  timestamp: '2025-08-15T14:32:00Z'
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000007
                   type: OUTGOING_PAYMENT
       responses:
@@ -3481,7 +3481,7 @@ webhooks:
               testWebhook:
                 summary: Test webhook example
                 value:
-                  timestamp: '2023-08-15T14:32:00Z'
+                  timestamp: '2025-08-15T14:32:00Z'
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000001
                   type: TEST
       responses:
@@ -3549,7 +3549,7 @@ webhooks:
                     errors: []
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000008
                   type: BULK_UPLOAD
-                  timestamp: '2023-08-15T14:32:00Z'
+                  timestamp: '2025-08-15T14:32:00Z'
               failedUpload:
                 summary: Failed bulk upload
                 value:
@@ -3571,7 +3571,7 @@ webhooks:
                             column: umaAddress
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000008
                   type: BULK_UPLOAD
-                  timestamp: '2023-08-15T14:32:00Z'
+                  timestamp: '2025-08-15T14:32:00Z'
       responses:
         '200':
           description: Webhook received successfully
@@ -3637,13 +3637,13 @@ webhooks:
                 value:
                   invitation:
                     code: 019542f5
-                    createdAt: '2023-09-01T14:30:00Z'
-                    claimedAt: '2023-09-01T15:45:00Z'
+                    createdAt: '2025-09-01T14:30:00Z'
+                    claimedAt: '2025-09-01T15:45:00Z'
                     inviterUma: $inviter@uma.domain
                     inviteeUma: $invitee@uma.domain
                     status: CLAIMED
                     url: https://uma.me/i/019542f5
-                  timestamp: '2023-09-01T15:45:00Z'
+                  timestamp: '2025-09-01T15:45:00Z'
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000008
                   type: INVITATION_CLAIMED
       responses:
@@ -3685,11 +3685,11 @@ webhooks:
         If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
 
         ### KYC/B Flow
-        This webhook is triggered when KYC/B has reached a decision on a customer. Generally most customers will finish KYC within a few minutes.  Others might be rejected because of incorrect data passed in or may have been flagged for manual review.
+        This webhook is triggered when KYC/B has reached a decision on a customer. Generally most customers will finish KYC within a few minutes. Others might be rejected because of incorrect data passed in or may have been flagged for manual review.
         The webhook will only trigger for final states. This will be APPROVED, REJECTED, EXPIRED, CANCELED, MANUALLY_APPROVED, MANUALLY_REJECTED.
 
           * APPROVED: The customer has been approved.
-          * REJECTED: The customer has been rejected after a KYC check. 
+          * REJECTED: The customer has been rejected after a KYC check.
           * PENDING_REVIEW: KYC check is in progress.
           * EXPIRED: KYC check has expired. This is generally because a customer did not submit all required information needed within a session.
           * CANCELED: KYC check was canceled.
@@ -3714,12 +3714,12 @@ webhooks:
                   customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
                   kycStatus: APPROVED
                   type: KYC_STATUS
-                  timestamp: '2023-08-15T14:32:00Z'
+                  timestamp: '2025-08-15T14:32:00Z'
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000007
       responses:
         '200':
           description: |
-            Webhook received successfully. 
+            Webhook received successfully
         '400':
           description: Bad request
           content:
@@ -3737,12 +3737,12 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error403'
+                $ref: '#/components/schemas/Error409'
   account-status:
     post:
       summary: Account status notification webhook
       description: |
-        Webhook that is called when the balance of an account changes 
+        Webhook that is called when the balance of an account changes
         This endpoint should be implemented by clients of the Grid API.
 
         ### Authentication
@@ -3755,7 +3755,7 @@ webhooks:
 
         If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
 
-        ### Account status 
+        ### Account status
         When the balance of an internal account changes, we will push a notification with information on the account, the new balance, and who the account belongs to.
       operationId: accountStatusWebhook
       tags:
@@ -3788,15 +3788,15 @@ webhooks:
                         name: United States Dollar
                         symbol: $
                         decimals: 2
-                    customerId: User:019542f5-b3e7-1d02-0000-000000000001
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
                     platformCustomerId: 019542f5-b3e7-1d02-0000-000000000001
-                  timestamp: '2023-08-15T14:32:00Z'
+                  timestamp: '2025-08-15T14:32:00Z'
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000007
                   type: ACCOUNT_STATUS
       responses:
         '200':
           description: |
-            Webhook received successfully. 
+            Webhook received successfully
         '400':
           description: Bad request
           content:
@@ -3814,7 +3814,7 @@ webhooks:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error403'
+                $ref: '#/components/schemas/Error409'
 components:
   securitySchemes:
     BasicAuth:
@@ -3977,13 +3977,13 @@ components:
           format: date-time
           description: Creation timestamp
           readOnly: true
-          example: '2023-06-15T12:30:45Z'
+          example: '2025-06-15T12:30:45Z'
         updatedAt:
           type: string
           format: date-time
           description: Last update timestamp
           readOnly: true
-          example: '2023-06-15T12:30:45Z'
+          example: '2025-06-15T12:30:45Z'
     Error401:
       type: object
       required:
@@ -4002,7 +4002,7 @@ components:
             | Error Code | Description |
             |------------|-------------|
             | UNAUTHORIZED | Issue with API credentials |
-            | INVALID_SIGNATURE | Signature header is invalid | 
+            | INVALID_SIGNATURE | Signature header is invalid |
           enum:
             - UNAUTHORIZED
             - INVALID_SIGNATURE
@@ -4030,7 +4030,7 @@ components:
             | Error Code | Description |
             |------------|-------------|
             | GRID_SWITCH_ERROR | Grid switch error |
-            | INTERNAL_ERROR | Internal server or UMA error | 
+            | INTERNAL_ERROR | Internal server or UMA error |
           enum:
             - GRID_SWITCH_ERROR
             - INTERNAL_ERROR
@@ -4083,7 +4083,7 @@ components:
             | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
             | INVALID_AMOUNT | Amount is invalid |
             | WEBHOOK_ENDPOINT_NOT_SET | Webhook endpoint is not set |
-            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error | 
+            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error |
           enum:
             - INVALID_INPUT
             - MISSING_MANDATORY_USER_INFO
@@ -4136,7 +4136,7 @@ components:
             | Error Code | Description |
             |------------|-------------|
             | UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY | Unrecognized mandatory payee data key |
-            | NOT_IMPLEMENTED | Feature not implemented | 
+            | NOT_IMPLEMENTED | Feature not implemented |
           enum:
             - UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY
             - NOT_IMPLEMENTED
@@ -4202,13 +4202,13 @@ components:
           format: date-time
           description: Creation timestamp
           readOnly: true
-          example: '2023-07-21T17:32:28Z'
+          example: '2025-07-21T17:32:28Z'
         updatedAt:
           type: string
           format: date-time
           description: Last update timestamp
           readOnly: true
-          example: '2023-07-21T17:32:28Z'
+          example: '2025-07-21T17:32:28Z'
         isDeleted:
           type: boolean
           description: Whether the customer is marked as deleted
@@ -4664,7 +4664,7 @@ components:
             | Error Code | Description |
             |------------|-------------|
             | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
-            | UMA_ADDRESS_EXISTS | UMA address already exists | 
+            | UMA_ADDRESS_EXISTS | UMA address already exists |
           enum:
             - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
             - UMA_ADDRESS_EXISTS
@@ -4871,7 +4871,7 @@ components:
             | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
             | TOKEN_NOT_FOUND | Token not found |
             | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
-            | REFERENCE_NOT_FOUND | Reference not found | 
+            | REFERENCE_NOT_FOUND | Reference not found |
           enum:
             - TRANSACTION_NOT_FOUND
             - INVITATION_NOT_FOUND
@@ -5218,7 +5218,7 @@ components:
           properties:
             customerId:
               type: string
-              description: The ID of the customer for whom to create the external account.  If not provided, the external account will be created on behalf of the platform.
+              description: The ID of the customer for whom to create the external account. If not provided, the external account will be created on behalf of the platform.
               example: Customer:019542f5-b3e7-1d02-0000-000000000001
             currency:
               type: string
@@ -5383,17 +5383,17 @@ components:
           type: string
           format: date-time
           description: When the payment was or will be settled
-          example: '2023-08-15T14:30:00Z'
+          example: '2025-08-15T14:30:00Z'
         createdAt:
           type: string
           format: date-time
           description: When the transaction was created
-          example: '2023-08-15T14:25:18Z'
+          example: '2025-08-15T14:25:18Z'
         updatedAt:
           type: string
           format: date-time
           description: When the transaction was last updated
-          example: '2023-08-15T14:30:00Z'
+          example: '2025-08-15T14:30:00Z'
         description:
           type: string
           description: Optional memo or description for the payment
@@ -5498,12 +5498,12 @@ components:
           type: string
           format: date-time
           description: When the refund was initiated
-          example: '2023-08-15T14:30:00Z'
+          example: '2025-08-15T14:30:00Z'
         settledAt:
           type: string
           format: date-time
           description: When the refund was or will be settled
-          example: '2023-08-15T14:30:00Z'
+          example: '2025-08-15T14:30:00Z'
     OutgoingRateDetails:
       description: Details about the rate and fees for an outgoing transaction or quote.
       type: object
@@ -5711,7 +5711,7 @@ components:
             | PAYREQ_REQUEST_FAILED | Payment request failed |
             | COUNTERPARTY_PUBKEY_FETCH_ERROR | Error fetching counterparty public key |
             | NO_COMPATIBLE_UMA_VERSION | No compatible UMA version |
-            | LNURLP_REQUEST_FAILED | LNURLP request failed | 
+            | LNURLP_REQUEST_FAILED | LNURLP request failed |
           enum:
             - PAYREQ_REQUEST_FAILED
             - COUNTERPARTY_PUBKEY_FETCH_ERROR
@@ -6057,7 +6057,7 @@ components:
           type: string
           format: date-time
           description: Timestamp when the job completed (only present for COMPLETED or FAILED status)
-          example: '2023-08-15T14:32:00Z'
+          example: '2025-08-15T14:32:00Z'
     UmaInvitation:
       type: object
       required:
@@ -6075,12 +6075,12 @@ components:
           type: string
           format: date-time
           description: When the invitation was created
-          example: '2023-09-01T14:30:00Z'
+          example: '2025-09-01T14:30:00Z'
         claimedAt:
           type: string
           format: date-time
           description: When the invitation was claimed if it has been claimed
-          example: '2023-09-01T14:30:00Z'
+          example: '2025-09-01T14:30:00Z'
         url:
           type: string
           description: The URL where this invitation can be claimed.
@@ -6089,7 +6089,7 @@ components:
           type: string
           format: date-time
           description: When the invitation expires (if at all)
-          example: '2023-09-01T14:30:00Z'
+          example: '2025-09-01T14:30:00Z'
         inviterUma:
           type: string
           description: The UMA address of the inviter
@@ -6135,8 +6135,8 @@ components:
             |------------|-------------|
             | FORBIDDEN | Insufficient permissions |
             | USER_NOT_READY | Customer exists but is not ready for operation |
-            | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account | 
-            | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits | 
+            | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account |
+            | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits |
           enum:
             - FORBIDDEN
             - USER_NOT_READY
@@ -6225,18 +6225,18 @@ components:
           example: 01947d2284054f890000e63bca4810df
         clientSecret:
           type: string
-          description: The secret that should be used to authenticate against Grid API. This secret is not stored and will never be available again after creation.  Platform must keep this secret secure as it grants access to the account.
+          description: The secret that should be used to authenticate against Grid API. This secret is not stored and will never be available again after creation. Platform must keep this secret secure as it grants access to the account.
           example: ed0ad25881e234cc28fb2dec0a4fe64e4172
         createdAt:
           type: string
           format: date-time
           description: Creation timestamp
-          example: '2023-07-21T17:32:28Z'
+          example: '2025-07-21T17:32:28Z'
         updatedAt:
           type: string
           format: date-time
           description: Last update timestamp
-          example: '2023-07-21T17:32:28Z'
+          example: '2025-07-21T17:32:28Z'
     IncomingPaymentWebhook:
       allOf:
         - $ref: '#/components/schemas/BaseWebhook'
@@ -6266,7 +6266,7 @@ components:
           type: string
           format: date-time
           description: ISO8601 timestamp when the webhook was sent (can be used to prevent replay attacks)
-          example: '2023-08-15T14:32:00Z'
+          example: '2025-08-15T14:32:00Z'
         webhookId:
           type: string
           description: Unique identifier for this webhook delivery (can be used for idempotency)
@@ -6404,7 +6404,7 @@ components:
             customerId:
               type: string
               description: The ID of the customer associated with the internal account
-              example: User:019542f5-b3e7-1d02-0000-000000000001
+              example: Customer:019542f5-b3e7-1d02-0000-000000000001
             platformCustomerId:
               type: string
               description: The ID of the customer as associated in your platform

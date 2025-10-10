@@ -28,13 +28,13 @@ properties:
     format: date-time
     description: Creation timestamp
     readOnly: true
-    example: '2023-07-21T17:32:28Z'
+    example: '2025-07-21T17:32:28Z'
   updatedAt:
     type: string
     format: date-time
     description: Last update timestamp
     readOnly: true
-    example: '2023-07-21T17:32:28Z'
+    example: '2025-07-21T17:32:28Z'
   isDeleted:
     type: boolean
     description: Whether the customer is marked as deleted

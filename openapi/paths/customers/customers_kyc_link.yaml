@@ -1,8 +1,8 @@
 parameters:
   - name: redirectUri
     in: query
-    description: An optional uri a customer will be redirected to after completing the hosted KYC flow 
-    required: false 
+    description: An optional uri a customer will be redirected to after completing the hosted KYC flow
+    required: false
     schema:
       type: string
   - name: platformCustomerId

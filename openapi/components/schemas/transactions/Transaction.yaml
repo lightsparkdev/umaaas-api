@@ -90,17 +90,17 @@ properties:
     type: string
     format: date-time
     description: When the payment was or will be settled
-    example: '2023-08-15T14:30:00Z'
+    example: '2025-08-15T14:30:00Z'
   createdAt:
     type: string
     format: date-time
     description: When the transaction was created
-    example: '2023-08-15T14:25:18Z'
+    example: '2025-08-15T14:25:18Z'
   updatedAt:
     type: string
     format: date-time
     description: When the transaction was last updated
-    example: '2023-08-15T14:30:00Z'
+    example: '2025-08-15T14:30:00Z'
   description:
     type: string
     description: Optional memo or description for the payment

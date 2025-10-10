@@ -31,4 +31,4 @@ properties:
     format: date-time
     description: Timestamp when the internal account was last updated
     example: 2025-10-03T12:30:00Z
-  
+

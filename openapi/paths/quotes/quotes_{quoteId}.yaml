@@ -1,7 +1,7 @@
 get:
   summary: Get quote by ID
   description: >
-    Retrieve a quote by its ID. If the quote has been settled, it will include 
+    Retrieve a quote by its ID. If the quote has been settled, it will include
 
     the transaction ID. This allows clients to track the full lifecycle of a
     payment

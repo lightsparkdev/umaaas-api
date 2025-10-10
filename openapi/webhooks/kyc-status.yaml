@@ -28,13 +28,13 @@ post:
 
     ### KYC/B Flow
 
-    This webhook is triggered when KYC/B has reached a decision on a customer. Generally most customers will finish KYC within a few minutes. 
+    This webhook is triggered when KYC/B has reached a decision on a customer. Generally most customers will finish KYC within a few minutes.
     Others might be rejected because of incorrect data passed in or may have been flagged for manual review.
 
     The webhook will only trigger for final states. This will be APPROVED, REJECTED, EXPIRED, CANCELED, MANUALLY_APPROVED, MANUALLY_REJECTED.
 
       * APPROVED: The customer has been approved.
-      * REJECTED: The customer has been rejected after a KYC check. 
+      * REJECTED: The customer has been rejected after a KYC check.
       * PENDING_REVIEW: KYC check is in progress.
       * EXPIRED: KYC check has expired. This is generally because a customer did not submit all required information needed within a session.
       * CANCELED: KYC check was canceled.
@@ -57,14 +57,14 @@ post:
             summary: When a customer KYC has been approved
             value:
               customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
-              kycStatus: APPROVED 
+              kycStatus: APPROVED
               type: KYC_STATUS
-              timestamp: '2023-08-15T14:32:00Z'
+              timestamp: '2025-08-15T14:32:00Z'
               webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000007
   responses:
     '200':
       description: >
-        Webhook received successfully. 
+        Webhook received successfully
     '400':
       description: Bad request
       content:
@@ -82,4 +82,4 @@ post:
       content:
         application/json:
           schema:
-            $ref: ../components/schemas/errors/Error403.yaml
+            $ref: ../components/schemas/errors/Error409.yaml

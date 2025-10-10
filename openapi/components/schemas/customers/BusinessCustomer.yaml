@@ -23,6 +23,6 @@ allOf:
             description: Tax identification number
             example: EIN-987654321
       beneficialOwners:
-        type: array 
+        type: array
         items:
           $ref: ./UltimateBeneficialOwner.yaml

@@ -1,7 +1,7 @@
 post:
   summary: Retry an incomplete payment
   description: >
-    In the case where a customer is debited but the Lightning payment fails to complete, integrators can retry the payment using this endpoint.  
+    In the case where a customer is debited but the Lightning payment fails to complete, integrators can retry the payment using this endpoint.
 
 
     Payments retried with this endpoint will debit from the sender and deliver to the recipient the same amount as the original quote.

@@ -6,7 +6,7 @@ post:
 
     This endpoint can only be used for quotes with a `source` which is either an internal account,
     or has direct pull functionality (e.g. ACH pull with an external account).
-    
+
     Once executed, the quote cannot be cancelled and the transfer will be processed.
   operationId: executeQuote
   tags:
@@ -25,7 +25,7 @@ post:
     '200':
       description: >
         Quote confirmed successfully. The transfer has been initiated and
-        
+
         the quote status has been updated.
       content:
         application/json:

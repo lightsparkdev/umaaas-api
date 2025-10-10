@@ -15,7 +15,7 @@ post:
     - **Currency Exchange**: Handles all cross-currency transfers with real-time exchange rates
     - **Payment Instructions**: For UMA or customer ID sources, provides banking details needed for execution
 
-    **Important:** If you are transferring funds in the same currency (no exchange required), 
+    **Important:** If you are transferring funds in the same currency (no exchange required),
     use the `/transfer-in` or `/transfer-out` endpoints instead.
   operationId: createQuote
   tags:
@@ -72,8 +72,8 @@ post:
   responses:
     '201':
       description: |
-        Transfer quote created successfully. The response includes exchange rates, 
-        fees, and transfer details. For transfers involving UMA addresses, payment 
+        Transfer quote created successfully. The response includes exchange rates,
+        fees, and transfer details. For transfers involving UMA addresses, payment
         instructions are also included for execution through banking systems.
       content:
         application/json:

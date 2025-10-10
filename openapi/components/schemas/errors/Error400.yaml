@@ -1,5 +1,5 @@
 type: object
-required: 
+required:
   - message
   - status
   - code
@@ -40,7 +40,7 @@ properties:
       | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
       | INVALID_AMOUNT | Amount is invalid |
       | WEBHOOK_ENDPOINT_NOT_SET | Webhook endpoint is not set |
-      | WEBHOOK_DELIVERY_ERROR | Webhook delivery error | 
+      | WEBHOOK_DELIVERY_ERROR | Webhook delivery error |
     enum:
       - INVALID_INPUT
       - MISSING_MANDATORY_USER_INFO

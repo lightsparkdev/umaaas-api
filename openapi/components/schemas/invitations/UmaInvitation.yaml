@@ -14,12 +14,12 @@ properties:
     type: string
     format: date-time
     description: When the invitation was created
-    example: '2023-09-01T14:30:00Z'
+    example: '2025-09-01T14:30:00Z'
   claimedAt:
     type: string
     format: date-time
     description: When the invitation was claimed if it has been claimed
-    example: '2023-09-01T14:30:00Z'
+    example: '2025-09-01T14:30:00Z'
   url:
     type: string
     description: The URL where this invitation can be claimed.
@@ -28,7 +28,7 @@ properties:
     type: string
     format: date-time
     description: When the invitation expires (if at all)
-    example: '2023-09-01T14:30:00Z'
+    example: '2025-09-01T14:30:00Z'
   inviterUma:
     type: string
     description: The UMA address of the inviter

@@ -18,15 +18,15 @@ tags:
   - name: Customers
     description: Customer management endpoints for creating and updating customer information
   - name: Internal Accounts
-    description: Internal account management endpoints for creating and managing internal accounts.
+    description: Internal account management endpoints for creating and managing internal accounts
   - name: External Accounts
     description: External account management endpoints for creating and managing external bank accounts
   - name: Same-Currency Transfers
-    description: Endpoints for transferring funds between internal and external accounts with the same currency.
+    description: Endpoints for transferring funds between internal and external accounts with the same currency
   - name: Cross-Currency Transfers
-    description: Endpoints for creating and confirming quotes for cross-currency transfers.
+    description: Endpoints for creating and confirming quotes for cross-currency transfers
   - name: Transactions
-    description: Endpoints for retrieving transaction information.
+    description: Endpoints for retrieving transaction information
   - name: Webhooks
     description: Webhook endpoints and configuration for receiving notifications
   - name: Invitations

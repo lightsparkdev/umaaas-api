@@ -1,5 +1,5 @@
 type: object
-required: 
+required:
   - message
   - status
   - code
@@ -21,7 +21,7 @@ properties:
       | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
       | TOKEN_NOT_FOUND | Token not found |
       | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
-      | REFERENCE_NOT_FOUND | Reference not found | 
+      | REFERENCE_NOT_FOUND | Reference not found |
     enum:
       - TRANSACTION_NOT_FOUND
       - INVITATION_NOT_FOUND

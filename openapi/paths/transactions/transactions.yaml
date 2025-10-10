@@ -2,7 +2,7 @@ get:
   summary: List transactions
   description: |
     Retrieve a paginated list of transactions with optional filtering.
-    The transactions can be filtered by customer ID, platform customer ID, UMA address, 
+    The transactions can be filtered by customer ID, platform customer ID, UMA address,
     date range, status, and transaction type.
   operationId: listTransactions
   tags:
