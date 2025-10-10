@@ -685,13 +685,13 @@ paths:
                 $ref: '#/components/schemas/Error500'
   /customers/kyc-link:
     parameters:
-      - name: redirect_uri
+      - name: redirectUri
         in: query
         description: An optional uri a customer will be redirected to after completing the hosted kyc flow
         required: false
         schema:
           type: string
-      - name: platform_customer_id
+      - name: platformCustomerId
         in: query
         description: The platform id of the customer to onboard
         required: true

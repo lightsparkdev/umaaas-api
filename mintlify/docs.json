@@ -96,8 +96,8 @@
             ]
           },
           {
-            "group": "Onboarding Customers",
-            "pages": ["developer-resources/placeholder"]
+            "group": "Customers",
+            "pages": ["rewards/developer-guides/configuring-customers"]
           },
           {
             "group": "Depositing Funds",
