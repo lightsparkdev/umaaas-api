@@ -30,26 +30,17 @@ Grid supports sending Bitcoin via Lightning Network to self-custody wallets usin
 
 ### Step 1: Collect wallet address
 
-Request the user's Spark wallet address. Spark addresses start with `sprt1`:
+Request the user's Spark wallet address. Spark addresses start with `sprt1` and are typically 90+ characters long.
 
-```javascript
-function validateSparkAddress(address) {
-  // Spark addresses start with sprt1 and are typically 90+ characters
-  if (!address.startsWith("sprt1")) {
-    throw new Error("Invalid Spark wallet address");
-  }
-
-  if (address.length < 90) {
-    throw new Error("Spark address appears incomplete");
-  }
-
-  return address;
-}
-
-// Example valid address
-const sparkAddress =
-  "sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu";
+Example valid address:
 ```
+sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
+```
+
+Validate the address format in your application before submitting to the API:
+- Must start with `sprt1`
+- Must be at least 90 characters
+- Should not contain whitespace
 
 <Warning>
   Always validate wallet addresses before creating quotes. Invalid addresses
@@ -154,248 +145,175 @@ print(f"External account ID: {external_account['id']}")
 
 Convert fiat directly to crypto in user's wallet:
 
-```javascript
-// Create quote for fiat-to-crypto
-const quote = await fetch("https://api.lightspark.com/grid/2025-10-13/quotes", {
-  method: "POST",
-  body: JSON.stringify({
-    source: {
-      customerId: "Customer:019542f5-b3e7-1d02-0000-000000000001",
-      currency: "USD",
+```bash
+curl -X POST 'https://api.lightspark.com/grid/2025-10-13/quotes' \
+  -H 'Authorization: Basic <base64-encoded-credentials>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "source": {
+      "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
+      "currency": "USD"
     },
-    destination: {
-      accountId: externalAccount.id,
-      currency: "BTC",
+    "destination": {
+      "accountId": "ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965",
+      "currency": "BTC"
     },
-    lockedCurrencySide: "SENDING",
-    lockedCurrencyAmount: 10000, // $100.00
-    description: "Buy Bitcoin to self-custody wallet",
-  }),
-}).then((r) => r.json());
-
-// Display payment instructions to user
-console.log("Send fiat to:", quote.paymentInstructions);
-console.log("Will receive:", `${quote.receivingAmount / 100000000} BTC`);
+    "lockedCurrencySide": "SENDING",
+    "lockedCurrencyAmount": 10000,
+    "description": "Buy Bitcoin to self-custody wallet"
+  }'
 ```
+
+The response includes payment instructions for funding and the amount of BTC the user will receive.
 
 #### Option B: From internal account to self-custody wallet
 
-Transfer crypto from internal account to user's wallet:
+Transfer crypto from internal account to user's wallet (same-currency transfer, no quote needed):
 
-```javascript
-// Same-currency transfer (no quote needed)
-const transaction = await fetch(
-  "https://api.lightspark.com/grid/2025-10-13/transfer-out",
-  {
-    method: "POST",
-    body: JSON.stringify({
-      source: {
-        accountId: "InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123",
-      },
-      destination: {
-        accountId: externalAccount.id,
-      },
-      amount: 100000, // 0.001 BTC in satoshis
-    }),
-  }
-).then((r) => r.json());
-
-console.log("Transfer initiated:", transaction.id);
+```bash
+curl -X POST 'https://api.lightspark.com/grid/2025-10-13/transfer-out' \
+  -H 'Authorization: Basic <base64-encoded-credentials>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "source": {
+      "accountId": "InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123"
+    },
+    "destination": {
+      "accountId": "ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965"
+    },
+    "amount": 100000
+  }'
 ```
+
+The response includes the transaction ID for tracking.
 
 ### Step 4: Monitor transfer completion
 
-Track the transfer status via webhooks:
+Track the transfer status via webhooks. Configure your webhook endpoint to receive `OUTGOING_PAYMENT` events:
 
-```javascript
-app.post("/webhooks/grid", async (req, res) => {
-  const { type, transaction } = req.body;
+- **COMPLETED**: Bitcoin successfully sent to wallet
+- **FAILED**: Transfer failed (check `failureReason` field)
 
-  if (type === "OUTGOING_PAYMENT") {
-    if (transaction.status === "COMPLETED") {
-      // Notify user of successful transfer
-      await notifyUser(transaction.customerId, {
-        message: "Bitcoin sent to your wallet!",
-        amount: `${transaction.receivedAmount.amount / 100000000} BTC`,
-        walletAddress: transaction.destination.accountInfo.address,
-      });
-    } else if (transaction.status === "FAILED") {
-      // Handle failure
-      await notifyUser(transaction.customerId, {
-        message: "Transfer failed",
-        reason: transaction.failureReason,
-        action: "Please verify your wallet address",
-      });
+Example webhook payload for a completed transfer:
+```json
+{
+  "type": "OUTGOING_PAYMENT",
+  "transaction": {
+    "id": "Transaction:...",
+    "status": "COMPLETED",
+    "customerId": "Customer:...",
+    "receivedAmount": {
+      "amount": 100000,
+      "currency": { "code": "BTC", "decimals": 8 }
+    },
+    "destination": {
+      "accountInfo": {
+        "address": "sprt1pg..."
+      }
     }
   }
-
-  res.status(200).json({ received: true });
-});
+}
 ```
+
+Use these events to notify users about successful transfers or handle failures.
 
 ## Best practices
 
 <AccordionGroup>
 <Accordion title="Validate wallet addresses">
-Always validate Spark addresses before processing:
+Always validate Spark addresses before processing to prevent transaction failures:
 
-```javascript
-function validateSparkAddress(address) {
-  // Check format
-  if (!address.startsWith("sprt1")) {
-    return { valid: false, error: "Must start with sprt1" };
-  }
+**Validation checks:**
+- Must start with `sprt1`
+- Must be at least 90 characters long
+- Should not contain whitespace or line breaks
+- Only lowercase alphanumeric characters allowed
 
-  // Check length (typical Spark addresses are 90+ chars)
-  if (address.length < 90) {
-    return { valid: false, error: "Address too short" };
-  }
-
-  // Check for common typos
-  if (address.includes(" ") || address.includes("\n")) {
-    return { valid: false, error: "Address contains whitespace" };
-  }
-
-  return { valid: true };
-}
-```
+Invalid addresses will cause transaction failures and potential fund loss.
 
 </Accordion>
 
 <Accordion title="Handle Lightning Network specifics">
-Lightning Network has unique characteristics:
+Lightning Network has unique characteristics to consider:
 
-```javascript
-const lightningLimits = {
-  minAmount: 1000, // 0.00001 BTC (1000 satoshis)
-  maxAmount: 10000000, // 0.1 BTC (10M satoshis)
-  settlementTime: "Instant (typically < 10 seconds)",
-  fees: "Very low (typically < 1%)",
-};
+**Transfer limits:**
+- **Minimum**: 1,000 satoshis (0.00001 BTC)
+- **Maximum**: 10,000,000 satoshis (0.1 BTC)
 
-function validateLightningAmount(satoshis) {
-  if (satoshis < lightningLimits.minAmount) {
-    throw new Error(`Minimum amount is ${lightningLimits.minAmount} sats`);
-  }
+**Performance:**
+- **Settlement time**: Instant (typically < 10 seconds)
+- **Fees**: Very low (typically < 1%)
 
-  if (satoshis > lightningLimits.maxAmount) {
-    throw new Error(`Maximum amount is ${lightningLimits.maxAmount} sats`);
-  }
-
-  return true;
-}
-```
+Validate amounts in your application to ensure they fall within Lightning Network limits before creating quotes.
 
 </Accordion>
 
 <Accordion title="Provide clear user instructions">
-Help users understand the process:
+Help users understand the Lightning wallet process:
 
-```javascript
-function getWalletInstructions(walletType) {
-  return {
-    SPARK_WALLET: {
-      title: "Lightning Network Wallet",
-      steps: [
-        "Open your Lightning wallet app",
-        'Select "Send" or "Pay"',
-        "Scan the QR code or paste the address",
-        "Confirm the amount and send",
-        "Funds arrive instantly",
-      ],
-      compatibleWallets: [
-        "Spark Wallet",
-        "Phoenix",
-        "Breez",
-        "Muun",
-        "Blue Wallet (Lightning)",
-      ],
-    },
-  };
-}
-```
+**Steps to receive Bitcoin:**
+1. Open your Lightning wallet app
+2. Navigate to the receive or deposit section
+3. Copy your Spark wallet address (starts with `sprt1`)
+4. Paste the address into your application
+5. Confirm the transfer
+6. Funds arrive instantly (typically < 10 seconds)
+
+**Compatible wallets:**
+- Spark Wallet
+- Phoenix
+- Breez
+- Muun
+- Blue Wallet (Lightning mode)
 
 </Accordion>
 
 <Accordion title="Handle failed transfers">
-Implement retry logic for common failures:
+Implement appropriate error handling for transfer failures:
 
-```javascript
-async function handleTransferFailure(transaction) {
-  const { failureReason } = transaction;
+**Retryable failures** (temporary network issues):
+- `TEMPORARY_NETWORK_ERROR`
+- `INSUFFICIENT_LIQUIDITY`
+- `ROUTE_NOT_FOUND`
 
-  const retryableReasons = [
-    "TEMPORARY_NETWORK_ERROR",
-    "INSUFFICIENT_LIQUIDITY",
-    "ROUTE_NOT_FOUND",
-  ];
+Wait a few seconds and retry the transfer with the same quote ID.
 
-  if (retryableReasons.includes(failureReason)) {
-    // Retry after delay
-    await delay(5000);
-    return await retryTransfer(transaction.quoteId);
-  }
+**Non-retryable failures** (user action required):
+- `INVALID_ADDRESS`: Wallet address is invalid - user must provide correct address
+- `AMOUNT_TOO_SMALL`: Below 1,000 satoshi minimum - increase amount
+- `AMOUNT_TOO_LARGE`: Exceeds Lightning Network limits - split into multiple transfers
 
-  // Non-retryable errors
-  const errorMessages = {
-    INVALID_ADDRESS:
-      "The wallet address is invalid. Please verify and try again.",
-    AMOUNT_TOO_SMALL:
-      "Amount is below minimum. Lightning Network requires at least 1000 satoshis.",
-    AMOUNT_TOO_LARGE:
-      "Amount exceeds Lightning Network limits. Consider splitting into multiple transfers.",
-  };
-
-  return {
-    canRetry: false,
-    message:
-      errorMessages[failureReason] ||
-      "Transfer failed. Please contact support.",
-  };
-}
-```
+Display clear error messages to help users resolve issues quickly.
 
 </Accordion>
 </AccordionGroup>
 
 ## Testing in sandbox
 
-Test self-custody wallet flows in sandbox mode:
+Test self-custody wallet flows in sandbox mode using test Spark addresses:
 
-```javascript
-// Sandbox: Use test Spark addresses
-const testSparkAddress =
-  "sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu";
-
-// Create test transfer
-const testTransfer = await fetch(
-  "https://api.lightspark.com/grid/2025-10-13/quotes",
-  {
-    method: "POST",
-    body: JSON.stringify({
-      source: { accountId: "InternalAccount:..." },
-      destination: {
-        externalAccountDetails: {
-          customerId: "Customer:...",
-          currency: "BTC",
-          beneficiary: {
-            /* test data */
-          },
-          accountInfo: {
-            accountType: "SPARK_WALLET",
-            address: testSparkAddress,
-          },
-        },
-      },
-      lockedCurrencySide: "SENDING",
-      lockedCurrencyAmount: 10000,
-      immediatelyExecute: true,
-    }),
-  }
-).then((r) => r.json());
-
-// Simulate completion (sandbox auto-completes)
-console.log("Test transfer status:", testTransfer.status);
+```bash
+curl -X POST 'https://api.lightspark.com/grid/2025-10-13/quotes' \
+  -H 'Authorization: Basic <base64-encoded-credentials>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "source": {
+      "accountId": "InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123"
+    },
+    "destination": {
+      "externalAccountDetails": {
+        "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
+        "currency": "BTC",
+        "accountInfo": {
+          "accountType": "SPARK_WALLET",
+          "address": "sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu"
+        }
+      }
+    },
+    "lockedCurrencySide": "SENDING",
+    "lockedCurrencyAmount": 10000,
+    "immediatelyExecute": true
+  }'
 ```
 
 <Tip>
