@@ -120,7 +120,7 @@
           {
             "group": "Platform Tools",
             "pages": [
-              "ramps/webhooks",
+              "remittances/developer-guides/webhooks",
               "remittances/developer-guides/sandbox-testing"
             ]
           },
@@ -137,12 +137,12 @@
         "tab": "Global P2P",
         "pages": [
           "remittances/index",
+          "remittances/terminology",
           "remittances/quickstart",
           {
             "group": "Getting Started",
             "pages": [
               "remittances/developer-guides/implementation-overview",
-              "developer-resources/terminology",
               "remittances/developer-guides/platform-configuration"
             ]
           },
@@ -156,7 +156,7 @@
           {
             "group": "Managing Accounts",
             "pages": [
-              "pay-to-bank/depositing-funds/internal-accounts",
+              "remittances/developer-guides/internal-accounts",
               "pay-to-bank/depositing-funds/external-accounts"
             ]
           },

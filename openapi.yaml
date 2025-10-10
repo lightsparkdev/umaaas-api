@@ -3905,7 +3905,7 @@ components:
               mandatory: true
             - name: NATIONALITY
               mandatory: true
-        umaProviderRequiredCustomerFields:
+        providerRequiredCustomerFields:
           type: array
           items:
             $ref: '#/components/schemas/CustomerInfoFieldName'
@@ -3914,7 +3914,7 @@ components:
           example:
             - NATIONALITY
             - BIRTH_DATE
-        umaProviderRequiredCounterpartyCustomerFields:
+        providerRequiredCounterpartyCustomerFields:
           type: array
           items:
             $ref: '#/components/schemas/CustomerInfoFieldName'
