@@ -62,4 +62,4 @@ properties:
     description: >-
       Timestamp when the job completed (only present for COMPLETED or FAILED
       status)
-    example: '2023-08-15T14:32:00Z'
+    example: '2025-08-15T14:32:00Z'

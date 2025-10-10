@@ -1,5 +1,5 @@
 type: object
-required: 
+required:
   - message
   - status
   - code
@@ -15,7 +15,7 @@ properties:
       | Error Code | Description |
       |------------|-------------|
       | UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY | Unrecognized mandatory payee data key |
-      | NOT_IMPLEMENTED | Feature not implemented | 
+      | NOT_IMPLEMENTED | Feature not implemented |
     enum:
       - UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY
       - NOT_IMPLEMENTED

@@ -1,70 +1,11 @@
 ---
 title: "Platform Configuration"
 ---
+import PlatformConfigAPI from '/snippets/platform-config-currency-api-webhooks.mdx';
 
 This guide explains how to configure your platform: get API credentials, set the base API path, configure webhooks, and set up UMA parameters and compliance settings.
 
-## API credentials and authentication
-Create API credentials in the Grid dashboard. Credentials are scoped to an environment (Sandbox or Production) and cannot be used across environments.
-
-- Authentication: Use HTTP Basic Auth with your API key and secret in the `Authorization` header.
-- Keys: Sandbox keys only work against Sandbox; Production keys only work against Production.
-
-<Tip>
-Never share or expose your API secret. Rotate credentials periodically and restrict access.
-</Tip>
-
-## Supported currencies
-During onboarding, choose the currencies your platform will support. For prefunded models, Grid automatically creates per‑currency accounts for each new customer. You can add or remove supported currencies anytime in the Grid dashboard.
-
-### Example: HTTP Basic Auth in cURL
-
-```bash
-# Using cURL's Basic Auth shorthand (-u):
-curl -sS -X GET "$GRID_BASE_URL/config" \
-  -u "$GRID_API_KEY:$GRID_API_SECRET"
-
-```
-
-## Base API path
-
-The base API path is consistent across environments; your credentials determine the environment.
-
-Base URL: `https://api.lightspark.com/grid/2025-10-13` (same for Sandbox and Production; your keys select the environment).
-
-<Tip>
-If you use an SDK, it manages request paths and authentication after you initialize it with your credentials.
-</Tip>
-
-## Webhooks and signature verification
-Configure your webhook endpoint to receive payment lifecycle events. Webhooks use asymmetric (public/private key) signatures; verify each webhook using the Grid public key available in your dashboard.
-
-- Expose a public HTTPS endpoint (for development, reverse proxies like ngrok can help). You'll also need to set your webhook endpoint in the Grid dashboard.
-- When receiving webhooks, verify the `X-Grid-Signature` header against the exact request body using the dashboard-provided public key
-- Process events idempotently and respond with 2xx on success
-
-You can trigger a test delivery from the API to validate your endpoint setup. The public key for verification is shown in the dashboard; rotate and update it when instructed by Lightspark.
-
-### Test your webhook endpoint
-Use the webhook test endpoint to send a synthetic event to your configured endpoint.
-
-```bash
-curl -sS -X POST "$GRID_BASE_URL/webhooks/test" \
-  -u "$GRID_API_KEY:$GRID_API_SECRET"
-```
-
-Example test webhook payload:
-
-```json
-{
-  "test": true,
-  "timestamp": "2023-08-15T14:32:00Z",
-  "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000001",
-  "type": "TEST"
-}
-```
-
-For more details about webhooks like retry policy and examples, take a look at our [Webhooks](/developer-tools/webhooks) documentation.
+<PlatformConfigAPI />
 
 ## UMA configuration (optional)
 To send and receive using UMA with your own domain (e.g., `$alice@yourdomain.com`), configure the following:
@@ -102,11 +43,11 @@ Define per‑currency rules for your UMA flows. Each entry can include:
 - `minAmount`: (Integer, required) Minimum transaction amount in the smallest unit of the currency.
 - `maxAmount`: (Integer, required) Maximum transaction amount in the smallest unit of the currency.
 - `requiredCounterpartyFields`: (Array, required) For regulated entities, defines PII your platform requires about *external counterparties* for transactions in this currency.
-- `umaProviderRequiredUserFields`: (Array, read-only) For regulated entities, lists user info field names (from `UserInfoFieldName`) that the UMA provider mandates for *your own users* to transact in this currency. This impacts user creation/updates.
+- `providerRequiredCustomerFields`: (Array, read-only) For regulated entities, lists user info field names (from `UserInfoFieldName`) that the UMA provider mandates for *your own users* to transact in this currency. This impacts user creation/updates.
 
 ### Required counterparty fields
 
-Within each currency defined in `supportedCurrencies`, the `requiredCounterpartyFields` parameter allows you to specify what information your platform needs to collect from *external counterparties* (senders or receivers) involved in transactions with your users for that specific currency.
+For regulated entities, within each currency defined in `supportedCurrencies`, the `requiredCounterpartyFields` parameter allows you to specify what information your platform needs to collect from *external counterparties* (senders or receivers) involved in transactions with your users for that specific currency.
 
 Available counterparty fields (to be specified with a `name` and `mandatory` flag):
 
@@ -129,7 +70,7 @@ Each field in `requiredCounterpartyFields` is an object containing:
 This information will be provided to your platform via webhooks for pending payments, allowing you to screen the counterparty based on your compliance rules before approving the payment.
 
 ### UMA provider required user fields
-For regulated financial institutions, the `umaProviderRequiredUserFields` array (per currency) lists the user fields required by the underlying provider. This array is read‑only and informs what you must capture for your own users.
+For regulated financial institutions, the `providerRequiredCustomerFields` array (per currency) lists the user fields required by the underlying provider. This array is read‑only and informs what you must capture for your own users.
 
 This list specifies which user information fields are mandated by the underlying UMA provider for *your own registered users* if they intend to send or receive payments in that particular currency. For example, to allow a user to transact in "USD", the UMA provider might require that the user has a `NATIONALITY` on record.
 
@@ -169,7 +110,7 @@ Response example:
           "mandatory": true
         }
       ],
-      "umaProviderRequiredUserFields": [
+      "providerRequiredCustomerFields": [
         "NATIONALITY",
         "FULL_NAME"
       ]
@@ -234,7 +175,7 @@ Response:
           "mandatory": false
         }
       ],
-      "umaProviderRequiredUserFields": [
+      "providerRequiredCustomerFields": [
         "NATIONALITY",
         "FULL_NAME"
       ]
@@ -252,8 +193,9 @@ Response:
 
 After updating your configuration, it's recommended to verify that the changes were saved correctly:
 
-```http
-GET /config
+```bash
+curl -X GET "https://api.lightspark.com/grid/2025-10-13/config" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
 The response should reflect your updated **settings**.

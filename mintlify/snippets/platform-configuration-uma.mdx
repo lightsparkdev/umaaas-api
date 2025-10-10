@@ -28,11 +28,11 @@ curl -X GET 'https://api.lightspark.com/grid/2025-10-13/config' \
         { "name": "BIRTH_DATE", "mandatory": true }
       ],
       "enabledTransactionTypes": ["OUTGOING", "INCOMING"],
-      "umaProviderRequiredCustomerFields": [
+      "providerRequiredCustomerFields": [
         "NATIONALITY",
         "BIRTH_DATE"
       ],
-      "umaProviderRequiredCounterpartyCustomerFields": [
+      "providerRequiredCounterpartyCustomerFields": [
         "FULL_NAME",
         "COUNTRY_OF_RESIDENCE"
       ]
@@ -91,11 +91,11 @@ curl -X PATCH 'https://api.lightspark.com/grid/2025-10-13/config' \
         { "name": "ADDRESS", "mandatory": false }
       ],
       "enabledTransactionTypes": ["OUTGOING", "INCOMING"],
-      "umaProviderRequiredCustomerFields": [
+      "providerRequiredCustomerFields": [
         "NATIONALITY",
         "BIRTH_DATE"
       ],
-      "umaProviderRequiredCounterpartyCustomerFields": [
+      "providerRequiredCounterpartyCustomerFields": [
         "FULL_NAME",
         "COUNTRY_OF_RESIDENCE"
       ]
@@ -143,8 +143,8 @@ The `supportedCurrencies` array allows you to define settings for each currency 
 - `maxAmount`: (Integer, required) Maximum transaction amount in the smallest unit of the currency.
 - `requiredCounterpartyFields`: (Array, required) Defines PII your platform requires about *external counterparties* for transactions in this currency.
 - `enabledTransactionTypes`: (Array, optional) Specifies which transaction types are allowed (e.g., `["OUTGOING", "INCOMING"]`).
-- `umaProviderRequiredCustomerFields`: (Array, read-only) Lists user info field names that the UMA provider mandates for *your own users* to transact in this currency.
-- `umaProviderRequiredCounterpartyCustomerFields`: (Array, read-only) Lists counterparty field names that the UMA provider mandates for external counterparties.
+- `providerRequiredCustomerFields`: (Array, read-only) Lists user info field names that the UMA provider mandates for *your own users* to transact in this currency.
+- `providerRequiredCounterpartyCustomerFields`: (Array, read-only) Lists counterparty field names that the UMA provider mandates for external counterparties.
 
 ### Required Counterparty Fields
 
@@ -175,8 +175,8 @@ This information will be provided to your platform via webhooks for pending paym
 
 Also within each currency defined in `supportedCurrencies`, you will find two arrays:
 
-- `umaProviderRequiredCustomerFields`: Lists user information fields mandated by the UMA provider for *your own registered users* to transact in this currency.
-- `umaProviderRequiredCounterpartyCustomerFields`: Lists counterparty information fields mandated by the UMA provider for external counterparties.
+- `providerRequiredCustomerFields`: Lists user information fields mandated by the UMA provider for *your own registered users* to transact in this currency.
+- `providerRequiredCounterpartyCustomerFields`: Lists counterparty information fields mandated by the UMA provider for external counterparties.
 
 These fields must be supplied when creating or updating users or counterparties via the respective API endpoints if they are expected to use the specified currency. Refer to the [Configuring Users](remittances/developer-guides/configuring-users) guide for more details on how this impacts user setup.
 

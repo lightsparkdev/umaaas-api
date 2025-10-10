@@ -32,7 +32,7 @@ properties:
         mandatory: true
       - name: NATIONALITY
         mandatory: true
-  umaProviderRequiredCustomerFields:
+  providerRequiredCustomerFields:
     type: array
     items:
       $ref: ../customers/CustomerInfoFieldName.yaml
@@ -45,7 +45,7 @@ properties:
     example:
       - NATIONALITY
       - BIRTH_DATE
-  umaProviderRequiredCounterpartyCustomerFields:
+  providerRequiredCounterpartyCustomerFields:
     type: array
     items:
       $ref: ../customers/CustomerInfoFieldName.yaml
@@ -62,7 +62,7 @@ properties:
     items:
       $ref: ../transactions/TransactionType.yaml
     description: List of transaction types that are enabled for this currency.
-    example: 
+    example:
       - OUTGOING
       - INCOMING
 required:

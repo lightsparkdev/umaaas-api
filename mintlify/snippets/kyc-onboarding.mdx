@@ -55,12 +55,14 @@ The hosted KYC flow provides a secure, hosted interface where customers can comp
 #### Generate KYC Link
 
 
-```bash cURL
-curl -X GET 'https://api.umaaas.com/customers/kyc-link?redirectUri=https://yourapp.com/onboarding-complete&platformCustomerId=019542f5-b3e7-1d02-0000-000000000001' \
-  -H 'Authorization: Basic <base64-encoded-credentials>'
+```bash
+curl -X GET "https://api.lightspark.com/grid/2025-10-13/customers/kyc-link?redirectUri=https://yourapp.com/onboarding-complete&platformCustomerId=019542f5-b3e7-1d02-0000-000000000001" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
-```json Success
+**Response:**
+
+```json
 {
   "kycUrl": "https://kyc.lightspark.com/onboard/abc123def456",
   "platformCustomerId": "019542f5-b3e7-1d02-0000-000000000001"
@@ -123,11 +125,9 @@ The `redirectUri` parameter is embedded in the KYC URL and will be used to redir
 
 After a customer completes the hosted KYC verification process, you'll receive webhook notifications about their KYC status. These notifications are sent to your configured webhook endpoint.
 
-```http POST Your Webhook Endpoint
-POST https://yourapp.com/webhooks/kyc-status
-Content-Type: application/json
-X-Webhook-Signature: sha256=abc123...
+**Webhook Payload (sent to your endpoint):**
 
+```json
 {
   "webhookId": "Webhook:019542f5-b3e7-1d02-0000-000000000020",
   "type": "KYC_STATUS",
@@ -137,6 +137,10 @@ X-Webhook-Signature: sha256=abc123...
   "platformCustomerId": "1234567"
 }
 ```
+
+**Webhook Headers:**
+- `Content-Type: application/json`
+- `X-Webhook-Signature: sha256=abc123...`
 
 <ResponseField name="customerId" type="string" required>
 System-generated unique identifier of the customer whose KYC status has changed.

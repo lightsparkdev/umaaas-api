@@ -90,7 +90,7 @@ properties:
     additionalProperties: true
     description: >
       Only relevant for UMA destinations.
-      
+
       Key-value pairs of information about the sender which was
       requested by the counterparty (recipient) institution.
 

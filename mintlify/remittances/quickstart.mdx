@@ -3,7 +3,7 @@ title: "Quickstart"
 ---
 import { umaaasProductName } from '/snippets/variables.mdx'
 
-This quickstart guides you through sending a payment from the US to a bank account in Mexicousing just‑in‑time funding.
+This quickstart guides you through sending a payment from the US to a bank account in Mexico using just-in-time funding.
 
 <Steps>
 <Step title="Get API credentials">
@@ -30,6 +30,7 @@ This quickstart guides you through sending a payment from the US to a bank accou
     -d '{
       "platformCustomerId": "cust_7b3c5a89d2f1e0",
       "customerType": "INDIVIDUAL",
+      "umaAddress": "$alice@yourapp.example",
       "fullName": "Alice Smith",
       "address": {
         "line1": "123 Pine Street",
@@ -46,7 +47,7 @@ This quickstart guides you through sending a payment from the US to a bank accou
   {
     "id": "Customer:019542f5-b3e7-1d02-0000-000000000001",
     "customerType": "INDIVIDUAL",
-    "umaAddress": "$default-generated-uma@grid.lightspark.com",
+    "umaAddress": "$alice@yourapp.example",
     "platformCustomerId": "cust_7b3c5a89d2f1e0"
   }
   ```
@@ -123,7 +124,7 @@ This quickstart guides you through sending a payment from the US to a bank accou
     -H "Content-Type: application/json" \
     -d '{
       "source": {
-        "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
+        "umaAddress": "$alice@yourapp.example",
         "currency": "USD"
       },
       "destination": {

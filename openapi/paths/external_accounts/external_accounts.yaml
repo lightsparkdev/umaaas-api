@@ -2,7 +2,7 @@ get:
   summary: List external accounts
   description: >
     Retrieve a list of external accounts with optional filtering parameters. Returns all
-    external accounts that match the specified filters. If no filters are provided, returns all 
+    external accounts that match the specified filters. If no filters are provided, returns all
     external accounts (paginated).
   operationId: listExternalAccounts
   tags:
@@ -38,7 +38,7 @@ get:
       schema:
         type: string
   responses:
-    "200":
+    '200':
       description: Successful operation
       content:
         application/json:
@@ -66,19 +66,19 @@ get:
                 description: >-
                   Total number of external accounts matching the criteria (excluding
                   pagination)
-    "400":
+    '400':
       description: Bad request - Invalid parameters
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error400.yaml
-    "401":
+    '401':
       description: Unauthorized
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error401.yaml
-    "500":
+    '500':
       description: Internal service error
       content:
         application/json:
@@ -131,31 +131,31 @@ post:
                 accountType: SPARK_WALLET
                 address: "sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu"
   responses:
-    "201":
+    '201':
       description: External account created successfully
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/external_accounts/ExternalAccount.yaml
-    "400":
+    '400':
       description: Bad request
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error400.yaml
-    "401":
+    '401':
       description: Unauthorized
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error401.yaml
-    "409":
+    '409':
       description: Conflict - External account already exists
       content:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error409.yaml
-    "500":
+    '500':
       description: Internal service error
       content:
         application/json:

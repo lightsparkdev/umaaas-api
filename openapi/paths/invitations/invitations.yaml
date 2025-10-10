@@ -47,7 +47,7 @@ post:
               type: string
               format: date-time
               description: When the invitation expires (if at all)
-              example: '2023-09-01T14:30:00Z'
+              example: '2025-09-01T14:30:00Z'
   responses:
     '201':
       description: Invitation created successfully

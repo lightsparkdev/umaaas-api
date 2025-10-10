@@ -124,33 +124,19 @@ curl -X GET 'https://api.lightspark.com/grid/2025-10-13/transactions?platformCus
 
 ## Pagination
 
-Handle large result sets with cursor-based pagination:
+Handle large result sets with cursor-based pagination. Use the `nextCursor` value from each response in subsequent requests:
 
-```javascript
-async function getAllRewardsForCustomer(platformCustomerId) {
-  const allRewards = [];
-  let cursor = null;
-  let hasMore = true;
+```bash
+# First page
+curl -X GET 'https://api.lightspark.com/grid/2025-10-13/transactions?platformCustomerId=user_789&limit=100' \
+  -H 'Authorization: Basic <base64-encoded-credentials>'
 
-  while (hasMore) {
-    const url = cursor
-      ? `https://api.lightspark.com/grid/2025-10-13/transactions?platformCustomerId=${platformCustomerId}&limit=100&cursor=${cursor}`
-      : `https://api.lightspark.com/grid/2025-10-13/transactions?platformCustomerId=${platformCustomerId}&limit=100`;
-
-    const response = await fetch(url, {
-      headers: { Authorization: `Basic ${credentials}` },
-    });
-
-    const { data, hasMore: more, nextCursor } = await response.json();
-
-    allRewards.push(...data);
-    hasMore = more;
-    cursor = nextCursor;
-  }
-
-  return allRewards;
-}
+# Next page (use the nextCursor from the previous response)
+curl -X GET 'https://api.lightspark.com/grid/2025-10-13/transactions?platformCustomerId=user_789&limit=100&cursor=eyJpZCI6IlRyYW5z...' \
+  -H 'Authorization: Basic <base64-encoded-credentials>'
 ```
+
+Continue fetching pages until `hasMore` is `false` in the response.
 
 <Info>The maximum `limit` is 100 transactions per request. Default is 20.</Info>
 
@@ -167,80 +153,45 @@ curl -X GET 'https://api.lightspark.com/grid/2025-10-13/transactions/Transaction
 
 ### Calculate total rewards distributed
 
-```javascript
-async function calculateMonthlyRewards(month) {
-  const startDate = new Date(month);
-  const endDate = new Date(startDate);
-  endDate.setMonth(endDate.getMonth() + 1);
+To calculate monthly totals, retrieve all completed transactions for the period and sum the amounts:
 
-  let totalUSD = 0;
-  let totalBTC = 0;
-  let cursor = null;
-
-  do {
-    const url = `/transactions?status=COMPLETED&startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}&cursor=${cursor || ''}`;
-
-    const { data, nextCursor } = await fetch(url).then(r => r.json());
-
-    data.forEach(tx => {
-      totalUSD += tx.sentAmount.amount;
-      totalBTC += tx.receivedAmount.amount;
-    });
-
-    cursor = nextCursor;
-  } while (cursor);
-
-  return {
-    totalUSD: totalUSD / 100, // Convert cents to dollars
-    totalBTC: totalBTC / 100000000, // Convert sats to BTC
-  };
-}
+```bash
+# Get all completed rewards for October 2025
+curl -X GET 'https://api.lightspark.com/grid/2025-10-13/transactions?status=COMPLETED&startDate=2025-10-01T00:00:00Z&endDate=2025-10-31T23:59:59Z&limit=100' \
+  -H 'Authorization: Basic <base64-encoded-credentials>'
 ```
+
+Sum the `sentAmount.amount` (USD sent) and `receivedAmount.amount` (BTC received) fields from each transaction. Remember to convert amounts using the `decimals` field in the currency object (USD: 2 decimals, BTC: 8 decimals).
 
 ### Track customer reward history
 
-```javascript
-async function getCustomerRewardsSummary(platformCustomerId) {
-  const response = await fetch(
-    `/transactions?platformCustomerId=${platformCustomerId}&status=COMPLETED`,
-    { headers: { Authorization: `Basic ${credentials}` } }
-  );
+Get a customer's complete reward history:
 
-  const { data, totalCount } = await response.json();
-
-  const totalSatsReceived = data.reduce(
-    (sum, tx) => sum + tx.receivedAmount.amount,
-    0
-  );
-
-  return {
-    rewardCount: totalCount,
-    totalSatsReceived,
-    lastRewardAt: data[0]?.settledAt,
-  };
-}
+```bash
+curl -X GET 'https://api.lightspark.com/grid/2025-10-13/transactions?platformCustomerId=user_789&status=COMPLETED' \
+  -H 'Authorization: Basic <base64-encoded-credentials>'
 ```
+
+The response includes:
+- `totalCount`: Total number of completed rewards
+- `data`: Array of transactions with amounts and timestamps
+- Sum the `receivedAmount.amount` values for total satoshis received
 
 ### Monitor failed rewards
 
-```javascript
-async function getFailedRewards(startDate) {
-  const response = await fetch(
-    `/transactions?status=FAILED&type=OUTGOING&startDate=${startDate}`,
-    { headers: { Authorization: `Basic ${credentials}` } }
-  );
+Track failed reward transactions to identify issues:
 
-  const { data } = await response.json();
-
-  return data.map(tx => ({
-    transactionId: tx.id,
-    customerId: tx.platformCustomerId,
-    amount: tx.sentAmount.amount / 100,
-    failedAt: tx.createdAt,
-    description: tx.description,
-  }));
-}
+```bash
+curl -X GET 'https://api.lightspark.com/grid/2025-10-13/transactions?status=FAILED&type=OUTGOING&startDate=2025-10-01T00:00:00Z' \
+  -H 'Authorization: Basic <base64-encoded-credentials>'
 ```
+
+Review the returned transactions to identify:
+- Transaction IDs
+- Customer IDs (`platformCustomerId`)
+- Failed amounts
+- Failure timestamps (`createdAt`)
+- Descriptions or error messages
 
 ## Best practices
 

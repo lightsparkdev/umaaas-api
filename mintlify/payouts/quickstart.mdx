@@ -42,8 +42,8 @@ This example walks through the complete process of sending funds to an external 
 Once the customer is created, list their internal accounts to see the available balances and funding instructions.
 
 ```bash
-curl -X GET 'https://api.umaaas.com/internal-account?customerId=Customer:019542f5-b3e7-1d02-0000-000000000001' \
-  -H 'Authorization: Basic <base64-encoded-credentials>'
+curl -X GET "https://api.lightspark.com/grid/2025-10-13/internal-account?customerId=Customer:019542f5-b3e7-1d02-0000-000000000001" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
 **Response:**
@@ -128,9 +128,9 @@ The internal account now has a balance of $1,000.00 (100000 cents).
 Now add the destination bank account where you want to send the funds. In this example, we'll add a Mexican CLABE account.
 
 ```bash
-curl -X POST 'https://api.umaaas.com/customers/external-accounts' \
-  -H 'Authorization: Basic <base64-encoded-credentials>' \
-  -H 'Content-Type: application/json' \
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/customers/external-accounts" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -H "Content-Type: application/json" \
   -d '{
     "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
     "currency": "MXN",
@@ -190,8 +190,8 @@ curl -X POST 'https://api.umaaas.com/customers/external-accounts' \
 Before creating a quote, look up the external account to verify supported currencies and get estimated exchange rates.
 
 ```bash
-curl -X GET 'https://api.umaaas.com/receiver/external-account/ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123?customerId=Customer:019542f5-b3e7-1d02-0000-000000000001' \
-  -H 'Authorization: Basic <base64-encoded-credentials>'
+curl -X GET "https://api.lightspark.com/grid/2025-10-13/receiver/external-account/ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123?customerId=Customer:019542f5-b3e7-1d02-0000-000000000001" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
 **Response:**
@@ -222,9 +222,9 @@ This shows you can send MXN to this account, with an estimated exchange rate of 
 Create a quote to lock in the exchange rate, fees, and get the final transfer details.
 
 ```bash
-curl -X POST 'https://api.umaaas.com/quotes' \
-  -H 'Authorization: Basic <base64-encoded-credentials>' \
-  -H 'Content-Type: application/json' \
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/quotes" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -H "Content-Type: application/json" \
   -d '{
     "lookupId": "LookupRequest:019542f5-b3e7-1d02-0000-000000000009",
     "source": {
@@ -294,9 +294,9 @@ The quote shows:
 Send a BTC payout from an internal account to an external account executed immediately:
 
 ```bash
-curl -X POST 'https://api.umaaas.com/quotes' \
-  -H 'Authorization: Basic <base64-encoded-credentials>' \
-  -H 'Content-Type: application/json' \
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/quotes" \
+  -H "Authorization: Basic <base64-encoded-credentials>" \
+  -H "Content-Type: application/json" \
   -d '{
     "source": {
       "accountId": "InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965"
@@ -327,8 +327,8 @@ curl -X POST 'https://api.umaaas.com/quotes' \
 Execute the quote to initiate the transfer from the internal account to the external bank account.
 
 ```bash
-curl -X POST 'https://api.umaaas.com/quotes/Quote:019542f5-b3e7-1d02-0000-000000000006/execute' \
-  -H 'Authorization: Basic <base64-encoded-credentials>'
+curl -X POST "https://api.lightspark.com/grid/2025-10-13/quotes/Quote:019542f5-b3e7-1d02-0000-000000000006/execute" \
+  -H "Authorization: Basic <base64-encoded-credentials>"
 ```
 
 **Response:**

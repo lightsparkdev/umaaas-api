@@ -1,7 +1,7 @@
 post:
   summary: Simulate sending funds
   description: >
-    Simulate sending funds to the bank account as instructed in the quote. 
+    Simulate sending funds to the bank account as instructed in the quote.
 
     This endpoint is only for the sandbox environment and will fail for
     production platforms/keys.

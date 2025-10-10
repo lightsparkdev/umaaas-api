@@ -2,14 +2,14 @@ get:
   summary: This endpoint provides a list of Counterparty Providers that are available.
   description: |
     This endpoint provides a list of Counterparty Providers that are available.
-    
+
     The response includes basic information about each provider, such as its UMA address, name, and supported currencies.
     This can be used to determine which providers are available for sending or receiving payments.
   operationId: getAvailableUmaProviders
   tags:
     - Available UMA Providers
   parameters:
-    - in: query 
+    - in: query
       name: countryCode
       description: The alpha-2 representation of a country, as defined by the ISO 3166-1 standard.
       required: false
@@ -62,7 +62,7 @@ get:
           schema:
             properties:
               data:
-                description: List of available Uma Providers using Grid
+                description: List of available UMA Providers using Grid
                 type: array
                 items:
                   $ref: '../../components/schemas/uma_providers/UmaProvider.yaml'

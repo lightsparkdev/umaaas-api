@@ -192,33 +192,7 @@ curl -X GET 'https://api.lightspark.com/grid/2025-10-13/transactions?limit=20&cu
 </Step>
 
 <Step title="Continue until done">
-Keep paginating while `hasMore` is `true`:
-
-```javascript
-async function getAllTransactions() {
-  const allTransactions = [];
-  let cursor = null;
-  let hasMore = true;
-
-  while (hasMore) {
-    const url = cursor
-      ? `https://api.lightspark.com/grid/2025-10-13/transactions?limit=100&cursor=${cursor}`
-      : `https://api.lightspark.com/grid/2025-10-13/transactions?limit=100`;
-
-    const response = await fetch(url, {
-      headers: { Authorization: `Basic ${credentials}` },
-    });
-
-    const { data, hasMore: more, nextCursor } = await response.json();
-
-    allTransactions.push(...data);
-    hasMore = more;
-    cursor = nextCursor;
-  }
-
-  return allTransactions;
-}
-```
+Keep paginating while `hasMore` is `true`. Continue making requests with the `nextCursor` value from each response until `hasMore` becomes `false`.
 
 </Step>
 </Steps>
@@ -265,73 +239,32 @@ async function fetchAll() {
 </Accordion>
 
 <Accordion title="Cache results when appropriate">
-For data that doesn't change frequently (like completed transactions), implement caching:
-
-```javascript
-const cache = new Map();
-
-async function getCompletedTransactions(customerId, month) {
-  const cacheKey = `${customerId}-${month}`;
-
-  if (cache.has(cacheKey)) {
-    return cache.get(cacheKey);
-  }
-
-  const transactions = await fetchMonthlyTransactions(customerId, month);
-  cache.set(cacheKey, transactions);
-
-  return transactions;
-}
-```
+For data that doesn't change frequently (like completed transactions), implement caching in your application. Completed transactions are immutable, so they're safe to cache using a key like `{customerId}-{month}` to reduce API calls and improve performance.
 
 </Accordion>
 
 <Accordion title="Use specific filters to reduce result sets">
-Apply filters to get only the data you need:
+Apply filters in the API query to get only the data you need, rather than fetching all transactions and filtering in your application code.
 
-```javascript
-// Good: Specific filters
-const recentFailed = await fetch(
-  "/transactions?status=FAILED&startDate=2025-10-01T00:00:00Z&type=OUTGOING"
-);
-
-// Bad: Fetch everything and filter in code
-const all = await fetch("/transactions");
-const filtered = all.data.filter(
-  (tx) =>
-    tx.status === "FAILED" &&
-    tx.type === "OUTGOING" &&
-    new Date(tx.createdAt) > new Date("2025-10-01")
-);
+**Good approach:**
+```bash
+curl -X GET 'https://api.lightspark.com/grid/2025-10-13/transactions?status=FAILED&startDate=2025-10-01T00:00:00Z&type=OUTGOING' \
+  -H 'Authorization: Basic <base64-encoded-credentials>'
 ```
+
+**Bad approach:** Fetching all transactions without filters and filtering in your application code. This wastes bandwidth and increases latency.
 
 </Accordion>
 
 <Accordion title="Handle rate limits gracefully">
-Implement exponential backoff for rate limit errors:
+Implement exponential backoff for rate limit errors in your application. When you receive a `429 Too Many Requests` response:
 
-```javascript
-async function fetchWithRetry(url, retries = 3) {
-  for (let i = 0; i < retries; i++) {
-    const response = await fetch(url, {
-      headers: { Authorization: `Basic ${credentials}` },
-    });
+1. Check the `Retry-After` header for the recommended wait time
+2. Wait for the specified duration (in seconds)
+3. Retry the request
+4. Implement a maximum retry limit (e.g., 3 attempts) to prevent infinite loops
 
-    if (response.status === 429) {
-      const retryAfter = parseInt(
-        response.headers.get("Retry-After") || "1",
-        10
-      );
-      await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
-      continue;
-    }
-
-    return response.json();
-  }
-
-  throw new Error("Max retries exceeded");
-}
-```
+This ensures your application handles API rate limits gracefully without overwhelming the service.
 
 </Accordion>
 </AccordionGroup>

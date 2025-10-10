@@ -30,16 +30,16 @@ properties:
     type: string
     description: >-
       The secret that should be used to authenticate against Grid API. This
-      secret is not stored and will never be available again after creation. 
+      secret is not stored and will never be available again after creation.
       Platform must keep this secret secure as it grants access to the account.
     example: ed0ad25881e234cc28fb2dec0a4fe64e4172
   createdAt:
     type: string
     format: date-time
     description: Creation timestamp
-    example: '2023-07-21T17:32:28Z'
+    example: '2025-07-21T17:32:28Z'
   updatedAt:
     type: string
     format: date-time
     description: Last update timestamp
-    example: '2023-07-21T17:32:28Z'
+    example: '2025-07-21T17:32:28Z'

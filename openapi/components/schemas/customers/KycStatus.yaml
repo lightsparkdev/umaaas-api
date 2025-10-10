@@ -1,11 +1,11 @@
 type: string
 enum:
   - APPROVED
-  - REJECTED 
+  - REJECTED
   - PENDING_REVIEW
-  - EXPIRED 
+  - EXPIRED
   - CANCELED
   - MANUALLY_APPROVED
   - MANUALLY_REJECTED
-description: The current kyc status of a customer
+description: The current KYC status of a customer
 example: APPROVED

@@ -1,6 +1,6 @@
 type: object
 required:
-  - fullName 
+  - fullName
   - individualType
 properties:
   fullName:
@@ -8,9 +8,9 @@ properties:
     description: Individual's full name
     example: John Michael Doe
   emailAddress:
-    type: string 
+    type: string
     format: email
-    description: Email address of the individual 
+    description: Email address of the individual
     example: example@test.com
   birthDate:
     type: string
@@ -24,19 +24,19 @@ properties:
   address:
     $ref: ../common/Address.yaml
   individualType:
-    type: string 
+    type: string
     enum:
       - OFFICER
       - BENEFICIAL_OWNER
       - CONTROL_PERSON
       - AUTHORIZED_PERSON
-    description: Type of individual in the corporation 
+    description: Type of individual in the corporation
     example: BENEFICIAL_OWNER
   percentageOwnership:
     type: number
-    description: Percent of ownership when individual type is benificial owner
-    example: 10 
-  title: 
-    type: string 
+    description: Percent of ownership when individual type is beneficial owner
+    example: 10
+  title:
+    type: string
     description: Title at company
     example: CEO, COO, President
