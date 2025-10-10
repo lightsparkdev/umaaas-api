@@ -35,7 +35,7 @@
           {
             "group": "Onboarding",
             "pages": [
-              "payouts/onboarding/platform-configuration",
+              "payouts/developer-guides/platform-configuration",
               "payouts/onboarding/configuring-users"
             ]
           },

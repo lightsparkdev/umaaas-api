@@ -41,9 +41,9 @@ This example walks through the complete process of sending funds to an external 
 
 Once the customer is created, list their internal accounts to see the available balances and funding instructions.
 
-```http
-GET /internal-account?customerId=Customer:019542f5-b3e7-1d02-0000-000000000001
-Authorization: Basic <base64-encoded-credentials>
+```bash
+curl -X GET 'https://api.umaaas.com/internal-account?customerId=Customer:019542f5-b3e7-1d02-0000-000000000001' \
+  -H 'Authorization: Basic <base64-encoded-credentials>'
 ```
 
 **Response:**
@@ -127,36 +127,33 @@ The internal account now has a balance of $1,000.00 (100000 cents).
 
 Now add the destination bank account where you want to send the funds. In this example, we'll add a Mexican CLABE account.
 
-```http
-POST /customers/external-accounts
-Authorization: Basic <base64-encoded-credentials>
-Content-Type: application/json
-```
-
-```json
-{
-  "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
-  "currency": "MXN",
-  "platformAccountId": "maria_garcia_account",
-  "accountInfo": {
-    "accountType": "CLABE",
-    "clabeNumber": "123456789012345678",
-    "bankName": "BBVA Mexico",
-    "beneficiary": {
-      "beneficiaryType": "INDIVIDUAL",
-      "fullName": "Maria Garcia",
-      "birthDate": "1990-01-01",
-      "nationality": "MX",
-      "address": {
-        "line1": "Av. Reforma 123",
-        "city": "Ciudad de México",
-        "state": "CDMX",
-        "postalCode": "06600",
-        "country": "MX"
+```bash
+curl -X POST 'https://api.umaaas.com/customers/external-accounts' \
+  -H 'Authorization: Basic <base64-encoded-credentials>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "customerId": "Customer:019542f5-b3e7-1d02-0000-000000000001",
+    "currency": "MXN",
+    "platformAccountId": "maria_garcia_account",
+    "accountInfo": {
+      "accountType": "CLABE",
+      "clabeNumber": "123456789012345678",
+      "bankName": "BBVA Mexico",
+      "beneficiary": {
+        "beneficiaryType": "INDIVIDUAL",
+        "fullName": "Maria Garcia",
+        "birthDate": "1990-01-01",
+        "nationality": "MX",
+        "address": {
+          "line1": "Av. Reforma 123",
+          "city": "Ciudad de México",
+          "state": "CDMX",
+          "postalCode": "06600",
+          "country": "MX"
+        }
       }
     }
-  }
-}
+  }'
 ```
 
 **Response:**
@@ -192,9 +189,9 @@ Content-Type: application/json
 
 Before creating a quote, look up the external account to verify supported currencies and get estimated exchange rates.
 
-```http
-GET /receiver/external-account/ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123?customerId=Customer:019542f5-b3e7-1d02-0000-000000000001
-Authorization: Basic <base64-encoded-credentials>
+```bash
+curl -X GET 'https://api.umaaas.com/receiver/external-account/ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123?customerId=Customer:019542f5-b3e7-1d02-0000-000000000001' \
+  -H 'Authorization: Basic <base64-encoded-credentials>'
 ```
 
 **Response:**
@@ -224,26 +221,23 @@ This shows you can send MXN to this account, with an estimated exchange rate of 
 
 Create a quote to lock in the exchange rate, fees, and get the final transfer details.
 
-```http
-POST /quotes
-Authorization: Basic <base64-encoded-credentials>
-Content-Type: application/json
-```
-
-```json
-{
-  "lookupId": "LookupRequest:019542f5-b3e7-1d02-0000-000000000009",
-  "source": {
-    "accountId": "InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965"
-  },
-  "destination": {
-    "accountId": "ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123",
-    "currency": "MXN"
-  },
-  "lockedCurrencySide": "SENDING",
-  "lockedCurrencyAmount": 50000,
-  "description": "Payment to Maria Garcia for services"
-}
+```bash
+curl -X POST 'https://api.umaaas.com/quotes' \
+  -H 'Authorization: Basic <base64-encoded-credentials>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "lookupId": "LookupRequest:019542f5-b3e7-1d02-0000-000000000009",
+    "source": {
+      "accountId": "InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965"
+    },
+    "destination": {
+      "accountId": "ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123",
+      "currency": "MXN"
+    },
+    "lockedCurrencySide": "SENDING",
+    "lockedCurrencyAmount": 50000,
+    "description": "Payment to Maria Garcia for services"
+  }'
 ```
 
 <Note>
@@ -299,45 +293,42 @@ The quote shows:
 
 Send a BTC payout from an internal account to an external account executed immediately:
 
-```http
-POST /quotes
-Authorization: Basic <base64-encoded-credentials>
-Content-Type: application/json
-```
-
-```json
-{
-  "source": {
-    "accountId": "InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965"
-  },
-  "destination": {
-    "externalAccountDetails": {
-      "beneficiary": {
-        "counterPartyType": "INDIVIDUAL",
-        "fullName": "Maria Garcia",
-        "dateOfBirth": "1990-01-01",
-        "nationality": "MX"
-      },
-      "accountInfo": {
-        "accountType": "SPARK_WALLET",
-        "address": "sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu",
-      },
-    }
-  },
-  "lockedCurrencySide": "SENDING",
-  "lockedCurrencyAmount": 50000,
-  "immediatelyExecute": true,
-  "description": "Payment to Maria Garcia for services"
-}
+```bash
+curl -X POST 'https://api.umaaas.com/quotes' \
+  -H 'Authorization: Basic <base64-encoded-credentials>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "source": {
+      "accountId": "InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965"
+    },
+    "destination": {
+      "externalAccountDetails": {
+        "beneficiary": {
+          "counterPartyType": "INDIVIDUAL",
+          "fullName": "Maria Garcia",
+          "dateOfBirth": "1990-01-01",
+          "nationality": "MX"
+        },
+        "accountInfo": {
+          "accountType": "SPARK_WALLET",
+          "address": "sprt1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu"
+        }
+      }
+    },
+    "lockedCurrencySide": "SENDING",
+    "lockedCurrencyAmount": 50000,
+    "immediatelyExecute": true,
+    "description": "Payment to Maria Garcia for services"
+  }'
 ```
 
 ### Step 7: Execute the Quote
 
 Execute the quote to initiate the transfer from the internal account to the external bank account.
 
-```http
-POST /quotes/Quote:019542f5-b3e7-1d02-0000-000000000006/execute
-Authorization: Basic <base64-encoded-credentials>
+```bash
+curl -X POST 'https://api.umaaas.com/quotes/Quote:019542f5-b3e7-1d02-0000-000000000006/execute' \
+  -H 'Authorization: Basic <base64-encoded-credentials>'
 ```
 
 **Response:**

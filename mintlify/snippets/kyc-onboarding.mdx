@@ -55,13 +55,15 @@ The hosted KYC flow provides a secure, hosted interface where customers can comp
 #### Generate KYC Link
 
 
-```http GET /customers/kyc-link
-GET /customers/kyc-link?redirectUri=https://yourapp.com/onboarding-complete&platformCustomerId=019542f5-b3e7-1d02-0000-000000000001
-Authorization: Basic <base64-encoded-credentials>
+```bash cURL
+curl -X GET 'https://api.umaaas.com/customers/kyc-link?redirectUri=https://yourapp.com/onboarding-complete&platformCustomerId=019542f5-b3e7-1d02-0000-000000000001' \
+  -H 'Authorization: Basic <base64-encoded-credentials>'
+```
 
+```json Success
 {
   "kycUrl": "https://kyc.lightspark.com/onboard/abc123def456",
-  "platformCustomerId": "019542f5-b3e7-1d02-0000-000000000001",
+  "platformCustomerId": "019542f5-b3e7-1d02-0000-000000000001"
 }
 ```
 
@@ -82,10 +84,6 @@ The `redirectUri` parameter is embedded in the KYC URL and will be used to redir
 <Steps>
 <Step title="Generate KYC Link">
   Call the `/customers/kyc-link` endpoint with your `redirectUri` parameter to generate a hosted KYC URL for your customer.
-  
-  <Note>
-  The `redirectUri` parameter is embedded in the generated KYC URL and will be used to automatically redirect the customer back to your application after they complete verification.
-  </Note>
 </Step>
 
 <Step title="Redirect Customer">
@@ -118,10 +116,6 @@ The `redirectUri` parameter is embedded in the KYC URL and will be used to redir
 
 <Step title="Handle Completion">
   On your redirect page, handle the completed KYC flow and integrate the new customer into your application.
-  
-  <Tip>
-  You may want to query the customer details or internal accounts to confirm successful onboarding.
-  </Tip>
 </Step>
 </Steps>
 
