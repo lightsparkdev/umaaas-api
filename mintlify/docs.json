@@ -70,15 +70,48 @@
         "tab": "Ramps",
         "pages": [
           "ramps/index",
+          "ramps/quickstart",
           {
             "group": "Getting Started",
-            "pages": ["developer-resources/placeholder"]
+            "pages": [
+              "ramps/onboarding/implementation-overview",
+              "developer-resources/terminology"
+            ]
           },
           {
-            "group": "Developer Guides",
+            "group": "Onboarding",
             "pages": [
-              "ramps/developer-guides/fiat-crypto-conversion",
-              "ramps/developer-guides/self-custody-wallets"
+              "ramps/onboarding/platform-configuration",
+              "ramps/onboarding/configuring-customers"
+            ]
+          },
+          {
+            "group": "Accounts",
+            "pages": [
+              "ramps/accounts/internal-accounts",
+              "ramps/accounts/external-accounts",
+              "ramps/accounts/plaid"
+            ]
+          },
+          {
+            "group": "Conversion Flows",
+            "pages": [
+              "ramps/conversion-flows/fiat-crypto-conversion",
+              "ramps/conversion-flows/self-custody-wallets"
+            ]
+          },
+          {
+            "group": "Platform Tools",
+            "pages": [
+              "ramps/platform-tools/webhooks",
+              "ramps/platform-tools/sandbox-testing"
+            ]
+          },
+          {
+            "group": "Developer Resources",
+            "pages": [
+              "developer-resources/tools",
+              "developer-resources/postman-collection"
             ]
           }
         ]
