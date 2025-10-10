@@ -27,13 +27,15 @@
           "pay-to-bank/quickstart",
           {
             "group": "Getting Started",
-            "pages": ["developer-resources/terminology", 
-            "pay-to-bank/onboarding/implementation-overview"
+            "pages": [
+              "developer-resources/terminology",
+              "pay-to-bank/onboarding/implementation-overview"
             ]
           },
           {
             "group": "Onboarding",
             "pages": [
+              "pay-to-bank/onboarding/platform-configuration",
               "pay-to-bank/onboarding/configuring-users"
             ]
           },
@@ -56,12 +58,11 @@
             ]
           },
           {
-            "group": "Developer Guides",
+            "group": "Developer Resources",
             "pages": [
-                "developer-resources/postman-collection",
-                "developer-resources/sdks",
-                "developer-resources/samples"
-              ]
+              "developer-resources/tools",
+              "developer-resources/postman-collection"
+            ]
           }
         ]
       },
@@ -90,14 +91,16 @@
           {
             "group": "Getting Started",
             "pages": [
-              "rewards/implementation-overview",
-              "developer-resources/terminology",
-              "rewards/developer-guides/platform-configuration"
+              "rewards/developer-guides/implementation-overview",
+              "developer-resources/terminology"
             ]
           },
           {
-            "group": "Customers",
-            "pages": ["rewards/developer-guides/configuring-customers"]
+            "group": "onboarding",
+            "pages": [
+              "rewards/developer-guides/platform-configuration",
+              "rewards/developer-guides/configuring-customers"
+            ]
           },
           {
             "group": "Depositing Funds",

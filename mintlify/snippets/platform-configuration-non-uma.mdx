@@ -1,7 +1,5 @@
-<Info>
-Use the `/config` endpoint to view and update your platform configuration for pay-to-bank payments.
-Authentication: HTTP Basic (client_id as username, client_secret as password).
-</Info>
+When you first sign up for Grid, a platform will be created for you with preconfigured settings.
+Use the `/config` endpoint to view and update your platform configuration for the Grid API.
 
 ## Retrieve Current Configuration
 
@@ -73,11 +71,13 @@ curl -X PATCH 'https://api.lightspark.com/grid/2025-10-13/config' \
 }
 ```
 
+Note that not all fields are patchable. If you need to update a field that is not patchable, please contact support.
+
 <Warning>
 The `webhookSecret` is not returned in the response. It can only be retrieved from the Grid dashboard. Store this securely as it's used to verify the authenticity of webhooks (see the [Webhook Verification Guide](/snippets/webhooks)).
 </Warning>
 
-## Configuration Parameters for Pay-to-Bank
+## Configuration Parameters
 
 ### Webhook Endpoint
 
@@ -88,7 +88,7 @@ The `webhookEndpoint` parameter specifies the URL where Grid will send webhook n
 - Handle webhook verification (see [Webhook Verification Guide](/docs/webhooks))
 - Process webhook payloads within a reasonable time (recommended: under 5 seconds)
 
-### Supported Currencies for Pay-to-Bank
+### Supported Currencies
 
 The `supportedCurrencies` array allows you to define settings for each currency your platform will support for pay-to-bank payments. Each object in this array can contain:
 
