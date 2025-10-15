@@ -148,8 +148,8 @@ private fun buildResponseUserData(requestedFields: List<CounterpartyFieldDefinit
             "PHONE_NUMBER" -> {
                 builder.putAdditionalProperty("PHONE_NUMBER",JsonValue.from("+16502535555"))
             }
-            "ADDRESS" -> {
-                builder.putAdditionalProperty("ADDRESS", JsonValue.from(Address.builder()
+            "POSTAL_ADDRESS" -> {
+                builder.putAdditionalProperty("POSTAL_ADDRESS", JsonValue.from(Address.builder()
                     .line1("123 Sample St")
                     .city("Sampleville")
                     .state("CA")

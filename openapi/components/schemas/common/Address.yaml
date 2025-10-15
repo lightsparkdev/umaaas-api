@@ -1,4 +1,5 @@
 type: object
+description: Physical address information
 required:
   - line1
   - postalCode
@@ -12,13 +13,17 @@ properties:
     type: string
     description: Street address line 2
     example: Apt 4B
+  town:
+    type: string
+    description: Town/Neighborhood
+    example: Hollywood
   city:
     type: string
     description: City
-    example: San Francisco
+    example: Los Angeles
   state:
     type: string
-    description: State/Province/Region
+    description: State/County/Province/Region
     example: CA
   postalCode:
     type: string

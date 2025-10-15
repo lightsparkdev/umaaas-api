@@ -2323,7 +2323,7 @@ webhooks:
                   requestedReceiverUserInfoFields:
                     - name: NATIONALITY
                       mandatory: true
-                    - name: ADDRESS
+                    - name: POSTAL_ADDRESS
                       mandatory: false
                   timestamp: '2023-08-15T14:32:00Z'
                   webhookId: Webhook:019542f5-b3e7-1d02-0000-000000000007
@@ -2854,6 +2854,7 @@ components:
           BUSINESS: '#/components/schemas/BusinessUser'
     Address:
       type: object
+      description: Physical address information
       required:
         - line1
         - postalCode
@@ -2867,13 +2868,17 @@ components:
           type: string
           description: Street address line 2
           example: Apt 4B
+        town:
+          type: string
+          description: Town/Neighborhood
+          example: Hollywood
         city:
           type: string
           description: City
-          example: San Francisco
+          example: Los Angeles
         state:
           type: string
-          description: State/Province/Region
+          description: State/County/Province/Region
           example: CA
         postalCode:
           type: string
@@ -3425,7 +3430,7 @@ components:
         - NATIONALITY
         - PHONE_NUMBER
         - EMAIL
-        - ADDRESS
+        - POSTAL_ADDRESS
         - TAX_ID
         - REGISTRATION_NUMBER
         - USER_TYPE
