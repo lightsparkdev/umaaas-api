@@ -172,12 +172,20 @@ Available counterparty fields (to be specified with a `name` and `mandatory` fla
 |---------------------------------------|-------------|
 | `FULL_NAME` | Full legal name of the individual or business |
 | `BIRTH_DATE` | Date of birth in YYYY-MM-DD format (for individuals) |
-| `NATIONALITY` | Nationality of the individual |
-| `ADDRESS` | Physical address including country, city, etc. |
-| `PHONE_NUMBER` | Contact phone number including country code |
+| `NATIONALITY` | Nationality of the individual (ISO 3166-1 alpha-2 code) |
+| `COUNTRY_OF_RESIDENCE` | The individual's country of residence (ISO 3166-1 alpha-2 code) |
+| `POSTAL_ADDRESS` | Physical address in the following format `{"line1":"123 Main St", "line2":"Apt 4B", "city":"Los Angeles", "state":"CA", "postalCode":"94105", "country":"US"}` |
+| `PHONE_NUMBER` | Contact phone number (E.164 international format) |
 | `EMAIL` | Email address |
+| `USER_TYPE` | `INDIVIDUAL` or `BUSINESS` |
 | `BUSINESS_NAME` | Legal business name (for business entities) |
+| `REGISTRATION_NUMBER` | Business registration number |
 | `TAX_ID` | Tax identification number |
+| `ACCOUNT_IDENTIFIER` | Stable id identifying the UMA account |
+| `FI_LEGAL_ENTITY_NAME` | Legal entity name of the FI participating in the UMA settlement |
+| `FI_ADDRESS` | Address of the FI participating in the UMA settlement |
+| `PURPOSE_OF_PAYMENT` | One of the following: `GIFT`, `SELF`, `GOODS_OR_SERVICES`, `EDUCATION`, `HEALTH_OR_MEDICAL`, `REAL_ESTATE_PURCHASE`, `LOAN_PAYMENT`, `TAX_PAYMENT`, `UTILITY_BILL`, `DONATION`, `TRAVEL`, `OTHER` |
+| `ULTIMATE_INSTITUTION_COUNTRY` | The country of the ultimate institution from which the UMA participant sends/receives funds (ISO 3166-1 alpha-2 code) |
 
 Each field in `requiredCounterpartyFields` is an object containing:
 

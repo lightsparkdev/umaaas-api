@@ -253,7 +253,7 @@ Update the platform configuration settings
 |»»» name|NATIONALITY|
 |»»» name|PHONE_NUMBER|
 |»»» name|EMAIL|
-|»»» name|ADDRESS|
+|»»» name|POSTAL_ADDRESS|
 |»»» name|TAX_ID|
 |»»» name|REGISTRATION_NUMBER|
 |»»» name|ACCOUNT_NUMBER|
@@ -263,7 +263,7 @@ Update the platform configuration settings
 |»» umaProviderRequiredUserFields|NATIONALITY|
 |»» umaProviderRequiredUserFields|PHONE_NUMBER|
 |»» umaProviderRequiredUserFields|EMAIL|
-|»» umaProviderRequiredUserFields|ADDRESS|
+|»» umaProviderRequiredUserFields|POSTAL_ADDRESS|
 |»» umaProviderRequiredUserFields|TAX_ID|
 |»» umaProviderRequiredUserFields|REGISTRATION_NUMBER|
 |»» umaProviderRequiredUserFields|ACCOUNT_NUMBER|
@@ -2144,7 +2144,7 @@ Status Code **200**
 |name|NATIONALITY|
 |name|PHONE_NUMBER|
 |name|EMAIL|
-|name|ADDRESS|
+|name|POSTAL_ADDRESS|
 |name|TAX_ID|
 |name|REGISTRATION_NUMBER|
 |name|ACCOUNT_NUMBER|
@@ -4504,7 +4504,7 @@ Name of a type of field containing info about a platform's user or counterparty 
 |*anonymous*|NATIONALITY|
 |*anonymous*|PHONE_NUMBER|
 |*anonymous*|EMAIL|
-|*anonymous*|ADDRESS|
+|*anonymous*|POSTAL_ADDRESS|
 |*anonymous*|TAX_ID|
 |*anonymous*|REGISTRATION_NUMBER|
 |*anonymous*|ACCOUNT_NUMBER|
