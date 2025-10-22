@@ -15,6 +15,7 @@ enum:
   - FI_ADDRESS
   - PURPOSE_OF_PAYMENT
   - ULTIMATE_INSTITUTION_COUNTRY
+  - IDENTIFIER
 description: >-
   Name of a type of field containing info about a platform's user or
   counterparty user.

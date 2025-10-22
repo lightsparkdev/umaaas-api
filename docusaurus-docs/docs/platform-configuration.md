@@ -186,6 +186,7 @@ Available counterparty fields (to be specified with a `name` and `mandatory` fla
 | `FI_ADDRESS` | Address of the FI participating in the UMA settlement |
 | `PURPOSE_OF_PAYMENT` | One of the following: `GIFT`, `SELF`, `GOODS_OR_SERVICES`, `EDUCATION`, `HEALTH_OR_MEDICAL`, `REAL_ESTATE_PURCHASE`, `LOAN_PAYMENT`, `TAX_PAYMENT`, `UTILITY_BILL`, `DONATION`, `TRAVEL`, `OTHER` |
 | `ULTIMATE_INSTITUTION_COUNTRY` | The country of the ultimate institution from which the UMA participant sends/receives funds (ISO 3166-1 alpha-2 code) |
+| `IDENTIFIER` | The UMA address of the user |
 
 Each field in `requiredCounterpartyFields` is an object containing:
 

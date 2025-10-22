@@ -2854,6 +2854,7 @@ components:
           BUSINESS: '#/components/schemas/BusinessUser'
     Address:
       type: object
+      description: Physical address information
       required:
         - line1
         - postalCode
@@ -2867,13 +2868,17 @@ components:
           type: string
           description: Street address line 2
           example: Apt 4B
+        town:
+          type: string
+          description: Town/Neighborhood
+          example: Hollywood
         city:
           type: string
           description: City
-          example: San Francisco
+          example: Los Angeles
         state:
           type: string
-          description: State/Province/Region
+          description: State/County/Province/Region
           example: CA
         postalCode:
           type: string
@@ -3435,6 +3440,7 @@ components:
         - FI_ADDRESS
         - PURPOSE_OF_PAYMENT
         - ULTIMATE_INSTITUTION_COUNTRY
+        - IDENTIFIER
       description: Name of a type of field containing info about a platform's user or counterparty user.
       example: FULL_NAME
     CounterpartyFieldDefinition:
