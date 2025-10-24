@@ -41,6 +41,7 @@ get:
               - receiverUmaAddress
               - supportedCurrencies
               - lookupId
+              - kycStatus
             properties:
               receiverUmaAddress:
                 type: string
@@ -64,6 +65,33 @@ get:
                   Unique identifier for the lookup. Needed in the subsequent
                   create quote request.
                 example: Lookup:019542f5-b3e7-1d02-0000-000000000009
+              kycStatus:
+                type: string
+                description: >-
+                  KYC status of the customer. This field describes whether the UMA provider
+                  is doing a full KYC check on the customer. Note that in cases where the UMA provider
+                  is proxying to an underlying bank account, the bank will still have KYC'd the customer.
+                  See `bankAccountNameMatchingStatus` for cases where there's a backing bank account, but
+                  the UMA provider is able to verify the account holder's name.
+                example: VERIFIED
+                enum:
+                  - UNKNOWN
+                  - NOT_VERIFIED
+                  - PENDING
+                  - VERIFIED
+              bankAccountNameMatchingStatus:
+                type: string
+                description: >-
+                  Status of the bank account name matching. This field describes whether the UMA provider
+                  is able to verify that a backing bank account holder's name matches the name provided
+                  as payee data in the payreq response if applicable. It ensures that the ultimate landing
+                  destination of the payment is the intended payee. Note that this field is only applicable if the
+                  UMA provider is proxying to an underlying bank account.
+                example: MATCHED
+                enum:
+                  - UNKNOWN
+                  - NOT_MATCHED
+                  - MATCHED
     '400':
       description: Bad request - Missing or invalid parameters
       content:
