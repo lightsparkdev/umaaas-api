@@ -60,7 +60,7 @@ Response:
 
 ```json
 {
-  "receivingUmaAddress": "$recipient@example.com",
+  "receiverUmaAddress": "$recipient@example.com",
   "supportedCurrencies": [
     {
       "currency": {
@@ -94,7 +94,9 @@ Response:
       "name": "BIRTH_DATE",
       "mandatory": true
     }
-  ]
+  ],
+  "lookupId": "Lookup:019542f5-b3e7-1d02-0000-000000000009",
+  "kycStatus": "VERIFIED"
 }
 ```
 
