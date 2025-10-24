@@ -66,7 +66,7 @@ get:
                   create quote request.
                 example: Lookup:019542f5-b3e7-1d02-0000-000000000009
               kycStatus:
-                type: enum
+                type: string
                 description: >-
                   KYC status of the customer. This field describes whether the UMA provider
                   is doing a full KYC check on the customer. Note that in cases where the UMA provider
@@ -80,7 +80,7 @@ get:
                   - PENDING
                   - VERIFIED
               bankAccountNameMatchingStatus:
-                type: enum
+                type: string
                 description: >-
                   Status of the bank account name matching. This field describes whether the UMA provider
                   is able to verify that a backing bank account holder's name matches the name provided
