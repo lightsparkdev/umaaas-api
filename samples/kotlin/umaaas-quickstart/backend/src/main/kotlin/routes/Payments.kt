@@ -82,6 +82,7 @@ fun Route.paymentsRoutes() {
                                     value.isTextual -> JsonValue.from(value.asText())
                                     value.isNumber -> JsonValue.from(value.asText())
                                     value.isBoolean -> JsonValue.from(value.asBoolean().toString())
+                                    value.isObject -> JsonValue.from(value)
                                     else -> throw IllegalArgumentException("Unsupported JSON value type for key: $key")
                                 }
                                 putAdditionalProperty(key, jsonValue)
