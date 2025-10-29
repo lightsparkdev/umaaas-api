@@ -96,6 +96,14 @@ export default function PaymentInitiation({ currUser, lookupResponse, onQuoteSuc
             newSenderUserInfo.EMAIL = currUser.email; // Assign to uppercase EMAIL for request
           } else if (field.name === 'FULL_NAME' && currUser.fullName) {
             newSenderUserInfo.FULL_NAME = currUser.fullName;
+          } else if (field.name === 'ACCOUNT_IDENTIFIER' && currUser.platformUserId) {
+            newSenderUserInfo.ACCOUNT_IDENTIFIER = currUser.platformUserId
+          } else if (field.name === 'POSTAL_ADDRESS' && currUser.address) {
+            newSenderUserInfo.POSTAL_ADDRESS = currUser.address;
+          } else if (field.name === 'BIRTH_DATE' && currUser.birthDate) {
+            newSenderUserInfo.BIRTH_DATE = currUser.birthDate;
+          } else if (field.name === 'NATIONALITY' && currUser.nationality) {
+            newSenderUserInfo.NATIONALITY = currUser.nationality;
           }
           // Add other fields here if necessary
         });

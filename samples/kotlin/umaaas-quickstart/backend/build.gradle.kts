@@ -70,7 +70,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:3.1.3")
 
     // UMAaaS Kotlin client dependencies
-    implementation("com.lightspark.umaaas:umaaas-kotlin:0.1.0-beta.9")
+    implementation("com.lightspark.umaaas:umaaas-kotlin:0.1.0-beta.14")
 
     // JSON helper
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.1")
