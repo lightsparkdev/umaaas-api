@@ -174,7 +174,7 @@ Available counterparty fields (to be specified with a `name` and `mandatory` fla
 | `BIRTH_DATE` | Date of birth in YYYY-MM-DD format (for individuals) |
 | `NATIONALITY` | Nationality of the individual (ISO 3166-1 alpha-2 code) |
 | `COUNTRY_OF_RESIDENCE` | The individual's country of residence (ISO 3166-1 alpha-2 code) |
-| `POSTAL_ADDRESS` | Physical address in the following format `{"line1":"123 Main St", "line2":"Apt 4B", "townName":"Los Angeles", "countrySubDivision":"CA", "postCode":"94105", "country":"US"}` |
+| `POSTAL_ADDRESS` | Physical address in the following format `{"line1":"123 Main St", "line2":"Apt 4B", "city":"Los Angeles", "state":"CA", "postalCode":"94105", "country":"US"}` |
 | `PHONE_NUMBER` | Contact phone number (E.164 international format) |
 | `EMAIL` | Email address |
 | `USER_TYPE` | `INDIVIDUAL` or `BUSINESS` |
