@@ -63,6 +63,9 @@ The sandbox provides several test UMA addresses you can use to simulate differen
 | `$success.eur@sandbox.umaaas.uma.money` | Always succeeds, sends EUR |
 | `$success.mxn@sandbox.umaaas.uma.money` | Always succeeds, sends MXN |
 | `$success.inr@sandbox.umaaas.uma.money` | Always succeeds, sends INR |
+| `$success.gbp@sandbox.umaaas.uma.money` | Always succeeds, sends GBP |
+| `$success.brl@sandbox.umaaas.uma.money` | Always succeeds, sends BRL |
+| `$success.php@sandbox.umaaas.uma.money` | Always succeeds, sends PHP |
 | `$pending.long.usd@sandbox.umaaas.uma.money` | Simulates a long-pending payment |
 | `$fail.compliance.usd@sandbox.umaaas.uma.money` | Simulates compliance check failure |
 | `$fail.timeout.usd@sandbox.umaaas.uma.money` | Simulates failure due to timeout |
