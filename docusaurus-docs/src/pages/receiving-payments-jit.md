@@ -193,7 +193,7 @@ When the payment completes, your webhook endpoint will receive another notificat
     },
     "userId": "User:019542f5-b3e7-1d02-0000-000000000001",
     "platformUserId": "9f84e0c2a72c4fa",
-    "settlementTime": "2023-08-15T14:30:00Z",
+    "settledAt": "2023-08-15T14:30:00Z",
     "createdAt": "2023-08-15T14:25:18Z",
     "description": "Payment for services",
   },
