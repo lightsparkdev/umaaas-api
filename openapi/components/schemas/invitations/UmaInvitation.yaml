@@ -66,3 +66,9 @@ properties:
       UMA address. Note that these sends can only be sender-locked, meaning that
       the sender will not know ahead of time how much the receiver will receive
       in the receiving currency.
+  inviteeCountryCode:
+    type: string
+    description: >-
+      The country of the invitee (ISO 3166-1 alpha-2 code). Only available for
+      CLAIMED invitations when provided by the invitee.
+    example: US
