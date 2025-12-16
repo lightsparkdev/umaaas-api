@@ -1812,7 +1812,7 @@ paths:
                   example: $inviter@uma.domain
                 firstName:
                   type: string
-                  description: First name of the invitee to show as part of the invite
+                  description: First name of the inviter to show as part of the invite
                   example: Alice
                 amountToSend:
                   description: |
