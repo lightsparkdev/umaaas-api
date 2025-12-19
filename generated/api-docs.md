@@ -83,7 +83,7 @@ Retrieve the current platform configuration
 
 ```json
 {
-  "id": "PlatformConfig:019542f5-b3e7-1d02-0000-000000000003",
+  "id": "Platform:019542f5-b3e7-1d02-0000-000000000003",
   "umaDomain": "platform.uma.domain",
   "webhookEndpoint": "https://api.mycompany.com/webhooks/uma",
   "supportedCurrencies": [
@@ -275,7 +275,7 @@ Update the platform configuration settings
 
 ```json
 {
-  "id": "PlatformConfig:019542f5-b3e7-1d02-0000-000000000003",
+  "id": "Platform:019542f5-b3e7-1d02-0000-000000000003",
   "umaDomain": "platform.uma.domain",
   "webhookEndpoint": "https://api.mycompany.com/webhooks/uma",
   "supportedCurrencies": [
@@ -4585,7 +4585,7 @@ Name of a type of field containing info about a platform's user or counterparty 
 
 ```json
 {
-  "id": "PlatformConfig:019542f5-b3e7-1d02-0000-000000000003",
+  "id": "Platform:019542f5-b3e7-1d02-0000-000000000003",
   "umaDomain": "platform.uma.domain",
   "webhookEndpoint": "https://api.mycompany.com/webhooks/uma",
   "supportedCurrencies": [
