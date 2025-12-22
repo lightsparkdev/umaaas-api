@@ -20,7 +20,7 @@ Response example:
 
 ```json
 {
-  "id": "PlatformConfig:019542f5-b3e7-1d02-0000-000000000003",
+  "id": "Platform:019542f5-b3e7-1d02-0000-000000000003",
   "umaDomain": "example.com",
   "webhookEndpoint": "https://api.example.com/webhooks/uma",
   "supportedCurrencies": [
@@ -93,7 +93,7 @@ Response:
 
 ```json
 {
-  "id": "PlatformConfig:019542f5-b3e7-1d02-0000-000000000003",
+  "id": "Platform:019542f5-b3e7-1d02-0000-000000000003",
   "umaDomain": "mycompany.com",
   "webhookEndpoint": "https://api.mycompany.com/webhooks/uma",
   "supportedCurrencies": [
