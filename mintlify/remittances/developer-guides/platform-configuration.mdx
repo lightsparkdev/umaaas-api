@@ -160,8 +160,31 @@ The `supportedCurrencies` array allows you to define settings for each currency 
 - `currencyCode`: (String, required) The ISO 4217 currency code (e.g., "USD").
 - `minAmount`: (Integer, required) Minimum transaction amount in the smallest unit of the currency.
 - `maxAmount`: (Integer, required) Maximum transaction amount in the smallest unit of the currency.
+- `umaProviderMinAmount`: (Integer, read-only) The minimum transaction amount enforced by the underlying UMA provider for this currency. See [Provider-Level Limits](#provider-level-limits) below.
+- `umaProviderMaxAmount`: (Integer, read-only) The maximum transaction amount enforced by the underlying UMA provider for this currency. See [Provider-Level Limits](#provider-level-limits) below.
 - `requiredCounterpartyFields`: (Array, required) Defines PII your platform requires about *external counterparties* for transactions in this currency.
 - `umaProviderRequiredUserFields`: (Array, read-only) Lists user info field names (from `UserInfoFieldName`) that the UMA provider mandates for *your own users* to transact in this currency. This impacts user creation/updates.
+
+### Provider-Level Limits
+
+The underlying UMA provider (e.g., the exchange used for currency conversion) may enforce its own minimum and maximum transaction amounts. These limits are exposed as read-only fields in the currency configuration:
+
+- `umaProviderMinAmount`: The provider's minimum, in the smallest unit of the currency.
+- `umaProviderMaxAmount`: The provider's maximum, in the smallest unit of the currency.
+
+<Warning>
+Provider minimums may be higher than your platform's configured `minAmount`. This commonly occurs because the underlying exchange enforces a minimum trade value denominated in BTC, which is then converted to the target currency at current market rates. For example, a BTC minimum trade value of 0.0001 BTC might translate to approximately €7 at current prices, even if your platform's `minAmount` for EUR is set to €1.00.
+
+The **effective** minimum used in receiver lookups and quote validation is `max(minAmount, umaProviderMinAmount)`. Similarly, the effective maximum is `min(maxAmount, umaProviderMaxAmount)`.
+</Warning>
+
+You can check the current provider limits by retrieving your platform configuration:
+
+```http
+GET /config
+```
+
+If you find that the provider's minimum is significantly higher than your configured `minAmount`, consider updating your `minAmount` to match or exceed `umaProviderMinAmount` to avoid confusing your users with limits that appear lower than what is actually accepted.
 
 ### Required Counterparty Fields
 

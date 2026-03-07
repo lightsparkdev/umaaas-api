@@ -7,4 +7,36 @@ This guide provides information about error handling in payments in UMA as a Ser
 
 ## Overview
 
+When creating quotes or executing payments, you may encounter errors related to amount limits, currency mismatches, or provider-level constraints. Understanding these errors helps you build a robust payment experience.
+
+## Common Quote Errors
+
+### AMOUNT_OUT_OF_RANGE
+
+This error occurs when the transaction amount falls outside the allowed limits. The allowed range is determined by the `min` and `max` values returned in the receiver lookup response for the target currency.
+
+<Warning>
+The `min` value from the receiver lookup accounts for **both** the platform-configured minimum and the underlying provider's minimum trade value. The provider minimum may be denominated in BTC and converted to the receiving currency at current rates, so it can fluctuate with market conditions.
+
+For example, if the provider requires a minimum trade of 0.0001 BTC and the current BTC/EUR rate makes that approximately €7, the `min` for EUR will be at least 700 (in cents), even if the platform's configured minimum is 100 (€1.00).
+</Warning>
+
+To avoid this error:
+
+1. Always check the `min` and `max` values from the receiver lookup response before presenting amount options to your users
+2. Validate amounts client-side before creating a quote
+3. If locking the sending side, estimate the receiving amount using the `estimatedExchangeRate` and verify it falls within range
+
+```json
+{
+  "status": 400,
+  "code": "AMOUNT_OUT_OF_RANGE",
+  "message": "Amount is outside the allowed min/max range"
+}
+```
+
+### QUOTE_REQUEST_FAILED
+
+This error indicates a retryable issue during the quote process. You can safely retry the request.
+
 ## Error Handling

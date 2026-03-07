@@ -806,6 +806,15 @@ paths:
                       mandatory: true
                     - name: BIRTH_DATE
                       mandatory: true
+                - currencyCode: EUR
+                  minAmount: 100
+                  maxAmount: 1000000
+                  enabledTransactionTypes:
+                    - OUTGOING
+                    - INCOMING
+                  requiredCounterpartyFields:
+                    - name: FULL_NAME
+                      mandatory: true
       responses:
         '200':
           description: Configuration updated successfully
@@ -3182,7 +3191,7 @@ components:
             | INVALID_PUBKEY_FORMAT | Counterparty Public key format is invalid |
             | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
             | SENDER_NOT_ACCEPTED | Sender is not accepted |
-            | AMOUNT_OUT_OF_RANGE | Amount is out of range |
+            | AMOUNT_OUT_OF_RANGE | Amount is outside the allowed min/max range. Check the min and max values from the receiver lookup response. |
             | INVALID_CURRENCY | Currency is invalid |
             | INVALID_TIMESTAMP | Timestamp is invalid |
             | INVALID_NONCE | Nonce is invalid |
@@ -3489,13 +3498,27 @@ components:
         minAmount:
           type: integer
           format: int64
-          description: Minimum amount that can be sent in the smallest unit of this currency
+          description: Minimum amount that can be sent in the smallest unit of this currency. Note that the effective minimum for transactions may be higher than this value if the underlying UMA provider enforces a higher minimum (see umaProviderMinAmount). The effective minimum used in receiver lookups is max(minAmount, umaProviderMinAmount).
           minimum: 0
           example: 100
         maxAmount:
           type: integer
           format: int64
-          description: Maximum amount that can be sent in the smallest unit of this currency
+          description: Maximum amount that can be sent in the smallest unit of this currency. Note that the effective maximum for transactions may be lower than this value if the underlying UMA provider enforces a lower maximum (see umaProviderMaxAmount). The effective maximum used in receiver lookups is min(maxAmount, umaProviderMaxAmount).
+          minimum: 0
+          example: 1000000
+        umaProviderMinAmount:
+          type: integer
+          format: int64
+          description: The minimum transaction amount enforced by the underlying UMA provider for this currency, in the smallest unit of the currency. This is a read-only value that reflects provider-level constraints such as minimum trade values on the underlying exchange (which may be denominated in BTC and converted to this currency at current rates). The effective minimum for transactions is max(minAmount, umaProviderMinAmount).
+          readOnly: true
+          minimum: 0
+          example: 500
+        umaProviderMaxAmount:
+          type: integer
+          format: int64
+          description: The maximum transaction amount enforced by the underlying UMA provider for this currency, in the smallest unit of the currency. This is a read-only value that reflects provider-level constraints. The effective maximum for transactions is min(maxAmount, umaProviderMaxAmount).
+          readOnly: true
           minimum: 0
           example: 1000000
         requiredCounterpartyFields:
@@ -4014,13 +4037,13 @@ components:
         min:
           type: integer
           format: int64
-          description: The minimum amount that can be received in this currency.
+          description: The minimum amount that can be received in this currency, in the smallest unit of the currency (e.g. cents). This is the effective minimum, accounting for both the platform-configured minimum and any provider-level constraints (such as minimum trade values on the underlying exchange). Sending amounts that would result in a receiving amount below this value will be rejected.
           exclusiveMinimum: 0
-          example: 1
+          example: 500
         max:
           type: integer
           format: int64
-          description: The maximum amount that can be received in this currency.
+          description: The maximum amount that can be received in this currency, in the smallest unit of the currency (e.g. cents). This is the effective maximum, accounting for both the platform-configured maximum and any provider-level constraints.
           exclusiveMinimum: 0
           example: 1000000
     Error412:

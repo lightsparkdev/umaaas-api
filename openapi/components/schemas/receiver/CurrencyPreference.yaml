@@ -18,12 +18,22 @@ properties:
   min:
     type: integer
     format: int64
-    description: The minimum amount that can be received in this currency.
+    description: >-
+      The minimum amount that can be received in this currency, in the smallest
+      unit of the currency (e.g. cents). This is the effective minimum,
+      accounting for both the platform-configured minimum and any provider-level
+      constraints (such as minimum trade values on the underlying exchange).
+      Sending amounts that would result in a receiving amount below this value
+      will be rejected.
     exclusiveMinimum: 0
-    example: 1
+    example: 500
   max:
     type: integer
     format: int64
-    description: The maximum amount that can be received in this currency.
+    description: >-
+      The maximum amount that can be received in this currency, in the smallest
+      unit of the currency (e.g. cents). This is the effective maximum,
+      accounting for both the platform-configured maximum and any provider-level
+      constraints.
     exclusiveMinimum: 0
     example: 1000000

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { User } from '../../types/user.types';
 import { ApiResponse, LookupResponse } from '../../types/payment.types';
-import { convertToSmallestUnit } from '../../lib/currency-utils';
+import { convertToSmallestUnit, convertFromSmallestUnit } from '../../lib/currency-utils';
 import ResponseDisplay from '../shared/ResponseDisplay';
 import LoadingButton from '../shared/LoadingButton';
 
@@ -21,6 +21,7 @@ export default function PaymentInitiation({ currUser, lookupResponse, onQuoteSuc
   const [lastEditedField, setLastEditedField] = useState<'usd' | 'receiving'>('usd');
   const [isCreatingQuote, setIsCreatingQuote] = useState(false);
   const [quoteResponse, setQuoteResponse] = useState<ApiResponse | null>(null);
+  const [amountError, setAmountError] = useState<string | null>(null);
 
   // Set receiving currency when lookup succeeds
   useEffect(() => {
@@ -32,10 +33,24 @@ export default function PaymentInitiation({ currUser, lookupResponse, onQuoteSuc
     }
   }, [lookupResponse]);
 
+  const validateReceivingAmount = (receivingAmountStr: string, currency: NonNullable<LookupResponse['supportedCurrencies']>[0]): string | null => {
+    const decimals = currency.currency.decimals;
+    const amountInMinorUnits = convertToSmallestUnit(receivingAmountStr, decimals);
+    const minDisplay = convertFromSmallestUnit(currency.min, decimals);
+    const maxDisplay = convertFromSmallestUnit(currency.max, decimals);
+
+    if (amountInMinorUnits < currency.min) {
+      return `Receiving amount is below the minimum of ${minDisplay} ${currency.currency.code}`;
+    }
+    if (amountInMinorUnits > currency.max) {
+      return `Receiving amount exceeds the maximum of ${maxDisplay} ${currency.currency.code}`;
+    }
+    return null;
+  };
+
   const updateAmounts = (amount: string, field: 'usd' | 'receiving') => {
     if (!amount || !receivingCurrency || isUpdatingAmounts) return;
     
-    // Check if we have a lookup response with supported currencies
     const lookupData = lookupResponse?.data as LookupResponse;
     
     const supportedCurrency = lookupData?.supportedCurrencies?.[0];
@@ -45,14 +60,19 @@ export default function PaymentInitiation({ currUser, lookupResponse, onQuoteSuc
     setLastEditedField(field);
     
     try {
+      let newReceivingAmount: string;
       if (field === 'usd') {
-        // User updated sending amount: receiving = exchangeRate * sending
         const convertedAmount = (supportedCurrency.estimatedExchangeRate) * parseFloat(amount);
-        setReceivingAmount(convertedAmount.toFixed(6));
+        newReceivingAmount = convertedAmount.toFixed(6);
+        setReceivingAmount(newReceivingAmount);
       } else {
-        // User updated receiving amount: sending = receiving / exchangeRate
         const convertedAmount = parseFloat(amount) / (supportedCurrency.estimatedExchangeRate);
         setUsdAmount(convertedAmount.toFixed(6));
+        newReceivingAmount = amount;
+      }
+
+      if (supportedCurrency.min && supportedCurrency.max) {
+        setAmountError(validateReceivingAmount(newReceivingAmount, supportedCurrency));
       }
     } catch (error) {
       console.error('Error updating amounts:', error);
@@ -181,10 +201,16 @@ export default function PaymentInitiation({ currUser, lookupResponse, onQuoteSuc
           </div>
         </div>
 
+        {amountError && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+            {amountError}
+          </div>
+        )}
+
         <div className="flex justify-center">
           <LoadingButton
             onClick={handleCreateQuote}
-            disabled={(!usdAmount && !receivingAmount) || !receivingCurrency}
+            disabled={(!usdAmount && !receivingAmount) || !receivingCurrency || !!amountError}
             loading={isCreatingQuote}
             loadingText="Creating Quote..."
             className="bg-green-600 hover:bg-green-700 focus:ring-green-500"

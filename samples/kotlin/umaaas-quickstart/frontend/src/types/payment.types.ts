@@ -20,8 +20,10 @@ export interface ApiResponse {
 export interface LookupResponse {
   lookupId: string;
   supportedCurrencies?: Array<{
-    currency: { code: string };
+    currency: { code: string; decimals: number };
     estimatedExchangeRate: number;
+    min: number;
+    max: number;
   }>;
   requiredPayerDataFields?: Array<{ name: string; mandatory: boolean }>;
 }
