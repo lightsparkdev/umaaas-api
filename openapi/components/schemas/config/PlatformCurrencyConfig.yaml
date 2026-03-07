@@ -7,13 +7,47 @@ properties:
   minAmount:
     type: integer
     format: int64
-    description: Minimum amount that can be sent in the smallest unit of this currency
+    description: >-
+      Minimum amount that can be sent in the smallest unit of this currency.
+      Note that the effective minimum for transactions may be higher than this
+      value if the underlying UMA provider enforces a higher minimum (see
+      umaProviderMinAmount). The effective minimum used in receiver lookups is
+      max(minAmount, umaProviderMinAmount).
     minimum: 0
     example: 100
   maxAmount:
     type: integer
     format: int64
-    description: Maximum amount that can be sent in the smallest unit of this currency
+    description: >-
+      Maximum amount that can be sent in the smallest unit of this currency.
+      Note that the effective maximum for transactions may be lower than this
+      value if the underlying UMA provider enforces a lower maximum (see
+      umaProviderMaxAmount). The effective maximum used in receiver lookups is
+      min(maxAmount, umaProviderMaxAmount).
+    minimum: 0
+    example: 1000000
+  umaProviderMinAmount:
+    type: integer
+    format: int64
+    description: >-
+      The minimum transaction amount enforced by the underlying UMA provider
+      for this currency, in the smallest unit of the currency. This is a
+      read-only value that reflects provider-level constraints such as minimum
+      trade values on the underlying exchange (which may be denominated in BTC
+      and converted to this currency at current rates). The effective minimum
+      for transactions is max(minAmount, umaProviderMinAmount).
+    readOnly: true
+    minimum: 0
+    example: 500
+  umaProviderMaxAmount:
+    type: integer
+    format: int64
+    description: >-
+      The maximum transaction amount enforced by the underlying UMA provider
+      for this currency, in the smallest unit of the currency. This is a
+      read-only value that reflects provider-level constraints. The effective
+      maximum for transactions is min(maxAmount, umaProviderMaxAmount).
+    readOnly: true
     minimum: 0
     example: 1000000
   requiredCounterpartyFields:

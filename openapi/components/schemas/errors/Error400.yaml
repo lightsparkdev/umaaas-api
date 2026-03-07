@@ -29,7 +29,7 @@ properties:
       | INVALID_PUBKEY_FORMAT | Counterparty Public key format is invalid |
       | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
       | SENDER_NOT_ACCEPTED | Sender is not accepted |
-      | AMOUNT_OUT_OF_RANGE | Amount is out of range |
+      | AMOUNT_OUT_OF_RANGE | Amount is outside the allowed min/max range. Check the min and max values from the receiver lookup response. |
       | INVALID_CURRENCY | Currency is invalid |
       | INVALID_TIMESTAMP | Timestamp is invalid |
       | INVALID_NONCE | Nonce is invalid |

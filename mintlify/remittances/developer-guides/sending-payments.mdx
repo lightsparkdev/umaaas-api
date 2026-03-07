@@ -77,7 +77,7 @@ Response:
         "decimals": 2
       },
       "estimatedExchangeRate": 0.92,
-      "min": 100,
+      "min": 500,
       "max": 9000000
     }
   ],
@@ -95,6 +95,12 @@ Response:
 ```
 
 This response tells you the currencies the recipient can receive and, crucially, any information the recipient's VASP requires about *your user (the sender)* in the `requiredPayerDataFields` array before a payment can be processed.
+
+<Warning>
+The `min` and `max` values in each supported currency represent the **effective** limits for receiving amounts, accounting for both platform-configured limits and provider-level constraints. Provider-level constraints may include minimum trade values on the underlying exchange, which can be denominated in BTC and converted to the receiving currency at current rates.
+
+Always validate that the receiving amount falls within the `min` and `max` range before creating a quote. Amounts outside this range will be rejected.
+</Warning>
 
 ## Step 2: Create a payment quote
 
