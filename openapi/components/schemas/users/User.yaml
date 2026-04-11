@@ -1,6 +1,5 @@
 type: object
 required:
-  - umaAddress
   - platformUserId
   - userType
 properties:
