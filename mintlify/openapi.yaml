@@ -3460,6 +3460,7 @@ components:
         - ULTIMATE_INSTITUTION_COUNTRY
         - IDENTIFIER
         - BUSINESS_TYPE
+        - COMPANY_LEGAL_NAME
       description: Name of a type of field containing info about a platform's user or counterparty user.
       example: FULL_NAME
     CounterpartyFieldDefinition:
