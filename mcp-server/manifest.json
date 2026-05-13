@@ -1,0 +1,54 @@
+{
+  "dxt_version": "0.2",
+  "name": "umaaas_mcp",
+  "version": "0.0.1-alpha.0",
+  "description": "The official MCP Server for the Umaaas API",
+  "author": {
+    "name": "Umaaas",
+    "email": "support@lightspark.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stainless-sdks/umaaas-typescript.git"
+  },
+  "homepage": "https://github.com/stainless-sdks/umaaas-typescript/tree/main/packages/mcp-server#readme",
+  "documentation": "https://lightsparkdev.github.io/umaaas-api/",
+  "server": {
+    "type": "node",
+    "entry_point": "index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/index.js"
+      ],
+      "env": {
+        "UMAAAS_CLIENT_ID": "${user_config.UMAAAS_CLIENT_ID}",
+        "UMAAAS_CLIENT_SECRET": "${user_config.UMAAAS_CLIENT_SECRET}"
+      }
+    }
+  },
+  "user_config": {
+    "UMAAAS_CLIENT_ID": {
+      "title": "username",
+      "description": "API token authentication using format `<api token id>:<api client secret>`",
+      "required": true,
+      "type": "string"
+    },
+    "UMAAAS_CLIENT_SECRET": {
+      "title": "password",
+      "description": "API token authentication using format `<api token id>:<api client secret>`",
+      "required": true,
+      "type": "string"
+    }
+  },
+  "tools": [],
+  "tools_generated": true,
+  "compatibility": {
+    "runtimes": {
+      "node": ">=18.0.0"
+    }
+  },
+  "keywords": [
+    "api"
+  ]
+}
