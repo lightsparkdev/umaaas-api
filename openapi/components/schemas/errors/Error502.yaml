@@ -1,0 +1,25 @@
+type: object
+required:
+  - message
+  - status
+  - code
+properties:
+  status:
+    enum:
+      - 502
+    type: integer
+    description: HTTP status code
+  code:
+    type: string
+    description: |
+      | Error Code | Description |
+      |------------|-------------|
+      | INVALID_PAYREQ_RESPONSE | Counterparty Payreq response was invalid. Retryable |
+    enum:
+      - INVALID_PAYREQ_RESPONSE
+  message:
+    type: string
+    description: Error message
+  details:
+    type: object
+    description: Additional error details

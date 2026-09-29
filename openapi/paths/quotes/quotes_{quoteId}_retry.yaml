@@ -97,3 +97,15 @@ post:
                       requiredFields:
                         - TAX_ID
                         - REGISTRATION_NUMBER
+    '424':
+      description: Counterparty issue
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error424.yaml
+    '502':
+      description: Counterparty returned an invalid response
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error502.yaml
