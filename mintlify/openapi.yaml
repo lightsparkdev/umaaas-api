@@ -1301,6 +1301,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
+        '502':
+          description: Counterparty returned an error or an invalid response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error502'
+        '504':
+          description: Counterparty could not be reached or timed out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error504'
   /quotes:
     post:
       summary: Create a payment quote
@@ -1433,11 +1445,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error501'
         '502':
-          description: Counterparty returned an invalid response
+          description: Counterparty returned an error or an invalid response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error502'
+        '504':
+          description: Counterparty could not be reached or timed out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error504'
   /quotes/{quoteId}:
     get:
       summary: Get quote by ID
@@ -1574,11 +1592,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error424'
         '502':
-          description: Counterparty returned an invalid response
+          description: Counterparty returned an error or an invalid response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error502'
+        '504':
+          description: Counterparty could not be reached or timed out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error504'
   /fbo/confirm/{quoteId}:
     post:
       summary: Trigger payment from a FBO account
@@ -2813,6 +2837,8 @@ components:
         - $ref: '#/components/schemas/Error424'
         - $ref: '#/components/schemas/Error500'
         - $ref: '#/components/schemas/Error501'
+        - $ref: '#/components/schemas/Error502'
+        - $ref: '#/components/schemas/Error504'
     UserType:
       type: string
       enum:
@@ -4083,13 +4109,65 @@ components:
             | COUNTERPARTY_PUBKEY_FETCH_ERROR | Error fetching counterparty public key |
             | NO_COMPATIBLE_UMA_VERSION | No compatible UMA version |
             | LNURLP_REQUEST_FAILED | LNURLP request failed |
-            | LOOKUP_REQUEST_FAILED | Network error or timeout reaching the counterparty during lookup. Retryable |
-            | QUOTE_REQUEST_FAILED | Network error or timeout sending the quote request to the counterparty. Retryable |
           enum:
             - PAYREQ_REQUEST_FAILED
             - COUNTERPARTY_PUBKEY_FETCH_ERROR
             - NO_COMPATIBLE_UMA_VERSION
             - LNURLP_REQUEST_FAILED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+    Error502:
+      type: object
+      required:
+        - message
+        - status
+        - code
+      properties:
+        status:
+          enum:
+            - 502
+          type: integer
+          description: HTTP status code
+        code:
+          type: string
+          description: |
+            | Error Code | Description |
+            |------------|-------------|
+            | INVALID_PAYREQ_RESPONSE | Counterparty payment request response was invalid. Retryable |
+            | COUNTERPARTY_SERVER_ERROR | Counterparty returned a server error. Retryable |
+          enum:
+            - INVALID_PAYREQ_RESPONSE
+            - COUNTERPARTY_SERVER_ERROR
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+    Error504:
+      type: object
+      required:
+        - message
+        - status
+        - code
+      properties:
+        status:
+          enum:
+            - 504
+          type: integer
+          description: HTTP status code
+        code:
+          type: string
+          description: |
+            | Error Code | Description |
+            |------------|-------------|
+            | LOOKUP_REQUEST_FAILED | Network error or timeout reaching the counterparty during lookup. Retryable |
+            | QUOTE_REQUEST_FAILED | Network error or timeout sending the quote request to the counterparty. Retryable |
+          enum:
             - LOOKUP_REQUEST_FAILED
             - QUOTE_REQUEST_FAILED
         message:
@@ -4184,32 +4262,6 @@ components:
         rateDetails:
           $ref: '#/components/schemas/OutgoingRateDetails'
           description: Details about the rate and fees for the transaction.
-    Error502:
-      type: object
-      required:
-        - message
-        - status
-        - code
-      properties:
-        status:
-          enum:
-            - 502
-          type: integer
-          description: HTTP status code
-        code:
-          type: string
-          description: |
-            | Error Code | Description |
-            |------------|-------------|
-            | INVALID_PAYREQ_RESPONSE | Counterparty payment request response was invalid. Retryable |
-          enum:
-            - INVALID_PAYREQ_RESPONSE
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
     BulkUserImportJob:
       type: object
       required:

@@ -18,15 +18,11 @@ properties:
       | COUNTERPARTY_PUBKEY_FETCH_ERROR | Error fetching counterparty public key |
       | NO_COMPATIBLE_UMA_VERSION | No compatible UMA version |
       | LNURLP_REQUEST_FAILED | LNURLP request failed |
-      | LOOKUP_REQUEST_FAILED | Network error or timeout reaching the counterparty during lookup. Retryable |
-      | QUOTE_REQUEST_FAILED | Network error or timeout sending the quote request to the counterparty. Retryable |
     enum:
       - PAYREQ_REQUEST_FAILED
       - COUNTERPARTY_PUBKEY_FETCH_ERROR
       - NO_COMPATIBLE_UMA_VERSION
       - LNURLP_REQUEST_FAILED
-      - LOOKUP_REQUEST_FAILED
-      - QUOTE_REQUEST_FAILED
   message:
     type: string
     description: Error message
