@@ -77,6 +77,8 @@ components:
         - $ref: components/schemas/errors/Error424.yaml
         - $ref: components/schemas/errors/Error500.yaml
         - $ref: components/schemas/errors/Error501.yaml
+        - $ref: components/schemas/errors/Error502.yaml
+        - $ref: components/schemas/errors/Error504.yaml
 
 paths:
   /users:
