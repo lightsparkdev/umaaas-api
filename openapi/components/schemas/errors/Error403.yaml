@@ -18,11 +18,13 @@ properties:
       | USER_NOT_READY | User exists but is not ready for operation |
       | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account | 
       | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits | 
+      | SANCTION_BLOCKED | Blocked by sanction screening |
     enum:
       - FORBIDDEN
       - USER_NOT_READY
       - COUNTERPARTY_NOT_ALLOWED
       - VELOCITY_LIMIT_EXCEEDED
+      - SANCTION_BLOCKED
   message:
     type: string
     description: Error message

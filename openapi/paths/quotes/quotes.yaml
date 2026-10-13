@@ -128,6 +128,18 @@ post:
         application/json:
           schema:
             $ref: ../../components/schemas/errors/Error401.yaml
+    '403':
+      description: >-
+        Forbidden. `SANCTION_BLOCKED` when sanctions screening blocks the
+        sender. `USER_NOT_READY` when the recipient cannot receive payments
+        yet; this can clear later. `COUNTERPARTY_NOT_ALLOWED` when the
+        counterparty is not allowed. `FORBIDDEN` when the receiving institution
+        refused the request. `VELOCITY_LIMIT_EXCEEDED` when the recipient is
+        over a velocity limit.
+      content:
+        application/json:
+          schema:
+            $ref: ../../components/schemas/errors/Error403.yaml
     '412':
       description: Counterparty doesn't support UMA version
       content:
