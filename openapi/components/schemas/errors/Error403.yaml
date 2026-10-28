@@ -19,12 +19,14 @@ properties:
       | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account | 
       | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits | 
       | SANCTION_BLOCKED | Blocked by sanction screening |
+      | CORRIDOR_UNDER_MAINTENANCE | Payments to this currency are paused for maintenance. |
     enum:
       - FORBIDDEN
       - USER_NOT_READY
       - COUNTERPARTY_NOT_ALLOWED
       - VELOCITY_LIMIT_EXCEEDED
       - SANCTION_BLOCKED
+      - CORRIDOR_UNDER_MAINTENANCE
   message:
     type: string
     description: Error message
