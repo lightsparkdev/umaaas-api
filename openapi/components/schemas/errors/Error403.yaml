@@ -20,6 +20,7 @@ properties:
       | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits | 
       | SANCTION_BLOCKED | Blocked by sanction screening |
       | CORRIDOR_UNDER_MAINTENANCE | Payments to this currency are paused for maintenance. |
+      | CORRIDOR_UNDER_OUTAGE | Payments to this currency are paused because of an outage. |
     enum:
       - FORBIDDEN
       - USER_NOT_READY
@@ -27,6 +28,7 @@ properties:
       - VELOCITY_LIMIT_EXCEEDED
       - SANCTION_BLOCKED
       - CORRIDOR_UNDER_MAINTENANCE
+      - CORRIDOR_UNDER_OUTAGE
   message:
     type: string
     description: Error message
